@@ -6,8 +6,8 @@
  "description": "Eight accessible styles for Starboard, from calm Paper to Neo-brutalist Bold, each in light and dark.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
- "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/styles",
- "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "homepage": "https://github.com/TheMightyTRex/starboard/tree/main/plugins-collection/styles",
+ "support_url": "https://github.com/TheMightyTRex/starboard/issues",
  "starboard_api": ">=1.0 <2.0",
  "permissions": [
   "appearance:styles"
