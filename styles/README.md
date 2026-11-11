@@ -1,6 +1,6 @@
 # Styles, a Starboard plug-in
 
-Eight styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
+Thirteen styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
 
 | Style | Look |
 |---|---|
@@ -12,6 +12,11 @@ Eight styles for Starboard, chosen from current interface trends and checked for
 | Forest | Earthy greens and natural tones |
 | Retro | Square corners, a monospace font and amber, like old terminals |
 | Vivid | Bright pink and purple |
+| Aurora | Deep night blue with violet and teal glows, rounded and calm |
+| Nordic | Scandinavian calm: soft greys, birch white and fjord blue |
+| Sunset | Warm coral and plum on soft peach |
+| Graphite | Precise monochrome greys with one electric lime accent |
+| Editorial | A magazine look: serif headings and a deep red rule |
 
 ## Install
 
