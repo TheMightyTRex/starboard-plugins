@@ -4,6 +4,7 @@
 
 ### Added
 - Five more styles: Aurora, Nordic, Sunset, Graphite and Editorial, each in light and dark.
+- Gradients, textures and glass: Aurora and Vivid have soft glows, Sunset, Nordic and Frost gradients, Graphite a grid, Bento dots, Nordic and Editorial a paper grain, and Aurora, Sunset and Frost glass panels. Aurora, Sunset, Frost, Bento and Vivid have rounded buttons and fields.
 - They also set the side menu, panel headers, the chosen button, count badges, status messages, chart colours and the logo, and Editorial uses serif headings. Every colour pair passes WCAG 2.2 contrast.
 
 ### Changed
