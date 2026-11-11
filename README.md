@@ -5,7 +5,7 @@ smaller home media servers. Each one has passed Starboard's plug-in tester, acce
 
 | Plug-in | What it does | Install address | Download |
 |---|---|---|---|
-| [Styles](styles/) | Eight accessible styles for Starboard's Display settings | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/styles/starboard-plugin.json` | [styles.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/styles.zip) |
+| [Styles](styles/) | Thirteen accessible styles for Starboard's Display settings, with gradients, textures and glass (needs Starboard 0.16.5) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/styles/starboard-plugin.json` | [styles.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/styles.zip) |
 
 ## Add a plug-in
 
