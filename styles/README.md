@@ -1,6 +1,6 @@
 # Styles, a Starboard plug-in
 
-Thirteen styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
+Fifteen styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
 
 | Style | Look |
 |---|---|
@@ -17,19 +17,22 @@ Thirteen styles for Starboard, chosen from current interface trends and checked 
 | Sunset | Warm coral and plum on soft peach |
 | Graphite | Precise monochrome greys with one electric lime accent |
 | Editorial | A magazine look: serif headings and a deep red rule |
+| Winter | Pine and berry over a frosty page, with snow dots, glows and glass |
+| Large and clear | Strong contrast, heavy headings and wide focus rings, for easy reading |
 
 ## Install
 
-1. Run `python3 install.py` and give your Starboard's address. Your browser opens Settings, Plug-ins with
-   Styles ready to add.
-2. Read what it may do (add styles to Display, nothing else), type your Starboard password and select **Add**.
-3. Select **Activate**, then open **Display** and choose a style.
+1. Run `python3 install.py` and give your Starboard's address. Your browser opens Settings, Plug-ins, Catalogue
+   with Styles ready to add.
+2. Select **Install**, read what it may do (add styles to Display, nothing else), type your Starboard password
+   and select **Install Styles**.
+3. Select **Activate** on its tab, then open **Display** and choose a style.
 
-No installer? In Settings, Plug-ins, choose this folder's `starboard-plugin.json` under **Or its manifest file**.
+Or find Styles in Settings, Plug-ins, Catalogue. No installer? There, choose this folder's `starboard-plugin.json` under **Or its manifest file**.
 
 ## What it can and cannot change
 
-It changes colours, corner shapes, the font (from fonts already on your device) and shadows. It runs nothing: no
+It changes colours, corner shapes, the fonts (from fonts already on your device), shadows, the page's gradient, a light texture and glass panels. It runs nothing: no
 container, no code and no network access. Starboard writes the CSS itself after checking contrast (WCAG 2.2:
 4.5:1 for text, 3:1 for edges and the focus ring). High contrast, text size, spacing, underlined links and reduced
 motion in Display always win over a style.
