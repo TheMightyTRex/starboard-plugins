@@ -25,7 +25,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: version
-        run: echo "v=$(python3 -c "import sys;sys.path.insert(0,'tools');import examples_src;print(examples_src.VERSION)")" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "v=$(python3 -c "import sys;sys.path.insert(0,'tools');import examples_src;print(examples_src.VERSION)")" >> "$GITHUB_OUTPUT"
       - id: build
         uses: docker/build-push-action@v6
         with:
@@ -41,4 +42,5 @@ jobs:
             org.opencontainers.image.licenses=MIT
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
       - name: Digest
-        run: echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"
+        run: |
+          echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"
