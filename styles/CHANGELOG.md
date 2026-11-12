@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.0 (12 November 2026)
+
+### Added
+- Six styles that reskin the whole look, from current design trends: Studio (a quiet product look with hairline
+  borders), Expressive (tonal colour blocks and pill buttons), Swiss (white, black and red, heavy rules and capital
+  labels), Neon (synthwave glows on a grid, with a gradient button), Clay (puffy soft-3D panels) and Mica (a calm
+  desktop look with see-through menus).
+- They use Starboard's new style settings: card, button, border, tab, header, side menu and chip styles, a primary
+  button gradient, capital labels and letter spacing, and clay and hairline shadows. Every colour pair still passes
+  WCAG 2.2 contrast, and High contrast still wins.
+
+### Changed
+- Needs Starboard's plug-in API 1.2 (the Starboard release after 0.16.5).
+
 ## 1.2.0 (12 November 2026)
 
 ### Added

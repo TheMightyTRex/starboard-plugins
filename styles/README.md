@@ -1,6 +1,6 @@
 # Styles, a Starboard plug-in
 
-Fifteen styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
+Twenty-one styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
 
 | Style | Look |
 |---|---|
@@ -19,6 +19,15 @@ Fifteen styles for Starboard, chosen from current interface trends and checked f
 | Editorial | A magazine look: serif headings and a deep red rule |
 | Winter | Pine and berry over a frosty page, with snow dots, glows and glass |
 | Large and clear | Strong contrast, heavy headings and wide focus rings, for easy reading |
+| Studio | A quiet product look: hairline borders, one indigo accent, outlined buttons |
+| Expressive | Tonal colour blocks, big round shapes and pill buttons |
+| Swiss | White, black and red on a grid, heavy rules and capital labels |
+| Neon | Synthwave glows on a faint grid, with a gradient button |
+| Clay | Puffy, matte soft-3D panels in calm pastels |
+| Mica | A calm desktop look with see-through menus |
+
+The last six reskin the whole look: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
+API 1.2).
 
 ## Install
 
