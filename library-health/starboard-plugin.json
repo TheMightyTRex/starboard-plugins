@@ -22,10 +22,9 @@
    "volumes": [
     "data"
    ],
-   "command": [
-    "python3",
-    "/app/library-health/app.py"
-   ]
+   "env": {
+    "EXAMPLE": "library-health"
+   }
   }
  ],
  "resources": {

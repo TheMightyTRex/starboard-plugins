@@ -18,10 +18,9 @@
    "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.0.0",
    "port": 8080,
    "network": "lan",
-   "command": [
-    "python3",
-    "/app/home-assistant/app.py"
-   ]
+   "env": {
+    "EXAMPLE": "home-assistant"
+   }
   }
  ],
  "resources": {

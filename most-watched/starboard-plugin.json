@@ -22,10 +22,9 @@
    "volumes": [
     "data"
    ],
-   "command": [
-    "python3",
-    "/app/most-watched/app.py"
-   ]
+   "env": {
+    "EXAMPLE": "most-watched"
+   }
   }
  ],
  "resources": {

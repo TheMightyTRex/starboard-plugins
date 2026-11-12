@@ -22,12 +22,9 @@
     "data"
    ],
    "env": {
-    "PORT": "7791"
-   },
-   "command": [
-    "python3",
-    "/app/vpn-check/app.py"
-   ]
+    "PORT": "7791",
+    "EXAMPLE": "vpn-check"
+   }
   }
  ],
  "resources": {

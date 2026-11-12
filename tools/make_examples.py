@@ -61,7 +61,7 @@ def main():
         # One shared image for every example (12 November 2026): pinned by digest once GitHub has built it.
         for c in m.get("containers") or []:
             c["image"] = EXAMPLES_IMAGE
-            c["command"] = ["python3", f"/app/{pid}/app.py"]
+            c["env"] = {**(c.get("env") or {}), "EXAMPLE": pid}  # the shared image runs /app/<EXAMPLE>/app.py
         with open(os.path.join(out, "starboard-plugin.json"), "w", encoding="utf-8") as f:
             json.dump(m, f, indent=1, ensure_ascii=False)
             f.write("\n")

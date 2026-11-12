@@ -19,10 +19,9 @@
    "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.0.0",
    "port": 8080,
    "network": "lan",
-   "command": [
-    "python3",
-    "/app/watching-now/app.py"
-   ]
+   "env": {
+    "EXAMPLE": "watching-now"
+   }
   }
  ],
  "resources": {

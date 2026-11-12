@@ -21,10 +21,9 @@
    "volumes": [
     "data"
    ],
-   "command": [
-    "python3",
-    "/app/outside-services/app.py"
-   ]
+   "env": {
+    "EXAMPLE": "outside-services"
+   }
   }
  ],
  "resources": {

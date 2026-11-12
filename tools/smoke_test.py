@@ -80,7 +80,7 @@ def main():
         subprocess.run(["docker", "rm", "-f", name], capture_output=True)
         subprocess.run(["docker", "run", "-d", "--name", name, "--network", "host", "--read-only", "--tmpfs", "/tmp",
                         "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true", "--pids-limit", "64",
-                        "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
+                        *[x for k, v in (m["containers"][0].get("env") or {}).items() for x in ("-e", f"{k}={v}")], "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
                         "-v", f"{run}/data:/data", "-v", f"{run}/settings.json:/run/starboard/settings.json:ro",
                         "-v", f"{run}/key:/run/starboard/key:ro", "-v", f"{run}/jellyfin.json:/run/starboard/jellyfin.json:ro",
                         m["containers"][0]["image"], *(m["containers"][0].get("command") or [])], check=True, capture_output=True)

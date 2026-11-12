@@ -20,10 +20,9 @@
    "volumes": [
     "data"
    ],
-   "command": [
-    "python3",
-    "/app/download-summary/app.py"
-   ]
+   "env": {
+    "EXAMPLE": "download-summary"
+   }
   }
  ],
  "resources": {

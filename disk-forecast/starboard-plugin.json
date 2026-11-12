@@ -20,10 +20,9 @@
    "volumes": [
     "data"
    ],
-   "command": [
-    "python3",
-    "/app/disk-forecast/app.py"
-   ]
+   "env": {
+    "EXAMPLE": "disk-forecast"
+   }
   }
  ],
  "resources": {
