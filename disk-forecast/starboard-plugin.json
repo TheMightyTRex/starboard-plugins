@@ -1,0 +1,44 @@
+{
+ "manifest_version": 1,
+ "id": "disk-forecast",
+ "name": "Disk forecast",
+ "version": "1.0.0",
+ "description": "When each disk fills at the rate it has been filling over the last month.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/disk-forecast",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "system:read"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-disk-forecast:1.0.0",
+   "port": 8080,
+   "volumes": [
+    "data"
+   ]
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "cards": [
+  {
+   "id": "forecast",
+   "title": "Disk forecast",
+   "type": "status",
+   "path": "/card",
+   "example": {
+    "state": "ok",
+    "text": "Pool full in about 140 days"
+   }
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "manifest_version": 1,
+ "id": "watching-now",
+ "name": "Watching now",
+ "version": "1.0.0",
+ "description": "Who is watching what in Jellyfin right now, with how far through they are.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/watching-now",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-watching-now:1.0.0",
+   "port": 8080,
+   "network": "lan"
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "cards": [
+  {
+   "id": "now",
+   "title": "Watching now",
+   "type": "list",
+   "path": "/card",
+   "example": {
+    "items": [
+     {
+      "title": "Dune: Part Two",
+      "detail": "Sam, living room TV, 40%"
+     }
+    ]
+   }
+  }
+ ]
+}

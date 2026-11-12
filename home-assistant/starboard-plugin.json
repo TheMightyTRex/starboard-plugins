@@ -1,0 +1,69 @@
+{
+ "manifest_version": 1,
+ "id": "home-assistant",
+ "name": "Home Assistant",
+ "version": "1.0.0",
+ "description": "Your house in one sentence on the dashboard: the things you choose from Home Assistant.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/home-assistant",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-home-assistant:1.0.0",
+   "port": 8080,
+   "network": "lan"
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "address",
+   "label": "Home Assistant's address",
+   "type": "address",
+   "hint": "Such as http://192.168.1.30:8123"
+  },
+  {
+   "key": "token",
+   "label": "Long-lived access token",
+   "type": "secret",
+   "hint": "In Home Assistant: your profile, Security, Long-lived access tokens, Create token. Kept by Starboard."
+  },
+  {
+   "key": "entities",
+   "label": "What to show",
+   "type": "list",
+   "hint": "One entity id each, such as binary_sensor.front_door or sensor.lounge_temperature."
+  },
+  {
+   "key": "alert_on",
+   "label": "Warn when any is",
+   "type": "text",
+   "default": "on, open, unlocked",
+   "hint": "States that turn the card amber, separated by commas."
+  }
+ ],
+ "cards": [
+  {
+   "id": "house",
+   "title": "Home",
+   "type": "status",
+   "path": "/card",
+   "example": {
+    "state": "ok",
+    "text": "Front door: closed. Lounge: 20.5 °C"
+   }
+  }
+ ]
+}

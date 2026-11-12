@@ -1,0 +1,61 @@
+{
+ "manifest_version": 1,
+ "id": "most-watched",
+ "name": "Most watched",
+ "version": "1.0.0",
+ "description": "The films and series most people watched in Jellyfin in the last week.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/most-watched",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-most-watched:1.0.0",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ]
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 64,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "days",
+   "label": "Over the last",
+   "type": "number",
+   "unit": "days",
+   "default": 7,
+   "min": 1,
+   "max": 90
+  }
+ ],
+ "cards": [
+  {
+   "id": "top",
+   "title": "Most watched",
+   "type": "list",
+   "path": "/card",
+   "example": {
+    "items": [
+     {
+      "title": "Slow Horses",
+      "detail": "3 people, 11 plays"
+     }
+    ]
+   }
+  }
+ ]
+}

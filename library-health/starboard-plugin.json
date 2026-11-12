@@ -1,0 +1,69 @@
+{
+ "manifest_version": 1,
+ "id": "library-health",
+ "name": "Library health",
+ "version": "1.0.0",
+ "description": "Films and series in Jellyfin with no poster, no description or no year, so you can fix them.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/library-health",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-library-health:1.0.0",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ]
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 96,
+   "cpus": 0.25
+  }
+ },
+ "health": "/health",
+ "actions": [
+  {
+   "id": "check",
+   "label": "Check now",
+   "path": "/check"
+  }
+ ],
+ "cards": [
+  {
+   "id": "count",
+   "title": "Library health",
+   "type": "stat",
+   "path": "/count",
+   "format": "number",
+   "example": {
+    "value": 4,
+    "label": "to fix",
+    "note": "of 1,240 titles"
+   }
+  },
+  {
+   "id": "list",
+   "title": "To fix in Jellyfin",
+   "type": "list",
+   "path": "/card",
+   "example": {
+    "items": [
+     {
+      "title": "Brazil (1985)",
+      "detail": "No poster"
+     }
+    ]
+   }
+  }
+ ]
+}

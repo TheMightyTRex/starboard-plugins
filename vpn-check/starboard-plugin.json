@@ -1,0 +1,72 @@
+{
+ "manifest_version": 1,
+ "id": "vpn-check",
+ "name": "VPN check",
+ "version": "1.0.0",
+ "description": "Shows the address and country your downloads use through the VPN, and warns if it is your home address.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/vpn-check",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "network:vpn"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-vpn-check:1.0.0",
+   "port": 7791,
+   "network": "vpn",
+   "volumes": [
+    "data"
+   ],
+   "env": {
+    "PORT": "7791"
+   }
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "home_address",
+   "label": "Your home's public address",
+   "type": "text",
+   "hint": "Optional, such as 81.2.69.160. If the VPN ever shows this address, the card turns red."
+  },
+  {
+   "key": "minutes",
+   "label": "Check every",
+   "type": "number",
+   "unit": "minutes",
+   "default": 15,
+   "min": 5,
+   "max": 240
+  }
+ ],
+ "actions": [
+  {
+   "id": "check",
+   "label": "Check now",
+   "path": "/check"
+  }
+ ],
+ "cards": [
+  {
+   "id": "status",
+   "title": "VPN",
+   "type": "status",
+   "path": "/card",
+   "example": {
+    "state": "ok",
+    "text": "185.65.134.12 in the Netherlands"
+   }
+  }
+ ]
+}

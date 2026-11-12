@@ -1,0 +1,46 @@
+{
+ "manifest_version": 1,
+ "id": "download-summary",
+ "name": "Download summary",
+ "version": "1.0.0",
+ "description": "How much has downloaded today and this week, from what Starboard sees in the queue.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/download-summary",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "downloads:read"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-download-summary:1.0.0",
+   "port": 8080,
+   "volumes": [
+    "data"
+   ]
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "cards": [
+  {
+   "id": "today",
+   "title": "Downloaded today",
+   "type": "stat",
+   "path": "/card",
+   "format": "bytes",
+   "example": {
+    "value": 12884901888,
+    "label": "today",
+    "note": "41 GB this week"
+   }
+  }
+ ]
+}

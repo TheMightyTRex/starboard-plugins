@@ -1,0 +1,91 @@
+{
+ "manifest_version": 1,
+ "id": "line-speed",
+ "name": "Line speed",
+ "version": "1.0.0",
+ "description": "Tests your internet download speed once a night, outside download hours, and keeps a week of results.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/line-speed",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.1 <2.0",
+ "permissions": [
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-line-speed:1.0.0",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ]
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 64,
+   "cpus": 0.25
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "hour",
+   "label": "Test at",
+   "type": "number",
+   "unit": "o'clock",
+   "default": 4,
+   "min": 0,
+   "max": 23,
+   "hint": "Choose an hour when nothing is downloading."
+  },
+  {
+   "key": "megabytes",
+   "label": "Test size",
+   "type": "number",
+   "unit": "MB",
+   "default": 25,
+   "min": 5,
+   "max": 200,
+   "hint": "Larger is more accurate on fast lines, and uses more of any data allowance."
+  }
+ ],
+ "actions": [
+  {
+   "id": "test",
+   "label": "Test now",
+   "path": "/test",
+   "confirm": "Downloads a test file now. Continue?"
+  }
+ ],
+ "cards": [
+  {
+   "id": "speed",
+   "title": "Line speed",
+   "type": "stat",
+   "path": "/card",
+   "format": "number",
+   "example": {
+    "value": 72,
+    "label": "Mbps",
+    "note": "04:00 today"
+   }
+  },
+  {
+   "id": "week",
+   "title": "Line speed this week",
+   "type": "list",
+   "path": "/week",
+   "example": {
+    "items": [
+     {
+      "title": "72 Mbps",
+      "detail": "Wednesday 04:00"
+     }
+    ]
+   }
+  }
+ ]
+}
