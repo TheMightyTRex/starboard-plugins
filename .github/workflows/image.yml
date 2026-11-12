@@ -34,8 +34,8 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/starboard-plugin-examples:${{ steps.version.outputs.v }}
-            ghcr.io/${{ github.repository_owner }}/starboard-plugin-examples:latest
+            ghcr.io/themightytrex/starboard-plugin-examples:${{ steps.version.outputs.v }}
+            ghcr.io/themightytrex/starboard-plugin-examples:latest
           labels: |
             org.opencontainers.image.title=Starboard example plug-ins
             org.opencontainers.image.description=Small example plug-ins for Starboard
