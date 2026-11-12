@@ -69,6 +69,32 @@ def main():
             with open(os.path.join(out, "Dockerfile"), "w", encoding="utf-8") as f:
                 f.write(DOCKERFILE.format(name=m["name"]))
         print("wrote", pid)
+    write_catalogue()
+
+
+# The collection's catalogue (DASH-318): every plug-in here, which Starboard's Catalogue page lists. "published" is
+# true once its manifest and image are on GitHub (Styles now; the examples after DASH-331).
+KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
+         "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
+         "download-summary": "Downloads", "disk-forecast": "System", "seasonal-styles": "Look", "styles": "Look"}
+PUBLISHED = {"styles"}
+
+
+def write_catalogue():
+    rows = []
+    for pid in sorted(os.listdir(ROOT)):
+        mf = os.path.join(ROOT, pid, "starboard-plugin.json")
+        if not os.path.isfile(mf):
+            continue
+        m = json.load(open(mf, encoding="utf-8"))
+        rows.append({"id": m["id"], "name": m["name"], "description": m["description"], "kind": KINDS.get(pid, "Other"),
+                     "author": m["author"], "permissions": m["permissions"], "version": m["version"],
+                     "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
+                     "published": pid in PUBLISHED})
+    with open(os.path.join(ROOT, "catalogue.json"), "w", encoding="utf-8") as f:
+        json.dump({"catalogue_version": 1, "name": "Starboard plug-ins", "plugins": rows}, f, indent=1, ensure_ascii=False)
+        f.write("\n")
+    print("wrote catalogue.json,", len(rows), "plug-ins")
 
 
 if __name__ == "__main__":
