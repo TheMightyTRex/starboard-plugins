@@ -11,6 +11,11 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from examples_src import COMMON, EXAMPLES, VERSION  # noqa: E402
 
+DIGEST_FILE = os.path.join(ROOT, "tools", "examples-digest.txt")
+_digest = open(DIGEST_FILE).read().strip() if os.path.isfile(DIGEST_FILE) else ""
+EXAMPLES_IMAGE = (f"ghcr.io/themightytrex/starboard-plugin-examples@{_digest}" if _digest.startswith("sha256:")
+                  else f"ghcr.io/themightytrex/starboard-plugin-examples:{VERSION}")
+
 DOCKERFILE = """# {name}: Python's standard library only, no other packages.
 FROM python:3.12-alpine
 WORKDIR /app
@@ -53,6 +58,10 @@ def main():
         order = ["manifest_version", "id", "name", "version", "description", "author", "licence", "homepage", "support_url",
                  "starboard_api", "permissions", "containers", "resources", "health", "settings", "actions", "cards", "styles"]
         m = {k: m[k] for k in order if k in m}
+        # One shared image for every example (12 November 2026): pinned by digest once GitHub has built it.
+        for c in m.get("containers") or []:
+            c["image"] = EXAMPLES_IMAGE
+            c["command"] = ["python3", f"/app/{pid}/app.py"]
         with open(os.path.join(out, "starboard-plugin.json"), "w", encoding="utf-8") as f:
             json.dump(m, f, indent=1, ensure_ascii=False)
             f.write("\n")
@@ -77,7 +86,7 @@ def main():
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
          "download-summary": "Downloads", "disk-forecast": "System", "seasonal-styles": "Look", "styles": "Look"}
-PUBLISHED = {"styles"}
+PUBLISHED = {"styles"} | ({pid for pid in EXAMPLES} if _digest.startswith("sha256:") else set())
 
 
 def write_catalogue():

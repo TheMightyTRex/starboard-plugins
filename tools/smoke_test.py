@@ -83,7 +83,7 @@ def main():
                         "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
                         "-v", f"{run}/data:/data", "-v", f"{run}/settings.json:/run/starboard/settings.json:ro",
                         "-v", f"{run}/key:/run/starboard/key:ro", "-v", f"{run}/jellyfin.json:/run/starboard/jellyfin.json:ro",
-                        m["containers"][0]["image"]], check=True, capture_output=True)
+                        m["containers"][0]["image"], *(m["containers"][0].get("command") or [])], check=True, capture_output=True)
         base = f"http://127.0.0.1:{port}"
         for _ in range(40):
             try:
