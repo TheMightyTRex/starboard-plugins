@@ -31,6 +31,10 @@ from any of them.
   each account to 25 downloads a day, so Starboard never reads its pages or downloads from it: you open the link, sign
   in there and keep to its rules. To add a track you downloaded, use the
   [Audio description tracks](../audio-description-tracks/) plug-in, which checks it is the same length as your film.
+- **YouDescribe search links** (activated): for each film and series, a link to YouDescribe's own search. YouDescribe
+  is a free website where volunteers describe YouTube videos, such as trailers and clips; they play there, in your
+  browser. Its programming interface serves its own website and is not offered to other apps, and its code is
+  published without a licence, so Starboard only links to the search and never searches it for you.
 
 ## What it may do
 
@@ -65,8 +69,9 @@ track once per film or series. Both are listed in Starboard's accessibility rese
 - **People who want audio description**: activate each person.
 - **Titles with audio description**: the list, by films and series.
 - **Audio description elsewhere**: places with audio description in their own apps.
-- **Sources**: AudioVault search links.
+- **Sources**: AudioVault search links, YouDescribe search links.
 - **Search AudioVault**: the links, by films and series, opening by first letter when the list is long.
+- **Search YouDescribe**: the links for every film and series, the same way.
 
 ## Add it
 

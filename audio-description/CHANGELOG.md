@@ -5,6 +5,8 @@
 ### Added
 - AudioVault search links: for each film and series without audio description, a link to AudioVault's own search.
   Deactivated until you activate it in Sources; Starboard never downloads from AudioVault.
+- YouDescribe search links: for each film and series, a link to YouDescribe's own search, where volunteers describe
+  YouTube videos such as trailers.
 
 ### Changed
 - Audio description elsewhere: each place is now a link that opens in a new tab.

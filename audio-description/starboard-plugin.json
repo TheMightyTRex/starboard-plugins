@@ -79,11 +79,26 @@
    "hint": "A link to AudioVault's own search for each film and series without audio description. Starboard never downloads from AudioVault or reads its pages."
   },
   {
+   "key": "youdescribe_links",
+   "label": "YouDescribe search links",
+   "type": "switch",
+   "default": true,
+   "group": "Sources",
+   "hint": "A link to YouDescribe's own search for each film and series, for described trailers and clips on YouTube. Nothing is fetched from YouDescribe."
+  },
+  {
    "key": "audiovault",
    "label": "Search AudioVault",
    "type": "custom",
    "choices": "/audiovault",
    "group": "AudioVault"
+  },
+  {
+   "key": "youdescribe",
+   "label": "Search YouDescribe",
+   "type": "custom",
+   "choices": "/youdescribe",
+   "group": "YouDescribe"
   }
  ],
  "actions": [
@@ -150,7 +165,8 @@
    "version": "1.1.0",
    "date": "2026-11-13",
    "added": [
-    "**AudioVault search links:** for each film and series without audio description, a link to AudioVault's own search. Deactivated until you activate it in Sources; Starboard never downloads from AudioVault"
+    "**AudioVault search links:** for each film and series without audio description, a link to AudioVault's own search. Deactivated until you activate it in Sources; Starboard never downloads from AudioVault",
+    "**YouDescribe search links:** for each film and series, a link to YouDescribe's own search, where volunteers describe YouTube videos such as trailers"
    ],
    "changed": [
     "**Audio description elsewhere:** each place is now a link that opens in a new tab"

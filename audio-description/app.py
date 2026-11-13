@@ -53,6 +53,9 @@ ELSEWHERE = [
 # AudioVault's own search, as its Movies and Shows pages send it (a GET form, `search`). A link the person opens; the
 # plug-in never calls it (DASH-410).
 AUDIOVAULT = {"film": "https://audiovault.net/movies?search=", "series": "https://audiovault.net/shows?search="}
+# YouDescribe's own search page (its site's /search?q=). Its programming interface serves its own site and is not
+# offered to others, so the plug-in only links to the search (DASH-410).
+YOUDESCRIBE = "https://youdescribe.org/search?q="
 MENU_SPLIT = 80  # more titles than this in Films or Series: sub menus by first letter, so no page is too long
 
 
@@ -394,9 +397,40 @@ def _guarded(job):
         raise
 
 
+def youdescribe(body=None):
+    """For each film and series in Jellyfin, a link to YouDescribe's own search: volunteers there describe YouTube
+    videos, such as trailers. Nothing is fetched from YouDescribe."""
+    title = "Search YouDescribe"
+    if not setting("youdescribe_links", True):
+        return _off_screen(title, "YouDescribe search links", "a link to YouDescribe's search for each title")
+    r, w = remember("result") or {}, remember("without") or {}
+    rows = [(re.sub(r" \(\d{4}\)$", "", f["name"]), f["name"], "Films", True) for f in r.get("films", [])]
+    rows += [(n, f"{n} ({y})" if y else n, "Films", False) for n, y in w.get("films", [])]
+    rows += [(x["name"], x["name"], "Series", x["described"] == x["episodes"]) for x in r.get("series", [])]
+    rows += [(n, n, "Series", False) for n, d, e in w.get("series", [])]  # a partly described series is in both
+    once = {}
+    for row in rows:
+        once.setdefault((row[2], row[1]), row)
+    rows = sorted(once.values(), key=lambda x: (x[2], x[1].lower()))
+    items = [{"id": f"{g.lower()}:{shown}", "title": shown, "group": g, "actions": [],
+              "state": "ok" if has else "off", "state_label": "Described here" if has else "No description here",
+              "link": {"url": YOUDESCRIBE + urllib.parse.quote(q), "label": f"Search YouDescribe for {shown}"[:80]}}
+             for q, shown, g, has in rows]
+    intro = ("YouDescribe is a free website where volunteers describe YouTube videos, such as trailers and clips, for blind and partially "
+             "sighted people. Each link opens YouDescribe's own search for a title in Jellyfin, and plays there in your browser. YouDescribe "
+             "offers no way for other apps to search it, so Starboard only links to it.")
+    if not r:
+        intro = "Not checked yet. Run Look for described titles now, or wait for tonight's check."
+    out = {"type": "list", "title": title, "intro": intro[:400], "items": items}
+    if items:
+        out["menus"] = _menus_for(items)
+    return out
+
+
 ROUTES = {"/count": count, "/recent": recent, "/titles": titles, ("POST", "/titles"): titles,
           "/people": people, ("POST", "/people"): people, "/elsewhere": elsewhere, ("POST", "/elsewhere"): elsewhere,
           "/audiovault": audiovault, ("POST", "/audiovault"): audiovault,
+          "/youdescribe": youdescribe, ("POST", "/youdescribe"): youdescribe,
           ("POST", "/jobs/scan"): lambda: _guarded(scan), ("POST", "/jobs/reelix"): reelix_now,
           ("POST", "/scan"): scan_now, ("POST", "/reelix"): reelix_now}
 
