@@ -131,6 +131,97 @@ class Library(unittest.TestCase):
         self.assertEqual(app.recent()["items"][0]["title"], "None found yet")
 
 
+class AudioVault(unittest.TestCase):
+    """DASH-410: a link to AudioVault's own search for each title without audio description; AudioVault is never called."""
+
+    def scanned(self, app, films=(), series=()):
+        pages = [list(films) + list(series)]
+        app.jellyfin = lambda path, data=None, method=None: {"Items": pages[0], "TotalRecordCount": len(pages[0])}
+        app.scan()
+
+    def test_deactivated_until_chosen(self):
+        app = load()
+        out = app.audiovault()
+        self.assertEqual(out["items"], [])
+        self.assertIn("Activate it under Sources", out["intro"])
+        self.assertFalse(manifest()["settings"][[s["key"] for s in manifest()["settings"]].index("audiovault_links")]["default"])
+
+    def test_links_for_titles_without_a_described_track(self):
+        app = load({"audiovault_links": True})
+        self.scanned(app, [{"Type": "Movie", "Name": "Dune", "ProductionYear": 2021, "MediaStreams": [audio("English (AD)")]},
+                           {"Type": "Movie", "Name": "Amélie & Nino", "ProductionYear": 2001, "MediaStreams": [audio("French")]}],
+                     [{"Type": "Episode", "SeriesName": "Slow Horses", "MediaStreams": [audio("AD")]},
+                      {"Type": "Episode", "SeriesName": "Slow Horses", "MediaStreams": [audio("English")]}])
+        out = app.audiovault()
+        films = [i for i in out["items"] if i["group"] == "Films"]
+        self.assertEqual([i["title"] for i in films], ["Amélie & Nino (2001)"])  # Dune has one already
+        self.assertEqual(films[0]["link"], {"url": "https://audiovault.net/movies?search=Am%C3%A9lie%20%26%20Nino",
+                                            "label": "Search AudioVault for Amélie & Nino (2001)"})
+        series = [i for i in out["items"] if i["group"] == "Series"]
+        self.assertEqual(series[0]["link"]["url"], "https://audiovault.net/shows?search=Slow%20Horses")
+        self.assertEqual(series[0]["state_label"], "1 of 2 described")
+        self.assertEqual([m["id"] for m in out["menus"]], ["films", "series"])
+        self.assertLessEqual(len(out["intro"]), 400)
+
+    def test_a_long_list_opens_by_first_letter(self):
+        app = load({"audiovault_links": True})
+        names = [f"{c}{i}" for c in "ABC" for i in range(40)] + ["The Zebra", "42"]
+        self.scanned(app, [{"Type": "Movie", "Name": n, "MediaStreams": []} for n in names])
+        out = app.audiovault()
+        letters = [m["title"] for m in out["menus"] if m.get("parent") == "films"]
+        self.assertEqual(letters, ["A", "B", "C", "Z", "0 to 9 and others"])
+        self.assertTrue(all(i.get("menu") for i in out["items"]))
+
+
+class YouDescribe(unittest.TestCase):
+    """DASH-410: YouDescribe offers no interface for other apps, so each title is a link to its own search."""
+
+    def test_every_title_links_to_its_search(self):
+        app = load()
+        pages = [[{"Type": "Movie", "Name": "Dune", "ProductionYear": 2021, "MediaStreams": [audio("English (AD)")]},
+                  {"Type": "Movie", "Name": "Brazil", "ProductionYear": 1985, "MediaStreams": [audio("English")]},
+                  {"Type": "Episode", "SeriesName": "Slow Horses", "MediaStreams": [audio("AD")]},
+                  {"Type": "Episode", "SeriesName": "Slow Horses", "MediaStreams": [audio("English")]},
+                  {"Type": "Episode", "SeriesName": "Bluey", "MediaStreams": [audio("AD")]}]]
+        app.jellyfin = lambda path, data=None, method=None: {"Items": pages[0], "TotalRecordCount": 5}
+        app.scan()
+        out = app.youdescribe()
+        got = [(i["group"], i["title"], i["state_label"], i["link"]["url"]) for i in out["items"]]
+        self.assertEqual(got, [("Films", "Brazil (1985)", "No description here", "https://youdescribe.org/search?q=Brazil"),
+                               ("Films", "Dune (2021)", "Described here", "https://youdescribe.org/search?q=Dune"),
+                               ("Series", "Bluey", "Described here", "https://youdescribe.org/search?q=Bluey"),
+                               ("Series", "Slow Horses", "No description here", "https://youdescribe.org/search?q=Slow%20Horses")])
+        self.assertLessEqual(len(out["intro"]), 400)
+
+    def test_can_be_deactivated(self):
+        app = load({"youdescribe_links": False})
+        self.assertEqual(app.youdescribe()["items"], [])
+
+
+class Apps(unittest.TestCase):
+    """DASH-410: MovieReading and Earcatch publish no list of titles that may be read, so a guide and links only."""
+
+    def test_a_guide_with_store_links_and_nothing_fetched(self):
+        app = load()
+        app.jellyfin = app.reelix = lambda *a, **k: self.fail("nothing is fetched")
+        out = app.apps()
+        groups = []
+        for i in out["items"]:
+            if i["group"] not in groups:
+                groups.append(i["group"])
+        self.assertEqual(groups, ["MovieReading", "Earcatch", "Using one with Jellyfin"])
+        links = {i["link"]["label"]: i["link"]["url"] for i in out["items"] if "link" in i}
+        self.assertEqual(links["MovieReading on the App Store"], "https://apps.apple.com/app/id460349347")
+        self.assertEqual(links["Earcatch on Google Play"], "https://play.google.com/store/apps/details?id=nl.q42.soundfocus")
+        self.assertEqual([i["state_label"] for i in out["items"] if i["group"] == "Using one with Jellyfin"],
+                         ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"])
+        self.assertTrue(all(len(i["detail"]) <= 200 for i in out["items"]))
+        self.assertLessEqual(len(out["intro"]), 400)
+
+    def test_can_be_deactivated(self):
+        self.assertEqual(load({"apps_guide": False}).apps()["items"], [])
+
+
 class FakeReelix:
     def __init__(self, formats=None, profiles=None):
         self.formats = formats if formats is not None else []
@@ -250,7 +341,9 @@ class Words(unittest.TestCase):
     def test_no_em_dashes_or_contractions_in_what_people_read(self):
         app = load()
         m = manifest()
-        text = json.dumps([m, app.ELSEWHERE, app.elsewhere(), app.titles(), app.count(), app.recent()], ensure_ascii=False)
+        text = json.dumps([m, app.ELSEWHERE, app.elsewhere(), app.titles(), app.count(), app.recent(), app.audiovault()], ensure_ascii=False)
+        app._set_on = load({"audiovault_links": True})
+        text += json.dumps([app._set_on.audiovault(), app.youdescribe(), app.apps()], ensure_ascii=False)
         with open(os.path.join(ROOT, PID, "README.md"), encoding="utf-8") as f:
             text += f.read()
         self.assertNotIn("—", text)
@@ -281,6 +374,10 @@ class StarboardAccepts(unittest.TestCase):
         self.cards.clean("list", app.recent())
         for screen in (app.titles(), app.elsewhere()):
             self.assertTrue(self.custom.clean(screen)["items"])
+        self.assertTrue(all(i["link"]["url"].startswith("https://") for i in self.custom.clean(app.elsewhere())["items"]))
+        self.custom.clean(app.audiovault())
+        self.custom.clean(app.youdescribe())
+        self.assertTrue(all(i["state_label"] for i in self.custom.clean(app.apps())["items"]))
         m = manifest()
         for c in m["cards"]:
             self.cards.clean(c["type"], c["example"])

@@ -13,9 +13,24 @@
     "reelix:key",
     "network:lan"
    ],
-   "version": "1.0.0",
-   "starboard_api": ">=1.6 <2.0",
+   "version": "1.1.0",
+   "starboard_api": ">=1.12 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
+   "published": false
+  },
+  {
+   "id": "audio-description-tracks",
+   "name": "Audio description tracks",
+   "description": "Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match.",
+   "kind": "Accessibility",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "jellyfin:key",
+    "network:lan"
+   ],
+   "version": "1.0.0",
+   "starboard_api": ">=1.12 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
    "published": false
   },
   {

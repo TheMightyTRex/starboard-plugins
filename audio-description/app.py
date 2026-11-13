@@ -9,6 +9,11 @@ check, in quiet hours), a job when Starboard starts (the Reelix format), its but
 timer of its own, and the library is read 200 items at a time, so memory stays flat whatever the library's size.
 
 What it never does: download from or scrape any site, record from a broadcaster's app, or change a media file.
+
+Sources (DASH-410): each is its own switch in Sources, and only links out. AudioVault states no licence and no terms
+for automated use and limits each account to 25 downloads a day, so the plug-in links to AudioVault's own search for
+each title without audio description and never reads AudioVault. Adding a track the person already holds is the
+separate Audio description tracks plug-in, which needs write access to the media folder.
 """
 import json
 import os
@@ -17,6 +22,7 @@ import threading
 import time
 import urllib.error
 import urllib.parse
+from collections import defaultdict
 
 import sbplugin
 from sbplugin import fetch, keep, plural, remember, serve, setting
@@ -44,6 +50,41 @@ ELSEWHERE = [
     ("adp", "The Audio Description Project", "A list of described films and series, by the American Council of the Blind", "https://adp.acb.org/"),
     ("audiovault", "AudioVault", "A community library of description tracks for blind people. Starboard does not download from it: sign in there and keep to its rules", "https://audiovault.net/"),
 ]
+# AudioVault's own search, as its Movies and Shows pages send it (a GET form, `search`). A link the person opens; the
+# plug-in never calls it (DASH-410).
+AUDIOVAULT = {"film": "https://audiovault.net/movies?search=", "series": "https://audiovault.net/shows?search="}
+# YouDescribe's own search page (its site's /search?q=). Its programming interface serves its own site and is not
+# offered to others, so the plug-in only links to the search (DASH-410).
+YOUDESCRIBE = "https://youdescribe.org/search?q="
+# MovieReading and Earcatch (DASH-410): phone apps that play a description in step by listening. Neither publishes a
+# list of titles that other apps may read (MovieReading's site names only the films in cinemas now; Earcatch's terms
+# forbid collecting its content with automated tools for AI and give no list), so this is a guide with links only.
+APPS = [
+    ("MovieReading", [
+        ("mr-what", "What it is", "Info", "A free phone app from Italy. It plays a film's description in step by listening to the film. Mostly Italian "
+         "cinema titles, and it lists only the films it has now.", None),
+        ("mr-ios", "MovieReading for iPhone and iPad", "Link only", "", ("https://apps.apple.com/app/id460349347", "MovieReading on the App Store")),
+        ("mr-android", "MovieReading for Android", "Link only", "", ("https://play.google.com/store/apps/details?id=com.unimaccess.umaclient",
+                                                                 "MovieReading on Google Play")),
+        ("mr-films", "The films it has now", "Link only", "", ("https://www.moviereading.com/#film", "MovieReading's films, on its website"))]),
+    ("Earcatch", [
+        ("ec-what", "What it is", "Info", "A free phone app from the Netherlands. It plays a description in step by listening, for films and "
+         "series at home or in the cinema. Mostly Dutch and Flemish titles.", None),
+        ("ec-ios", "Earcatch for iPhone and iPad", "Link only", "", ("https://apps.apple.com/app/id1021220730", "Earcatch on the App Store")),
+        ("ec-android", "Earcatch for Android", "Link only", "", ("https://play.google.com/store/apps/details?id=nl.q42.soundfocus", "Earcatch on Google Play")),
+        ("ec-search", "Its titles", "Link only", "", ("https://www.earcatch.nl/zoeken/", "Search Earcatch's titles, on its website"))]),
+    ("Using one with Jellyfin", [
+        ("step-1", "Get the description first", "Step 1", "Install the app on your phone and download the description for your film in the app, "
+         "at home on Wi-Fi. It must be for the same cut of the film as yours.", None),
+        ("step-2", "Start the film in Jellyfin", "Step 2", "Play it on your television with its original sound track, loud enough for the "
+         "phone to hear. Keep the phone near the television.", None),
+        ("step-3", "Start the description", "Step 3", "Open the film in the app and press play. It listens to the film's sound and plays "
+         "the description in step, wherever the film is.", None),
+        ("step-4", "Listen with headphones", "Step 4", "Use headphones or earbuds on the phone, so others in the room hear only the film.", None),
+        ("step-5", "If it loses its place", "Step 5", "After a pause or a skip in Jellyfin it finds its place again in a few seconds. If it "
+         "does not, close the description in the app and open it again.", None)]),
+]
+MENU_SPLIT = 80  # more titles than this in Films or Series: sub menus by first letter, so no page is too long
 
 
 # Jellyfin and Reelix ---------------------------------------------------------------------------------------------
@@ -99,7 +140,7 @@ def _items():
 
 def scan():
     """Reads every film and episode's audio tracks and keeps which have audio description."""
-    films, series, total = [], {}, 0
+    films, series, total, without = [], {}, 0, []
     for it in _items():
         total += 1
         track = described_track(it.get("MediaStreams"))
@@ -113,6 +154,8 @@ def scan():
         elif track:
             year = it.get("ProductionYear")
             films.append({"id": str(it.get("Id") or ""), "name": f"{it.get('Name')}" + (f" ({year})" if year else ""), "track": track["name"]})
+        elif it.get("Type") == "Movie" and it.get("Name"):  # kept small: a name and a year, for the Sources' links
+            without.append([str(it["Name"])[:120], int(it.get("ProductionYear") or 0)])
     series_rows = sorted((s for s in series.values() if s["described"]), key=lambda s: s["name"].lower())
     films.sort(key=lambda f: f["name"].lower())
     seen = remember("seen", {}) or {}
@@ -121,6 +164,10 @@ def scan():
     seen = {k: seen.get(k, now) for k in keys}  # when each was first found, for Recently found
     keep("seen", seen)
     keep("result", {"at": now, "total": total, "films": films, "series": series_rows})
+    # Titles without a described track, for the links in Sources: films by name and year, series not fully described.
+    keep("without", {"at": now, "films": sorted(without, key=lambda f: (f[0].lower(), f[1])),
+                     "series": sorted(([s["name"], s["described"], s["episodes"]] for s in series.values() if s["described"] < s["episodes"]),
+                                      key=lambda x: x[0].lower())})
     return {"said": f"Found {plural(len(films), 'film')} and {plural(len(series_rows), 'series', 'series')} with audio description, of {total:,} films and episodes"}
 
 
@@ -263,8 +310,71 @@ def elsewhere(body=None):
     return {"type": "list", "title": "Audio description elsewhere",
             "intro": "Places that offer audio description in their own apps. Starboard only lists them: it never downloads, "
                      "records or copies from them.",
-            "items": [{"id": i, "title": t, "detail": d, "address": a, "group": "Services", "state": "ok", "actions": []}
-                      for i, t, d, a in ELSEWHERE]}
+            "items": [{"id": i, "title": t, "detail": d, "group": "Services", "state": "ok", "state_label": "Link only", "actions": [],
+                       "link": {"url": a, "label": f"Open {t}"}} for i, t, d, a in ELSEWHERE]}
+
+
+# Sources (DASH-410) ----------------------------------------------------------------------------------------------
+
+def _letter(name):
+    first = re.sub(r"^(?:the|a|an)\s+", "", name.strip(), flags=re.I)[:1].upper()
+    return first if first.isalpha() and first.isascii() else "0 to 9 and others"
+
+
+def _menus_for(items):
+    """Films and Series as menus; each with a sub menu per first letter when it is long. Puts `menu` on each item."""
+    menus, by_group = [], defaultdict(list)
+    for it in items:
+        by_group[it["group"]].append(it)
+    for group, rows in by_group.items():
+        gid = group.lower()
+        menus.append({"id": gid, "title": group, "group": "Your library", "detail": plural(len(rows), "title")})
+        if len(rows) <= MENU_SPLIT:
+            for it in rows:
+                it["menu"] = gid
+            continue
+        letters = defaultdict(list)
+        for it in rows:
+            letters[_letter(it["title"])].append(it)
+        for letter in sorted(letters, key=lambda x: (len(x) > 1, x)):
+            mid = f"{gid}-{letter[:1].lower()}"
+            menus.append({"id": mid, "title": letter, "parent": gid, "group": "By first letter", "detail": plural(len(letters[letter]), "title")})
+            for it in letters[letter]:
+                it["menu"] = mid
+    return menus
+
+
+def _off_screen(title, switch, what):
+    return {"type": "list", "title": title, "items": [],
+            "intro": f"{switch} is deactivated, so nothing is shown here. Activate it under Sources to see {what}."}
+
+
+def audiovault(body=None):
+    """For each film and series without audio description, a link to AudioVault's own search for it. AudioVault is
+    never called: the person opens the link, signs in there and keeps to its rules (25 downloads a day)."""
+    title = "Search AudioVault"
+    if not setting("audiovault_links", False):
+        return _off_screen(title, "AudioVault search links", "a link to AudioVault's search for each title without audio description")
+    w = remember("without") or {}
+    items = [{"id": f"film:{n}:{y}", "title": f"{n} ({y})" if y else n, "group": "Films", "state": "off", "state_label": "No description here",
+              "actions": [], "link": {"url": AUDIOVAULT["film"] + urllib.parse.quote(n), "label": f"Search AudioVault for {n}" + (f" ({y})" if y else "")}}
+             for n, y in w.get("films", [])]
+    items += [{"id": f"series:{n}", "title": n, "group": "Series", "state": "off" if not d else "warning",
+               "state_label": "No description here" if not d else f"{d:,} of {e:,} described",
+               "detail": "" if not d else f"{plural(e - d, 'episode')} without a described track",
+               "actions": [], "link": {"url": AUDIOVAULT["series"] + urllib.parse.quote(n), "label": f"Search AudioVault for {n}"}}
+              for n, d, e in w.get("series", [])]
+    intro = ("AudioVault is a free community library of description tracks for blind and partially sighted people. Each link opens its "
+             "own search for a title without audio description. Starboard never downloads from AudioVault or reads its pages. It states no "
+             "licence, so using it is your choice: sign in there and keep to its 25 downloads a day. Add a track with Audio description tracks.")
+    if not w:
+        intro = "Not checked yet. Run Look for described titles now, or wait for tonight's check."
+    elif not items:
+        intro = "Every film and series in Jellyfin has a described sound track, so there is nothing to search for."
+    out = {"type": "list", "title": title, "intro": intro[:400], "items": items}
+    if items:
+        out["menus"] = _menus_for(items)
+    return out
 
 
 def count():
@@ -315,8 +425,60 @@ def _guarded(job):
         raise
 
 
+def youdescribe(body=None):
+    """For each film and series in Jellyfin, a link to YouDescribe's own search: volunteers there describe YouTube
+    videos, such as trailers. Nothing is fetched from YouDescribe."""
+    title = "Search YouDescribe"
+    if not setting("youdescribe_links", True):
+        return _off_screen(title, "YouDescribe search links", "a link to YouDescribe's search for each title")
+    r, w = remember("result") or {}, remember("without") or {}
+    rows = [(re.sub(r" \(\d{4}\)$", "", f["name"]), f["name"], "Films", True) for f in r.get("films", [])]
+    rows += [(n, f"{n} ({y})" if y else n, "Films", False) for n, y in w.get("films", [])]
+    rows += [(x["name"], x["name"], "Series", x["described"] == x["episodes"]) for x in r.get("series", [])]
+    rows += [(n, n, "Series", False) for n, d, e in w.get("series", [])]  # a partly described series is in both
+    once = {}
+    for row in rows:
+        once.setdefault((row[2], row[1]), row)
+    rows = sorted(once.values(), key=lambda x: (x[2], x[1].lower()))
+    items = [{"id": f"{g.lower()}:{shown}", "title": shown, "group": g, "actions": [],
+              "state": "ok" if has else "off", "state_label": "Described here" if has else "No description here",
+              "link": {"url": YOUDESCRIBE + urllib.parse.quote(q), "label": f"Search YouDescribe for {shown}"[:80]}}
+             for q, shown, g, has in rows]
+    intro = ("YouDescribe is a free website where volunteers describe YouTube videos, such as trailers and clips, for blind and partially "
+             "sighted people. Each link opens YouDescribe's own search for a title in Jellyfin, and plays there in your browser. YouDescribe "
+             "offers no way for other apps to search it, so Starboard only links to it.")
+    if not r:
+        intro = "Not checked yet. Run Look for described titles now, or wait for tonight's check."
+    out = {"type": "list", "title": title, "intro": intro[:400], "items": items}
+    if items:
+        out["menus"] = _menus_for(items)
+    return out
+
+
+def apps(body=None):
+    """MovieReading and Earcatch: what they are, a guide to using one alongside Jellyfin, and where to get them."""
+    title = "MovieReading and Earcatch"
+    if not setting("apps_guide", True):
+        return _off_screen(title, "MovieReading and Earcatch", "how to use these apps alongside Jellyfin")
+    items = []
+    for group, rows in APPS:
+        for rid, t, label, detail, link in rows:
+            item = {"id": rid, "title": t, "detail": detail, "group": group, "actions": [], "state": "off" if label.startswith("Step") else "ok",
+                    "state_label": label}
+            if link:
+                item["link"] = {"url": link[0], "label": link[1]}
+            items.append(item)
+    return {"type": "list", "title": title, "items": items,
+            "intro": ("MovieReading and Earcatch are free phone apps that play a description through headphones, in step with a film, by "
+                      "listening to its sound. Neither publishes a list of titles that other apps may read, so Starboard cannot say which of "
+                      "your films they have. RNIB says they are not offered in the UK yet.")}
+
+
 ROUTES = {"/count": count, "/recent": recent, "/titles": titles, ("POST", "/titles"): titles,
           "/people": people, ("POST", "/people"): people, "/elsewhere": elsewhere, ("POST", "/elsewhere"): elsewhere,
+          "/audiovault": audiovault, ("POST", "/audiovault"): audiovault,
+          "/youdescribe": youdescribe, ("POST", "/youdescribe"): youdescribe,
+          "/apps": apps, ("POST", "/apps"): apps,
           ("POST", "/jobs/scan"): lambda: _guarded(scan), ("POST", "/jobs/reelix"): reelix_now,
           ("POST", "/scan"): scan_now, ("POST", "/reelix"): reelix_now}
 
