@@ -85,7 +85,7 @@ def main():
 # true once its manifest and image are on GitHub (Styles now; the examples after DASH-331).
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
-         "download-summary": "Downloads", "disk-forecast": "System", "seasonal-styles": "Look", "styles": "Look"}
+         "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Look", "styles": "Look"}
 PUBLISHED = {"styles"} | ({pid for pid in EXAMPLES} if _digest.startswith("sha256:") else set())
 
 

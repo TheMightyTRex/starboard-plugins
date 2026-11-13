@@ -1,0 +1,44 @@
+# Builds and publishes the Remote access plug-in's image when it changes, for amd64, arm64 and arm/v7:
+#   ghcr.io/<owner>/starboard-plugin-remote-access:<version> and :latest
+# The digest is printed in the run's summary; put it in remote-access/starboard-plugin.json in place of the tag.
+name: Remote access image
+on:
+  push:
+    branches: [main]
+    paths: ["remote-access/Dockerfile", "remote-access/app.py", "remote-access/sbplugin.py", ".github/workflows/remote-access-image.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The helper compiles and its tests pass
+        run: python3 -m py_compile remote-access/app.py && python3 tools/test_remote_access.py
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: version
+        run: echo "v=$(python3 -c "import json;print(json.load(open('remote-access/starboard-plugin.json'))['version'])")" >> "$GITHUB_OUTPUT"
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: remote-access
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: |
+            ghcr.io/themightytrex/starboard-plugin-remote-access:${{ steps.version.outputs.v }}
+            ghcr.io/themightytrex/starboard-plugin-remote-access:latest
+          labels: |
+            org.opencontainers.image.title=Starboard remote access plug-in
+            org.opencontainers.image.description=Tailscale or Cloudflare Tunnel for Starboard, Jellyfin and Audiobookshelf
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+      - name: Digest
+        run: echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"

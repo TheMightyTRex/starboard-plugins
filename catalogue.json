@@ -109,6 +109,20 @@
    "published": true
   },
   {
+   "id": "remote-access",
+   "name": "Remote access",
+   "description": "Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router.",
+   "kind": "Network",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "apps:read",
+    "network:lan"
+   ],
+   "version": "1.0.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/remote-access/starboard-plugin.json",
+   "published": false
+  },
+  {
    "id": "styles",
    "name": "Styles",
    "description": "Twenty-one accessible styles for Display: six reskin the whole look (cards, buttons, tabs, menus), checked for contrast.",
