@@ -26,7 +26,8 @@ ANSWERS = {
     "/Users/u2/Items": {"Items": [{"Name": "Pilot", "SeriesName": "Slow Horses", "UserData": {"LastPlayedDate": NOW}},
                                   {"Name": "Brazil", "UserData": {"LastPlayedDate": NOW}}]},
     "/Items": {"Items": [{"Name": "Brazil", "ProductionYear": 1985, "Overview": "x", "ImageTags": {}},
-                         {"Name": "Dune", "ProductionYear": 2021, "Overview": "x", "ImageTags": {"Primary": "a"}}]},
+                         {"Name": "Dune", "ProductionYear": 2021, "Overview": "x", "ImageTags": {"Primary": "a"}, "Type": "Movie",
+                          "MediaStreams": [{"Type": "Audio", "Index": 1, "DisplayTitle": "English (Audio Description) - AAC - Stereo"}]}]},
     "/api/v1/downloads": {"items": [{"client": "nzbget", "id": "1", "size": 2_000_000_000, "progress": 50}]},
     "/api/v1/system": {"disks": [{"label": "Pool", "used": 6e12, "total": 1e13}]},
     "/control/stats": {"num_blocked_filtering": 420, "num_dns_queries": 3500},
@@ -70,7 +71,7 @@ SETTINGS = {
 # What each plug-in is sent before its cards are read: a path, or (path, JSON body) for an event.
 POSTS = {"vpn-check": "/check", "line-speed": "/test", "library-health": "/check",
          "notifications": ["/test/webhook", ("/events", {"event": "app.down", "data": {"app": "Jellyfin", "type": "jellyfin"}}), "/weekly-now"],
-         "watch-stats": "/refresh", "remote-access": "/test"}
+         "watch-stats": "/refresh", "remote-access": "/test", "audio-description": "/jobs/scan"}
 # Remote access refuses callers on 127.0.0.1 (visitors through its tunnel arrive there); the host network needs this.
 ENV = {"remote-access": {"ALLOW_LOOPBACK": "1"}}
 SETTINGS["remote-access"] = {"method": "tailscale"}  # no key: it must say so clearly and start nothing
@@ -85,6 +86,9 @@ def main():
         if not os.path.isfile(mf) or not os.path.isfile(os.path.join(ROOT, pid, "Dockerfile")):
             continue
         m = json.load(open(mf))
+        # SMOKE_IMAGE: a local build of the shared image for plug-ins that name its next tag, before it is published.
+        if os.environ.get("SMOKE_IMAGE") and ":" in m["containers"][0]["image"].rsplit("/", 1)[-1]:
+            m["containers"][0]["image"] = os.environ["SMOKE_IMAGE"]
         port += 1
         run = tempfile.mkdtemp(prefix=f"sb-{pid}-")
         os.makedirs(f"{run}/data")
@@ -92,6 +96,7 @@ def main():
         json.dump(SETTINGS.get(pid, {}), open(f"{run}/settings.json", "w"))
         json.dump({"url": f"http://127.0.0.1:{STUB}", "api_key": "k"}, open(f"{run}/jellyfin.json", "w"))
         open(f"{run}/key", "w").write("sbk_test")
+        json.dump({"url": f"http://127.0.0.1:{STUB}", "api_key": "k"}, open(f"{run}/reelix.json", "w"))
         name = f"smoke-{pid}"
         subprocess.run(["docker", "rm", "-f", name], capture_output=True)
         subprocess.run(["docker", "run", "-d", "--name", name, "--network", "host", "--read-only", "--tmpfs", "/tmp",
@@ -99,6 +104,7 @@ def main():
                         *[x for k, v in (m["containers"][0].get("env") or {}).items() for x in ("-e", f"{k}={v}")], *[x for k, v in ENV.get(pid, {}).items() for x in ("-e", f"{k}={v}")], "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
                         "-v", f"{run}/data:/data", "-v", f"{run}/settings.json:/run/starboard/settings.json:ro",
                         "-v", f"{run}/key:/run/starboard/key:ro", "-v", f"{run}/jellyfin.json:/run/starboard/jellyfin.json:ro",
+                        "-v", f"{run}/reelix.json:/run/starboard/reelix.json:ro",
                         m["containers"][0]["image"], *(m["containers"][0].get("command") or [])], check=True, capture_output=True)
         base = f"http://127.0.0.1:{port}"
         for _ in range(40):

@@ -124,6 +124,7 @@ KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jel
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
          "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Look", "styles": "Look",
          "notifications": "System", "watch-stats": "Jellyfin"}
+KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 # The plug-ins new in the image are published once it is built with them and its digest pinned (NEW_IN_IMAGE emptied).
 PUBLISHED = {"styles"} | ({pid for pid in EXAMPLES if pid not in NEW_IN_IMAGE} if _digest.startswith("sha256:") else set())
 

@@ -3,6 +3,7 @@
 FROM python:3.12-alpine
 WORKDIR /app
 COPY _shared/sbplugin.py _shared/run.py /app/
+COPY audio-description/app.py /app/audio-description/
 COPY disk-forecast/app.py /app/disk-forecast/
 COPY dns-blocking/app.py /app/dns-blocking/
 COPY download-summary/app.py /app/download-summary/

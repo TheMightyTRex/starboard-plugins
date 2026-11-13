@@ -1,0 +1,63 @@
+# Audio description
+
+Audio description is a second sound track in which a narrator says what is happening on screen, for blind and
+partially sighted people. This plug-in finds the films and series in Jellyfin that have one, prefers releases with one
+in Reelix, and helps each person who wants it keep the described track.
+
+A Starboard plug-in by TheMightyTRexUK, MIT licence. Starboard's first set-up offers it, unticked.
+
+## What it does
+
+- **Your library:** once a night, in quiet hours, it reads the sound tracks of every film and episode in Jellyfin and
+  lists those with a track named as audio description, such as "English (Audio Description)", "AD" or "Descriptive
+  audio". Commentary tracks never count.
+- **Reelix searches:** it adds an **Audio description** format to Reelix that matches release names such as
+  `WiTH.AD`, `ENG.AD`, `BSL.and.AD`, `Audio.Description` and `DVS`, and prefers it in every video quality level.
+  Reelix still takes a release without it when there is no other. Deactivate **Prefer releases with audio
+  description** to put the scores back to neutral.
+- **People:** for each person you activate, Jellyfin remembers the sound track they choose, so choosing the
+  described track once is enough for each film and series.
+- **Elsewhere:** a list of places with audio description in their own apps, such as BBC iPlayer and ITVX. It only
+  lists them.
+
+## What it may do
+
+- It uses Jellyfin's key, which Starboard keeps: to read sound tracks and to change one setting (remember my audio
+  track) for the people you activate.
+- It uses Reelix's key, which Starboard keeps: to add the Audio description format and score it.
+- It reaches your home network, where Jellyfin and Reelix are.
+- It runs one small container (64 MB of memory at most) that rests when it is not needed. Starboard wakes it for the
+  nightly check, when Starboard starts, and when you open its screens or buttons.
+
+## What it never does
+
+- Download from, or read pages of, any website, AudioVault included.
+- Record or copy from BBC iPlayer, ITVX, Channel 4, My5 or any other app.
+- Change a media file.
+
+## What Jellyfin cannot do yet
+
+Jellyfin does not read the "visual impaired" flag that marks a described track inside a file, and has no setting that
+picks a described track by itself. So the plug-in finds tracks by their names, and each person chooses the described
+track once per film or series. Both are listed in Starboard's accessibility research (DASH-400).
+
+## On the dashboard
+
+- **Audio description**: how many films and series have a described sound track.
+- **Recently found with audio description**: the newest ten.
+
+## Settings
+
+- **Prefer releases with audio description**: Adds an Audio description format to Reelix and prefers it in every
+  quality level. Reelix still takes a release without it when there is no other.
+- **People who want audio description**: activate each person.
+- **Titles with audio description**: the list, by films and series.
+- **Audio description elsewhere**: places with audio description in their own apps.
+
+## Add it
+
+In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
+
+`https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json`
+
+Or run `python3 install.py` in this folder.
