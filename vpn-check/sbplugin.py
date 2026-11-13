@@ -6,6 +6,7 @@
 - fetch(url): any address, JSON or bytes, with a time limit and a size limit.
 - remember(name) and keep(name, value): a small JSON file in /data, the plug-in's own folder.
 - every(seconds, job): a background job; serve(routes): the HTTP answers Starboard asks for (cards, buttons, health).
+  A POST answer that takes one argument is given the JSON body Starboard sent, such as an event (64 KB at most).
 """
 import json
 import os
@@ -118,9 +119,19 @@ def serve(routes, port=8080):
             if not fn:
                 return self._send(404, {"error": "Not found"})
             try:
+                if method == "POST" and getattr(fn, "__code__", None) and fn.__code__.co_argcount:
+                    return self._send(200, fn(self._body()))
                 return self._send(200, fn())
             except Exception as e:  # noqa: BLE001 - Starboard shows the message
                 return self._send(502, {"error": f"{e}"[:200]})
+
+        def _body(self):
+            n = int(self.headers.get("Content-Length") or 0)
+            try:
+                got = json.loads(self.rfile.read(min(n, 65536)) or b"{}") if n else {}
+            except ValueError:
+                got = {}
+            return got if isinstance(got, dict) else {}
 
         def _send(self, status, body):
             data = json.dumps(body).encode()

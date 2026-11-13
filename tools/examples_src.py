@@ -426,3 +426,163 @@ def card():
 every(3600, sample)
 serve({"/card": card})
 ''')
+
+# The recommended plug-ins (owner, 13 November 2026: "Start working on all the recommended plugins", from
+# STACK-COMPARISON-2026-11-13.md). Each keeps its own version, its changes and its app.py in its own folder ("file"),
+# and runs from the shared image; until that image is built again with them, they name its next tag (IMAGE_VERSION)
+# and the catalogue marks them not yet published.
+IMAGE_VERSION = "1.1.0"
+NEW_IN_IMAGE = {"notifications", "watch-stats"}
+
+
+def _switch(key, label, hint, group, default=True):
+    return {"key": key, "label": label, "type": "switch", "default": default, "hint": hint, "group": group}
+
+
+# 11. Notifications (DASH-401) -------------------------------------------------------------------------------------
+EXAMPLES["notifications"] = ({
+    "name": "Notifications", "version": "1.0.0",
+    "description": "Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week.",
+    "starboard_api": ">=1.11 <2.0",
+    "permissions": ["apps:read", "downloads:read", "media:read", "system:read", "network:lan"],
+    "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
+                    "idle_stop_minutes": 5}],
+    "resources": {"main": {"memory": 48, "cpus": 0.1}}, "health": "/health",
+    "settings": [
+        _switch("send_requests", "Something someone asked for is ready", "Reelix's or Seerr's requests that become ready to watch.", "What to send"),
+        _switch("tell_requester", "Tell the person who asked too", "By the email address or Telegram chat given for them under People.", "What to send"),
+        _switch("send_failed", "A download failed", "A download that stops with a problem.", "What to send"),
+        _switch("send_apps", "An app stops answering, and when it is back", "After two checks in a row with no answer.", "What to send"),
+        _switch("send_disk", "A disk is nearly full", "At the limit set for alerts in Settings, Alerts, or 90%.", "What to send"),
+        _switch("send_updates", "An update is ready", "For Starboard, your apps and your plug-ins.", "What to send"),
+        _switch("send_weekly", "New this week", "Films, series and more that arrived in the last 7 days, once a week at 09:00.", "What to send"),
+        {"key": "weekly_day", "label": "Send New this week on", "type": "choice", "default": "monday", "group": "What to send",
+         "choices": [{"value": d.lower(), "label": d} for d in ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")]},
+        {"key": "starboard_address", "label": "Starboard's address, for links", "type": "address", "group": "What to send",
+         "hint": "Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address."},
+        _switch("email_active", "Send by email", "Activate once the details below are filled in and the test arrives.", "Email", False),
+        {"key": "smtp_host", "label": "Email server", "type": "text", "group": "Email", "hint": "Such as smtp.example.com"},
+        {"key": "smtp_port", "label": "Port", "type": "number", "default": 587, "min": 1, "max": 65535, "group": "Email"},
+        {"key": "smtp_security", "label": "Security", "type": "choice", "default": "starttls", "group": "Email",
+         "choices": [{"value": "starttls", "label": "STARTTLS (usually port 587)"}, {"value": "ssl", "label": "SSL (usually port 465)"},
+                     {"value": "none", "label": "None (only on your own network)"}]},
+        {"key": "smtp_user", "label": "User name", "type": "text", "group": "Email"},
+        {"key": "smtp_password", "label": "Password", "type": "secret", "group": "Email", "hint": "An app password where your email service offers one."},
+        {"key": "email_from", "label": "Send from", "type": "text", "group": "Email", "hint": "Such as starboard@example.com"},
+        {"key": "email_to", "label": "Send email to", "type": "list", "group": "Email", "hint": "One address a line."},
+        _switch("telegram_active", "Send by Telegram", "Activate once the details below are filled in and the test arrives.", "Telegram", False),
+        {"key": "telegram_token", "label": "Bot token", "type": "secret", "group": "Telegram", "hint": "From @BotFather in Telegram."},
+        {"key": "telegram_chat", "label": "Telegram chat", "type": "list", "group": "Telegram",
+         "hint": "One chat id a line. Send your bot a message first, so it may write to you."},
+        _switch("discord_active", "Send by Discord", "Activate once the webhook is filled in and the test arrives.", "Discord", False),
+        {"key": "discord_webhook", "label": "Discord webhook address", "type": "secret", "group": "Discord",
+         "hint": "In Discord: the channel's Edit channel, Integrations, Webhooks, Copy webhook URL."},
+        _switch("signal_active", "Send by Signal", "Only if you run signal-cli-rest-api, which sends for a number you registered with it.", "Signal", False),
+        {"key": "signal_api", "label": "signal-cli-rest-api address", "type": "address", "group": "Signal", "hint": "Such as http://192.0.2.10:8080"},
+        {"key": "signal_number", "label": "Send from number", "type": "text", "group": "Signal", "hint": "The number registered with it, such as +447700900123."},
+        {"key": "signal_to", "label": "Send Signal messages to", "type": "list", "group": "Signal", "hint": "One number or group id a line."},
+        _switch("pushover_active", "Send by Pushover", "Activate once the keys below are filled in and the test arrives.", "Pushover", False),
+        {"key": "pushover_user", "label": "User key", "type": "secret", "group": "Pushover"},
+        {"key": "pushover_token", "label": "Application token", "type": "secret", "group": "Pushover", "hint": "Make an application for Starboard on pushover.net."},
+        _switch("ntfy_active", "Send by ntfy", "Activate once the topic is filled in and the test arrives.", "ntfy", False),
+        {"key": "ntfy_url", "label": "ntfy server", "type": "address", "default": "https://ntfy.sh", "group": "ntfy"},
+        {"key": "ntfy_topic", "label": "Topic", "type": "text", "group": "ntfy", "hint": "On ntfy.sh anyone who knows the topic can read it, so make it hard to guess."},
+        {"key": "ntfy_token", "label": "Access token", "type": "secret", "group": "ntfy", "hint": "Optional, for a server or topic that needs one."},
+        _switch("webhook_active", "Send to webhooks", "Activate once an address is filled in and the test arrives.", "Webhooks", False),
+        {"key": "webhooks", "label": "Webhook addresses", "type": "secret", "group": "Webhooks",
+         "hint": "One or more, separated by spaces. Each gets title, body and type as JSON, as the Apprise API's notify address takes them."},
+        {"key": "people", "label": "People", "type": "list", "group": "People",
+         "hint": "One person a line: the name they use in Reelix or Seerr, a comma, then their email address or telegram and their chat id."},
+    ],
+    "actions": [{"id": "test-email", "label": "Send a test email", "path": "/test/email"},
+                {"id": "test-telegram", "label": "Send a test to Telegram", "path": "/test/telegram"},
+                {"id": "test-discord", "label": "Send a test to Discord", "path": "/test/discord"},
+                {"id": "test-signal", "label": "Send a test by Signal", "path": "/test/signal"},
+                {"id": "test-pushover", "label": "Send a test by Pushover", "path": "/test/pushover"},
+                {"id": "test-ntfy", "label": "Send a test by ntfy", "path": "/test/ntfy"},
+                {"id": "test-webhook", "label": "Send a test to the webhooks", "path": "/test/webhook"},
+                {"id": "weekly-now", "label": "Send New this week now", "path": "/weekly-now"}],
+    "cards": [{"id": "status", "title": "Notifications", "type": "status", "path": "/card", "refresh_minutes": 60,
+               "example": {"state": "ok", "text": "Mon 09:00, New this week: sent by Email, Telegram"}},
+              {"id": "recent", "title": "Notifications sent", "type": "list", "path": "/recent", "refresh_minutes": 60,
+               "example": {"items": [{"title": "Ready to watch: Dune (2021)", "detail": "Mon 12 Nov 20:15, sent by Email, Telegram"}]}}],
+    "events": ["request.available", "download.failed", "app.down", "app.up", "disk.nearly_full", "update.available", "item.added"],
+    "jobs": [{"id": "weekly", "label": "Send New this week on the chosen day", "path": "/jobs/weekly", "daily": "09:00", "time_limit_minutes": 2}],
+    "changes": [{"version": "1.0.0", "date": "2026-11-13", "added": [
+        "**Seven ways to send:** email, Telegram, Discord, Signal (through signal-cli-rest-api), Pushover, ntfy and Apprise-style webhooks, each with a Test button.",
+        "**What it sends:** a request ready to watch (to the person who asked too), a failed download, an app down and back, a disk nearly full, an update ready, and New this week.",
+        "Plain words with no meaning in symbols, and links with words before them.",
+        "Rests between messages: Starboard's events and its daily job wake it, so it uses no memory while idle."]}],
+    "_readme": """## How it stays light
+
+It has no timer of its own. Starboard sends it each event and runs its daily job, and it rests (stops) 5 minutes after
+the last one. A message takes about a second and 14 MB of memory while it runs.
+
+## Secrets
+
+Passwords, tokens, keys and the webhook addresses are secret settings: Starboard never shows them again, and the
+plug-in never writes them to its log, its card or its folder. A failed message says only which channel failed and why,
+in words such as "it refused the sign-in or token".
+
+## Per person
+
+Under **People**, give one line for each person who asks for things: the name they use in Reelix or Seerr, a comma,
+then their email address, or `telegram` and their chat id. When their request is ready, they hear too.
+
+## Signal
+
+Signal has no official way for a server to send messages. If you already run
+[signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api) with a number registered, give its address
+and that number. Otherwise leave Signal deactivated.
+""",
+}, "file")
+
+# 12. Watch statistics (DASH-402) ----------------------------------------------------------------------------------
+EXAMPLES["watch-stats"] = ({
+    "name": "Watch statistics", "version": "1.0.0",
+    "description": "What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database.",
+    "starboard_api": ">=1.11 <2.0",
+    "permissions": ["jellyfin:key", "network:lan"],
+    "needs": ["jellyfin"],
+    "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
+                    "idle_stop_minutes": 5}],
+    "resources": {"main": {"memory": 64, "cpus": 0.25}}, "health": "/health",
+    "settings": [
+        {"key": "plays", "label": "Recent plays", "type": "custom", "choices": "/screen/plays"},
+        {"key": "titles", "label": "Top titles", "type": "custom", "choices": "/screen/titles"},
+        {"key": "people", "label": "People", "type": "custom", "choices": "/screen/people"},
+        {"key": "days", "label": "Over the last", "type": "number", "unit": "days", "default": 30, "min": 1, "max": 365},
+        {"key": "leave_out", "label": "Leave out these people", "type": "list",
+         "hint": "One Jellyfin user name a line, such as an account for testing."},
+    ],
+    "actions": [{"id": "refresh", "label": "Read the figures again now", "path": "/refresh"}],
+    "cards": [{"id": "week", "title": "Plays this week", "type": "stat", "path": "/card/week", "format": "number", "refresh_minutes": 30,
+               "example": {"value": 23, "label": "plays this week", "note": "14.5 hours by 3 people"}},
+              {"id": "top", "title": "Top titles", "type": "list", "path": "/card/top", "refresh_minutes": 30,
+               "example": {"items": [{"title": "Slow Horses", "detail": "2 people, 3 plays"}]}},
+              {"id": "people", "title": "Who watched most", "type": "list", "path": "/card/people", "refresh_minutes": 30,
+               "example": {"items": [{"title": "Sam", "detail": "4.1 hours, 5 plays, most Slow Horses"}]}},
+              {"id": "source", "title": "Watch statistics source", "type": "status", "path": "/card/source", "refresh_minutes": 60,
+               "example": {"state": "ok", "text": "Reading Jellyfin's Playback Reporting"}}],
+    "changes": [{"version": "1.0.0", "date": "2026-11-13", "added": [
+        "**Three tables:** recent plays by day, top titles and people, each to read only, with search and sorting.",
+        "**Four cards:** plays this week, top titles, who watched most, and where the figures come from.",
+        "Reads Jellyfin's Playback Reporting with one query, so a Full install can go without Jellystat and its PostgreSQL.",
+        "Without Playback Reporting it says so and how to add it, and shows each person's last plays from Jellyfin itself.",
+        "Rests when not in use, and keeps each answer for 15 minutes."]}],
+    "_readme": """## Playback Reporting
+
+The figures come from [Playback Reporting](https://github.com/jellyfin/jellyfin-plugin-playbackreporting), a plug-in
+for Jellyfin in its official catalogue. Add it in Starboard's **Settings**, **Jellyfin**, or in Jellyfin's
+**Dashboard**, **Plugins**, **Catalogue**, then restart Jellyfin. It counts from then on, and keeps its own history
+inside Jellyfin's data, so nothing else needs a database.
+
+Without it, this plug-in says so on its tables and its **Watch statistics source** card, and shows what Jellyfin knows
+itself: each person's last play of each title, with no device or time watched.
+
+## In place of Jellystat
+
+Jellystat needs two containers and PostgreSQL (about 60 MB measured on a small server, 150 to 250 MB on a busy one).
+This plug-in rests when no one is looking, and uses about 14 MB for a few seconds when a card or table asks.
+""",
+}, "file")

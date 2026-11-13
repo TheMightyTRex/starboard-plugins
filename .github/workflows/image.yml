@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: version
         run: |
-          echo "v=$(python3 -c "import sys;sys.path.insert(0,'tools');import examples_src;print(examples_src.VERSION)")" >> "$GITHUB_OUTPUT"
+          echo "v=$(python3 -c "import sys;sys.path.insert(0,'tools');import examples_src;print(examples_src.IMAGE_VERSION)")" >> "$GITHUB_OUTPUT"
       - id: build
         uses: docker/build-push-action@v6
         with:

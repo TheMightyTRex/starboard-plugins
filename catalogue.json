@@ -12,6 +12,7 @@
     "system:read"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json",
    "published": true
   },
@@ -25,6 +26,7 @@
     "network:lan"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json",
    "published": true
   },
@@ -38,6 +40,7 @@
     "downloads:read"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/download-summary/starboard-plugin.json",
    "published": true
   },
@@ -51,6 +54,7 @@
     "network:lan"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assistant/starboard-plugin.json",
    "published": true
   },
@@ -65,6 +69,7 @@
     "network:lan"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json",
    "published": true
   },
@@ -78,6 +83,7 @@
     "network:lan"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-speed/starboard-plugin.json",
    "published": true
   },
@@ -92,8 +98,27 @@
     "network:lan"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/most-watched/starboard-plugin.json",
    "published": true
+  },
+  {
+   "id": "notifications",
+   "name": "Notifications",
+   "description": "Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week.",
+   "kind": "System",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "apps:read",
+    "downloads:read",
+    "media:read",
+    "system:read",
+    "network:lan"
+   ],
+   "version": "1.0.0",
+   "starboard_api": ">=1.11 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json",
+   "published": false
   },
   {
    "id": "outside-services",
@@ -105,6 +130,7 @@
     "network:lan"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
    "published": true
   },
@@ -118,6 +144,7 @@
     "appearance:styles"
    ],
    "version": "1.3.0",
+   "starboard_api": ">=1.2 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/styles/starboard-plugin.json",
    "published": true
   },
@@ -131,8 +158,24 @@
     "network:vpn"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/vpn-check/starboard-plugin.json",
    "published": true
+  },
+  {
+   "id": "watch-stats",
+   "name": "Watch statistics",
+   "description": "What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database.",
+   "kind": "Jellyfin",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "jellyfin:key",
+    "network:lan"
+   ],
+   "version": "1.0.0",
+   "starboard_api": ">=1.11 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json",
+   "published": false
   },
   {
    "id": "watching-now",
@@ -145,6 +188,7 @@
     "network:lan"
    ],
    "version": "1.0.0",
+   "starboard_api": ">=1.1 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json",
    "published": true
   }

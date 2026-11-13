@@ -13,8 +13,10 @@ smaller home media servers. Each one has passed Starboard's plug-in tester, acce
 | [Library health](library-health/) | Films and series in Jellyfin with no poster, no description or no year, so you can fix them. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json` | [library-health.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/library-health.zip) |
 | [Line speed](line-speed/) | Tests your internet download speed once a night, outside download hours, and keeps a week of results. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-speed/starboard-plugin.json` | [line-speed.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/line-speed.zip) |
 | [Most watched](most-watched/) | The films and series most people watched in Jellyfin in the last week. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/most-watched/starboard-plugin.json` | [most-watched.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/most-watched.zip) |
+| [Notifications](notifications/) | Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week (needs plug-in API 1.11; coming soon) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json` | [notifications.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/notifications.zip) |
 | [Outside services](outside-services/) | Up or down for things that are not on this server: your router, a NAS, a website. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json` | [outside-services.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/outside-services.zip) |
 | [VPN check](vpn-check/) | Shows the address and country your downloads use through the VPN, and warns if it is your home address. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/vpn-check/starboard-plugin.json` | [vpn-check.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/vpn-check.zip) |
+| [Watch statistics](watch-stats/) | What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database (needs plug-in API 1.11; coming soon) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json` | [watch-stats.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/watch-stats.zip) |
 | [Watching now](watching-now/) | Who is watching what in Jellyfin right now, with how far through they are. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json` | [watching-now.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/watching-now.zip) |
 
 ## Add a plug-in
@@ -29,9 +31,12 @@ Or download its zip, unzip it and run `python3 install.py` inside, or choose its
 Read [Add a plug-in](https://github.com/TheMightyTRex/starboard/blob/main/docs/help/topics/add-a-plugin.md) and
 [What a plug-in can change](https://github.com/TheMightyTRex/starboard/blob/main/docs/help/basics/what-plugins-can-change.md).
 
-The ten examples (all but Styles) share one small image, `ghcr.io/themightytrex/starboard-plugin-examples`
+The twelve examples (all but Styles) share one small image, `ghcr.io/themightytrex/starboard-plugin-examples`
 (Python's standard library only, about 14 MB of memory each while running), so Starboard downloads it once.
-They are short on purpose: read any `app.py` to see how a plug-in answers Starboard's cards and buttons.
+They are short on purpose: read any `app.py` to see how a plug-in answers Starboard's cards and buttons. Notifications and Watch statistics are
+longer: they keep their own version, changelog and `app.py` in their folders, with tests in `tests/`
+(`python3 -m unittest discover -s tests`). They name the image's next tag, 1.1.0, until it is built with them and its
+digest pinned, so the catalogue shows them as coming soon until then.
 
 ## Make your own
 
