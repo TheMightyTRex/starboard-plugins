@@ -1,0 +1,138 @@
+{
+ "manifest_version": 1,
+ "id": "jellystat",
+ "name": "Jellystat",
+ "version": "1.0.0",
+ "description": "Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/jellystat",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.13 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "network:lan",
+  "network:port"
+ ],
+ "needs": [
+  "jellyfin"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-jellystat:1.0.0",
+   "port": 8080,
+   "user": "70:70",
+   "volumes": [
+    "data"
+   ],
+   "env": {
+    "PGHOST": "plugin-jellystat-db",
+    "PGUSER": "jellystat",
+    "PGPASSWORD": "{secret:db_password}",
+    "PGDATABASE": "jfstat",
+    "JELLYSTAT_URL": "http://plugin-jellystat-app:3000"
+   }
+  },
+  {
+   "name": "app",
+   "image": "docker.io/cyfershepard/jellystat@sha256:e61c759ec706da378bc8374e797da1dfd298ab30f804cefd82d192c301a888c7",
+   "port": 3000,
+   "network": "lan",
+   "publish": true,
+   "host_port": 3000,
+   "volumes": [
+    "data:/app/backend/backup-data"
+   ],
+   "env": {
+    "POSTGRES_USER": "jellystat",
+    "POSTGRES_PASSWORD": "{secret:db_password}",
+    "POSTGRES_IP": "plugin-jellystat-db",
+    "POSTGRES_PORT": 5432,
+    "POSTGRES_DB": "jfstat",
+    "JWT_SECRET": "{secret:jwt_secret}",
+    "JF_HOST": "{jellyfin:url}",
+    "JF_API_KEY": "{jellyfin:key}"
+   }
+  },
+  {
+   "name": "db",
+   "image": "docker.io/library/postgres@sha256:fc41cfa8a90c09e84dd723ee764be4b2f59ba6c98b1e5b3fca540adddf68a5ba",
+   "port": 5432,
+   "user": "70:70",
+   "volumes": [
+    "data"
+   ],
+   "tmpfs": [
+    "/var/run/postgresql"
+   ],
+   "env": {
+    "POSTGRES_USER": "jellystat",
+    "POSTGRES_PASSWORD": "{secret:db_password}",
+    "POSTGRES_DB": "jfstat",
+    "PGDATA": "/data/pgdata"
+   }
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 64,
+   "cpus": 0.25
+  },
+  "app": {
+   "memory": 320,
+   "cpus": 0.5,
+   "pids": 128
+  },
+  "db": {
+   "memory": 256,
+   "cpus": 0.5,
+   "pids": 128
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "restore_file",
+   "label": "Backup file to restore",
+   "type": "text",
+   "group": "Restore a Jellystat backup",
+   "hint": "Only if you have one: the name of a pg_dump file you put in the restore folder, such as jfstat.pgdump."
+  },
+  {
+   "key": "restore",
+   "label": "Restore a Jellystat backup",
+   "type": "custom",
+   "choices": "/restore",
+   "hint": "Brings in the figures from a Jellystat you had before. Optional."
+  }
+ ],
+ "cards": [
+  {
+   "id": "status",
+   "title": "Jellystat",
+   "type": "status",
+   "path": "/status",
+   "refresh_minutes": 10
+  }
+ ],
+ "actions": [
+  {
+   "id": "restore",
+   "label": "Restore the backup",
+   "path": "/restore-now",
+   "confirm": "Restore the backup named in Backup file to restore? Jellystat's figures are replaced by the backup's. Your current figures are kept in a database beside it, not deleted."
+  }
+ ],
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "Jellystat and its PostgreSQL 15 database as one plug-in, outside the main install, on its own page on your home network.",
+    "Jellyfin's address and key handed over by Starboard, and a database password made for this install.",
+    "Restore a Jellystat backup: a pg_dump file, restored beside your figures and then swapped in."
+   ]
+  }
+ ]
+}

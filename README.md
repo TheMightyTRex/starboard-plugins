@@ -22,6 +22,29 @@ smaller home media servers. Each one has passed Starboard's plug-in tester, acce
 | [Watch statistics](watch-stats/) | What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database (needs plug-in API 1.11; coming soon) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json` | [watch-stats.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/watch-stats.zip) |
 | [Watching now](watching-now/) | Who is watching what in Jellyfin right now, with how far through they are. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json` | [watching-now.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/watching-now.zip) |
 
+## Apps you can add
+
+Whole apps kept out of the main install (DASH-411), each with its own page on your home network at a port Starboard
+chooses, shown on the plug-in's page with **Open**. They run in Starboard's locked-down containers like every plug-in:
+read only, never as root, with no extra rights, and only their own folders. Each needs plug-in API 1.13 (coming
+soon). Removing one keeps its data: in `data/plugins/.removed`, or the holding folder, as you choose.
+
+| App | Who it is for | At rest | Folders it reads or changes |
+|---|---|---|---|
+| [Jellystat](jellystat/) | Every figure about what was watched in Jellyfin, with its own PostgreSQL; restores a Jellystat backup | about 117 MB, 0.22% of a processor | its own only |
+| [Navidrome](navidrome/) | Music in Subsonic apps on phones and in the car | about 16 MB, 0.01% of a processor | `media/music`, read only |
+| [Kavita](kavita/) | Comics, manga and books in the browser and e-reader apps | about 337 MB, 0.99% of a processor | `media/books` and `media/comics`, read only |
+| [Calibre-Web](calibre-web/) | A Calibre library in the browser | about 182 MB, 0.01% of a processor | `media/books`, read only |
+| [Wizarr](wizarr/) | Invitation links for Jellyfin | about 124 MB, 0.02% of a processor | its own only |
+| [Maintainerr](maintainerr/) | Clean-up rules for Jellyfin | about 127 MB, 0.0% of a processor | its own only |
+| [Uptime Kuma](uptime-kuma/) | Status checks beyond your apps | about 116 MB, 0.0% of a processor | its own only |
+| [Seerr](seerr/) | A requests page (Reelix already has requests) | about 127 MB, 0.0% of a processor | its own only |
+| [Tdarr](tdarr/) | Converting films and series to save space, in quiet hours; can copy the Tdarr you have | about 59 MB, 0.11% of a processor | `media/movies` and `media/tv`, read and write |
+
+`tools/app_check.py` runs any of them as Starboard writes it, on closed networks, checks its page answers and measures
+it at rest. Dozzle is not here: it needs every app's details from Docker, passwords included, so it cannot be a safe
+plug-in; Starboard's System, Logs does its job.
+
 ## Add a plug-in
 
 1. In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**.

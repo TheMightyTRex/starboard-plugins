@@ -1,0 +1,57 @@
+{
+ "manifest_version": 1,
+ "id": "calibre-web",
+ "name": "Calibre-Web",
+ "version": "1.0.0",
+ "description": "Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books folder and never changes it.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/calibre-web",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.13 <2.0",
+ "permissions": [
+  "network:lan",
+  "network:port"
+ ],
+ "containers": [
+  {
+   "name": "app",
+   "image": "lscr.io/linuxserver/calibre-web@sha256:8eabbc9ac4d7fcbc252434493078ba22e4e8c3aa461e11b102020b040c5fc3e6",
+   "port": 8083,
+   "network": "lan",
+   "publish": true,
+   "host_port": 8083,
+   "entrypoint": [
+    "/lsiopy/bin/python3",
+    "/app/calibre-web/cps.py"
+   ],
+   "volumes": [
+    "data:/config",
+    "media/books:ro"
+   ],
+   "tmpfs": [
+    "/app/calibre-web/cps/cache"
+   ],
+   "env": {
+    "CALIBRE_DBPATH": "/config",
+    "HOME": "/tmp"
+   }
+  }
+ ],
+ "resources": {
+  "app": {
+   "memory": 384,
+   "cpus": 0.5,
+   "pids": 128
+  }
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "Calibre-Web as a plug-in, outside the main install, on its own page on your home network."
+   ]
+  }
+ ]
+}
