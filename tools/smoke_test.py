@@ -70,7 +70,10 @@ SETTINGS = {
 # What each plug-in is sent before its cards are read: a path, or (path, JSON body) for an event.
 POSTS = {"vpn-check": "/check", "line-speed": "/test", "library-health": "/check",
          "notifications": ["/test/webhook", ("/events", {"event": "app.down", "data": {"app": "Jellyfin", "type": "jellyfin"}}), "/weekly-now"],
-         "watch-stats": "/refresh"}
+         "watch-stats": "/refresh", "remote-access": "/test"}
+# Remote access refuses callers on 127.0.0.1 (visitors through its tunnel arrive there); the host network needs this.
+ENV = {"remote-access": {"ALLOW_LOOPBACK": "1"}}
+SETTINGS["remote-access"] = {"method": "tailscale"}  # no key: it must say so clearly and start nothing
 
 
 def main():
@@ -93,7 +96,7 @@ def main():
         subprocess.run(["docker", "rm", "-f", name], capture_output=True)
         subprocess.run(["docker", "run", "-d", "--name", name, "--network", "host", "--read-only", "--tmpfs", "/tmp",
                         "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true", "--pids-limit", "64",
-                        *[x for k, v in (m["containers"][0].get("env") or {}).items() for x in ("-e", f"{k}={v}")], "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
+                        *[x for k, v in (m["containers"][0].get("env") or {}).items() for x in ("-e", f"{k}={v}")], *[x for k, v in ENV.get(pid, {}).items() for x in ("-e", f"{k}={v}")], "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
                         "-v", f"{run}/data:/data", "-v", f"{run}/settings.json:/run/starboard/settings.json:ro",
                         "-v", f"{run}/key:/run/starboard/key:ro", "-v", f"{run}/jellyfin.json:/run/starboard/jellyfin.json:ro",
                         m["containers"][0]["image"], *(m["containers"][0].get("command") or [])], check=True, capture_output=True)

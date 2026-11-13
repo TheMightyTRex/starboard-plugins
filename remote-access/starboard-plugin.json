@@ -1,0 +1,160 @@
+{
+ "manifest_version": 1,
+ "id": "remote-access",
+ "name": "Remote access",
+ "version": "1.0.0",
+ "description": "Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/remote-access",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.8 <2.0",
+ "permissions": [
+  "apps:read",
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-remote-access:1.0.0",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ]
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 128,
+   "cpus": 0.5
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "method",
+   "label": "Connect with",
+   "type": "choice",
+   "default": "none",
+   "choices": [
+    {
+     "value": "none",
+     "label": "Nothing yet"
+    },
+    {
+     "value": "tailscale",
+     "label": "Tailscale (recommended)"
+    },
+    {
+     "value": "cloudflare",
+     "label": "Cloudflare Tunnel"
+    }
+   ],
+   "hint": "Tailscale joins your phone to home privately. Cloudflare Tunnel gives a web address of your own, behind Cloudflare Access."
+  },
+  {
+   "key": "addresses",
+   "label": "Addresses away from home",
+   "type": "custom",
+   "choices": "/screen"
+  },
+  {
+   "key": "tailscale_sign_in",
+   "label": "Sign in with",
+   "type": "choice",
+   "default": "key",
+   "group": "Tailscale",
+   "choices": [
+    {
+     "value": "key",
+     "label": "An auth key you paste"
+    },
+    {
+     "value": "link",
+     "label": "A sign-in link"
+    }
+   ],
+   "hint": "With a link, the address to open shows in Addresses away from home."
+  },
+  {
+   "key": "tailscale_key",
+   "label": "Tailscale auth key",
+   "type": "secret",
+   "group": "Tailscale",
+   "hint": "Make one in your own Tailscale admin page, Settings, Keys. It starts with tskey-auth-."
+  },
+  {
+   "key": "device_name",
+   "label": "Name on your tailnet",
+   "type": "text",
+   "default": "starboard",
+   "group": "Tailscale",
+   "hint": "Letters, numbers and hyphens, such as starboard."
+  },
+  {
+   "key": "cloudflare_token",
+   "label": "Cloudflare tunnel token",
+   "type": "secret",
+   "group": "Cloudflare Tunnel",
+   "hint": "From Cloudflare's dashboard, Networks, Tunnels. Point each public hostname at http://localhost:8095, 8096 or 13378."
+  },
+  {
+   "key": "share_starboard",
+   "label": "Share Starboard",
+   "type": "switch",
+   "default": true,
+   "group": "What to share"
+  },
+  {
+   "key": "share_jellyfin",
+   "label": "Share Jellyfin",
+   "type": "switch",
+   "default": true,
+   "group": "What to share"
+  },
+  {
+   "key": "share_audiobookshelf",
+   "label": "Share Audiobookshelf",
+   "type": "switch",
+   "default": true,
+   "group": "What to share",
+   "hint": "Shared only when Audiobookshelf is in Starboard's apps. Download apps are never shared."
+  }
+ ],
+ "actions": [
+  {
+   "id": "test",
+   "label": "Test remote access",
+   "path": "/test"
+  },
+  {
+   "id": "restart",
+   "label": "Start remote access again",
+   "path": "/restart"
+  }
+ ],
+ "cards": [
+  {
+   "id": "status",
+   "title": "Away from home",
+   "type": "status",
+   "path": "/card",
+   "example": {
+    "state": "ok",
+    "text": "Away from home: http://100.101.102.103:8095 (Tailscale)"
+   }
+  }
+ ],
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "**Tailscale** in userspace networking, with an auth key or a sign-in link",
+    "**Cloudflare Tunnel** with a tunnel token, stopped if a route leads anywhere but Starboard, Jellyfin or Audiobookshelf, or to Starboard without Cloudflare Access",
+    "**Addresses away from home** for each shared app, with Test; download apps are never shared"
+   ]
+  }
+ ]
+}
