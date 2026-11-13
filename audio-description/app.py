@@ -9,6 +9,11 @@ check, in quiet hours), a job when Starboard starts (the Reelix format), its but
 timer of its own, and the library is read 200 items at a time, so memory stays flat whatever the library's size.
 
 What it never does: download from or scrape any site, record from a broadcaster's app, or change a media file.
+
+Sources (DASH-410): each is its own switch in Sources, and only links out. AudioVault states no licence and no terms
+for automated use and limits each account to 25 downloads a day, so the plug-in links to AudioVault's own search for
+each title without audio description and never reads AudioVault. Adding a track the person already holds is the
+separate Audio description tracks plug-in, which needs write access to the media folder.
 """
 import json
 import os
@@ -17,6 +22,7 @@ import threading
 import time
 import urllib.error
 import urllib.parse
+from collections import defaultdict
 
 import sbplugin
 from sbplugin import fetch, keep, plural, remember, serve, setting
@@ -44,6 +50,10 @@ ELSEWHERE = [
     ("adp", "The Audio Description Project", "A list of described films and series, by the American Council of the Blind", "https://adp.acb.org/"),
     ("audiovault", "AudioVault", "A community library of description tracks for blind people. Starboard does not download from it: sign in there and keep to its rules", "https://audiovault.net/"),
 ]
+# AudioVault's own search, as its Movies and Shows pages send it (a GET form, `search`). A link the person opens; the
+# plug-in never calls it (DASH-410).
+AUDIOVAULT = {"film": "https://audiovault.net/movies?search=", "series": "https://audiovault.net/shows?search="}
+MENU_SPLIT = 80  # more titles than this in Films or Series: sub menus by first letter, so no page is too long
 
 
 # Jellyfin and Reelix ---------------------------------------------------------------------------------------------
@@ -99,7 +109,7 @@ def _items():
 
 def scan():
     """Reads every film and episode's audio tracks and keeps which have audio description."""
-    films, series, total = [], {}, 0
+    films, series, total, without = [], {}, 0, []
     for it in _items():
         total += 1
         track = described_track(it.get("MediaStreams"))
@@ -113,6 +123,8 @@ def scan():
         elif track:
             year = it.get("ProductionYear")
             films.append({"id": str(it.get("Id") or ""), "name": f"{it.get('Name')}" + (f" ({year})" if year else ""), "track": track["name"]})
+        elif it.get("Type") == "Movie" and it.get("Name"):  # kept small: a name and a year, for the Sources' links
+            without.append([str(it["Name"])[:120], int(it.get("ProductionYear") or 0)])
     series_rows = sorted((s for s in series.values() if s["described"]), key=lambda s: s["name"].lower())
     films.sort(key=lambda f: f["name"].lower())
     seen = remember("seen", {}) or {}
@@ -121,6 +133,10 @@ def scan():
     seen = {k: seen.get(k, now) for k in keys}  # when each was first found, for Recently found
     keep("seen", seen)
     keep("result", {"at": now, "total": total, "films": films, "series": series_rows})
+    # Titles without a described track, for the links in Sources: films by name and year, series not fully described.
+    keep("without", {"at": now, "films": sorted(without, key=lambda f: (f[0].lower(), f[1])),
+                     "series": sorted(([s["name"], s["described"], s["episodes"]] for s in series.values() if s["described"] < s["episodes"]),
+                                      key=lambda x: x[0].lower())})
     return {"said": f"Found {plural(len(films), 'film')} and {plural(len(series_rows), 'series', 'series')} with audio description, of {total:,} films and episodes"}
 
 
@@ -263,8 +279,71 @@ def elsewhere(body=None):
     return {"type": "list", "title": "Audio description elsewhere",
             "intro": "Places that offer audio description in their own apps. Starboard only lists them: it never downloads, "
                      "records or copies from them.",
-            "items": [{"id": i, "title": t, "detail": d, "address": a, "group": "Services", "state": "ok", "actions": []}
-                      for i, t, d, a in ELSEWHERE]}
+            "items": [{"id": i, "title": t, "detail": d, "group": "Services", "state": "ok", "state_label": "Link only", "actions": [],
+                       "link": {"url": a, "label": f"Open {t}"}} for i, t, d, a in ELSEWHERE]}
+
+
+# Sources (DASH-410) ----------------------------------------------------------------------------------------------
+
+def _letter(name):
+    first = re.sub(r"^(?:the|a|an)\s+", "", name.strip(), flags=re.I)[:1].upper()
+    return first if first.isalpha() and first.isascii() else "0 to 9 and others"
+
+
+def _menus_for(items):
+    """Films and Series as menus; each with a sub menu per first letter when it is long. Puts `menu` on each item."""
+    menus, by_group = [], defaultdict(list)
+    for it in items:
+        by_group[it["group"]].append(it)
+    for group, rows in by_group.items():
+        gid = group.lower()
+        menus.append({"id": gid, "title": group, "group": "Your library", "detail": plural(len(rows), "title")})
+        if len(rows) <= MENU_SPLIT:
+            for it in rows:
+                it["menu"] = gid
+            continue
+        letters = defaultdict(list)
+        for it in rows:
+            letters[_letter(it["title"])].append(it)
+        for letter in sorted(letters, key=lambda x: (len(x) > 1, x)):
+            mid = f"{gid}-{letter[:1].lower()}"
+            menus.append({"id": mid, "title": letter, "parent": gid, "group": "By first letter", "detail": plural(len(letters[letter]), "title")})
+            for it in letters[letter]:
+                it["menu"] = mid
+    return menus
+
+
+def _off_screen(title, switch, what):
+    return {"type": "list", "title": title, "items": [],
+            "intro": f"{switch} is deactivated, so nothing is shown here. Activate it under Sources to see {what}."}
+
+
+def audiovault(body=None):
+    """For each film and series without audio description, a link to AudioVault's own search for it. AudioVault is
+    never called: the person opens the link, signs in there and keeps to its rules (25 downloads a day)."""
+    title = "Search AudioVault"
+    if not setting("audiovault_links", False):
+        return _off_screen(title, "AudioVault search links", "a link to AudioVault's search for each title without audio description")
+    w = remember("without") or {}
+    items = [{"id": f"film:{n}:{y}", "title": f"{n} ({y})" if y else n, "group": "Films", "state": "off", "state_label": "No description here",
+              "actions": [], "link": {"url": AUDIOVAULT["film"] + urllib.parse.quote(n), "label": f"Search AudioVault for {n}" + (f" ({y})" if y else "")}}
+             for n, y in w.get("films", [])]
+    items += [{"id": f"series:{n}", "title": n, "group": "Series", "state": "off" if not d else "warning",
+               "state_label": "No description here" if not d else f"{d:,} of {e:,} described",
+               "detail": "" if not d else f"{plural(e - d, 'episode')} without a described track",
+               "actions": [], "link": {"url": AUDIOVAULT["series"] + urllib.parse.quote(n), "label": f"Search AudioVault for {n}"}}
+              for n, d, e in w.get("series", [])]
+    intro = ("AudioVault is a free community library of description tracks for blind and partially sighted people. Each link opens its "
+             "own search for a title without audio description. Starboard never downloads from AudioVault or reads its pages. It states no "
+             "licence, so using it is your choice: sign in there and keep to its 25 downloads a day. Add a track with Audio description tracks.")
+    if not w:
+        intro = "Not checked yet. Run Look for described titles now, or wait for tonight's check."
+    elif not items:
+        intro = "Every film and series in Jellyfin has a described sound track, so there is nothing to search for."
+    out = {"type": "list", "title": title, "intro": intro[:400], "items": items}
+    if items:
+        out["menus"] = _menus_for(items)
+    return out
 
 
 def count():
@@ -317,6 +396,7 @@ def _guarded(job):
 
 ROUTES = {"/count": count, "/recent": recent, "/titles": titles, ("POST", "/titles"): titles,
           "/people": people, ("POST", "/people"): people, "/elsewhere": elsewhere, ("POST", "/elsewhere"): elsewhere,
+          "/audiovault": audiovault, ("POST", "/audiovault"): audiovault,
           ("POST", "/jobs/scan"): lambda: _guarded(scan), ("POST", "/jobs/reelix"): reelix_now,
           ("POST", "/scan"): scan_now, ("POST", "/reelix"): reelix_now}
 

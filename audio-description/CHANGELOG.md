@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 (13 November 2026)
+
+### Added
+- AudioVault search links: for each film and series without audio description, a link to AudioVault's own search.
+  Deactivated until you activate it in Sources; Starboard never downloads from AudioVault.
+
+### Changed
+- Audio description elsewhere: each place is now a link that opens in a new tab.
+
 ## 1.0.0 (13 November 2026)
 
 ### Added

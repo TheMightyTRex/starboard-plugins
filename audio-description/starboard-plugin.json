@@ -2,13 +2,13 @@
  "manifest_version": 1,
  "id": "audio-description",
  "name": "Audio description",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/audio-description",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.6 <2.0",
+ "starboard_api": ">=1.12 <2.0",
  "permissions": [
   "jellyfin:key",
   "reelix:key",
@@ -69,6 +69,21 @@
    "type": "custom",
    "choices": "/elsewhere",
    "group": "Elsewhere"
+  },
+  {
+   "key": "audiovault_links",
+   "label": "AudioVault search links",
+   "type": "switch",
+   "default": false,
+   "group": "Sources",
+   "hint": "A link to AudioVault's own search for each film and series without audio description. Starboard never downloads from AudioVault or reads its pages."
+  },
+  {
+   "key": "audiovault",
+   "label": "Search AudioVault",
+   "type": "custom",
+   "choices": "/audiovault",
+   "group": "AudioVault"
   }
  ],
  "actions": [
@@ -128,6 +143,28 @@
    "path": "/jobs/reelix",
    "at_start": true,
    "time_limit_minutes": 2
+  }
+ ],
+ "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-13",
+   "added": [
+    "**AudioVault search links:** for each film and series without audio description, a link to AudioVault's own search. Deactivated until you activate it in Sources; Starboard never downloads from AudioVault"
+   ],
+   "changed": [
+    "**Audio description elsewhere:** each place is now a link that opens in a new tab"
+   ]
+  },
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "Finds the films and series in Jellyfin with a described sound track, once a night in quiet hours",
+    "Prefers releases with audio description in Reelix",
+    "People who want audio description: Jellyfin remembers the sound track each of them chooses",
+    "Audio description elsewhere, and two dashboard cards"
+   ]
   }
  ]
 }
