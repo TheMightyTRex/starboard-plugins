@@ -1,0 +1,44 @@
+# Builds and publishes the Jellystat plug-in's helper image when it changes, for amd64, arm64 and arm/v7:
+#   ghcr.io/<owner>/starboard-plugin-jellystat:<version> and :latest
+# The digest is printed in the run's summary; put it in jellystat/starboard-plugin.json in place of the tag.
+name: Jellystat helper image
+on:
+  push:
+    branches: [main]
+    paths: ["jellystat/Dockerfile", "jellystat/app.py", "jellystat/sbplugin.py", ".github/workflows/jellystat-image.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The helper compiles and its tests pass
+        run: python3 -m py_compile jellystat/app.py && python3 -m unittest tests.test_jellystat
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: version
+        run: echo "v=$(python3 -c "import json;print(json.load(open('jellystat/starboard-plugin.json'))['version'])")" >> "$GITHUB_OUTPUT"
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: jellystat
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: |
+            ghcr.io/themightytrex/starboard-plugin-jellystat:${{ steps.version.outputs.v }}
+            ghcr.io/themightytrex/starboard-plugin-jellystat:latest
+          labels: |
+            org.opencontainers.image.title=Starboard Jellystat plug-in helper
+            org.opencontainers.image.description=Hands Jellyfin to Jellystat and restores a Jellystat backup
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+      - name: Digest
+        run: echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,10 @@
+# Jellystat plug-in helper: Python's standard library on the same PostgreSQL image as the database container, so
+# psql and pg_restore match the server's version. The base is pinned by digest.
+FROM postgres:15-alpine@sha256:fc41cfa8a90c09e84dd723ee764be4b2f59ba6c98b1e5b3fca540adddf68a5ba
+RUN apk add --no-cache python3
+WORKDIR /app
+COPY sbplugin.py app.py /app/
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+USER 70:70
+ENTRYPOINT []
+CMD ["python3", "/app/app.py"]
