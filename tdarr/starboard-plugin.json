@@ -1,0 +1,73 @@
+{
+ "manifest_version": 1,
+ "id": "tdarr",
+ "name": "Tdarr",
+ "version": "1.0.0",
+ "description": "Tdarr converts films and series to save space, in Starboard's quiet hours. It can copy the Tdarr you already have, with its libraries and history.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/tdarr",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.13 <2.0",
+ "permissions": [
+  "network:lan",
+  "network:port"
+ ],
+ "containers": [
+  {
+   "name": "server",
+   "image": "ghcr.io/haveagitgat/tdarr@sha256:84743e5ae433a5b49cb463b2dff2679eb02f0cac24fb88c830f49bf8aa9f1c04",
+   "port": 8265,
+   "network": "lan",
+   "publish": true,
+   "host_port": 8265,
+   "user": "1000:1000",
+   "tmpfs": [
+    "/run"
+   ],
+   "volumes": [
+    "data/server:/app/server",
+    "data/configs:/app/configs",
+    "data/logs:/app/logs",
+    "data/cache:/temp",
+    "media/movies",
+    "media/tv"
+   ],
+   "env": {
+    "serverIP": "0.0.0.0",
+    "serverPort": "8266",
+    "webUIPort": "8265",
+    "internalNode": "true",
+    "inContainer": "true",
+    "nodeName": "starboard"
+   }
+  }
+ ],
+ "resources": {
+  "server": {
+   "memory": 2048,
+   "cpus": 2.0,
+   "pids": 512
+  }
+ },
+ "adopt": {
+  "app": "tdarr",
+  "name": "Tdarr",
+  "into": "server",
+  "stop": true,
+  "copy": {
+   "/app/server": "server",
+   "/app/configs": "configs",
+   "/app/logs": "logs"
+  }
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "Tdarr as a plug-in, outside the main install, on its own page on your home network."
+   ]
+  }
+ ]
+}
