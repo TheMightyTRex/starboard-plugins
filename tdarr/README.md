@@ -23,11 +23,12 @@ People who want their films and series converted to save space (H.265), and peop
 - It can change: Its own folder in Starboard's data (data/plugins/tdarr).
 - It can change: Files in your media folder under movies: it can change, replace and remove them.
 - It can change: Files in your media folder under tv: it can change, replace and remove them.
+- It can change: It runs as the owner of your media folder, so the files it adds there are yours to move or delete.
 - It can change: Only if you choose it: a copy of the Tdarr you already have, put in its own folder (your app's own folders are read, never changed).
 - It can reach: Other computers on your home network, and the internet.
 - It can reach: Its own web page is opened on your home network: anyone on your home network can open it, at this computer's address and a port Starboard chooses.
 
-It runs as user 1000, the owner of the media folders on a usual install, so it can replace a file with its smaller copy. It can change, replace and remove files in `media/movies` and `media/tv`, and only there: that is the least a converter needs. It gets up to 2 GB of memory and 2 processor cores while converting; at rest it uses far less (below).
+It runs as the owner of your media folder (plug-in API 1.12's `"user": "media"`: the apps' user from Install apps, 1000 on a usual install), so it can replace a file with its smaller copy and the new file is yours. It can change, replace and remove files in `media/movies` and `media/tv`, and only there: that is the least a converter needs. It gets up to 2 GB of memory and 2 processor cores while converting; at rest it uses far less (below).
 
 It runs read only, as a user that is not root, with no extra rights, like every plug-in. Its images, pinned by digest:
 

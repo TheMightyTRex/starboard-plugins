@@ -49,7 +49,7 @@ def render(pid, manifest, base):
         os.chmod(os.path.join(run, f), 0o644)
     extra = {"ports": {}, "secrets": {n: os.urandom(24).hex() for n in plugins.secret_names(manifest)},
              "jellyfin": {"url": "http://host.docker.internal:8096", "api_key": "0" * 32}}
-    text = plugins.compose(manifest, plugin_dir, media, None, extra)
+    text = plugins.compose(manifest, plugin_dir, media, None, media_user=os.environ.get("MEDIA_USER", "1000:1000"), extra=extra)
     text = text.replace(f"plugin-{pid}", f"bench-app-{pid}").replace("starboard.plugin:", "bench.plugin:")
     text = text.replace("  lan:\n    driver: bridge", "  lan:\n    internal: true")
     path = os.path.join(base, "compose.yaml")
@@ -67,6 +67,7 @@ def prepare(manifest, plugin_dir):
         if "data" not in vols and not any(re.match(plugins.DATA_AT, v) for v in vols):
             continue
         user = c.get("user") or "10001:10001"
+        user = os.environ.get("MEDIA_USER", "1000:1000") if user == "media" else user  # plug-in API 1.12
         d = f"/w/data/{c['name']}"
         cmds.append(f"mkdir -p {d} && chown {user} {d} && chmod 700 {d}")
         made = json.load(open(os.path.join(os.path.dirname(plugin_dir), "secrets.json")))

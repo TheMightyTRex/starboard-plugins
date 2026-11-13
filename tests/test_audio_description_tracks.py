@@ -368,7 +368,7 @@ class StarboardAccepts(unittest.TestCase):
         self.assertEqual(m["containers"][0]["start"], "when_needed")
         self.assertEqual(m["containers"][0]["user"], "media")
         warning = self.plugins.install_warning(m)
-        self.assertIn("Files in your media folder under audio-description", warning["change"])
+        self.assertTrue(any(c.startswith("Files in your media folder under audio-description") for c in warning["change"]))  # plug-in API 1.13 adds what it can do there
 
     def test_answers_have_the_shapes_starboard_draws(self):
         app = load()

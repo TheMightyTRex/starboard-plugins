@@ -21,7 +21,7 @@
    "network": "lan",
    "publish": true,
    "host_port": 8265,
-   "user": "1000:1000",
+   "user": "media",
    "tmpfs": [
     "/run"
    ],
