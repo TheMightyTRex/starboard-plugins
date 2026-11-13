@@ -12,7 +12,7 @@ from helpers import ROOT, STARBOARD_SRC, manifest  # noqa: E402
 
 APPS = ("jellystat", "navidrome", "kavita", "calibre-web", "wizarr", "maintainerr", "uptime-kuma", "seerr", "tdarr")
 # Each app's own folders: read only, except Tdarr, which converts films and series in place.
-WRITES_MEDIA = {"tdarr": {"media/movies", "media/tv"}}
+WRITES_MEDIA = {"tdarr": {"media/movies", "media/tv", "media/tdarr-cache"}}  # tdarr-cache: its working copies (1.0.2)
 JELLYFIN_KEY = {"jellystat"}  # the only one Starboard hands Jellyfin's key to; the others are given it in their own page
 OWN_IMAGE = re.compile(r"^ghcr\.io/themightytrex/")
 
