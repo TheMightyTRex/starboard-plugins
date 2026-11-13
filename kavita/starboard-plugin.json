@@ -1,0 +1,53 @@
+{
+ "manifest_version": 1,
+ "id": "kavita",
+ "name": "Kavita",
+ "version": "1.0.0",
+ "description": "Kavita, a reader for comics, manga and books in the browser and in e-reader apps (OPDS). It reads your books and comics folders and never changes them.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/kavita",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.13 <2.0",
+ "permissions": [
+  "network:lan",
+  "network:port"
+ ],
+ "containers": [
+  {
+   "name": "app",
+   "image": "docker.io/jvmilazz0/kavita@sha256:31181a32f0dda73cae68721867028a7253d57881b58bea5754cd9e578e75421a",
+   "port": 5000,
+   "network": "lan",
+   "publish": true,
+   "host_port": 5000,
+   "entrypoint": [
+    "/kavita/Kavita"
+   ],
+   "volumes": [
+    "data:/kavita/config",
+    "media/books:ro",
+    "media/comics:ro"
+   ],
+   "files": {
+    "appsettings.json": "{\n  \"TokenKey\": \"{secret:token_key}\",\n  \"Port\": 5000,\n  \"IpAddresses\": \"\",\n  \"BaseUrl\": \"/\",\n  \"Cache\": 75\n}"
+   }
+  }
+ ],
+ "resources": {
+  "app": {
+   "memory": 768,
+   "cpus": 1.0,
+   "pids": 256
+  }
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "Kavita as a plug-in, outside the main install, on its own page on your home network."
+   ]
+  }
+ ]
+}
