@@ -432,7 +432,7 @@ serve({"/card": card})
 # and runs from the shared image; until that image is built again with them, they name its next tag (IMAGE_VERSION)
 # and the catalogue marks them not yet published.
 IMAGE_VERSION = "1.1.0"
-NEW_IN_IMAGE = {"notifications"}
+NEW_IN_IMAGE = {"notifications", "watch-stats"}
 
 
 def _switch(key, label, hint, group, default=True):
@@ -537,3 +537,52 @@ and that number. Otherwise leave Signal deactivated.
 """,
 }, "file")
 
+# 12. Watch statistics (DASH-402) ----------------------------------------------------------------------------------
+EXAMPLES["watch-stats"] = ({
+    "name": "Watch statistics", "version": "1.0.0",
+    "description": "What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database.",
+    "starboard_api": ">=1.11 <2.0",
+    "permissions": ["jellyfin:key", "network:lan"],
+    "needs": ["jellyfin"],
+    "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
+                    "idle_stop_minutes": 5}],
+    "resources": {"main": {"memory": 64, "cpus": 0.25}}, "health": "/health",
+    "settings": [
+        {"key": "plays", "label": "Recent plays", "type": "custom", "choices": "/screen/plays"},
+        {"key": "titles", "label": "Top titles", "type": "custom", "choices": "/screen/titles"},
+        {"key": "people", "label": "People", "type": "custom", "choices": "/screen/people"},
+        {"key": "days", "label": "Over the last", "type": "number", "unit": "days", "default": 30, "min": 1, "max": 365},
+        {"key": "leave_out", "label": "Leave out these people", "type": "list",
+         "hint": "One Jellyfin user name a line, such as an account for testing."},
+    ],
+    "actions": [{"id": "refresh", "label": "Read the figures again now", "path": "/refresh"}],
+    "cards": [{"id": "week", "title": "Plays this week", "type": "stat", "path": "/card/week", "format": "number", "refresh_minutes": 30,
+               "example": {"value": 23, "label": "plays this week", "note": "14.5 hours by 3 people"}},
+              {"id": "top", "title": "Top titles", "type": "list", "path": "/card/top", "refresh_minutes": 30,
+               "example": {"items": [{"title": "Slow Horses", "detail": "2 people, 3 plays"}]}},
+              {"id": "people", "title": "Who watched most", "type": "list", "path": "/card/people", "refresh_minutes": 30,
+               "example": {"items": [{"title": "Sam", "detail": "4.1 hours, 5 plays, most Slow Horses"}]}},
+              {"id": "source", "title": "Watch statistics source", "type": "status", "path": "/card/source", "refresh_minutes": 60,
+               "example": {"state": "ok", "text": "Reading Jellyfin's Playback Reporting"}}],
+    "changes": [{"version": "1.0.0", "date": "2026-11-13", "added": [
+        "**Three tables:** recent plays by day, top titles and people, each to read only, with search and sorting.",
+        "**Four cards:** plays this week, top titles, who watched most, and where the figures come from.",
+        "Reads Jellyfin's Playback Reporting with one query, so a Full install can go without Jellystat and its PostgreSQL.",
+        "Without Playback Reporting it says so and how to add it, and shows each person's last plays from Jellyfin itself.",
+        "Rests when not in use, and keeps each answer for 15 minutes."]}],
+    "_readme": """## Playback Reporting
+
+The figures come from [Playback Reporting](https://github.com/jellyfin/jellyfin-plugin-playbackreporting), a plug-in
+for Jellyfin in its official catalogue. Add it in Starboard's **Settings**, **Jellyfin**, or in Jellyfin's
+**Dashboard**, **Plugins**, **Catalogue**, then restart Jellyfin. It counts from then on, and keeps its own history
+inside Jellyfin's data, so nothing else needs a database.
+
+Without it, this plug-in says so on its tables and its **Watch statistics source** card, and shows what Jellyfin knows
+itself: each person's last play of each title, with no device or time watched.
+
+## In place of Jellystat
+
+Jellystat needs two containers and PostgreSQL (about 60 MB measured on a small server, 150 to 250 MB on a busy one).
+This plug-in rests when no one is looking, and uses about 14 MB for a few seconds when a card or table asks.
+""",
+}, "file")

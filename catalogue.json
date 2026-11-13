@@ -163,6 +163,21 @@
    "published": true
   },
   {
+   "id": "watch-stats",
+   "name": "Watch statistics",
+   "description": "What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database.",
+   "kind": "Jellyfin",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "jellyfin:key",
+    "network:lan"
+   ],
+   "version": "1.0.0",
+   "starboard_api": ">=1.11 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json",
+   "published": false
+  },
+  {
    "id": "watching-now",
    "name": "Watching now",
    "description": "Who is watching what in Jellyfin right now, with how far through they are.",

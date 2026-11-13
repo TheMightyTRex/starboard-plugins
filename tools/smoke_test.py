@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Runs each example plug-in's image, hardened as Starboard runs it (read only, no capabilities, its own /data), against
-a stand-in for Starboard, Jellyfin, Pi-hole, AdGuard Home, Home Assistant and a webhook on this computer, and checks every card
+a stand-in for Starboard, Jellyfin (with Playback Reporting), Pi-hole, AdGuard Home, Home Assistant and a webhook on this computer, and checks every card
 answer with Starboard's own card check. Nothing real is touched. Needs Docker and Starboard's source (STARBOARD_SRC)."""
 import json
 import os
@@ -34,6 +34,11 @@ ANSWERS = {
     "/api/stats/summary": {"queries": {"blocked": 4210, "total": 35000}},
     "/api/states/binary_sensor.front_door": {"state": "off", "attributes": {"friendly_name": "Front door"}},
     "/api/states/sensor.lounge": {"state": "20.5", "attributes": {"friendly_name": "Lounge", "unit_of_measurement": "°C"}},
+    # Watch statistics (DASH-402): Jellyfin with Playback Reporting, answering its custom query
+    "/Plugins": [{"Name": "Playback Reporting", "Status": "Active"}],
+    "/user_usage_stats/submit_custom_query": {"colums": ["DateCreated", "UserId", "ItemName", "ItemType", "DeviceName", "ClientName", "PlayDuration"],
+                                              "results": [[NOW[:19].replace("T", " "), "Sam", "Slow Horses - s01e01 - Pilot", "Episode", "Lounge TV", "Web", "3120"],
+                                                          [NOW[:19].replace("T", " "), "Alex", "Dune", "Movie", "Phone", "Android", "9000"]]},
     # Notifications (DASH-401): a webhook that takes anything, and Starboard's recent list
     "/hook": {"ok": True},
     "/api/v1/recent": {"items": []},
@@ -60,10 +65,12 @@ SETTINGS = {
     "home-assistant": {"address": f"http://127.0.0.1:{STUB}", "token": "t", "entities": ["binary_sensor.front_door", "sensor.lounge"]},
     "outside-services": {"addresses": ["Stand-in http://127.0.0.1:%d/Users" % STUB, "Nowhere http://127.0.0.1:1"], "minutes": 1},
     "notifications": {"webhook_active": True, "webhooks": f"http://127.0.0.1:{STUB}/hook", "send_apps": True},
+    "watch-stats": {"days": 30},
 }
 # What each plug-in is sent before its cards are read: a path, or (path, JSON body) for an event.
 POSTS = {"vpn-check": "/check", "line-speed": "/test", "library-health": "/check",
-         "notifications": ["/test/webhook", ("/events", {"event": "app.down", "data": {"app": "Jellyfin", "type": "jellyfin"}}), "/weekly-now"]}
+         "notifications": ["/test/webhook", ("/events", {"event": "app.down", "data": {"app": "Jellyfin", "type": "jellyfin"}}), "/weekly-now"],
+         "watch-stats": "/refresh"}
 
 
 def main():

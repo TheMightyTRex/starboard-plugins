@@ -13,6 +13,7 @@ COPY most-watched/app.py /app/most-watched/
 COPY notifications/app.py /app/notifications/
 COPY outside-services/app.py /app/outside-services/
 COPY vpn-check/app.py /app/vpn-check/
+COPY watch-stats/app.py /app/watch-stats/
 COPY watching-now/app.py /app/watching-now/
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/app
 USER 10001:10001
