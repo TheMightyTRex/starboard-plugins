@@ -86,6 +86,7 @@ def main():
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
          "download-summary": "Downloads", "disk-forecast": "System", "seasonal-styles": "Look", "styles": "Look"}
+KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 PUBLISHED = {"styles"} | ({pid for pid in EXAMPLES} if _digest.startswith("sha256:") else set())
 
 

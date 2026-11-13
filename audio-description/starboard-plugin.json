@@ -1,0 +1,133 @@
+{
+ "manifest_version": 1,
+ "id": "audio-description",
+ "name": "Audio description",
+ "version": "1.0.0",
+ "description": "Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/audio-description",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.6 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "reelix:key",
+  "network:lan"
+ ],
+ "needs": [
+  "jellyfin"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.1.0",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ],
+   "env": {
+    "EXAMPLE": "audio-description"
+   },
+   "start": "when_needed",
+   "idle_stop_minutes": 10
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 64,
+   "cpus": 0.25
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "prefer_in_reelix",
+   "label": "Prefer releases with audio description",
+   "type": "switch",
+   "default": true,
+   "group": "Reelix searches",
+   "hint": "Adds an Audio description format to Reelix and prefers it in every quality level. Reelix still takes a release without it when there is no other."
+  },
+  {
+   "key": "people",
+   "label": "People who want audio description",
+   "type": "custom",
+   "choices": "/people",
+   "group": "People"
+  },
+  {
+   "key": "titles",
+   "label": "Titles with audio description",
+   "type": "custom",
+   "choices": "/titles",
+   "group": "Your library"
+  },
+  {
+   "key": "elsewhere",
+   "label": "Audio description elsewhere",
+   "type": "custom",
+   "choices": "/elsewhere",
+   "group": "Elsewhere"
+  }
+ ],
+ "actions": [
+  {
+   "id": "scan",
+   "label": "Look for described titles now",
+   "path": "/scan"
+  },
+  {
+   "id": "reelix",
+   "label": "Apply the Reelix choice now",
+   "path": "/reelix"
+  }
+ ],
+ "cards": [
+  {
+   "id": "count",
+   "title": "Audio description",
+   "type": "stat",
+   "path": "/count",
+   "format": "number",
+   "refresh_minutes": 60,
+   "example": {
+    "value": 42,
+    "label": "described",
+    "note": "of 1,240 films and episodes"
+   }
+  },
+  {
+   "id": "recent",
+   "title": "Recently found with audio description",
+   "type": "list",
+   "path": "/recent",
+   "refresh_minutes": 60,
+   "example": {
+    "items": [
+     {
+      "title": "Slow Horses",
+      "detail": "12 of 18 episodes described"
+     }
+    ]
+   }
+  }
+ ],
+ "jobs": [
+  {
+   "id": "scan",
+   "label": "Look for titles with audio description",
+   "path": "/jobs/scan",
+   "daily": "04:20",
+   "time_limit_minutes": 20,
+   "quiet_hours": true
+  },
+  {
+   "id": "reelix",
+   "label": "Keep the audio description choice in Reelix",
+   "path": "/jobs/reelix",
+   "at_start": true,
+   "time_limit_minutes": 2
+  }
+ ]
+}
