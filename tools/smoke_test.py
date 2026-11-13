@@ -86,6 +86,10 @@ def main():
         if not os.path.isfile(mf) or not os.path.isfile(os.path.join(ROOT, pid, "Dockerfile")):
             continue
         m = json.load(open(mf))
+        if "network:port" in (m.get("permissions") or []):
+            # An app plug-in (DASH-411): its app and database are run and measured by tools/app_check.py instead.
+            print(f"{pid}: an app plug-in, checked by tools/app_check.py")
+            continue
         # SMOKE_IMAGE: a local build of the shared image for plug-ins that name its next tag, before it is published.
         if os.environ.get("SMOKE_IMAGE") and ":" in m["containers"][0]["image"].rsplit("/", 1)[-1]:
             m["containers"][0]["image"] = os.environ["SMOKE_IMAGE"]
