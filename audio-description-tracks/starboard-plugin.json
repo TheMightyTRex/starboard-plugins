@@ -1,0 +1,165 @@
+{
+ "manifest_version": 1,
+ "id": "audio-description-tracks",
+ "name": "Audio description tracks",
+ "version": "1.0.0",
+ "description": "Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/audio-description-tracks",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.12 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "network:lan"
+ ],
+ "needs": [
+  "jellyfin"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks:1.0.0",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data",
+    "media/movies",
+    "media/tv",
+    "media/audio-description"
+   ],
+   "user": "media",
+   "start": "when_needed",
+   "idle_stop_minutes": 10
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 96,
+   "cpus": 0.5
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "inbox",
+   "label": "Description tracks to add",
+   "type": "custom",
+   "choices": "/inbox",
+   "group": "Tracks"
+  },
+  {
+   "key": "language",
+   "label": "Language of the description tracks",
+   "type": "choice",
+   "default": "eng",
+   "group": "Settings",
+   "choices": [
+    {
+     "value": "eng",
+     "label": "English"
+    },
+    {
+     "value": "fra",
+     "label": "French"
+    },
+    {
+     "value": "deu",
+     "label": "German"
+    },
+    {
+     "value": "spa",
+     "label": "Spanish"
+    },
+    {
+     "value": "ita",
+     "label": "Italian"
+    },
+    {
+     "value": "nld",
+     "label": "Dutch"
+    },
+    {
+     "value": "por",
+     "label": "Portuguese"
+    },
+    {
+     "value": "pol",
+     "label": "Polish"
+    },
+    {
+     "value": "swe",
+     "label": "Swedish"
+    },
+    {
+     "value": "dan",
+     "label": "Danish"
+    },
+    {
+     "value": "nor",
+     "label": "Norwegian"
+    },
+    {
+     "value": "fin",
+     "label": "Finnish"
+    }
+   ],
+   "hint": "The track is named after it, such as English (Audio Description)."
+  },
+  {
+   "key": "tolerance",
+   "label": "How close the lengths must be",
+   "type": "number",
+   "default": 5,
+   "min": 1,
+   "max": 30,
+   "unit": "seconds",
+   "group": "Settings",
+   "hint": "A track is added only when it is this close to the film's length. A bigger difference usually means another cut of the film."
+  }
+ ],
+ "actions": [
+  {
+   "id": "look",
+   "label": "Look in the folder now",
+   "path": "/look"
+  }
+ ],
+ "cards": [
+  {
+   "id": "count",
+   "title": "Description tracks to check",
+   "type": "stat",
+   "path": "/count",
+   "format": "number",
+   "refresh_minutes": 60,
+   "example": {
+    "value": 2,
+    "label": "to check",
+    "note": "Nothing else waiting"
+   }
+  }
+ ],
+ "jobs": [
+  {
+   "id": "look",
+   "label": "Look for new description tracks",
+   "path": "/jobs/look",
+   "daily": "04:40",
+   "time_limit_minutes": 30,
+   "quiet_hours": true
+  }
+ ],
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "**Add a description track you already have:** put it in the audio-description folder in your media folder, or upload it, and it is matched to its film or episode by name",
+    "**Lengths checked:** added only when the track and the film are the same length, within the seconds you choose; otherwise it says the track is probably for another cut",
+    "**Added as an extra sound track** next to the film, named English (Audio Description), with the visual impaired flag; the film file is not changed",
+    "**Nothing deleted:** the original moves to Confirmed once you say it plays in step, and a wrong track moves to Taken off"
+   ]
+  }
+ ]
+}

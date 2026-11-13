@@ -17,8 +17,30 @@ A Starboard plug-in by TheMightyTRexUK, MIT licence. Starboard's first set-up of
   description** to put the scores back to neutral.
 - **People:** for each person you activate, Jellyfin remembers the sound track they choose, so choosing the
   described track once is enough for each film and series.
-- **Elsewhere:** a list of places with audio description in their own apps, such as BBC iPlayer and ITVX. It only
-  lists them.
+- **Elsewhere:** a list of places with audio description in their own apps, such as BBC iPlayer and ITVX, each a link
+  that opens in a new tab. It only links to them.
+
+## Sources
+
+Each source is its own part, activated or deactivated under **Sources**, and each only links out. Nothing is fetched
+from any of them.
+
+- **AudioVault search links** (deactivated until you activate it): for each film and series in Jellyfin without audio
+  description, a link to AudioVault's own search for it. AudioVault is a free community library of description tracks
+  for blind and partially sighted people. It states no licence and no terms for automated use, has no API, and limits
+  each account to 25 downloads a day, so Starboard never reads its pages or downloads from it: you open the link, sign
+  in there and keep to its rules. To add a track you downloaded, use the
+  [Audio description tracks](../audio-description-tracks/) plug-in, which checks it is the same length as your film.
+- **YouDescribe search links** (activated): for each film and series, a link to YouDescribe's own search. YouDescribe
+  is a free website where volunteers describe YouTube videos, such as trailers and clips; they play there, in your
+  browser. Its programming interface serves its own website and is not offered to other apps, and its code is
+  published without a licence, so Starboard only links to the search and never searches it for you.
+- **MovieReading and Earcatch** (activated): a short guide to these free phone apps, which play a description
+  through headphones in step with a film by listening to its sound, so they work alongside Jellyfin on your
+  television; and links to them in the App Store, on Google Play and on their websites. Neither publishes a list of
+  titles that other apps may read (MovieReading's website names only the films it has now; Earcatch's terms forbid
+  collecting its content with automated tools for AI), so Starboard cannot say which of your films they have. RNIB
+  says neither is offered in the UK yet; MovieReading is mostly Italian, Earcatch mostly Dutch and Flemish.
 
 ## What it may do
 
@@ -53,10 +75,14 @@ track once per film or series. Both are listed in Starboard's accessibility rese
 - **People who want audio description**: activate each person.
 - **Titles with audio description**: the list, by films and series.
 - **Audio description elsewhere**: places with audio description in their own apps.
+- **Sources**: AudioVault search links, YouDescribe search links, MovieReading and Earcatch.
+- **Search AudioVault**: the links, by films and series, opening by first letter when the list is long.
+- **Search YouDescribe**: the links for every film and series, the same way.
+- **MovieReading and Earcatch**: the guide and the links.
 
 ## Add it
 
-In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
+Version 1.1.0 needs Starboard with plug-in API 1.12, for links on its lists. In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json`
 
