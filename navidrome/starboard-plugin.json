@@ -1,0 +1,50 @@
+{
+ "manifest_version": 1,
+ "id": "navidrome",
+ "name": "Navidrome",
+ "version": "1.0.0",
+ "description": "Navidrome, a music server for Subsonic apps on phones and in the car. It reads your music folder and never changes it.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/navidrome",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.13 <2.0",
+ "permissions": [
+  "network:lan",
+  "network:port"
+ ],
+ "containers": [
+  {
+   "name": "app",
+   "image": "docker.io/deluan/navidrome@sha256:38dc2727bfcfd5ede290f8ada114fc90368146f265ae4701ddddbcbe2a44ee52",
+   "port": 4533,
+   "network": "lan",
+   "publish": true,
+   "host_port": 4533,
+   "volumes": [
+    "data",
+    "media/music:ro"
+   ],
+   "env": {
+    "ND_DATAFOLDER": "/data",
+    "ND_MUSICFOLDER": "/media/music"
+   }
+  }
+ ],
+ "resources": {
+  "app": {
+   "memory": 256,
+   "cpus": 0.5,
+   "pids": 128
+  }
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "Navidrome as a plug-in, outside the main install, on its own page on your home network."
+   ]
+  }
+ ]
+}
