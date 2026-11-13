@@ -1,0 +1,53 @@
+{
+ "manifest_version": 1,
+ "id": "wizarr",
+ "name": "Wizarr",
+ "version": "1.0.0",
+ "description": "Wizarr, invitation links for Jellyfin: send someone a link and they make their own Jellyfin account, with the libraries you choose.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/wizarr",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.13 <2.0",
+ "permissions": [
+  "network:lan",
+  "network:port"
+ ],
+ "needs": [
+  "jellyfin"
+ ],
+ "containers": [
+  {
+   "name": "app",
+   "image": "ghcr.io/wizarrrr/wizarr@sha256:08f2c6de534ec7d36d39a4f55b7c5c379021ca881dc519c702aad0ddafbdc67a",
+   "port": 5690,
+   "network": "lan",
+   "publish": true,
+   "host_port": 5690,
+   "volumes": [
+    "data"
+   ],
+   "env": {
+    "HOME": "/tmp",
+    "UV_CACHE_DIR": "/tmp/uv",
+    "UV_NO_SYNC": "1"
+   }
+  }
+ ],
+ "resources": {
+  "app": {
+   "memory": 384,
+   "cpus": 0.5,
+   "pids": 128
+  }
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-13",
+   "added": [
+    "Wizarr as a plug-in, outside the main install, on its own page on your home network."
+   ]
+  }
+ ]
+}
