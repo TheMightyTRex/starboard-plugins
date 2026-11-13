@@ -10,6 +10,7 @@ COPY home-assistant/app.py /app/home-assistant/
 COPY library-health/app.py /app/library-health/
 COPY line-speed/app.py /app/line-speed/
 COPY most-watched/app.py /app/most-watched/
+COPY notifications/app.py /app/notifications/
 COPY outside-services/app.py /app/outside-services/
 COPY vpn-check/app.py /app/vpn-check/
 COPY watching-now/app.py /app/watching-now/

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Runs each example plug-in's image, hardened as Starboard runs it (read only, no capabilities, its own /data), against
-a stand-in for Starboard, Jellyfin, Pi-hole, AdGuard Home and Home Assistant on this computer, and checks every card
+a stand-in for Starboard, Jellyfin, Pi-hole, AdGuard Home, Home Assistant and a webhook on this computer, and checks every card
 answer with Starboard's own card check. Nothing real is touched. Needs Docker and Starboard's source (STARBOARD_SRC)."""
 import json
 import os
@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.insert(0, os.environ.get("STARBOARD_SRC", os.path.expanduser("~/src/starboard")))
-from starboard import plugin_cards  # noqa: E402
+from starboard import plugin_cards, plugin_custom  # noqa: E402
 
 STUB = 39999
 NOW = time.strftime("%Y-%m-%dT%H:%M:%S.0000000Z", time.gmtime(time.time() - 3600))
@@ -34,6 +34,9 @@ ANSWERS = {
     "/api/stats/summary": {"queries": {"blocked": 4210, "total": 35000}},
     "/api/states/binary_sensor.front_door": {"state": "off", "attributes": {"friendly_name": "Front door"}},
     "/api/states/sensor.lounge": {"state": "20.5", "attributes": {"friendly_name": "Lounge", "unit_of_measurement": "°C"}},
+    # Notifications (DASH-401): a webhook that takes anything, and Starboard's recent list
+    "/hook": {"ok": True},
+    "/api/v1/recent": {"items": []},
 }
 
 
@@ -56,8 +59,11 @@ SETTINGS = {
     "dns-blocking": {"kind": "Pi-hole", "address": f"http://127.0.0.1:{STUB}", "password": "x"},
     "home-assistant": {"address": f"http://127.0.0.1:{STUB}", "token": "t", "entities": ["binary_sensor.front_door", "sensor.lounge"]},
     "outside-services": {"addresses": ["Stand-in http://127.0.0.1:%d/Users" % STUB, "Nowhere http://127.0.0.1:1"], "minutes": 1},
+    "notifications": {"webhook_active": True, "webhooks": f"http://127.0.0.1:{STUB}/hook", "send_apps": True},
 }
-POSTS = {"vpn-check": "/check", "line-speed": "/test", "library-health": "/check"}
+# What each plug-in is sent before its cards are read: a path, or (path, JSON body) for an event.
+POSTS = {"vpn-check": "/check", "line-speed": "/test", "library-health": "/check",
+         "notifications": ["/test/webhook", ("/events", {"event": "app.down", "data": {"app": "Jellyfin", "type": "jellyfin"}}), "/weekly-now"]}
 
 
 def main():
@@ -91,12 +97,17 @@ def main():
                 break
             except OSError:
                 time.sleep(0.25)
-        if pid in POSTS:
+        for post in ([POSTS[pid]] if isinstance(POSTS.get(pid), str) else POSTS.get(pid) or []):
+            path, body = (post, None) if isinstance(post, str) else post
             try:
-                r = urllib.request.urlopen(urllib.request.Request(base + POSTS[pid], method="POST", data=b""), timeout=60)
-                print(f"  {pid} {POSTS[pid]}: {json.loads(r.read()).get('said')}")
+                r = urllib.request.urlopen(urllib.request.Request(base + path, method="POST", data=json.dumps(body).encode() if body else b"",
+                                                                  headers={"Content-Type": "application/json"}), timeout=60)
+                ans = json.loads(r.read())
+                print(f"  {pid} {path}: {ans.get('said') or ans}")
+                if body and ans.get("failed"):
+                    raise ValueError(f"not sent: {ans['failed']}")
             except Exception as e:  # noqa: BLE001
-                print(f"  {pid} {POSTS[pid]}: FAILED {e}")
+                print(f"  {pid} {path}: FAILED {e}")
                 failed += 1
         time.sleep(7)  # the background jobs' first run
         for c in m.get("cards") or []:
@@ -105,6 +116,13 @@ def main():
                 print(f"  {pid} {c['id']}: {json.dumps(plugin_cards.clean(c['type'], ans), ensure_ascii=False)[:150]}")
             except Exception as e:  # noqa: BLE001
                 print(f"  {pid} {c['id']}: FAILED {e}")
+                failed += 1
+        for st in [x for x in m.get("settings") or [] if x["type"] == "custom"]:  # read-only tables and other screens
+            try:
+                ans = plugin_custom.clean(json.loads(urllib.request.urlopen(base + st["choices"], timeout=20).read()))
+                print(f"  {pid} {st['key']}: {len(ans['items'])} rows, {', '.join(c['label'] for c in ans.get('columns') or [])}")
+            except Exception as e:  # noqa: BLE001
+                print(f"  {pid} {st['key']}: FAILED {e}")
                 failed += 1
         stats = subprocess.run(["docker", "stats", "--no-stream", "--format", "{{.MemUsage}}", name], capture_output=True, text=True).stdout.strip()
         print(f"{pid}: memory {stats}")
