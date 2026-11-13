@@ -16,7 +16,7 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.insert(0, os.environ.get("STARBOARD_SRC", os.path.expanduser("~/src/starboard")))
 from starboard import plugin_cards  # noqa: E402
 
-STUB = 39999
+STUB = int(os.environ.get("SMOKE_STUB_PORT", "39999"))  # several runs at once each give their own (13 November 2026)
 NOW = time.strftime("%Y-%m-%dT%H:%M:%S.0000000Z", time.gmtime(time.time() - 3600))
 ANSWERS = {
     "/Sessions": [{"UserName": "Sam", "DeviceName": "Lounge TV", "PlayState": {"PositionTicks": 40, "IsPaused": False},
@@ -63,7 +63,7 @@ POSTS = {"vpn-check": "/check", "line-speed": "/test", "library-health": "/check
 def main():
     threading.Thread(target=ThreadingHTTPServer(("127.0.0.1", STUB), Stub).serve_forever, daemon=True).start()
     failed = 0
-    port = 40100
+    port = int(os.environ.get("SMOKE_FIRST_PORT", "40100"))  # each run its own range (13 November 2026)
     for pid in sorted(os.listdir(ROOT)):
         mf = os.path.join(ROOT, pid, "starboard-plugin.json")
         if not os.path.isfile(mf) or not os.path.isfile(os.path.join(ROOT, pid, "Dockerfile")):
