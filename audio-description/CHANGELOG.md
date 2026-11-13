@@ -7,6 +7,8 @@
   Deactivated until you activate it in Sources; Starboard never downloads from AudioVault.
 - YouDescribe search links: for each film and series, a link to YouDescribe's own search, where volunteers describe
   YouTube videos such as trailers.
+- MovieReading and Earcatch: how to use these phone apps alongside Jellyfin, which play a description in step by
+  listening, and where to get them.
 
 ### Changed
 - Audio description elsewhere: each place is now a link that opens in a new tab.

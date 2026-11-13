@@ -87,6 +87,14 @@
    "hint": "A link to YouDescribe's own search for each film and series, for described trailers and clips on YouTube. Nothing is fetched from YouDescribe."
   },
   {
+   "key": "apps_guide",
+   "label": "MovieReading and Earcatch",
+   "type": "switch",
+   "default": true,
+   "group": "Sources",
+   "hint": "How to use these phone apps alongside Jellyfin, and where to get them. Neither publishes a list of titles, so Starboard cannot say which films they have."
+  },
+  {
    "key": "audiovault",
    "label": "Search AudioVault",
    "type": "custom",
@@ -99,6 +107,13 @@
    "type": "custom",
    "choices": "/youdescribe",
    "group": "YouDescribe"
+  },
+  {
+   "key": "apps",
+   "label": "MovieReading and Earcatch",
+   "type": "custom",
+   "choices": "/apps",
+   "group": "MovieReading and Earcatch"
   }
  ],
  "actions": [
@@ -166,7 +181,8 @@
    "date": "2026-11-13",
    "added": [
     "**AudioVault search links:** for each film and series without audio description, a link to AudioVault's own search. Deactivated until you activate it in Sources; Starboard never downloads from AudioVault",
-    "**YouDescribe search links:** for each film and series, a link to YouDescribe's own search, where volunteers describe YouTube videos such as trailers"
+    "**YouDescribe search links:** for each film and series, a link to YouDescribe's own search, where volunteers describe YouTube videos such as trailers",
+    "**MovieReading and Earcatch:** how to use these phone apps alongside Jellyfin, which play a description in step by listening, and where to get them"
    ],
    "changed": [
     "**Audio description elsewhere:** each place is now a link that opens in a new tab"

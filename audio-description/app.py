@@ -56,6 +56,34 @@ AUDIOVAULT = {"film": "https://audiovault.net/movies?search=", "series": "https:
 # YouDescribe's own search page (its site's /search?q=). Its programming interface serves its own site and is not
 # offered to others, so the plug-in only links to the search (DASH-410).
 YOUDESCRIBE = "https://youdescribe.org/search?q="
+# MovieReading and Earcatch (DASH-410): phone apps that play a description in step by listening. Neither publishes a
+# list of titles that other apps may read (MovieReading's site names only the films in cinemas now; Earcatch's terms
+# forbid collecting its content with automated tools for AI and give no list), so this is a guide with links only.
+APPS = [
+    ("MovieReading", [
+        ("mr-what", "What it is", "Info", "A free phone app from Italy. It plays a film's description in step by listening to the film. Mostly Italian "
+         "cinema titles, and it lists only the films it has now.", None),
+        ("mr-ios", "MovieReading for iPhone and iPad", "Link only", "", ("https://apps.apple.com/app/id460349347", "MovieReading on the App Store")),
+        ("mr-android", "MovieReading for Android", "Link only", "", ("https://play.google.com/store/apps/details?id=com.unimaccess.umaclient",
+                                                                 "MovieReading on Google Play")),
+        ("mr-films", "The films it has now", "Link only", "", ("https://www.moviereading.com/#film", "MovieReading's films, on its website"))]),
+    ("Earcatch", [
+        ("ec-what", "What it is", "Info", "A free phone app from the Netherlands. It plays a description in step by listening, for films and "
+         "series at home or in the cinema. Mostly Dutch and Flemish titles.", None),
+        ("ec-ios", "Earcatch for iPhone and iPad", "Link only", "", ("https://apps.apple.com/app/id1021220730", "Earcatch on the App Store")),
+        ("ec-android", "Earcatch for Android", "Link only", "", ("https://play.google.com/store/apps/details?id=nl.q42.soundfocus", "Earcatch on Google Play")),
+        ("ec-search", "Its titles", "Link only", "", ("https://www.earcatch.nl/zoeken/", "Search Earcatch's titles, on its website"))]),
+    ("Using one with Jellyfin", [
+        ("step-1", "Get the description first", "Step 1", "Install the app on your phone and download the description for your film in the app, "
+         "at home on Wi-Fi. It must be for the same cut of the film as yours.", None),
+        ("step-2", "Start the film in Jellyfin", "Step 2", "Play it on your television with its original sound track, loud enough for the "
+         "phone to hear. Keep the phone near the television.", None),
+        ("step-3", "Start the description", "Step 3", "Open the film in the app and press play. It listens to the film's sound and plays "
+         "the description in step, wherever the film is.", None),
+        ("step-4", "Listen with headphones", "Step 4", "Use headphones or earbuds on the phone, so others in the room hear only the film.", None),
+        ("step-5", "If it loses its place", "Step 5", "After a pause or a skip in Jellyfin it finds its place again in a few seconds. If it "
+         "does not, close the description in the app and open it again.", None)]),
+]
 MENU_SPLIT = 80  # more titles than this in Films or Series: sub menus by first letter, so no page is too long
 
 
@@ -427,10 +455,30 @@ def youdescribe(body=None):
     return out
 
 
+def apps(body=None):
+    """MovieReading and Earcatch: what they are, a guide to using one alongside Jellyfin, and where to get them."""
+    title = "MovieReading and Earcatch"
+    if not setting("apps_guide", True):
+        return _off_screen(title, "MovieReading and Earcatch", "how to use these apps alongside Jellyfin")
+    items = []
+    for group, rows in APPS:
+        for rid, t, label, detail, link in rows:
+            item = {"id": rid, "title": t, "detail": detail, "group": group, "actions": [], "state": "off" if label.startswith("Step") else "ok",
+                    "state_label": label}
+            if link:
+                item["link"] = {"url": link[0], "label": link[1]}
+            items.append(item)
+    return {"type": "list", "title": title, "items": items,
+            "intro": ("MovieReading and Earcatch are free phone apps that play a description through headphones, in step with a film, by "
+                      "listening to its sound. Neither publishes a list of titles that other apps may read, so Starboard cannot say which of "
+                      "your films they have. RNIB says they are not offered in the UK yet.")}
+
+
 ROUTES = {"/count": count, "/recent": recent, "/titles": titles, ("POST", "/titles"): titles,
           "/people": people, ("POST", "/people"): people, "/elsewhere": elsewhere, ("POST", "/elsewhere"): elsewhere,
           "/audiovault": audiovault, ("POST", "/audiovault"): audiovault,
           "/youdescribe": youdescribe, ("POST", "/youdescribe"): youdescribe,
+          "/apps": apps, ("POST", "/apps"): apps,
           ("POST", "/jobs/scan"): lambda: _guarded(scan), ("POST", "/jobs/reelix"): reelix_now,
           ("POST", "/scan"): scan_now, ("POST", "/reelix"): reelix_now}
 

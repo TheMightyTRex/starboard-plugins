@@ -198,6 +198,30 @@ class YouDescribe(unittest.TestCase):
         self.assertEqual(app.youdescribe()["items"], [])
 
 
+class Apps(unittest.TestCase):
+    """DASH-410: MovieReading and Earcatch publish no list of titles that may be read, so a guide and links only."""
+
+    def test_a_guide_with_store_links_and_nothing_fetched(self):
+        app = load()
+        app.jellyfin = app.reelix = lambda *a, **k: self.fail("nothing is fetched")
+        out = app.apps()
+        groups = []
+        for i in out["items"]:
+            if i["group"] not in groups:
+                groups.append(i["group"])
+        self.assertEqual(groups, ["MovieReading", "Earcatch", "Using one with Jellyfin"])
+        links = {i["link"]["label"]: i["link"]["url"] for i in out["items"] if "link" in i}
+        self.assertEqual(links["MovieReading on the App Store"], "https://apps.apple.com/app/id460349347")
+        self.assertEqual(links["Earcatch on Google Play"], "https://play.google.com/store/apps/details?id=nl.q42.soundfocus")
+        self.assertEqual([i["state_label"] for i in out["items"] if i["group"] == "Using one with Jellyfin"],
+                         ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"])
+        self.assertTrue(all(len(i["detail"]) <= 200 for i in out["items"]))
+        self.assertLessEqual(len(out["intro"]), 400)
+
+    def test_can_be_deactivated(self):
+        self.assertEqual(load({"apps_guide": False}).apps()["items"], [])
+
+
 class FakeReelix:
     def __init__(self, formats=None, profiles=None):
         self.formats = formats if formats is not None else []
@@ -319,7 +343,7 @@ class Words(unittest.TestCase):
         m = manifest()
         text = json.dumps([m, app.ELSEWHERE, app.elsewhere(), app.titles(), app.count(), app.recent(), app.audiovault()], ensure_ascii=False)
         app._set_on = load({"audiovault_links": True})
-        text += json.dumps([app._set_on.audiovault(), app.youdescribe()], ensure_ascii=False)
+        text += json.dumps([app._set_on.audiovault(), app.youdescribe(), app.apps()], ensure_ascii=False)
         with open(os.path.join(ROOT, PID, "README.md"), encoding="utf-8") as f:
             text += f.read()
         self.assertNotIn("—", text)
@@ -353,6 +377,7 @@ class StarboardAccepts(unittest.TestCase):
         self.assertTrue(all(i["link"]["url"].startswith("https://") for i in self.custom.clean(app.elsewhere())["items"]))
         self.custom.clean(app.audiovault())
         self.custom.clean(app.youdescribe())
+        self.assertTrue(all(i["state_label"] for i in self.custom.clean(app.apps())["items"]))
         m = manifest()
         for c in m["cards"]:
             self.cards.clean(c["type"], c["example"])
