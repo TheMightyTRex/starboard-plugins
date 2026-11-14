@@ -16,7 +16,7 @@
    "version": "1.1.0",
    "starboard_api": ">=1.12 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
-   "published": false
+   "published": true
   },
   {
    "id": "audio-description-tracks",
@@ -31,7 +31,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.12 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
-   "published": false
+   "published": true
   },
   {
    "id": "calibre-web",
@@ -46,7 +46,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/calibre-web/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 182,
     "cpu_percent": 0.01
@@ -122,7 +122,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/jellystat/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 117,
     "cpu_percent": 0.22
@@ -141,7 +141,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/kavita/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 337,
     "cpu_percent": 0.99
@@ -189,7 +189,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/maintainerr/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 127,
     "cpu_percent": 0.0
@@ -223,7 +223,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/navidrome/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 16,
     "cpu_percent": 0.01
@@ -245,7 +245,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.11 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json",
-   "published": false
+   "published": true
   },
   {
    "id": "outside-services",
@@ -274,7 +274,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.8 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/remote-access/starboard-plugin.json",
-   "published": false
+   "published": true
   },
   {
    "id": "seerr",
@@ -289,7 +289,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/seerr/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 127,
     "cpu_percent": 0.0
@@ -322,7 +322,7 @@
    "version": "1.0.2",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/tdarr/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 59,
     "cpu_percent": 0.11
@@ -341,7 +341,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/uptime-kuma/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 116,
     "cpu_percent": 0.0
@@ -374,7 +374,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.11 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json",
-   "published": false
+   "published": true
   },
   {
    "id": "watching-now",
@@ -404,7 +404,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.13 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/wizarr/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "rest": {
     "memory_mb": 124,
     "cpu_percent": 0.02

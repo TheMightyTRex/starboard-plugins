@@ -5,6 +5,7 @@ example, then tools/build_images.sh to build the images and tools/make_zips.py f
 import datetime as dt
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -122,15 +123,26 @@ def main():
 
 
 # The collection's catalogue (DASH-318): every plug-in here, which Starboard's Catalogue page lists. "published" is
-# true once its manifest and image are on GitHub (Styles now; the examples after DASH-331).
+# worked out from each manifest by published() below.
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
          "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Look", "styles": "Look",
          "notifications": "System", "watch-stats": "Jellyfin"}
 KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 KINDS["audio-description-tracks"] = "Accessibility"  # hand-made, its own image with ffmpeg (DASH-410)
-# The plug-ins new in the image are published once it is built with them and its digest pinned (NEW_IN_IMAGE emptied).
-PUBLISHED = {"styles"} | ({pid for pid in EXAMPLES if pid not in NEW_IN_IMAGE} if _digest.startswith("sha256:") else set())
+# Apps you can add (DASH-411), each with its memory and processor at rest: the 13 November 2026 benchmark where it
+# measured the app, else measured with tools/app_check.py.
+REST = {"calibre-web": (182, 0.01), "jellystat": (117, 0.22), "kavita": (337, 0.99), "maintainerr": (127, 0.0),
+        "navidrome": (16, 0.01), "seerr": (127, 0.0), "tdarr": (59, 0.11), "uptime-kuma": (116, 0.0), "wizarr": (124, 0.02)}
+KINDS.update({pid: "Apps you can add" for pid in REST})
+PINNED = re.compile(r"@sha256:[0-9a-f]{64}$")
+
+
+def published(m):
+    """A plug-in is published when every container image it runs is pinned by digest, so what Starboard downloads is
+    exactly what was built and tested; one with no containers, such as Styles, is published as it stands. A tag (an
+    image not yet built, or one that could change under it) keeps it coming soon (14 November 2026)."""
+    return all(PINNED.search(c.get("image") or "") for c in m.get("containers") or [])
 
 
 def write_catalogue():
@@ -143,7 +155,9 @@ def write_catalogue():
         rows.append({"id": m["id"], "name": m["name"], "description": m["description"], "kind": KINDS.get(pid, "Other"),
                      "author": m["author"], "permissions": m["permissions"], "version": m["version"], "starboard_api": m["starboard_api"],
                      "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
-                     "published": pid in PUBLISHED})
+                     "published": published(m)})
+        if pid in REST:
+            rows[-1]["rest"] = {"memory_mb": REST[pid][0], "cpu_percent": REST[pid][1]}
     with open(os.path.join(ROOT, "catalogue.json"), "w", encoding="utf-8") as f:
         json.dump({"catalogue_version": 1, "name": "Starboard plug-ins", "plugins": rows}, f, indent=1, ensure_ascii=False)
         f.write("\n")

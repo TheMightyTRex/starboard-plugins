@@ -429,10 +429,11 @@ serve({"/card": card})
 
 # The recommended plug-ins (owner, 13 November 2026: "Start working on all the recommended plugins", from
 # STACK-COMPARISON-2026-11-13.md). Each keeps its own version, its changes and its app.py in its own folder ("file"),
-# and runs from the shared image; until that image is built again with them, they name its next tag (IMAGE_VERSION)
-# and the catalogue marks them not yet published.
+# and runs from the shared image. A plug-in new to the image goes in NEW_IN_IMAGE and names its next tag
+# (IMAGE_VERSION) until GitHub builds it and its digest is pinned in tools/examples-digest.txt; 1.1.0 was built and
+# pinned on 14 November 2026 with Notifications and Watch statistics.
 IMAGE_VERSION = "1.1.0"
-NEW_IN_IMAGE = {"notifications", "watch-stats"}
+NEW_IN_IMAGE = set()
 
 
 def _switch(key, label, hint, group, default=True):

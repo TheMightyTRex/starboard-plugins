@@ -361,6 +361,7 @@ class StarboardAccepts(unittest.TestCase):
     def test_manifest_passes_in_development_and_accessibility(self):
         m = manifest()
         self.assertEqual(self.plugins.check(m, dev=True), [])
+        self.assertEqual(self.plugins.check(m), [])  # published: its image pinned by digest (14 November 2026)
         report = self.tester.report(m, dev=True)
         self.assertTrue(report["accessibility"]["passed"])
         self.assertEqual(report["errors"], 0)

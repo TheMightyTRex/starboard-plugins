@@ -3,7 +3,6 @@ Tdarr, each a whole app kept out of the main install. These check each one asks 
 Starboard's own manifest check (plug-in API 1.13), and that its catalogue entry says what it costs at rest."""
 import json
 import os
-import re
 import sys
 import unittest
 
@@ -14,7 +13,6 @@ APPS = ("jellystat", "navidrome", "kavita", "calibre-web", "wizarr", "maintainer
 # Each app's own folders: read only, except Tdarr, which converts films and series in place.
 WRITES_MEDIA = {"tdarr": {"media/movies", "media/tv", "media/tdarr-cache"}}  # tdarr-cache: its working copies (1.0.2)
 JELLYFIN_KEY = {"jellystat"}  # the only one Starboard hands Jellyfin's key to; the others are given it in their own page
-OWN_IMAGE = re.compile(r"^ghcr\.io/themightytrex/")
 
 
 def checker():
@@ -35,14 +33,13 @@ class AppPlugins(unittest.TestCase):
         if not plugins:
             self.skipTest("Starboard's source with plug-in API 1.13 is not here (STARBOARD_SRC)")
         for pid in APPS:
-            # dev: only Jellystat's own helper, named by its next tag until GitHub builds it
-            self.assertEqual(plugins.check(manifest(pid), dev=pid == "jellystat"), [], pid)
+            # as published: every image pinned by digest, Jellystat's own helper included (14 November 2026)
+            self.assertEqual(plugins.check(manifest(pid)), [], pid)
 
-    def test_third_party_images_pinned_by_digest(self):
+    def test_every_image_pinned_by_digest(self):
         for pid in APPS:
             for c in manifest(pid)["containers"]:
-                if not OWN_IMAGE.match(c["image"]):
-                    self.assertRegex(c["image"], r"@sha256:[0-9a-f]{64}$", f"{pid} {c['name']}")
+                self.assertRegex(c["image"], r"@sha256:[0-9a-f]{64}$", f"{pid} {c['name']}")
 
     def test_least_permissions(self):
         for pid in APPS:
