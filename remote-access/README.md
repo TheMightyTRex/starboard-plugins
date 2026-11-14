@@ -5,6 +5,9 @@ your router. Download apps are never shared.
 
 A Starboard plug-in by TheMightyTRexUK, MIT licence. Needs Starboard with plug-in API 1.8 or later.
 
+Its image is for 64-bit computers only (amd64 and arm64): Cloudflare does not make cloudflared for 32-bit Arm, so
+there is no arm/v7 build for older Raspberry Pis.
+
 ## Choose a way
 
 - **Tailscale (recommended).** Your phone joins your own private network (a tailnet), and Starboard, Jellyfin and

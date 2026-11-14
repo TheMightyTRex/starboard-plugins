@@ -1,4 +1,5 @@
-# Builds and publishes the Remote access plug-in's image when it changes, for amd64, arm64 and arm/v7:
+# Builds and publishes the Remote access plug-in's image when it changes, for amd64 and arm64 (Cloudflare publishes
+# cloudflared for those two only, so there is no arm/v7 build):
 #   ghcr.io/<owner>/starboard-plugin-remote-access:<version> and :latest
 # The digest is printed in the run's summary; put it in remote-access/starboard-plugin.json in place of the tag.
 name: Remote access image
@@ -30,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: remote-access
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/themightytrex/starboard-plugin-remote-access:${{ steps.version.outputs.v }}
