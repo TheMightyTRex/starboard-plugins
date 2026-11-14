@@ -1,6 +1,9 @@
 # Every example plug-in in one small image (Python's standard library only), so Starboard downloads it once.
 # Each manifest chooses its app with the EXAMPLE environment setting (run.py starts /app/<EXAMPLE>/app.py). Built and published by .github/workflows/image.yml.
 FROM python:3.12-alpine
+# Every package of the base image takes Alpine's fixed version at build (as Starboard does), so a fix such as
+# zlib's CVE-2026-4738 or krb5's 1.22.3 reaches the next build with no change here.
+RUN apk upgrade --no-cache
 WORKDIR /app
 COPY _shared/sbplugin.py _shared/run.py /app/
 COPY audio-description/app.py /app/audio-description/
