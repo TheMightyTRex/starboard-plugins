@@ -130,6 +130,10 @@ KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jel
          "notifications": "System", "watch-stats": "Jellyfin"}
 KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 KINDS["audio-description-tracks"] = "Accessibility"  # hand-made, its own image with ffmpeg (DASH-410)
+KINDS["direct-play"] = "Jellyfin"  # hand-made, its own image with ffmpeg (DASH-425)
+# Recommended (DASH-425, owner 14 November 2026: "its recommended in the catalogue"): a few plug-ins that suit most
+# servers, shown first in Starboard's Catalogue (plug-in API 1.14). Never installed by default: adding stays a choice.
+RECOMMENDED = {"direct-play", "notifications", "disk-forecast"}
 # Apps you can add (DASH-411), each with its memory and processor at rest: the 13 November 2026 benchmark where it
 # measured the app, else measured with tools/app_check.py.
 REST = {"calibre-web": (182, 0.01), "jellystat": (117, 0.22), "kavita": (337, 0.99), "maintainerr": (127, 0.0),
@@ -155,7 +159,7 @@ def write_catalogue():
         rows.append({"id": m["id"], "name": m["name"], "description": m["description"], "kind": KINDS.get(pid, "Other"),
                      "author": m["author"], "permissions": m["permissions"], "version": m["version"], "starboard_api": m["starboard_api"],
                      "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
-                     "published": published(m)})
+                     "published": published(m), "recommended": pid in RECOMMENDED})
         if pid in REST:
             rows[-1]["rest"] = {"memory_mb": REST[pid][0], "cpu_percent": REST[pid][1]}
     with open(os.path.join(ROOT, "catalogue.json"), "w", encoding="utf-8") as f:

@@ -1,0 +1,296 @@
+{
+ "manifest_version": 1,
+ "id": "direct-play",
+ "name": "Direct play",
+ "version": "1.0.0",
+ "description": "Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/direct-play",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.14 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "reelix:key",
+  "network:lan"
+ ],
+ "needs": [
+  "jellyfin"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-direct-play:1.0.0",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data",
+    "media/movies",
+    "media/tv"
+   ],
+   "user": "media",
+   "start": "always"
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 512,
+   "cpus": 1.0
+  }
+ },
+ "health": "/health",
+ "setup_required": true,
+ "settings": [
+  {
+   "key": "files",
+   "label": "Files",
+   "type": "custom",
+   "choices": "/files",
+   "group": "Files"
+  },
+  {
+   "key": "device_roku_express",
+   "label": "Roku Express and older Rokus",
+   "type": "switch",
+   "default": true,
+   "group": "Devices",
+   "hint": "H.264 up to 1080p; Dolby Digital, AAC and MP3 sound. No HEVC, DTS or TrueHD."
+  },
+  {
+   "key": "device_roku_4k",
+   "label": "Roku 4K",
+   "type": "switch",
+   "default": false,
+   "group": "Devices",
+   "hint": "Roku Express 4K, Streaming Stick 4K and Ultra: H.264 and HEVC up to 4K. No DTS or TrueHD."
+  },
+  {
+   "key": "device_fire_tv",
+   "label": "Fire TV Sticks",
+   "type": "switch",
+   "default": false,
+   "group": "Devices",
+   "hint": "H.264 and HEVC up to 1080p, so the HD sticks play them too. No DTS or TrueHD."
+  },
+  {
+   "key": "device_chromecast",
+   "label": "Chromecast",
+   "type": "switch",
+   "default": false,
+   "group": "Devices",
+   "hint": "H.264 up to 1080p; AAC, MP3, Opus and FLAC sound. No HEVC, Dolby Digital, DTS or TrueHD."
+  },
+  {
+   "key": "device_smart_tv",
+   "label": "Smart TV apps",
+   "type": "switch",
+   "default": false,
+   "group": "Devices",
+   "hint": "Jellyfin on Samsung and LG televisions: H.264 and HEVC up to 4K. No DTS or TrueHD."
+  },
+  {
+   "key": "device_browser",
+   "label": "Web browsers",
+   "type": "switch",
+   "default": false,
+   "group": "Devices",
+   "hint": "H.264 up to 4K; AAC, MP3, Opus and FLAC sound. No HEVC or Dolby Digital, so files with only Dolby Digital get a stereo track."
+  },
+  {
+   "key": "device_apple_tv",
+   "label": "Apple TV",
+   "type": "switch",
+   "default": false,
+   "group": "Devices",
+   "hint": "H.264 and HEVC up to 4K; Dolby Digital, AAC and FLAC sound. No DTS or TrueHD."
+  },
+  {
+   "key": "device_shield",
+   "label": "Nvidia Shield",
+   "type": "switch",
+   "default": false,
+   "group": "Devices",
+   "hint": "Nearly everything, DTS and TrueHD included, up to 4K."
+  },
+  {
+   "key": "when",
+   "label": "When it works",
+   "type": "choice",
+   "default": "weekends",
+   "group": "When it works",
+   "choices": [
+    {
+     "value": "weekends",
+     "label": "At weekends"
+    },
+    {
+     "value": "quiet",
+     "label": "In Starboard's quiet hours"
+    },
+    {
+     "value": "any",
+     "label": "Any time"
+    }
+   ],
+   "hint": "One file at a time, at the lowest priority. The file being converted always finishes."
+  },
+  {
+   "key": "shrink",
+   "label": "Shrink very large H.264 files",
+   "type": "switch",
+   "default": true,
+   "group": "Shrink",
+   "hint": "Converts H.264 files with a higher bitrate than below again, at the same picture quality. A file is kept as it was when it would not get at least a tenth smaller."
+  },
+  {
+   "key": "shrink_1080",
+   "label": "Shrink 1080p files above",
+   "type": "number",
+   "default": 15,
+   "min": 4,
+   "max": 80,
+   "unit": "Mbps",
+   "group": "Shrink"
+  },
+  {
+   "key": "shrink_720",
+   "label": "Shrink 720p files above",
+   "type": "number",
+   "default": 8,
+   "min": 2,
+   "max": 40,
+   "unit": "Mbps",
+   "group": "Shrink"
+  },
+  {
+   "key": "shrink_sd",
+   "label": "Shrink smaller files above",
+   "type": "number",
+   "default": 5,
+   "min": 1,
+   "max": 20,
+   "unit": "Mbps",
+   "group": "Shrink"
+  },
+  {
+   "key": "hevc_to_h264",
+   "label": "Convert HEVC to H.264",
+   "type": "switch",
+   "default": false,
+   "group": "More",
+   "hint": "Only when none of your devices plays HEVC. H.264 files are larger, so this uses more space."
+  },
+  {
+   "key": "keep_originals",
+   "label": "Keep the originals",
+   "type": "switch",
+   "default": false,
+   "group": "More",
+   "hint": "Moves each original to a .direct-play-originals folder in movies or tv instead of replacing it, so you can delete them yourself. Saves no space until you do."
+  },
+  {
+   "key": "card_seconds",
+   "label": "Card updates every",
+   "type": "choice",
+   "default": "30",
+   "group": "More",
+   "choices": [
+    {
+     "value": "10",
+     "label": "10 seconds"
+    },
+    {
+     "value": "30",
+     "label": "30 seconds"
+    },
+    {
+     "value": "60",
+     "label": "1 minute"
+    },
+    {
+     "value": "300",
+     "label": "5 minutes"
+    }
+   ],
+   "hint": "How often the Direct play card on the dashboard shows the progress while a file is converted."
+  }
+ ],
+ "actions": [
+  {
+   "id": "pause",
+   "label": "Pause fixing",
+   "path": "/pause"
+  },
+  {
+   "id": "resume",
+   "label": "Resume fixing",
+   "path": "/resume"
+  },
+  {
+   "id": "survey",
+   "label": "Look at the library now",
+   "path": "/survey"
+  }
+ ],
+ "cards": [
+  {
+   "id": "now",
+   "title": "Direct play",
+   "type": "list",
+   "path": "/card",
+   "refresh_seconds": 30,
+   "example": {
+    "items": [
+     {
+      "title": "Converting now: Dune (2021)",
+      "detail": "Shrink, 34% done, about 1 hour 5 minutes left"
+     },
+     {
+      "title": "Next: Slow Horses, series 1 episode 3",
+      "detail": "Add a playable sound track"
+     },
+     {
+      "title": "Totals",
+      "detail": "1,173 files fixed, 1.03 TB saved, 40 files still to do"
+     }
+    ]
+   }
+  },
+  {
+   "id": "saved",
+   "title": "Space saved by Direct play",
+   "type": "stat",
+   "path": "/summary",
+   "format": "bytes",
+   "refresh_minutes": 10,
+   "example": {
+    "value": 1030000000000,
+    "label": "saved",
+    "note": "1,173 files fixed, 40 files to do"
+   }
+  }
+ ],
+ "jobs": [
+  {
+   "id": "quiet",
+   "label": "Direct play in quiet hours",
+   "path": "/jobs/quiet",
+   "every_hours": 1,
+   "time_limit_minutes": 1,
+   "quiet_hours": true
+  }
+ ],
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-14",
+   "added": [
+    "**Plays directly on the devices you choose:** Rokus, Fire TV Sticks, Chromecast, smart TV apps, web browsers, Apple TV and Nvidia Shield",
+    "**Four fixes, cheapest first:** repackages the wrong container, adds a sound track your devices play beside the original, shrinks very large H.264 files and converts old formats to H.264",
+    "**Checked before it replaces:** the length, the picture, the first sound track and where sound and picture start; a file that fails is left as it was",
+    "**One file at a time, at the lowest priority:** at weekends, in quiet hours or any time, with Pause and Resume",
+    "**On the dashboard:** what is being converted, what is next and how much space it has saved"
+   ]
+  }
+ ]
+}

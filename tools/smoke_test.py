@@ -100,7 +100,9 @@ POSTS = {"vpn-check": "/check", "line-speed": "/test", "library-health": "/check
 SETTINGS["audio-description"] = {"audiovault_links": True}
 # Remote access refuses callers on 127.0.0.1 (visitors through its tunnel arrive there); the host network needs this.
 ENV = {"remote-access": {"ALLOW_LOOPBACK": "1"}}
-SETTINGS["remote-access"] = {"method": "tailscale"}  # no key: it must say so clearly and start nothing
+SETTINGS["remote-access"] = {"method": "tailscale"}
+SETTINGS["direct-play"] = {"when": "any", "device_roku_express": True}
+ENV["direct-play"] = {"DIRECT_PLAY_FIRST": "1"}  # no key: it must say so clearly and start nothing
 
 
 def _wav(path, seconds):
@@ -148,6 +150,43 @@ def tracks_check(run, image):
     return f"added with {got}; original kept; Brazil not added"
 
 
+def dp_media(run, image):
+    """The stand-in media folder for Direct play (DASH-425): an AVI to repackage and an episode with FLAC 5.1 only,
+    each a second long, made by ffmpeg in the plug-in's own image."""
+    media = f"{run}/media"
+    for d in ("movies/Old (1999)", "tv/Show/Season 1"):
+        os.makedirs(f"{media}/{d}")
+    for out, audio in (("movies/Old (1999)/Old (1999).avi", ["-c:a", "mp3"]), ("tv/Show/Season 1/Show S01E01.mkv", ["-ac", "6", "-c:a", "flac"])):
+        subprocess.run(["docker", "run", "--rm", "--network", "none", "-v", f"{media}:/m", "--user", f"{os.getuid()}:{os.getgid()}",
+                        "--entrypoint", "ffmpeg", image, "-v", "error", "-f", "lavfi", "-i", "testsrc=size=160x90:rate=10:duration=1",
+                        "-f", "lavfi", "-i", "sine=duration=1", "-c:v", "libx264", "-pix_fmt", "yuv420p", *audio, f"/m/{out}"],
+                       check=True, capture_output=True)
+    for root, dirs, _ in os.walk(media):
+        for d in dirs:
+            os.chmod(os.path.join(root, d), 0o777)
+    return ["-v", f"{media}/movies:/media/movies", "-v", f"{media}/tv:/media/tv"]
+
+
+def dp_check(run, image):
+    """What came of it: the AVI is an MKV, the episode has a Dolby Digital track first with its FLAC kept."""
+    media = f"{run}/media"
+    for _ in range(60):
+        if os.path.isfile(f"{media}/movies/Old (1999)/Old (1999).mkv") and not os.path.exists(f"{media}/movies/Old (1999)/Old (1999).avi"):
+            break
+        time.sleep(1)
+    else:
+        raise ValueError("the AVI was not repackaged")
+    for _ in range(60):
+        info = json.loads(subprocess.run(["docker", "run", "--rm", "--network", "none", "-v", f"{media}:/m:ro", "--entrypoint", "ffprobe", image,
+                                          "-v", "error", "-print_format", "json", "-show_streams", "/m/tv/Show/Season 1/Show S01E01.mkv"],
+                                         capture_output=True, text=True, check=True).stdout)
+        audio = [x["codec_name"] for x in info["streams"] if x["codec_type"] == "audio"]
+        if audio == ["ac3", "flac"]:
+            return "AVI repackaged as MKV; Dolby Digital added before the FLAC, which was kept"
+        time.sleep(1)
+    raise ValueError(f"the episode's sound is {audio}")
+
+
 def main():
     threading.Thread(target=ThreadingHTTPServer(("127.0.0.1", STUB), Stub).serve_forever, daemon=True).start()
     failed = 0
@@ -174,7 +213,11 @@ def main():
         json.dump({"url": f"http://127.0.0.1:{STUB}", "api_key": "k"}, open(f"{run}/reelix.json", "w"))
         name = f"smoke-{pid}"
         subprocess.run(["docker", "rm", "-f", name], capture_output=True)
+        # SMOKE_DIRECT_PLAY_IMAGE: a local build of Direct play's image before it is published (DASH-425).
+        if pid == "direct-play" and os.environ.get("SMOKE_DIRECT_PLAY_IMAGE"):
+            m["containers"][0]["image"] = os.environ["SMOKE_DIRECT_PLAY_IMAGE"]
         extra = tracks_media(run, m["containers"][0]["image"]) if pid == "audio-description-tracks" else []
+        extra = dp_media(run, m["containers"][0]["image"]) if pid == "direct-play" else extra
         subprocess.run(["docker", "run", "-d", "--name", name, "--network", "host", "--read-only", "--tmpfs", "/tmp",
                         "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true", "--pids-limit", "64",
                         *[x for k, v in (m["containers"][0].get("env") or {}).items() for x in ("-e", f"{k}={v}")], *[x for k, v in ENV.get(pid, {}).items() for x in ("-e", f"{k}={v}")], "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
@@ -202,6 +245,12 @@ def main():
                 print(f"  {pid} {path}: FAILED {e}")
                 failed += 1
         time.sleep(7)  # the background jobs' first run
+        if pid == "direct-play":
+            try:
+                print(f"  {pid} media: {dp_check(run, m['containers'][0]['image'])}")
+            except Exception as e:  # noqa: BLE001
+                print(f"  {pid} media: FAILED {e}")
+                failed += 1
         if pid == "audio-description-tracks":
             try:
                 print(f"  {pid} media: {tracks_check(run, m['containers'][0]['image'])}")
