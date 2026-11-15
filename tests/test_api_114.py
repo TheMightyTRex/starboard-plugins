@@ -52,11 +52,12 @@ class Collection(unittest.TestCase):
 
     def test_every_plugin_needs_api_114_and_says_what_is_new(self):
         sb = starboard()
+        newer = {"library-cleanup": ">=1.15 <2.0"}  # DASH-406: needs library:holding, new in plug-in API 1.15
         for pid in IDS:
             m = manifest(pid)
-            self.assertEqual(m["starboard_api"], ">=1.14 <2.0", pid)
+            self.assertEqual(m["starboard_api"], newer.get(pid, ">=1.14 <2.0"), pid)
             self.assertEqual(m["changes"][0]["version"], m["version"], pid)
-            if sb:
+            if sb and pid not in newer:
                 self.assertTrue(sb[1]._range_ok(m["starboard_api"], "1.14.0"), pid)
                 self.assertFalse(sb[1]._range_ok(m["starboard_api"], "1.13.0"), pid)
 

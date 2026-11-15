@@ -9,7 +9,7 @@ own migration code; the new image starts on the same data and must answer its he
 wait; its after step and its cards are checked, and then its before step must say it is ready.
 
 A local build of a plug-in's own image, before it is published: SMOKE_IMAGE_<ID> (such as SMOKE_IMAGE_PICTURE_SHRINKER),
-or SMOKE_IMAGE for the shared image. SMOKE_UPDATE=0 leaves the update pass out."""
+or SMOKE_IMAGE for the shared image. SMOKE_UPDATE=0 leaves the update pass out; SMOKE_ONLY=<id>,<id> runs only those."""
 import json
 import os
 import subprocess
@@ -64,9 +64,45 @@ TRACK_FILMS = [{"Id": "m-dune", "Name": "Dune", "ProductionYear": 2021, "Type": 
                 "Path": "/data/media/movies/Brazil (1985)/Brazil (1985).mkv", "MediaStreams": [{"Type": "Audio", "Title": "English"}]}]
 
 
+# Library clean-up (DASH-406): Jellyfin with a Films and a Series library at its own paths, one film everyone watched
+# 200 days ago and one series that ended, all watched; Reelix following both. The stand-in media folder has small
+# made-up files at the same places, so the move, the holding folder and Put back are real, on a copy.
+OLD = time.strftime("%Y-%m-%dT%H:%M:%S.0000000Z", time.gmtime(time.time() - 200 * 86400))
+LC_ITEMS = {"lc-films": [{"Id": "lc-a", "Name": "Old Film", "ProductionYear": 2001, "DateCreated": OLD, "ProviderIds": {"Tmdb": "111"},
+                          "Path": "/data/media/movies/Old Film (2001)/Old Film (2001).mkv", "UserData": {"Played": True, "LastPlayedDate": OLD}}],
+            "lc-series": [{"Id": "lc-s", "Name": "Harbour Lights", "ProductionYear": 2019, "DateCreated": OLD, "Status": "Ended",
+                           "ProviderIds": {"Tvdb": "9000"}, "Path": "/data/media/tv/Harbour Lights (2019)", "UserData": {"Played": True}}]}
+LC_ANSWERS = {"/Library/VirtualFolders": [{"Name": "Films", "ItemId": "lc-films", "CollectionType": "movies", "Locations": ["/data/media/movies"]},
+                                          {"Name": "Series", "ItemId": "lc-series", "CollectionType": "tvshows", "Locations": ["/data/media/tv"]}],
+              "/UserItems/Resume": {"Items": [], "TotalRecordCount": 0},
+              "/movies": {"items": [{"id": 7, "tmdb_id": 111, "monitored": True}], "total": 1},
+              "/series": {"items": [{"id": 30, "tvdb_id": 9000, "monitored": True}], "total": 1},
+              "/series/30/episodes": [{"id": 301, "season_number": 1, "monitored": True}]}
+LC_TOLD = []
+
+
 class Stub(BaseHTTPRequestHandler):
     def _go(self):
         q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+        here = urllib.parse.urlparse(self.path).path
+        lc = None
+        if (q.get("ParentId") or [""])[0] in LC_ITEMS:
+            lc = {"Items": LC_ITEMS[q["ParentId"][0]], "TotalRecordCount": 1}
+        elif (q.get("IncludeItemTypes") or [""])[0] in ("BoxSet", "Episode"):
+            lc = {"Items": [], "TotalRecordCount": 0}
+        elif here in LC_ANSWERS:
+            lc = LC_ANSWERS[here]
+        elif here == "/Library/Media/Updated" or (self.command in ("PUT", "POST") and here.startswith(("/movies", "/series", "/episodes"))):
+            n = int(self.headers.get("Content-Length") or 0)
+            LC_TOLD.append((self.command, here, json.loads(self.rfile.read(n) or b"null")))
+            lc = {}
+        if lc is not None:
+            data = json.dumps(lc).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(data)
+            return
         if "searchTerm" in q or "Ids" in q:  # the tracks plug-in's search, or one title by its id
             want = (q.get("searchTerm") or [""])[0].lower()
             items = [f for f in TRACK_FILMS if (want and want in f["Name"].lower()) or f["Id"] in (q.get("Ids") or [""])[0].split(",")]
@@ -86,7 +122,7 @@ class Stub(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(data)
-    do_GET = do_POST = do_DELETE = _go
+    do_GET = do_POST = do_DELETE = do_PUT = _go
 
     def log_message(self, *a):
         pass
@@ -106,6 +142,8 @@ POSTS = {"picture-shrinker": "/jobs/shrink", "vpn-check": "/check", "line-speed"
          "watch-stats": "/refresh", "remote-access": "/test", "audio-description": "/jobs/scan",
          "audio-description-tracks": "/jobs/look"}
 SETTINGS["audio-description"] = {"audiovault_links": True}
+POSTS["library-cleanup"] = "/jobs/move"  # DASH-406: activated here, on a stand-in media folder of made-up files
+SETTINGS["library-cleanup"] = {"active": True}
 # Remote access refuses callers on 127.0.0.1 (visitors through its tunnel arrive there); the host network needs this.
 ENV = {"remote-access": {"ALLOW_LOOPBACK": "1"}}
 SETTINGS["remote-access"] = {"method": "tailscale"}
@@ -223,6 +261,43 @@ def ps_check(run, image):
     if out[:4] != want:
         raise ValueError(f"the pictures are {out[:4]}, not {want}")
     return "poster to 600 by 900, photo to 400 by 533; the backdrop and the small poster as they were"
+
+
+def lc_media(run, image):
+    """The stand-in media folder for Library clean-up: a film and a series as small made-up files, owned by anyone."""
+    media = f"{run}/media"
+    for path, size in (("movies/Old Film (2001)/Old Film (2001).mkv", 4096), ("movies/Old Film (2001)/Old Film (2001).en.srt", 64),
+                       ("tv/Harbour Lights (2019)/Season 01/Harbour Lights S01E01.mkv", 8192), ("movies/Keep Me (2010)/Keep Me (2010).mkv", 100)):
+        os.makedirs(os.path.dirname(f"{media}/{path}"), exist_ok=True)
+        with open(f"{media}/{path}", "wb") as f:
+            f.write(b"x" * size)
+    for root, dirs, _ in os.walk(media):
+        os.chmod(root, 0o777)
+    return ["-v", f"{media}:/media"]
+
+
+def lc_check(run, base):
+    """What came of the move: both went to the holding folder keeping their folders, Reelix and Jellyfin were told,
+    the other film stayed; then Put back returns the film and Reelix follows it again."""
+    media, hold = f"{run}/media", f"{run}/media/.holding/library-cleanup"
+    for _ in range(60):
+        if os.path.isfile(f"{hold}/movies/Old Film (2001)/Old Film (2001).en.srt") and os.path.isdir(f"{hold}/tv/Harbour Lights (2019)/Season 01"):
+            break
+        time.sleep(1)
+    else:
+        raise ValueError("the film and the series did not reach the holding folder")
+    if os.path.exists(f"{media}/movies/Old Film (2001)") or not os.path.isfile(f"{media}/movies/Keep Me (2010)/Keep Me (2010).mkv"):
+        raise ValueError("the wrong things moved")
+    told = {(m, p) for m, p, _ in LC_TOLD}
+    for want in (("PUT", "/movies/7"), ("PUT", "/series/30"), ("POST", "/Library/Media/Updated")):
+        if want not in told:
+            raise ValueError(f"{want} was not called")
+    held = json.loads(urllib.request.urlopen(base + "/held", timeout=20).read())
+    film = next(i for i in held["items"] if i["title"].startswith("Old Film"))
+    out = post(base, "/held", {"action": "restore", "id": film["id"]})
+    if not os.path.isfile(f"{media}/movies/Old Film (2001)/Old Film (2001).mkv") or ("PUT", "/movies/7", {"monitored": True}) not in LC_TOLD:
+        raise ValueError(f"Put back did not return it: {out.get('said')}")
+    return f"film and series moved keeping their folders, Reelix and Jellyfin told; Put back said: {out.get('said')}"
 
 
 def image_for(pid, m):
@@ -346,9 +421,10 @@ def main():
     threading.Thread(target=ThreadingHTTPServer(("127.0.0.1", STUB), Stub).serve_forever, daemon=True).start()
     failed = 0
     port = int(os.environ.get("SMOKE_FIRST_PORT", "40100"))  # each run its own range (13 November 2026)
+    only = set(filter(None, os.environ.get("SMOKE_ONLY", "").split(",")))  # such as SMOKE_ONLY=library-cleanup
     for pid in sorted(os.listdir(ROOT)):
         mf = os.path.join(ROOT, pid, "starboard-plugin.json")
-        if not os.path.isfile(mf) or not os.path.isfile(os.path.join(ROOT, pid, "Dockerfile")):
+        if not os.path.isfile(mf) or not os.path.isfile(os.path.join(ROOT, pid, "Dockerfile")) or (only and pid not in only):
             continue
         m = json.load(open(mf))
         if "network:port" in (m.get("permissions") or []):
@@ -372,6 +448,7 @@ def main():
         extra = tracks_media(run, m["containers"][0]["image"]) if pid == "audio-description-tracks" else []
         extra = dp_media(run, m["containers"][0]["image"]) if pid == "direct-play" else extra
         extra = ps_media(run, m["containers"][0]["image"]) if pid == "picture-shrinker" else extra
+        extra = lc_media(run, m["containers"][0]["image"]) if pid == "library-cleanup" else extra
         subprocess.run(["docker", "run", "-d", "--name", name, "--network", "host", "--read-only", "--tmpfs", "/tmp",
                         "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true", "--pids-limit", "64",
                         *[x for k, v in (m["containers"][0].get("env") or {}).items() for x in ("-e", f"{k}={v}")], *[x for k, v in ENV.get(pid, {}).items() for x in ("-e", f"{k}={v}")], "-e", f"PORT={port}", "-e", f"STARBOARD_API=http://127.0.0.1:{STUB}/api/v1/",
@@ -410,6 +487,12 @@ def main():
                 print(f"  {pid} pictures: {ps_check(run, m['containers'][0]['image'])}")
             except Exception as e:  # noqa: BLE001
                 print(f"  {pid} pictures: FAILED {e}")
+                failed += 1
+        if pid == "library-cleanup":
+            try:
+                print(f"  {pid} media: {lc_check(run, base)}")
+            except Exception as e:  # noqa: BLE001
+                print(f"  {pid} media: FAILED {e}")
                 failed += 1
         if pid == "audio-description-tracks":
             try:
