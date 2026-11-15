@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description-tracks",
  "name": "Audio description tracks",
- "version": "1.1.0",
+ "version": "1.1.1",
  "description": "Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -19,7 +19,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks@sha256:8325ae1902e619e97f78818dd9872ecdc982fde9208dd8e205b2f53769cbc168",
+   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks:1.1.1",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -168,6 +168,13 @@
   "alt": "A loudspeaker with a plus sign"
  },
  "changes": [
+  {
+   "version": "1.1.1",
+   "date": "2026-11-15",
+   "fixed": [
+    "**Its card says when it last looked:** the grey band now shows when it last looked in the folder or a track last changed. Before, it never showed a time."
+   ]
+  },
   {
    "version": "1.1.0",
    "date": "2026-11-15",
