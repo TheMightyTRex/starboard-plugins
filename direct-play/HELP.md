@@ -91,6 +91,10 @@ do**, and when it next runs. The card shows only while the plug-in is active.
 
 The **Space saved by Direct play** card shows only the space saved.
 
+The grey band at the top of each card shows the Direct play logo, the plug-in's name and a status: **Converting**,
+**Waiting**, **Paused**, **Done** or **Needs setting up** when no device is chosen. Beside it is when the card last
+changed, such as **2 minutes ago**.
+
 ## The Files page
 
 In **Settings**, **Plug-ins**, **Direct play**, **Files** lists every file in tables: **Converting now**, **Still to
@@ -108,6 +112,13 @@ Before you add it, Starboard shows what it may do and asks for your password.
 - It uses 512 MB of memory and one processor at most.
 
 It never downloads anything, and it never changes any folder but movies and tv.
+
+## Updating it
+
+When a new version of Direct play is ready, the plug-in's page offers **Update** with what is new. Before the update,
+Direct play stops the file being converted, removes its unfinished copy and starts no new file, so nothing is left
+half done. After the update it carries on, and converts that file again. If the new version does not start, Starboard
+goes back to the version you had, with your settings as they were.
 
 ## Pause it or remove it
 

@@ -421,7 +421,7 @@ def fix(rec, bucket, prof, opts):
     finally:
         if code:
             _rm(tmp)
-    if _state().get("paused"):
+    if _state().get("paused") or sbplugin.holding():  # paused, or stopped for an update (plug-in API 1.14)
         _rm(tmp)
         raise Stopped()
     if code or not os.path.exists(tmp):
@@ -650,6 +650,8 @@ def why_idle():
     s = _state()
     if s.get("paused"):
         return "Paused"
+    if sbplugin.holding():
+        return "Waiting for an update"
     if not profile():
         return "No devices chosen"
     if not in_hours():
@@ -680,7 +682,7 @@ def work_once():
     fixed = 0
     while True:
         s = _state()
-        if s.get("paused") or not in_hours():
+        if s.get("paused") or not in_hours() or sbplugin.holding():
             break
         prof, opts = profile(), options()
         todo = todo_list(prof=prof, opts=opts, state=s)
@@ -777,14 +779,21 @@ def card():
     nxt = [r for r in todo_list() if r["path"] != st.get("path") or not converting][:4]
     items += [{"title": f"Next: {title(r['path'])}", "detail": WORDS[r["bucket"]]} for r in nxt]
     items.append({"title": "Totals", "detail": totals()})
-    state = "converting" if converting else {"Paused": "paused", "Nothing left to do": "done"}.get(items[0]["title"], "waiting")
-    # status and updated: for the card header of a later plug-in API (DASH-428); Starboard ignores them until then.
-    return {"items": items, "refresh_seconds": card_seconds(), "status": state, "updated": int(st.get("at") or now())}  # plug-in API 1.14; an older Starboard reads it each minute
+    state = "converting" if converting else {"Paused": "paused", "Nothing left to do": "done", "No devices chosen": "needs_setup"}.get(items[0]["title"], "waiting")
+    # The card band (plug-in API 1.14, DASH-428): the status chip and when the card last changed.
+    return {"items": items, "refresh_seconds": card_seconds(), "status": state, "updated": int(min(float(st.get("at") or now()), now()))}
 
 
 def summary_card():
     s = _state()
-    return {"value": int(s["saved_bytes"]), "label": "saved", "note": f"{plural(s['done'], 'file')} fixed, {plural(len(todo_list(state=s)), 'file')} to do"}
+    left = len(todo_list(state=s))
+    answer = {"value": int(s["saved_bytes"]), "label": "saved", "note": f"{plural(s['done'], 'file')} fixed, {plural(left, 'file')} to do"}
+    at = (s.get("last") or {}).get("at")
+    if _current["path"]:
+        return sbplugin.band(answer, "converting", at)
+    if s.get("paused"):
+        return sbplugin.band(answer, "paused", at)
+    return sbplugin.band(answer, "done" if not left and s.get("surveyed") else "waiting", at)
 
 
 GROUPS = {"now": "Converting now", "todo": "Still to do", "failed": "Not fixed", "done": "Fixed", "alone": "Left alone"}
@@ -854,6 +863,32 @@ def resume():
     return {"said": "Resumed. It carries on " + ("now" if in_hours() else next_run())}
 
 
+def before_update(body=None):
+    """POST /update/before (plug-in API 1.14): no new file starts, and the file being converted is stopped; its
+    unfinished copy is removed and it is converted again after the update, as Pause does."""
+    sbplugin._work["hold"] = now() + sbplugin.HOLD_SECONDS
+    with _lock:
+        p, name = _current["proc"], _current["path"]
+    if p:
+        p.terminate()
+    for _ in range(60):  # up to 30 seconds for the worker to tidy up
+        if not _current["path"]:
+            break
+        time.sleep(0.5)
+    if _current["path"]:
+        sbplugin._work["hold"] = 0.0
+        return {"ok": False, "said": "A file is still being converted. Try again in a minute"}
+    status(reason="Waiting for an update")
+    return {"ok": True, "said": f"Stopped converting {title(name)}; it is converted again after the update" if name else "Ready to update: nothing was being converted"}
+
+
+def after_update(body=None):
+    """POST /update/after: carries on, after the update or a Roll back."""
+    sbplugin._work["hold"] = 0.0
+    _wake.set()
+    return {"ok": True, "said": "Carrying on " + ("now" if in_hours() else next_run())}
+
+
 def survey_now():
     _survey_now.set()
     _wake.set()
@@ -861,7 +896,8 @@ def survey_now():
 
 
 ROUTES = {"/card": card, "/summary": summary_card, "/files": screen, ("POST", "/files"): screen_post,
-          ("POST", "/pause"): pause, ("POST", "/resume"): resume, ("POST", "/survey"): survey_now, ("POST", "/jobs/quiet"): quiet_job}
+          ("POST", "/pause"): pause, ("POST", "/resume"): resume, ("POST", "/survey"): survey_now, ("POST", "/jobs/quiet"): quiet_job,
+          ("POST", "/update/before"): before_update, ("POST", "/update/after"): after_update}
 
 if __name__ == "__main__":
     threading.Thread(target=worker, daemon=True).start()

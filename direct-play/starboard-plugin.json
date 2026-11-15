@@ -253,7 +253,9 @@
       "title": "Totals",
       "detail": "1,173 files fixed, 1.03 TB saved, 40 files still to do"
      }
-    ]
+    ],
+    "status": "converting",
+    "updated": 1794694110
    }
   },
   {
@@ -266,7 +268,9 @@
    "example": {
     "value": 1030000000000,
     "label": "saved",
-    "note": "1,173 files fixed, 40 files to do"
+    "note": "1,173 files fixed, 40 files to do",
+    "status": "converting",
+    "updated": 1794694110
    }
   }
  ],
@@ -280,6 +284,20 @@
    "quiet_hours": true
   }
  ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A play symbol on a screen"
+ },
  "changes": [
   {
    "version": "1.0.0",
@@ -289,7 +307,9 @@
     "**Four fixes, cheapest first:** repackages the wrong container, adds a sound track your devices play beside the original, shrinks very large H.264 files and converts old formats to H.264",
     "**Checked before it replaces:** the length, the picture, the first sound track and where sound and picture start; a file that fails is left as it was",
     "**One file at a time, at the lowest priority:** at weekends, in quiet hours or any time, with Pause and Resume",
-    "**On the dashboard:** what is being converted, what is next and how much space it has saved"
+    "**On the dashboard:** what is being converted, what is next and how much space it has saved",
+    "**A logo and a status on its cards:** the grey band at the top of each card says whether it is converting, waiting, paused or done, and when it last changed.",
+    "**Updates safely:** before an update it stops the file being converted, which is converted again afterwards, and starts no new one."
    ]
   }
  ]
