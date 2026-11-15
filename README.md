@@ -1,98 +1,138 @@
 # Starboard plug-ins
 
-Plug-ins for [Starboard](https://github.com/TheMightyTRex/starboard), the lightweight, accessible dashboard for
-smaller home media servers. Each one has passed Starboard's plug-in tester, accessibility included.
+Add more to [Starboard](https://github.com/TheMightyTRex/starboard), the lightweight, accessible dashboard for home
+media servers. Every plug-in here has passed Starboard's plug-in tester, accessibility included, and runs in a
+locked-down container that can only reach what it says it needs.
 
-Every plug-in here needs plug-in API 1.14 (15 November 2026): each has a logo, its dashboard cards say how things are
-in the grey band at the top, and the ones that work in the background update safely. A Starboard with an older plug-in
-API, such as 0.17.0 with 1.13, is still offered the version before from the catalogue, which keeps it at the commit it
-was published from. Starboard says so when you add one it cannot run yet.
-
-**Help:** every plug-in has the same eight pages (what it does, install and remove, settings, its dashboard card,
-updates and roll back, accessibility, problems, and for developers) in the
-[plug-ins help centre](https://themightytrex.github.io/starboard-plugins/help/), built from `help/` and each README.
-
-| Plug-in | What it does | Install address | Download |
-|---|---|---|---|
-| [Styles](styles/) | Twenty-one accessible styles for Starboard's Display settings, with gradients, textures and glass (needs Starboard 0.16.5) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/styles/starboard-plugin.json` | [styles.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/styles.zip) |
-| [Audio description](audio-description/) | Films and series in Jellyfin with a described sound track for blind and partially sighted people, preferred in Reelix searches (needs plug-in API 1.12) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json` | [audio-description.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/audio-description.zip) |
-| [Audio description tracks](audio-description-tracks/) | Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin after checking the lengths match (needs plug-in API 1.12; its own image, with mkvmerge) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json` | [audio-description-tracks.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/audio-description-tracks.zip) |
-| [Direct play](direct-play/) | Makes films and series play directly on the devices you choose, one file at a time in the hours you choose; recommended (needs plug-in API 1.14; its own image, with ffmpeg) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/direct-play/starboard-plugin.json` | [direct-play.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/direct-play.zip) |
-| [Disk forecast](disk-forecast/) | When each disk fills at the rate it has been filling over the last month. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json` | [disk-forecast.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/disk-forecast.zip) |
-| [Ad blocking](dns-blocking/) | How many adverts and trackers Pi-hole or AdGuard Home blocked today. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json` | [dns-blocking.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/dns-blocking.zip) |
-| [Download summary](download-summary/) | How much has downloaded today and this week, from what Starboard sees in the queue. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/download-summary/starboard-plugin.json` | [download-summary.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/download-summary.zip) |
-| [Home Assistant](home-assistant/) | Your house in one sentence on the dashboard: the things you choose from Home Assistant. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assistant/starboard-plugin.json` | [home-assistant.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/home-assistant.zip) |
-| [Library health](library-health/) | Films and series in Jellyfin with no poster, no description or no year, so you can fix them. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json` | [library-health.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/library-health.zip) |
-| [Line speed](line-speed/) | Tests your internet download speed once a night, outside download hours, and keeps a week of results. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-speed/starboard-plugin.json` | [line-speed.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/line-speed.zip) |
-| [Most watched](most-watched/) | The films and series most people watched in Jellyfin in the last week. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/most-watched/starboard-plugin.json` | [most-watched.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/most-watched.zip) |
-| [Notifications](notifications/) | Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week (needs plug-in API 1.11) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json` | [notifications.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/notifications.zip) |
-| [Picture shrinker](picture-shrinker/) | Shrinks the posters and photos of people Jellyfin keeps, on the schedule you choose, checking each before it replaces the original (needs plug-in API 1.14; its own image, with Pillow) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/picture-shrinker/starboard-plugin.json` | [picture-shrinker.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/picture-shrinker.zip) |
-| [Outside services](outside-services/) | Up or down for things that are not on this server: your router, a NAS, a website. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json` | [outside-services.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/outside-services.zip) |
-| [Remote access](remote-access/) | Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router. Download apps are never shared (needs plug-in API 1.8; amd64 and arm64 only) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/remote-access/starboard-plugin.json` | [remote-access.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/remote-access.zip) |
-| [VPN check](vpn-check/) | Shows the address and country your downloads use through the VPN, and warns if it is your home address. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/vpn-check/starboard-plugin.json` | [vpn-check.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/vpn-check.zip) |
-| [Watch statistics](watch-stats/) | What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database (needs plug-in API 1.11) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json` | [watch-stats.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/watch-stats.zip) |
-| [Watching now](watching-now/) | Who is watching what in Jellyfin right now, with how far through they are. | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json` | [watching-now.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/watching-now.zip) |
-
-Recommended plug-ins (plug-in API 1.14) come first in Starboard's Catalogue, with a Recommended chip: Direct play,
-Notifications and Disk forecast. Starboard never adds them by itself; adding one is your choice, as for any other.
-
-## Apps you can add
-
-Whole apps kept out of the main install (DASH-411), each with its own page on your home network at a port Starboard
-chooses, shown on the plug-in's page with **Open**. They run in Starboard's locked-down containers like every plug-in:
-read only, never as root, with no extra rights, and only their own folders. Each needs plug-in API 1.14 (its version
-for plug-in API 1.13, as in Starboard 0.17.0, stays in the catalogue). Removing one keeps its data: in `data/plugins/.removed`, or the holding folder, as you choose.
-
-| App | Who it is for | At rest | Folders it reads or changes |
-|---|---|---|---|
-| [Jellystat](jellystat/) | Every figure about what was watched in Jellyfin, with its own PostgreSQL; restores a Jellystat backup | about 117 MB, 0.22% of a processor | its own only |
-| [Navidrome](navidrome/) | Music in Subsonic apps on phones and in the car | about 16 MB, 0.01% of a processor | `media/music`, read only |
-| [Kavita](kavita/) | Comics, manga and books in the browser and e-reader apps | about 337 MB, 0.99% of a processor | `media/books` and `media/comics`, read only |
-| [Calibre-Web](calibre-web/) | A Calibre library in the browser | about 182 MB, 0.01% of a processor | `media/books`, read only |
-| [Wizarr](wizarr/) | Invitation links for Jellyfin | about 124 MB, 0.02% of a processor | its own only |
-| [Maintainerr](maintainerr/) | Clean-up rules for Jellyfin | about 127 MB, 0.0% of a processor | its own only |
-| [Uptime Kuma](uptime-kuma/) | Status checks beyond your apps | about 116 MB, 0.0% of a processor | its own only |
-| [Seerr](seerr/) | A requests page (Reelix already has requests) | about 127 MB, 0.0% of a processor | its own only |
-| [Tdarr](tdarr/) | Converting films and series to save space, in quiet hours; can copy the Tdarr you have | about 59 MB, 0.11% of a processor | `media/movies` and `media/tv`, read and write |
-
-`tools/app_check.py` runs any of them as Starboard writes it, on closed networks, checks its page answers and measures
-it at rest. Dozzle is not here: it needs every app's details from Docker, passwords included, so it cannot be a safe
-plug-in; Starboard's System, Logs does its job.
+**Help:** the [plug-ins help centre](https://themightytrex.github.io/starboard-plugins/help/) has a page for every
+plug-in: what it does, what it may change, its settings, its dashboard card, updates, accessibility and fixes for
+problems.
 
 ## Add a plug-in
 
-1. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find the plug-in under its kind.
-2. Select **Install…**, read what it may do, enter your Starboard password and select **Install** and its name.
+1. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**.
+2. Find the plug-in and select **Install…**. Read what it may do, enter your Starboard password and select **Install**.
 3. Select **Activate** when you are ready.
 
-A plug-in from elsewhere: paste its install address into **The plug-in's manifest address**, under **Add one from
-elsewhere**. Or download its zip, unzip it and run `python3 install.py` inside, or choose its `starboard-plugin.json` under
-**Or its manifest file**.
+That is all most people need. Starboard keeps each plug-in up to date from the catalogue, and you can roll one back
+from its page. Other ways to add one are under [Advanced](#advanced).
 
-Read [Add a plug-in](https://github.com/TheMightyTRex/starboard/blob/main/docs/help/topics/add-a-plugin.md) and
-[What a plug-in can change](https://github.com/TheMightyTRex/starboard/blob/main/docs/help/basics/what-plugins-can-change.md).
+## Recommended
 
-Each plug-in's logo is `logo.svg` in its folder, drawn by `tools/make_logos.py`: an original symbol on a coloured tile,
-no other project's logo. `tools/make_examples.py` puts each one in `catalogue.json` with its words, so Starboard's
-Catalogue shows it before anything is added.
+Starboard shows these first in the Catalogue, with a Recommended chip. It never adds them by itself.
 
-The twelve examples (all but Styles) and Audio description share one small image, `ghcr.io/themightytrex/starboard-plugin-examples`
-(Python's standard library only, about 14 MB of memory each while running), so Starboard downloads it once.
-They are short on purpose: read any `app.py` to see how a plug-in answers Starboard's cards and buttons. Notifications and Watch statistics are
-longer: they keep their own version, changelog and `app.py` in their folders, with tests in `tests/`
-(`python3 -m unittest discover -s tests`).
+- **[Direct play](https://themightytrex.github.io/starboard-plugins/help/plugins/direct-play/index.html):** films and series play directly on your devices, with no converting
+  as they play.
+- **[Disk forecast](https://themightytrex.github.io/starboard-plugins/help/plugins/disk-forecast/index.html):** when each disk will be full.
+- **[Notifications](https://themightytrex.github.io/starboard-plugins/help/plugins/notifications/index.html):** Starboard's alerts on your phone, by email or chat.
 
-A plug-in is published when each image it runs is pinned by digest (`@sha256:`), so Starboard downloads exactly what
-was built and tested. Until then it names its next tag and the catalogue lists it as coming soon. The shared image, Audio description tracks and Jellystat's helper are built for amd64,
-arm64 and arm/v7; Remote access for amd64 and arm64, because cloudflared has no 32-bit Arm build. The catalogue marks
-a plug-in published when every image it runs is pinned, or it runs none, as Styles does
-(`tools/make_examples.py`).
+## All the plug-ins
 
-## Make your own
+### Jellyfin
 
-Each plug-in is a folder with a `starboard-plugin.json`. Read
-[Write a plug-in](https://github.com/TheMightyTRex/starboard/blob/main/docs/help/basics/write-a-plugin.md), test it in
-**Settings**, **Plug-ins**, **Test a plug-in**, then run `python3 tools/make_zips.py` to make its zip.
+| Plug-in | What it does |
+|---|---|
+| [Direct play](https://themightytrex.github.io/starboard-plugins/help/plugins/direct-play/index.html) | Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose. |
+| [Library health](https://themightytrex.github.io/starboard-plugins/help/plugins/library-health/index.html) | Films and series in Jellyfin with no poster, no description or no year, so you can fix them. |
+| [Most watched](https://themightytrex.github.io/starboard-plugins/help/plugins/most-watched/index.html) | The films and series most people watched in Jellyfin in the last week. |
+| [Picture shrinker](https://themightytrex.github.io/starboard-plugins/help/plugins/picture-shrinker/index.html) | Shrinks the posters and photos of people Jellyfin keeps, so they take less space. Each picture is checked before it replaces the one Jellyfin saved. |
+| [Watch statistics](https://themightytrex.github.io/starboard-plugins/help/plugins/watch-stats/index.html) | What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database. |
+| [Watching now](https://themightytrex.github.io/starboard-plugins/help/plugins/watching-now/index.html) | Who is watching what in Jellyfin right now, with how far through they are. |
+
+### Downloads
+
+| Plug-in | What it does |
+|---|---|
+| [Download summary](https://themightytrex.github.io/starboard-plugins/help/plugins/download-summary/index.html) | How much has downloaded today and this week, from what Starboard sees in the queue. |
+| [VPN check](https://themightytrex.github.io/starboard-plugins/help/plugins/vpn-check/index.html) | Shows the address and country your downloads use through the VPN, and warns if it is your home address. |
+
+### System
+
+| Plug-in | What it does |
+|---|---|
+| [Disk forecast](https://themightytrex.github.io/starboard-plugins/help/plugins/disk-forecast/index.html) | When each disk fills at the rate it has been filling over the last month. |
+| [Notifications](https://themightytrex.github.io/starboard-plugins/help/plugins/notifications/index.html) | Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week. |
+
+### Network
+
+| Plug-in | What it does |
+|---|---|
+| [Ad blocking](https://themightytrex.github.io/starboard-plugins/help/plugins/dns-blocking/index.html) | How many adverts and trackers Pi-hole or AdGuard Home blocked today. |
+| [Line speed](https://themightytrex.github.io/starboard-plugins/help/plugins/line-speed/index.html) | Tests your internet download speed once a night, outside download hours, and keeps a week of results. |
+| [Outside services](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Up or down for things that are not on this server: your router, a NAS, a website. |
+| [Remote access](https://themightytrex.github.io/starboard-plugins/help/plugins/remote-access/index.html) | Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router. |
+
+### Home
+
+| Plug-in | What it does |
+|---|---|
+| [Home Assistant](https://themightytrex.github.io/starboard-plugins/help/plugins/home-assistant/index.html) | Your house in one sentence on the dashboard: the things you choose from Home Assistant. |
+
+### Accessibility
+
+| Plug-in | What it does |
+|---|---|
+| [Audio description](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description/index.html) | Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix. |
+| [Audio description tracks](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description-tracks/index.html) | Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match. |
+
+### Look
+
+| Plug-in | What it does |
+|---|---|
+| [Styles](https://themightytrex.github.io/starboard-plugins/help/plugins/styles/index.html) | Twenty-one accessible styles for Display: six reskin the whole look (cards, buttons, tabs, menus), checked for contrast. |
+
+## Apps you can add
+
+Whole apps kept out of the main install. Each opens on its own page on your home network, from **Open** on its
+plug-in page. They run in the same locked-down containers as every plug-in: read only, never as root and only with
+their own folders. Removing one keeps its data.
+
+| App | What it does | Memory at rest | Folders it reads or changes |
+|---|---|---|---|
+| [Calibre-Web](https://themightytrex.github.io/starboard-plugins/help/plugins/calibre-web/index.html) | Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books folder and never changes it. | about 182 MB | `media/books`, read only |
+| [Jellystat](https://themightytrex.github.io/starboard-plugins/help/plugins/jellystat/index.html) | Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page. | about 117 MB | its own only |
+| [Kavita](https://themightytrex.github.io/starboard-plugins/help/plugins/kavita/index.html) | Kavita, a reader for comics, manga and books in the browser and in e-reader apps (OPDS). It reads your books and comics folders and never changes them. | about 337 MB | `media/books` and `media/comics`, read only |
+| [Maintainerr](https://themightytrex.github.io/starboard-plugins/help/plugins/maintainerr/index.html) | Maintainerr, clean-up rules for Jellyfin, such as films everyone has watched. It changes nothing until you give it keys and a rule that removes. | about 127 MB | its own only |
+| [Navidrome](https://themightytrex.github.io/starboard-plugins/help/plugins/navidrome/index.html) | Navidrome, a music server for Subsonic apps on phones and in the car. It reads your music folder and never changes it. | about 16 MB | `media/music`, read only |
+| [Seerr](https://themightytrex.github.io/starboard-plugins/help/plugins/seerr/index.html) | Seerr, a requests page for Jellyfin users. Reelix already has requests in Starboard, so most people do not need it. | about 127 MB | its own only |
+| [Tdarr](https://themightytrex.github.io/starboard-plugins/help/plugins/tdarr/index.html) | Tdarr converts films and series to save space, in Starboard's quiet hours. It can copy the Tdarr you already have, with its libraries and history. | about 59 MB | `media/movies` and `media/tv`, read and write |
+| [Uptime Kuma](https://themightytrex.github.io/starboard-plugins/help/plugins/uptime-kuma/index.html) | Uptime Kuma, status checks for websites and services, with alerts and status pages. Starboard already watches your apps; this is for more. | about 116 MB | its own only |
+| [Wizarr](https://themightytrex.github.io/starboard-plugins/help/plugins/wizarr/index.html) | Wizarr, invitation links for Jellyfin: send someone a link and they make their own Jellyfin account, with the libraries you choose. | about 124 MB | its own only |
+
+## Advanced
+
+### Add a plug-in from elsewhere
+
+- **By address:** in **Settings**, **Plug-ins**, under **Add one from elsewhere**, paste the address into **The
+  plug-in's manifest address**, such as `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json`.
+- **From a file:** download its zip from [`zips/`](zips/), unzip it and run `python3 install.py` inside, or choose
+  its `starboard-plugin.json` under **Or its manifest file**.
+
+### Starboard versions
+
+Every plug-in here needs plug-in API 1.14 (Starboard 0.18.0 or newer). An older Starboard is offered the version
+before from the catalogue, and says so when a plug-in needs a newer one.
+
+### How plug-ins are published
+
+- A plug-in is published when every image it runs is pinned by digest (`@sha256:`), so Starboard downloads exactly
+  what was built and tested. Until then the catalogue lists it as coming soon.
+- The small example plug-ins share one image, `ghcr.io/themightytrex/starboard-plugin-examples` (Python's standard
+  library only, about 14 MB of memory each while running), so Starboard downloads it once.
+- Images are built for amd64, arm64 and arm/v7, except Remote access (amd64 and arm64: cloudflared has no 32-bit Arm
+  build).
+- Each logo is `logo.svg` in the plug-in's folder, drawn by `tools/make_logos.py`: an original symbol on a rounded tile.
+- `tools/make_examples.py` writes `catalogue.json` and the example plug-ins; `tools/make_zips.py` makes the zips;
+  `tools/app_check.py` runs an app plug-in as Starboard would and measures it at rest.
+- Dozzle is not here: it would need every app's details from Docker, passwords included, so it cannot be a safe
+  plug-in. Starboard's **System**, **Logs** does its job.
+
+### Make your own
+
+Each plug-in is a folder with a `starboard-plugin.json`. Start with the
+[developers' pages](https://themightytrex.github.io/starboard-plugins/help/areas/dev.html), test it in Starboard's
+**Settings**, **Plug-ins**, **Test a plug-in**, then run `python3 tools/make_zips.py`. The tests run with
+`python3 -m unittest discover -s tests`.
 
 ## Licence
 
