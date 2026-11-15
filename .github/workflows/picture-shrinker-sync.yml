@@ -1,0 +1,27 @@
+# Fails when the Picture shrinker's rules.json or shared test pictures differ from the Jellyfin version's
+# (TheMightyTRex/jellyfin-plugin-picture-shrinker, SYNC.md), so the two never drift apart. Runs on each push and pull
+# request that touches the plug-in, and every Monday in case the Jellyfin version changed.
+name: Picture shrinker in step with the Jellyfin version
+on:
+  push:
+    paths: ["picture-shrinker/**", "tests/picture-shrinker-shared/**", "tests/test_picture_shrinker.py", "tools/sync_picture_rules.py", ".github/workflows/picture-shrinker-sync.yml"]
+  pull_request:
+    paths: ["picture-shrinker/**", "tests/picture-shrinker-shared/**", "tests/test_picture_shrinker.py", "tools/sync_picture_rules.py"]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  in-step:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the Jellyfin version's rules and test pictures
+        run: git clone --depth 1 https://github.com/TheMightyTRex/jellyfin-plugin-picture-shrinker.git /tmp/jellyfin-version
+      - name: Same rules.json and test pictures
+        run: python3 tools/sync_picture_rules.py --check /tmp/jellyfin-version
+      - name: Pillow for the tests
+        run: python3 -m pip install --quiet pillow
+      - name: The shared test pictures give the same results here
+        run: python3 -m unittest tests.test_picture_shrinker

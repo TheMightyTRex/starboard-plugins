@@ -1,0 +1,40 @@
+{
+  "rules_version": "1.1",
+  "about": "The rules both picture shrinkers follow: the Jellyfin plug-in (this repository) and the Starboard plug-in (TheMightyTRex/starboard-plugins, picture-shrinker). Change them here only; SYNC.md says how.",
+  "kinds": {
+    "poster": {
+      "folder": "library",
+      "name_starts_with": "poster",
+      "limit": "height",
+      "default": 900,
+      "min": 300,
+      "max": 3000
+    },
+    "person": {
+      "folder": "People",
+      "name_starts_with": "",
+      "limit": "width",
+      "default": 400,
+      "min": 100,
+      "max": 2000
+    }
+  },
+  "extensions": [".jpg", ".jpeg", ".png", ".webp"],
+  "formats": ["JPEG", "PNG", "WEBP"],
+  "quality": { "default": 85, "min": 50, "max": 100 },
+  "rounding": "half_to_even",
+  "temp_suffix": ".picture-shrinker-tmp",
+  "skip_hidden": true,
+  "checks": ["decodes_in_full", "size_matches", "format_matches", "smaller_than_original"],
+  "keep_from_original": ["mode", "owner"],
+  "backup": {
+    "default": true,
+    "folder": "picture-shrinker/originals",
+    "never_overwrite": true,
+    "keep_free_bytes": 104857600
+  },
+  "new_pictures": { "default": false, "min_age_seconds": 600 },
+  "run_limit_minutes": 115,
+  "keep_runs": 20,
+  "keep_failures_per_run": 20
+}
