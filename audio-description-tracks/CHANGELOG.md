@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 (15 November 2026)
+
+### Fixed
+- Its card says when it last looked: the grey band now shows when it last looked in the folder or a track last changed. Before, it never showed a time.
+
 ## 1.1.0 (15 November 2026)
 
 ### Added

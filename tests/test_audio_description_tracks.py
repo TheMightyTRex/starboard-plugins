@@ -174,6 +174,18 @@ class Adding(unittest.TestCase):
         self.assertEqual([o[0] for o in row["choice"]["options"]], ["wait", "right", "undo"])
         self.assertEqual(self.app.look()["said"], "No new files in the folder")  # looked at once only
 
+    def test_the_count_card_says_when_it_last_looked(self):
+        self.assertNotIn("updated", self.app.count())  # nothing looked at yet
+        f = film(self.app, "Dune", 2021)
+        Stand(self.app, [f], {"Dune (2021).mp3": 9302.4, "Dune (2021).mkv": 9300.0})
+        drop(self.app, "Dune (2021).mp3")
+        before = int(time.time())
+        self.app.look()
+        card = self.app.count()  # DASH-441: its records have no "at", so this was never set before
+        self.assertEqual(card["value"], 1)
+        self.assertGreaterEqual(card["updated"], before)
+        self.assertLessEqual(card["updated"], int(time.time()))
+
     def test_a_different_cut_is_explained_and_not_added(self):
         f = film(self.app, "Dune", 2021)
         Stand(self.app, [f], {"Dune (2021).mp3": 9508.0, "Dune (2021).mkv": 9300.0})

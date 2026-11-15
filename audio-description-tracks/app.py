@@ -602,7 +602,8 @@ def count():
     check_ = sum(1 for r in recs.values() if r.get("status") not in ("added", "confirmed", "described", "exists"))
     answer = {"value": waiting, "label": "to check" if waiting != 1 else "track to check",
               "note": f"{plural(check_, 'file')} {'needs' if check_ == 1 else 'need'} a look" if check_ else "Nothing else waiting"}
-    at = max([float(r.get("at") or 0) for r in recs.values()] + [0]) or None
+    # When it last looked, or when a track last changed (DASH-441: its records have no "at" of their own).
+    at = max(float((remember("last", {}) or {}).get("at") or 0), float(sbplugin.changed("files") or 0)) or None
     if _pass["running"]:
         return band(answer, "working", at, "Adding tracks")
     if waiting or check_:
