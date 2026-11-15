@@ -61,7 +61,7 @@ Your phone joins your own private network, a tailnet, and the shared apps answer
 5. Select **Save**.
 6. Wait for the card or **Addresses away from home** to say **Connected**.
 7. Install Tailscale on your phone and sign in to the same tailnet.
-8. Away from home, use the addresses in **Addresses away from home**, such as `http://100.101.102.103:8095` for Starboard.
+8. Away from home, use the addresses in **Addresses away from home**, such as `http://<its Tailscale address>:8095` for Starboard.
 
 To sign in without a key, choose **A sign-in link** in **Sign in with** instead of steps 1, 4 and 5. Open the link that shows in **Addresses away from home** on any device, sign in to your own Tailscale account and approve this computer.
 

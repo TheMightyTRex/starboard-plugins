@@ -4,10 +4,10 @@ Remote access adds 1 card you can put on your dashboard. It starts with a grey b
 
 ## Away from home
 
-When it is connected, it shows the address to use away from home and the way it connects, such as "Away from home: http://100.101.102.103:8095 (Tailscale)". The address is Starboard's, or Jellyfin's when Starboard is not shared. When it is not connected, it says what to do next.
+When it is connected, it shows the address to use away from home and the way it connects, such as `Away from home: http://<its Tailscale address>:8095 (Tailscale)`. The address is Starboard's, or Jellyfin's when Starboard is not shared. When it is not connected, it says what to do next.
 
 - **How often it updates:** once a minute while the dashboard is open. Remote access itself looks at the connection every 10 seconds. Nothing is asked while the browser tab is hidden.
-- **Example:** Away from home: http://100.101.102.103:8095 (Tailscale)
+- **Example:** `Away from home: http://<its Tailscale address>:8095 (Tailscale)`
 
 ## What the status says
 

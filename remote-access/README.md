@@ -11,7 +11,7 @@ there is no arm/v7 build for older Raspberry Pis.
 ## Choose a way
 
 - **Tailscale (recommended).** Your phone joins your own private network (a tailnet), and Starboard, Jellyfin and
-  Audiobookshelf answer there at an address such as `http://100.101.102.103:8095`. Nothing is open to the internet.
+  Audiobookshelf answer there at an address such as `http://<its Tailscale address>:8095`. Nothing is open to the internet.
   It runs in userspace networking: no device, no extra rights and no change to this computer's network.
   Sign in with an auth key you make in your own Tailscale admin page (**Settings**, **Keys**), or choose
   **A sign-in link** and open the link the plug-in shows.
