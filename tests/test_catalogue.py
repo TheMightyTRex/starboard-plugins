@@ -40,5 +40,24 @@ class PublishedRule(unittest.TestCase):
             self.assertEqual(e["published"], make_examples.published(manifest(e["id"])), e["id"])
 
 
+
+class RecommendedRule(unittest.TestCase):
+    """DASH-425 (owner, 14 November 2026): "its recommended in the catalogue", "only downloaded if required"."""
+
+    def rows(self):
+        with open(os.path.join(ROOT, "catalogue.json"), encoding="utf-8") as f:
+            return {e["id"]: e for e in json.load(f)["plugins"]}
+
+    def test_every_row_says_whether_it_is_recommended(self):
+        rows = self.rows()
+        self.assertTrue(all(isinstance(e.get("recommended"), bool) for e in rows.values()))
+        self.assertEqual({k for k, e in rows.items() if e["recommended"]}, make_examples.RECOMMENDED)
+
+    def test_direct_play_is_recommended_and_a_few_at_most(self):
+        self.assertIn("direct-play", make_examples.RECOMMENDED)
+        self.assertLessEqual(len(make_examples.RECOMMENDED), 4)
+        self.assertTrue(make_examples.RECOMMENDED <= set(self.rows()))
+
+
 if __name__ == "__main__":
     unittest.main()

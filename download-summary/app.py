@@ -1,6 +1,6 @@
 """Download summary: How much has downloaded today and this week, from what Starboard sees in the queue."""
 import time
-from sbplugin import every, keep, remember, serve, starboard
+from sbplugin import band, changed, every, keep, last_error, remember, serve, starboard
 
 
 def sample():
@@ -21,7 +21,9 @@ def sample():
 def card():
     days = remember("days", {})
     week = sum(v for k, v in days.items() if k >= time.strftime("%Y-%m-%d", time.localtime(time.time() - 6 * 86400)))
-    return {"value": int(days.get(time.strftime("%Y-%m-%d"), 0)), "label": "today", "note": f"{week / 1e9:.1f} GB this week"}
+    err = last_error()
+    return band({"value": int(days.get(time.strftime("%Y-%m-%d"), 0)), "label": "today", "note": err or f"{week / 1e9:.1f} GB this week"},
+                "problem" if err else "ok", changed("days"))
 
 
 every(60, sample)

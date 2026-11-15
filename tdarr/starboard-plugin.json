@@ -2,17 +2,28 @@
  "manifest_version": 1,
  "id": "tdarr",
  "name": "Tdarr",
- "version": "1.0.2",
+ "version": "1.1.0",
  "description": "Tdarr converts films and series to save space, in Starboard's quiet hours. It can copy the Tdarr you already have, with its libraries and history.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/tdarr",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.13 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "network:lan",
   "network:port"
  ],
+ "adopt": {
+  "app": "tdarr",
+  "name": "Tdarr",
+  "into": "server",
+  "stop": true,
+  "copy": {
+   "/app/server": "server",
+   "/app/configs": "configs",
+   "/app/logs": "logs"
+  }
+ },
  "containers": [
   {
    "name": "server",
@@ -52,18 +63,21 @@
    "pids": 512
   }
  },
- "adopt": {
-  "app": "tdarr",
-  "name": "Tdarr",
-  "into": "server",
-  "stop": true,
-  "copy": {
-   "/app/server": "server",
-   "/app/configs": "configs",
-   "/app/logs": "logs"
-  }
+ "logo": {
+  "file": "logo.svg",
+  "alt": "Two arrows in a circle"
  },
  "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins and in the Catalogue."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.2."
+   ]
+  },
   {
    "version": "1.0.2",
    "date": "2026-11-13",

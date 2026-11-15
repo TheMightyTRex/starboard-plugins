@@ -32,7 +32,7 @@ import urllib.parse
 import zipfile
 
 import sbplugin
-from sbplugin import fetch, keep, plural, remember, serve, setting
+from sbplugin import band, fetch, keep, plural, remember, serve, setting
 
 INBOX = os.environ.get("TRACKS_INBOX", "/media/audio-description")
 MOUNTS = {"movies": os.environ.get("TRACKS_MOVIES", "/media/movies"), "tv": os.environ.get("TRACKS_TV", "/media/tv")}
@@ -395,7 +395,8 @@ def look_soon():
 
 def _guarded_look():
     try:
-        look()
+        with sbplugin.working("adding description tracks"):  # an update waits for it (plug-in API 1.14)
+            look()
         keep("_error", None)
     except Exception as e:  # noqa: BLE001 - kept for the page, never fatal
         keep("_error", {"at": time.time(), "text": f"{type(e).__name__}: {e}"[:200]})
@@ -599,8 +600,14 @@ def count():
     recs = _records()
     waiting = sum(1 for r in recs.values() if r.get("status") == "added")
     check_ = sum(1 for r in recs.values() if r.get("status") not in ("added", "confirmed", "described", "exists"))
-    return {"value": waiting, "label": "to check" if waiting != 1 else "track to check",
-            "note": f"{plural(check_, 'file')} {'needs' if check_ == 1 else 'need'} a look" if check_ else "Nothing else waiting"}
+    answer = {"value": waiting, "label": "to check" if waiting != 1 else "track to check",
+              "note": f"{plural(check_, 'file')} {'needs' if check_ == 1 else 'need'} a look" if check_ else "Nothing else waiting"}
+    at = max([float(r.get("at") or 0) for r in recs.values()] + [0]) or None
+    if _pass["running"]:
+        return band(answer, "working", at, "Adding tracks")
+    if waiting or check_:
+        return band(answer, "warning", at, f"{plural(waiting + check_, 'track')} to check")
+    return band(answer, "ok", at)
 
 
 ROUTES = {"/inbox": inbox, ("POST", "/inbox"): inbox, ("FILE", "/inbox/file"): upload,

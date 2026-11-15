@@ -2,13 +2,13 @@
  "manifest_version": 1,
  "id": "watching-now",
  "name": "Watching now",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "Who is watching what in Jellyfin right now, with how far through they are.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/watching-now",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.1 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "jellyfin:key",
   "network:lan"
@@ -16,7 +16,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:2fcdfff01a9722bc754efa9dd2a30aebd57fdef72eb2f526f085861c9876f8ff",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:83b980f1828cdee537bcdf03702ddf6458710cba53f9009938225df430d34d9e",
    "port": 8080,
    "network": "lan",
    "env": {
@@ -37,14 +37,43 @@
    "title": "Watching now",
    "type": "list",
    "path": "/card",
+   "refresh_seconds": 30,
    "example": {
     "items": [
      {
       "title": "Dune: Part Two",
       "detail": "Sam, living room TV, 40%"
      }
-    ]
+    ],
+    "status": "running",
+    "status_label": "1 watching",
+    "updated": 1794694110
    }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "An eye"
+ },
+ "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card.",
+    "**Kept up to date:** its card is asked every 30 seconds while the dashboard is open."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
+  {
+   "version": "1.0.0",
+   "date": "2026-11-12",
+   "added": [
+    "Who is watching what in Jellyfin right now, with how far through they are."
+   ]
   }
  ]
 }

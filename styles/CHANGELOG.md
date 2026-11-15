@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.0 (15 November 2026)
+
+### Added
+- A logo in Settings, Plug-ins and in the Catalogue.
+
+### Changed
+- Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.3.0.
+
 ## 1.3.0 (12 November 2026)
 
 ### Added

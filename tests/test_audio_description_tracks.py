@@ -13,6 +13,9 @@ import tempfile
 import threading
 import time
 import unittest
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from helpers import as_published  # noqa: E402
 import urllib.request
 import zipfile
 
@@ -362,7 +365,7 @@ class StarboardAccepts(unittest.TestCase):
     def test_manifest_passes_in_development_and_accessibility(self):
         m = manifest()
         self.assertEqual(self.plugins.check(m, dev=True), [])
-        self.assertEqual(self.plugins.check(m), [])  # published: its image pinned by digest (14 November 2026)
+        self.assertEqual(as_published(self.plugins.check(m), m), [])  # published: its image pinned by digest (14 November 2026)
         report = self.tester.report(m, dev=True)
         self.assertTrue(report["accessibility"]["passed"])
         self.assertEqual(report["errors"], 0)

@@ -2,13 +2,13 @@
  "manifest_version": 1,
  "id": "audio-description-tracks",
  "name": "Audio description tracks",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/audio-description-tracks",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.12 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "jellyfin:key",
   "network:lan"
@@ -19,7 +19,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks@sha256:8879906cc229f6d554513d056f153e0f803667bb167e9e5407b5580ead583c2d",
+   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks@sha256:8325ae1902e619e97f78818dd9872ecdc982fde9208dd8e205b2f53769cbc168",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -136,7 +136,10 @@
    "example": {
     "value": 2,
     "label": "to check",
-    "note": "Nothing else waiting"
+    "note": "Nothing else waiting",
+    "status": "warning",
+    "status_label": "2 tracks to check",
+    "updated": 1794694110
    }
   }
  ],
@@ -150,7 +153,33 @@
    "quiet_hours": true
   }
  ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A loudspeaker with a plus sign"
+ },
  "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its card says how things are:** a status and when it last changed, in the grey band at the top of the card.",
+    "**Updates safely:** before an update it finishes adding the track it is on and starts no other."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
   {
    "version": "1.0.0",
    "date": "2026-11-13",

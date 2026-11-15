@@ -1,6 +1,6 @@
 """Disk forecast: When each disk fills at the rate it has been filling over the last month."""
 import time
-from sbplugin import every, keep, last_error, remember, serve, starboard
+from sbplugin import band, changed, every, keep, last_error, remember, serve, starboard
 
 
 def sample():
@@ -16,7 +16,9 @@ def sample():
 def card():
     hist = remember("history", {})
     if not hist:
-        return {"state": "warning", "text": last_error() or "Measuring: a forecast after two days"}
+        err = last_error()
+        return band({"state": "warning", "text": err or "Measuring: a forecast after two days"}, "problem" if err else "waiting",
+                    label=None if err else "Measuring")
     worst, parts = None, []
     for name, days in hist.items():
         rows = sorted(days.items())
@@ -30,7 +32,8 @@ def card():
         worst = left if worst is None else min(worst, left)
         parts.append(f"{name}: full in about {round(left):,} days")
     state = "problem" if worst is not None and worst < 14 else "warning" if worst is not None and worst < 60 else "ok"
-    return {"state": state, "text": ". ".join(parts)}
+    label = f"Full in {round(worst):,} days" if worst is not None and worst < 60 else None
+    return band({"state": state, "text": ". ".join(parts)}, state, changed("history"), label)
 
 
 every(3600, sample)

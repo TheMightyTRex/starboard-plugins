@@ -83,7 +83,8 @@ class Screen(unittest.TestCase):
         use(method="tailscale")
         app.targets.update({"starboard": ("starboard", 8095), "jellyfin": ("host.docker.internal", 8096)})
         app.state.update({"method": "tailscale", "phase": "connected", "text": "Connected", "ips": ["100.101.102.103"], "dns": "starboard.tail1.ts.net"})
-        self.assertEqual(app.card(), {"state": "ok", "text": "Away from home: http://100.101.102.103:8095 (Tailscale)"})
+        self.assertEqual(app.card(), {"state": "ok", "text": "Away from home: http://100.101.102.103:8095 (Tailscale)",
+                                      "status": "ok", "status_label": "Connected"})
         items = {i["id"]: i for i in app.screen()["items"]}
         self.assertEqual(items["jellyfin"]["address"], "http://100.101.102.103:8096")
         self.assertEqual(items["audiobookshelf"]["state"], "off")

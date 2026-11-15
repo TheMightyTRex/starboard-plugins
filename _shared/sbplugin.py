@@ -7,7 +7,14 @@
 - remember(name) and keep(name, value): a small JSON file in /data, the plug-in's own folder.
 - every(seconds, job): a background job; serve(routes): the HTTP answers Starboard asks for (cards, buttons, health).
   A POST answer that takes one argument is given the JSON body Starboard sent, such as an event (64 KB at most).
+  A ("FILE", path) answer is given a file Starboard streams to it (the name, the item, its length and the stream),
+  which it reads a piece at a time (Audio description tracks, DASH-410).
+- band(answer, status): adds the card band's status, status_label and updated to a card answer (plug-in API 1.14);
+  changed(name) is when /data/<name>.json last changed, for updated.
+- Updates (plug-in API 1.14): serve() answers POST /update/before by holding new background runs and waiting for any
+  that is running to finish, and POST /update/after by letting them run again, so an update never cuts one short.
 """
+import contextlib
 import json
 import os
 import threading
@@ -89,8 +96,11 @@ def every(seconds, job, first=5):
     def loop():
         time.sleep(first)
         while True:
+            while holding():  # an update is about to start: no new run until it is done (API 1.14)
+                time.sleep(5)
             try:
-                job()
+                with working(getattr(job, "__name__", "a background job")):
+                    job()
                 keep("_error", None)
             except Exception as e:  # noqa: BLE001 - a plug-in keeps running and says what went wrong
                 keep("_error", {"at": time.time(), "text": f"{type(e).__name__}: {e}"[:200]})
@@ -103,25 +113,112 @@ def last_error():
     return e.get("text") if isinstance(e, dict) else ""
 
 
+# The card band (plug-in API 1.14, DASH-428) -------------------------------------------------------------------
+STATUSES = {"ok", "done", "ready", "protected", "working", "converting", "scanning", "updating", "running", "waiting", "idle",
+            "scheduled", "paused", "inactive", "warning", "needs_setup", "problem", "failed", "stopped"}
+
+
+def changed(name):
+    """When /data/<name>.json last changed, in whole seconds since 1970, or None when it is not there yet."""
+    try:
+        return int(os.stat(os.path.join(DATA, f"{name}.json")).st_mtime)
+    except OSError:
+        return None
+
+
+def band(answer, status, updated=None, label=None, refresh=None):
+    """The card answer with the band's fields: status (one of STATUSES), status_label (24 characters at most) and
+    updated (seconds since 1970, never in the future). An older Starboard ignores them."""
+    if status not in STATUSES:
+        raise ValueError(f"Unknown card status {status}")
+    out = {**answer, "status": status}
+    if label:
+        out["status_label"] = str(label)[:24]
+    if updated:
+        out["updated"] = min(int(updated), int(time.time()))
+    if refresh:
+        out["refresh_seconds"] = max(10, min(int(refresh), 3600))
+    return out
+
+
+# Updates (plug-in API 1.14, DASH-424) -------------------------------------------------------------------------
+_work = {"running": [], "hold": 0.0}
+_work_lock = threading.Lock()
+HOLD_SECONDS = 600  # the longest an update may hold new runs, in case its after step never comes
+WAIT_SECONDS = 50  # how long the before step waits for a run to finish: inside Starboard's 60 seconds
+
+
+@contextlib.contextmanager
+def working(what):
+    """Marks a background run or a button as running, so the update's before step can wait for it."""
+    with _work_lock:
+        _work["running"].append(what)
+    try:
+        yield
+    finally:
+        with _work_lock:
+            _work["running"].remove(what)
+
+
+def holding():
+    return time.time() < _work["hold"]
+
+
+def before_update(body=None):
+    """POST /update/before: no new background run starts, and one that is running is given time to finish."""
+    _work["hold"] = time.time() + HOLD_SECONDS
+    waited = time.monotonic()
+    while _work["running"] and time.monotonic() - waited < WAIT_SECONDS:
+        time.sleep(0.5)
+    if _work["running"]:
+        _work["hold"] = 0.0
+        return {"ok": False, "said": f"Still busy with {_work['running'][0].replace('_', ' ')}. Try again in a few minutes"}
+    return {"ok": True, "said": "Ready to update: nothing is running" if time.monotonic() - waited < 1 else "Ready to update: the last run finished"}
+
+
+def after_update(body=None):
+    """POST /update/after: background runs may start again, after an update or a Roll back."""
+    _work["hold"] = 0.0
+    return {"ok": True, "said": f"Running again after the {'roll back' if (body or {}).get('outcome') == 'rolled_back' else 'update'}"}
+
+
 def plural(n, one, many=None):
     return f"{n:,} {one if n == 1 else (many or one + 's')}"
 
 
 def serve(routes, port=8080):
-    """routes: {"/card": fn() -> dict, ("POST", "/run"): fn() -> dict}. /health is added."""
-    table = {("GET", "/health"): lambda: {"ok": True}}
+    """routes: {"/card": fn() -> dict, ("POST", "/run"): fn() -> dict}. /health, /update/before and /update/after are
+    added unless given. A POST other than those is counted as running work, and a job (/jobs/...) is not started
+    while an update holds new runs."""
+    table = {("GET", "/health"): lambda: {"ok": True}, ("POST", "/update/before"): before_update,
+             ("POST", "/update/after"): after_update}
     for k, fn in routes.items():
         table[k if isinstance(k, tuple) else ("GET", k)] = fn
 
     class Handler(BaseHTTPRequestHandler):
         def _answer(self, method):
-            fn = table.get((method, urllib.parse.urlparse(self.path).path))
+            url = urllib.parse.urlparse(self.path)
+            upload = table.get(("FILE", url.path)) if method == "POST" else None
+            if upload:  # a chosen file, streamed as it is: never read whole into memory
+                q = urllib.parse.parse_qs(url.query)
+                try:
+                    with working("a file being added"):
+                        return self._send(200, upload((q.get("name") or [""])[0], (q.get("id") or [""])[0],
+                                                      int(self.headers.get("Content-Length") or 0), self.rfile))
+                except Exception as e:  # noqa: BLE001 - Starboard shows the message
+                    return self._send(400 if isinstance(e, ValueError) else 502, {"error": f"{e}"[:200]})
+            fn = table.get((method, url.path))
             if not fn:
                 return self._send(404, {"error": "Not found"})
             try:
-                if method == "POST" and getattr(fn, "__code__", None) and fn.__code__.co_argcount:
-                    return self._send(200, fn(self._body()))
-                return self._send(200, fn())
+                if method == "POST" and url.path.startswith("/update/"):
+                    return self._send(200, fn(self._body()) if getattr(fn, "__code__", None) and fn.__code__.co_argcount else fn())
+                if method == "POST" and url.path.startswith("/jobs/") and holding():
+                    return self._send(200, {"said": "Not started: the plug-in is about to be updated"})
+                with (working(url.path.rsplit("/", 1)[-1] or "a job") if method == "POST" else contextlib.nullcontext()):
+                    if method == "POST" and getattr(fn, "__code__", None) and fn.__code__.co_argcount:
+                        return self._send(200, fn(self._body()))
+                    return self._send(200, fn())
             except Exception as e:  # noqa: BLE001 - Starboard shows the message
                 return self._send(502, {"error": f"{e}"[:200]})
 

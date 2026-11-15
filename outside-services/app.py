@@ -1,7 +1,7 @@
 """Outside services: Up or down for things that are not on this server: your router, a NAS, a website."""
 import time
 import urllib.error
-from sbplugin import every, fetch, keep, remember, serve, setting
+from sbplugin import band, changed, every, fetch, keep, remember, serve, setting
 
 
 def targets():
@@ -31,14 +31,20 @@ def check():
 def status():
     rows = remember("rows", [])
     if not rows:
-        return {"state": "warning", "text": "Add addresses in the plug-in's settings" if not targets() else "Not checked yet"}
+        return band({"state": "warning", "text": "Add addresses in the plug-in's settings" if not targets() else "Not checked yet"},
+                    "needs_setup" if not targets() else "waiting")
     down = [r["name"] for r in rows if not r["up"]]
-    return {"state": "problem" if down else "ok", "text": f"Not answering: {', '.join(down)}" if down else f"All {len(rows)} answer"}
+    return band({"state": "problem" if down else "ok", "text": f"Not answering: {', '.join(down)}" if down else f"All {len(rows)} answer"},
+                "problem" if down else "ok", changed("rows"), f"{len(down)} not answering" if down else None)
 
 
 def card():
-    return {"items": [{"title": r["name"], "detail": f"Up, {r['ms']} ms" if r["up"] else "Not answering", "link": r["url"]}
-                      for r in remember("rows", [])][:10]}
+    rows = remember("rows", [])
+    down = sum(1 for r in rows if not r["up"])
+    out = {"items": [{"title": r["name"], "detail": f"Up, {r['ms']} ms" if r["up"] else "Not answering", "link": r["url"]} for r in rows][:10]}
+    if not rows:
+        return band(out, "needs_setup" if not targets() else "waiting")
+    return band(out, "problem" if down else "ok", changed("rows"), f"{down} not answering" if down else None)
 
 
 every(60 * float(setting("minutes", 5)), check, first=2)

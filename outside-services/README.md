@@ -16,7 +16,7 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
 ## Settings
 
-- **Addresses to check**: One each, such as http://192.168.1.1 or https://example.org. Give a name first if you like: Router http://192.168.1.1
+- **Addresses to check**: One each, such as http://192.0.2.1 or https://example.org. Give a name first if you like: Router http://192.0.2.1
 - **Check every**
 
 ## Add it

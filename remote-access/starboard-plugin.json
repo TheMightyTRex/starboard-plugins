@@ -2,13 +2,13 @@
  "manifest_version": 1,
  "id": "remote-access",
  "name": "Remote access",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/remote-access",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.8 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "apps:read",
   "network:lan"
@@ -16,7 +16,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-remote-access@sha256:af613b2fe109a206fea731b9e8e0312e2bec0a41d782b354fc239387b78c7df2",
+   "image": "ghcr.io/themightytrex/starboard-plugin-remote-access@sha256:ef50260e2ded8917b42c216efe97f20eab495845f3192f496513a9bf1e0373d1",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -104,14 +104,16 @@
    "label": "Share Starboard",
    "type": "switch",
    "default": true,
-   "group": "What to share"
+   "group": "What to share",
+   "hint": "Starboard's own pages, away from home."
   },
   {
    "key": "share_jellyfin",
    "label": "Share Jellyfin",
    "type": "switch",
    "default": true,
-   "group": "What to share"
+   "group": "What to share",
+   "hint": "Jellyfin, so the apps on phones and televisions work away from home."
   },
   {
    "key": "share_audiobookshelf",
@@ -142,11 +144,29 @@
    "path": "/card",
    "example": {
     "state": "ok",
-    "text": "Away from home: http://100.101.102.103:8095 (Tailscale)"
+    "text": "Away from home: http://100.101.102.103:8095 (Tailscale)",
+    "status": "ok",
+    "status_label": "Connected",
+    "updated": 1794694110
    }
   }
  ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A phone with signal waves"
+ },
  "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its card says how things are:** a status and when it last changed, in the grey band at the top of the card."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
   {
    "version": "1.0.0",
    "date": "2026-11-13",

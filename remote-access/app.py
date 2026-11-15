@@ -387,8 +387,8 @@ def look_cloudflare():
 def set_phase(phase, text, fatal=False):
     with lock:
         if state["phase"] != phase or state["text"] != text:
-            state["phase"], state["text"], state["fatal"] = phase, text, fatal
-            keep("state", {"phase": phase, "text": text, "at": time.time()})
+            state["phase"], state["text"], state["fatal"], state["changed"] = phase, text, fatal, time.time()
+            keep("state", {"phase": phase, "text": text, "at": state["changed"]})
 
 
 def _drain(proc):
@@ -478,17 +478,23 @@ def address(app):
 
 
 def card():
+    """The card, with the band's status and when the connection last changed (plug-in API 1.14; an older Starboard
+    ignores both)."""
     with lock:
-        phase, text, m = state["phase"], state["text"], state["method"]
+        phase, text, m, at = state["phase"], state["text"], state["method"], state.get("changed")
+    when = {"updated": int(at)} if at else {}
     if phase == "connected":
         where = address("starboard") or address("jellyfin")
         how = "Tailscale" if m == "tailscale" else "Cloudflare Tunnel"
-        return {"state": "ok", "text": f"Away from home: {where} ({how})" if where else f"Connected through {how}"}
+        return {"state": "ok", "text": f"Away from home: {where} ({how})" if where else f"Connected through {how}", "status": "ok",
+                "status_label": "Connected", **when}
     if phase in ("off",):
-        return {"state": "warning", "text": "Not set up: choose Tailscale or Cloudflare Tunnel in its settings"}
+        return {"state": "warning", "text": "Not set up: choose Tailscale or Cloudflare Tunnel in its settings", "status": "needs_setup", **when}
     if phase in ("starting", "sign-in", "approve", "no-routes"):
-        return {"state": "warning", "text": text}
-    return {"state": "problem", "text": text or "Not connected"}
+        return {"state": "warning", "text": text, "status": "waiting" if phase == "starting" else "needs_setup",
+                "status_label": {"starting": "Connecting", "sign-in": "Needs signing in", "approve": "Needs approving",
+                                 "no-routes": "No apps shared"}[phase], **when}
+    return {"state": "problem", "text": text or "Not connected", "status": "problem", "status_label": "Not connected", **when}
 
 
 def _reach(app):

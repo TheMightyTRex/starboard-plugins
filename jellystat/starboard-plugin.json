@@ -2,13 +2,13 @@
  "manifest_version": 1,
  "id": "jellystat",
  "name": "Jellystat",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/jellystat",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.13 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "jellyfin:key",
   "network:lan",
@@ -20,7 +20,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-jellystat@sha256:6191c7a630ba2aa7d456e99bf5224c388910f26b3dfc20d736f52906325e30ba",
+   "image": "ghcr.io/themightytrex/starboard-plugin-jellystat@sha256:c229ae7259f383b17d03d2a5877eb62b706957d917f4a7e289162169418960fa",
    "port": 8080,
    "user": "70:70",
    "volumes": [
@@ -107,15 +107,6 @@
    "hint": "Brings in the figures from a Jellystat you had before. Optional."
   }
  ],
- "cards": [
-  {
-   "id": "status",
-   "title": "Jellystat",
-   "type": "status",
-   "path": "/status",
-   "refresh_minutes": 10
-  }
- ],
  "actions": [
   {
    "id": "restore",
@@ -124,7 +115,48 @@
    "confirm": "Restore the backup named in Backup file to restore? Jellystat's figures are replaced by the backup's. Your current figures are kept in a database beside it, not deleted."
   }
  ],
+ "cards": [
+  {
+   "id": "status",
+   "title": "Jellystat",
+   "type": "status",
+   "path": "/status",
+   "refresh_minutes": 10,
+   "example": {
+    "state": "ok",
+    "text": "Connected to Jellyfin. Open Jellystat from its page in Settings, Plug-ins.",
+    "status": "ok",
+    "updated": 1794694110
+   }
+  }
+ ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A pie chart"
+ },
  "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its card says how things are:** a status and when it last changed, in the grey band at the top of the card.",
+    "**Updates safely:** an update waits for a restore that is running, or is refused until it is done."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
   {
    "version": "1.0.0",
    "date": "2026-11-13",

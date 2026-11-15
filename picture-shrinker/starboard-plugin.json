@@ -1,0 +1,159 @@
+{
+ "manifest_version": 1,
+ "id": "picture-shrinker",
+ "name": "Picture shrinker",
+ "version": "1.0.0",
+ "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. Each picture is checked before it replaces the one Jellyfin saved.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/picture-shrinker",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.14 <2.0",
+ "permissions": [
+  "jellyfin:metadata"
+ ],
+ "needs": [
+  "jellyfin"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-picture-shrinker@sha256:aa8c586d5766acd23fe9bacb6ca68d236387b2949881fc9c6417bf5e261a3cad",
+   "port": 8080,
+   "volumes": [
+    "data",
+    "jellyfin-metadata"
+   ],
+   "user": "media",
+   "start": "always"
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 128,
+   "cpus": 0.5
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "saved",
+   "label": "Space saved",
+   "type": "custom",
+   "choices": "/saved"
+  },
+  {
+   "key": "when",
+   "label": "When to shrink",
+   "type": "schedule",
+   "default": {
+    "every": "week",
+    "day": "sunday",
+    "time": "03:30"
+   },
+   "hint": "Every day, week or month, at a time. It works at the lowest priority, so a time when the server is quiet is best."
+  },
+  {
+   "key": "poster_height",
+   "label": "Posters no taller than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 900,
+   "min": 300,
+   "max": 3000,
+   "hint": "A poster taller than this is shrunk to this height. 900 pixels looks sharp on a television."
+  },
+  {
+   "key": "person_width",
+   "label": "Photos of people no wider than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 400,
+   "min": 100,
+   "max": 2000,
+   "hint": "A photo of a cast or crew member wider than this is shrunk to this width."
+  },
+  {
+   "key": "new_pictures",
+   "label": "Shrink new pictures in quiet hours",
+   "type": "switch",
+   "default": false,
+   "hint": "Each hour of quiet hours, shrinks the posters and photos Jellyfin saved since the last pass, so they never build up."
+  }
+ ],
+ "actions": [
+  {
+   "id": "shrink-now",
+   "label": "Shrink now",
+   "path": "/shrink-now"
+  },
+  {
+   "id": "stop",
+   "label": "Stop shrinking",
+   "path": "/stop"
+  }
+ ],
+ "cards": [
+  {
+   "id": "saved",
+   "title": "Space saved",
+   "type": "stat",
+   "path": "/card",
+   "format": "bytes",
+   "refresh_seconds": 60,
+   "example": {
+    "value": 41200000000,
+    "label": "saved",
+    "note": "18,402 pictures shrunk. Next run Sunday 16 November at 03:30",
+    "status": "scheduled",
+    "status_label": "Next Sun 03:30",
+    "updated": 1794694110,
+    "refresh_seconds": 600
+   }
+  }
+ ],
+ "jobs": [
+  {
+   "id": "shrink",
+   "label": "Shrink pictures",
+   "path": "/jobs/shrink",
+   "schedule": "when",
+   "time_limit_minutes": 120
+  },
+  {
+   "id": "new",
+   "label": "Shrink new pictures in quiet hours",
+   "path": "/jobs/new",
+   "every_hours": 1,
+   "quiet_hours": true,
+   "time_limit_minutes": 30
+  }
+ ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A picture with an arrow pointing into its corner"
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-15",
+   "added": [
+    "**Shrinks Jellyfin's pictures:** posters to 900 pixels tall and photos of cast and crew to 400 pixels wide, both settings. Smaller pictures are left alone.",
+    "**Checked before it replaces:** each picture is written beside the original, opened again and checked, and swapped in only when it is smaller.",
+    "**When you choose:** every day, week or month at a time, with Shrink now, at the lowest priority.",
+    "**New pictures in quiet hours:** deactivated unless you activate it.",
+    "**Space saved:** on its page and on a dashboard card."
+   ]
+  }
+ ]
+}

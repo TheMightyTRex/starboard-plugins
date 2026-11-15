@@ -50,6 +50,23 @@ def starboard_cleaners():
     return plugin_cards, plugin_custom
 
 
+# Between a release of the plug-in API and publishing (15 November 2026, plugins-114): an image of our own may name its
+# next tag until GitHub builds it and its digest is pinned; the catalogue lists it as coming soon meanwhile.
+NEXT_TAG = r"^ghcr\.io/themightytrex/starboard-plugin-[a-z-]+:\d+\.\d+\.\d+$"
+
+
+def pinned_or_next(image):
+    import re
+    return bool(re.search(r"@sha256:[0-9a-f]{64}$", image) or re.match(NEXT_TAG, image))
+
+
+def as_published(problems, m):
+    """Starboard's check of a manifest, leaving out only "pinned by digest" for our own images that name their next tag."""
+    import re
+    ours = all(re.match(NEXT_TAG, c["image"]) or "@sha256:" in c["image"] for c in m.get("containers") or [])
+    return [p for p in problems if not (ours and "must be pinned by digest" in p)]
+
+
 def manifest(pid):
     with open(os.path.join(ROOT, pid, "starboard-plugin.json"), encoding="utf-8") as f:
         return json.load(f)

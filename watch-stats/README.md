@@ -43,6 +43,10 @@ itself: each person's last play of each title, with no device or time watched.
 Jellystat needs two containers and PostgreSQL (about 60 MB measured on a small server, 150 to 250 MB on a busy one).
 This plug-in rests when no one is looking, and uses about 14 MB for a few seconds when a card or table asks.
 
+## Updating
+
+Before an update, it finishes any check or message it is part way through and starts no new one, so the update never cuts one short (plug-in API 1.14). What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.
+
 ## Add it
 
 In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:

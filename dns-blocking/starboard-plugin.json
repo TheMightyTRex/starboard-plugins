@@ -2,20 +2,20 @@
  "manifest_version": 1,
  "id": "dns-blocking",
  "name": "Ad blocking",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "How many adverts and trackers Pi-hole or AdGuard Home blocked today.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/dns-blocking",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.1 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "network:lan"
  ],
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:2fcdfff01a9722bc754efa9dd2a30aebd57fdef72eb2f526f085861c9876f8ff",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:83b980f1828cdee537bcdf03702ddf6458710cba53f9009938225df430d34d9e",
    "port": 8080,
    "network": "lan",
    "env": {
@@ -45,7 +45,7 @@
    "key": "address",
    "label": "Its address",
    "type": "address",
-   "hint": "Such as http://192.168.1.2 for Pi-hole, or http://192.168.1.2:3000 for AdGuard Home."
+   "hint": "Such as http://192.0.2.2 for Pi-hole, or http://192.0.2.2:3000 for AdGuard Home."
   },
   {
    "key": "username",
@@ -70,8 +70,34 @@
    "example": {
     "value": 4210,
     "label": "blocked",
-    "note": "12% of 35,000 lookups"
+    "note": "12% of 35,000 lookups",
+    "status": "protected",
+    "updated": 1794694110
    }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A circle with a line through it"
+ },
+ "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
+  {
+   "version": "1.0.0",
+   "date": "2026-11-12",
+   "added": [
+    "How many adverts and trackers Pi-hole or AdGuard Home blocked today."
+   ]
   }
  ]
 }

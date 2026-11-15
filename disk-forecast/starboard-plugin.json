@@ -2,20 +2,20 @@
  "manifest_version": 1,
  "id": "disk-forecast",
  "name": "Disk forecast",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "When each disk fills at the rate it has been filling over the last month.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/disk-forecast",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.1 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "system:read"
  ],
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:2fcdfff01a9722bc754efa9dd2a30aebd57fdef72eb2f526f085861c9876f8ff",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:83b980f1828cdee537bcdf03702ddf6458710cba53f9009938225df430d34d9e",
    "port": 8080,
    "volumes": [
     "data"
@@ -40,8 +40,34 @@
    "path": "/card",
    "example": {
     "state": "ok",
-    "text": "Pool full in about 140 days"
+    "text": "Pool full in about 140 days",
+    "status": "ok",
+    "updated": 1794694110
    }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A disk drive, partly full"
+ },
+ "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
+  {
+   "version": "1.0.0",
+   "date": "2026-11-12",
+   "added": [
+    "When each disk fills at the rate it has been filling over the last month."
+   ]
   }
  ]
 }

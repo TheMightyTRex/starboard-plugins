@@ -1,12 +1,13 @@
 """Home Assistant: Your house in one sentence on the dashboard: the things you choose from Home Assistant."""
-from sbplugin import fetch, serve, setting
+import time
+from sbplugin import band, fetch, serve, setting
 
 
 def card():
     base, token = str(setting("address", "")).rstrip("/"), setting("token", "")
     ids = setting("entities", []) or []
     if not base or not token or not ids:
-        return {"state": "warning", "text": "Add the address, a token and what to show in the plug-in's settings"}
+        return band({"state": "warning", "text": "Add the address, a token and what to show in the plug-in's settings"}, "needs_setup")
     alert = {s.strip().lower() for s in str(setting("alert_on", "on, open, unlocked")).split(",") if s.strip()}
     parts, warn = [], False
     for eid in ids[:8]:
@@ -16,7 +17,7 @@ def card():
         state = s.get("state", "")
         warn |= state.lower() in alert
         parts.append(f"{name}: {state}{' ' + unit if unit else ''}")
-    return {"state": "warning" if warn else "ok", "text": ". ".join(parts)}
+    return band({"state": "warning" if warn else "ok", "text": ". ".join(parts)}, "warning" if warn else "ok", time.time())
 
 
 serve({"/card": card})

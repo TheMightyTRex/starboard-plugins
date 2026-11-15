@@ -2,6 +2,7 @@
 """Writes each example plug-in's folder from tools/examples_src.py: starboard-plugin.json, app.py, sbplugin.py (from
 _shared), Dockerfile, README.md, LICENSE and install.py (the same installer as Styles). Run it after changing an
 example, then tools/build_images.sh to build the images and tools/make_zips.py for the zips."""
+import base64
 import datetime as dt
 import json
 import os
@@ -11,7 +12,8 @@ import sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from examples_src import COMMON, EXAMPLES, IMAGE_VERSION, NEW_IN_IMAGE, VERSION  # noqa: E402
+from examples_src import COMMON, EXAMPLES, IMAGE_VERSION, NEW_IN_IMAGE, UPDATE_STEPS, VERSION, changes_for  # noqa: E402
+import make_logos  # noqa: E402
 
 DIGEST_FILE = os.path.join(ROOT, "tools", "examples-digest.txt")
 _digest = open(DIGEST_FILE).read().strip() if os.path.isfile(DIGEST_FILE) else ""
@@ -67,6 +69,10 @@ def readme(pid, m, extra=""):
             lines += [f"- **{s['label']}**" + (f": {s['hint']}" if s.get("hint") else "") for s in plain if s.get("group", "Settings") == g] + [""]
     if extra:
         lines += [extra.strip(), ""]
+    if (m.get("update") or {}).get("before"):
+        lines += ["## Updating", "", "Before an update, it finishes any check or message it is part way through and starts no new one, "
+                  "so the update never cuts one short (plug-in API 1.14). What changed in each version is in "
+                  "[CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.", ""]
     lines += ["## Add it", "", "In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:", "",
               f"`https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json`", "",
               "Or run `python3 install.py` in this folder.", ""]
@@ -91,9 +97,15 @@ def main():
         os.makedirs(out, exist_ok=True)
         m = {**COMMON, "id": pid, "version": VERSION,
              "homepage": f"https://github.com/TheMightyTRex/starboard-plugins/tree/main/{pid}", **spec}
+        # Plug-in API 1.14 (15 November 2026): a logo, What is new for every version, and update steps for those that
+        # work in the background (tools/examples_src.py UPDATE_STEPS).
+        m["logo"] = make_logos.entry(pid)
+        m["changes"] = changes_for(pid, m)
+        if pid in UPDATE_STEPS:
+            m["update"] = UPDATE_STEPS[pid]
         order = ["manifest_version", "id", "name", "version", "description", "author", "licence", "homepage", "support_url",
-                 "starboard_api", "permissions", "needs", "containers", "resources", "health", "settings", "actions", "cards",
-                 "events", "jobs", "styles", "changes"]
+                 "starboard_api", "permissions", "needs", "containers", "resources", "health", "settings", "setup_required",
+                 "actions", "cards", "events", "jobs", "styles", "notices", "update", "logo", "changes"]
         m = {k: m[k] for k in order if k in m}
         # One shared image for every example (12 November 2026): pinned by digest once GitHub has built it.
         for c in m.get("containers") or []:
@@ -130,6 +142,11 @@ KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jel
          "notifications": "System", "watch-stats": "Jellyfin"}
 KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 KINDS["audio-description-tracks"] = "Accessibility"  # hand-made, its own image with ffmpeg (DASH-410)
+KINDS["direct-play"] = "Jellyfin"  # hand-made, its own image with ffmpeg (DASH-425)
+KINDS["picture-shrinker"] = "Jellyfin"  # hand-made, its own image with Pillow (DASH-432); not recommended, never added by itself
+# Recommended (DASH-425, owner 14 November 2026: "its recommended in the catalogue"): a few plug-ins that suit most
+# servers, shown first in Starboard's Catalogue (plug-in API 1.14). Never installed by default: adding stays a choice.
+RECOMMENDED = {"direct-play", "notifications", "disk-forecast"}
 # Apps you can add (DASH-411), each with its memory and processor at rest: the 13 November 2026 benchmark where it
 # measured the app, else measured with tools/app_check.py.
 REST = {"calibre-web": (182, 0.01), "jellystat": (117, 0.22), "kavita": (337, 0.99), "maintainerr": (127, 0.0),
@@ -145,6 +162,42 @@ def published(m):
     return all(PINNED.search(c.get("image") or "") for c in m.get("containers") or [])
 
 
+def logo_fields(pid, m):
+    """The catalogue's logo (plug-in API 1.14): the plug-in's own logo file as a data address, and its words, so
+    Starboard's Catalogue shows it before anything is added and never loads it from GitHub."""
+    logo = m.get("logo") or {}
+    path = os.path.join(ROOT, pid, logo.get("file") or "")
+    if not logo.get("file") or not os.path.isfile(path):
+        return {}
+    kind = "image/svg+xml" if path.endswith(".svg") else "image/png"
+    uri = f"data:{kind};base64,{base64.b64encode(open(path, 'rb').read()).decode()}"
+    if len(uri) > LOGO_DATA_MAX:
+        raise ValueError(f"{pid}: the logo is too large for the catalogue ({len(uri):,} of {LOGO_DATA_MAX:,} characters)")
+    return {"logo": uri, "logo_alt": logo["alt"]}
+
+
+LOGO_DATA_MAX = 24 * 1024  # Starboard's limit for a catalogue's data address (plugin_logo.DATA_MAX)
+PREVIOUS = json.load(open(os.path.join(ROOT, "tools", "previous-versions.json"), encoding="utf-8"))
+
+
+def versions(pid, m):
+    """A plug-in whose new version needs a newer plug-in API keeps its last version in the catalogue (15 November
+    2026), pinned to the commit it was published at with its SHA-256, so a Starboard with an older plug-in API (such as
+    0.17.0, with 1.13) still installs that one, and a newer Starboard is offered the new one."""
+    old = PREVIOUS["plugins"].get(pid)
+    if not old or old["version"] == m["version"]:
+        return {}
+    first = (m.get("changes") or [{}])[0]
+    words = " ".join(line.replace("**", "") for kind in ("added", "changed", "fixed") for line in first.get(kind) or [])
+    return {"versions": [
+        {"version": m["version"], "starboard_api": m["starboard_api"], "released": first.get("date", ""),
+         "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
+         "changelog": words[:600]},
+        {"version": old["version"], "starboard_api": old["starboard_api"],
+         "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/{PREVIOUS['commit']}/{pid}/starboard-plugin.json",
+         "manifest_sha256": old["sha256"]}]}
+
+
 def write_catalogue():
     rows = []
     for pid in sorted(os.listdir(ROOT)):
@@ -155,7 +208,9 @@ def write_catalogue():
         rows.append({"id": m["id"], "name": m["name"], "description": m["description"], "kind": KINDS.get(pid, "Other"),
                      "author": m["author"], "permissions": m["permissions"], "version": m["version"], "starboard_api": m["starboard_api"],
                      "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
-                     "published": published(m)})
+                     "published": published(m), "recommended": pid in RECOMMENDED})
+        rows[-1].update(logo_fields(pid, m))
+        rows[-1].update(versions(pid, m))
         if pid in REST:
             rows[-1]["rest"] = {"memory_mb": REST[pid][0], "cpu_percent": REST[pid][1]}
     with open(os.path.join(ROOT, "catalogue.json"), "w", encoding="utf-8") as f:

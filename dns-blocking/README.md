@@ -16,7 +16,7 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 ## Settings
 
 - **Which one**
-- **Its address**: Such as http://192.168.1.2 for Pi-hole, or http://192.168.1.2:3000 for AdGuard Home.
+- **Its address**: Such as http://192.0.2.2 for Pi-hole, or http://192.0.2.2:3000 for AdGuard Home.
 - **User name**: AdGuard Home only.
 - **Password**: Pi-hole's web password, or AdGuard Home's. Kept by Starboard.
 

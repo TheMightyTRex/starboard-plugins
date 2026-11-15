@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0 (15 November 2026)
+
+### Added
+- A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards.
+- Its card says how things are: a status and when it last changed, in the grey band at the top of the card.
+- Updates safely: before an update it finishes adding the track it is on and starts no other.
+
+### Changed
+- Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0.
+
 ## 1.0.0 (13 November 2026)
 
 ### Added

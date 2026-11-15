@@ -14,7 +14,7 @@ import time
 import urllib.parse
 from email.message import EmailMessage
 
-from sbplugin import fetch, keep, remember, serve, setting, settings, starboard
+from sbplugin import band, fetch, keep, remember, serve, setting, settings, starboard
 
 SECRETS = ("smtp_password", "telegram_token", "discord_webhook", "pushover_user", "pushover_token", "ntfy_token", "webhooks")
 CHANNELS = {"email": "Email", "telegram": "Telegram", "discord": "Discord", "signal": "Signal", "pushover": "Pushover",
@@ -376,22 +376,28 @@ def card():
     log = remember("log", []) or []
     real = [x for x in log if x.get("kind") != "test"]
     if not active():
-        return {"state": "warning", "text": "No channel is active. Activate one in Settings, Plug-ins, Notifications."}
+        return band({"state": "warning", "text": "No channel is active. Activate one in Settings, Plug-ins, Notifications."},
+                    "needs_setup", label="No channel active")
     if not real:
-        return {"state": "ok", "text": f"Ready to send by {', '.join(CHANNELS[c] for c in active())}. Nothing sent yet."}
+        return band({"state": "ok", "text": f"Ready to send by {', '.join(CHANNELS[c] for c in active())}. Nothing sent yet."}, "ready")
     last = real[-1]
     when = time.strftime("%a %H:%M", time.localtime(last["at"]))
     if last["failed"]:
-        return {"state": "problem", "text": f"{when}, {last['title']}: not sent by {'; '.join(last['failed'])}"[:160]}
-    return {"state": "ok", "text": f"{when}, {last['title']}: sent by {', '.join(last['sent'])}"[:160]}
+        return band({"state": "problem", "text": f"{when}, {last['title']}: not sent by {'; '.join(last['failed'])}"[:160]},
+                    "problem", last["at"], "Last one not sent")
+    return band({"state": "ok", "text": f"{when}, {last['title']}: sent by {', '.join(last['sent'])}"[:160]}, "ok", last["at"])
 
 
 def recent():
-    rows = []
-    for x in reversed((remember("log", []) or [])[-10:]):
+    rows, log = [], (remember("log", []) or [])[-10:]
+    for x in reversed(log):
         state = "not sent by " + "; ".join(x["failed"]) if x["failed"] else "sent by " + ", ".join(x["sent"]) if x["sent"] else "no channel active"
         rows.append({"title": x["title"], "detail": f"{time.strftime('%a %d %b %H:%M', time.localtime(x['at']))}, {state}"})
-    return {"items": rows or [{"title": "Nothing sent yet", "detail": "Messages appear here as Starboard sends them"}]}
+    if not rows:
+        return band({"items": [{"title": "Nothing sent yet", "detail": "Messages appear here as Starboard sends them"}]},
+                    "ready" if active() else "needs_setup")
+    failed = sum(1 for x in log if x["failed"])
+    return band({"items": rows}, "warning" if failed else "ok", log[-1]["at"], f"{failed} not sent" if failed else None)
 
 
 ROUTES = {"/card": card, "/recent": recent, ("POST", "/events"): on_event, ("POST", "/jobs/weekly"): lambda: weekly(),

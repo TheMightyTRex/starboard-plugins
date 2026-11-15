@@ -11,7 +11,7 @@ import time
 import urllib.parse
 from collections import Counter, defaultdict
 
-from sbplugin import RUN, fetch, jellyfin, keep, plural, remember, serve, setting
+from sbplugin import RUN, band, fetch, jellyfin, keep, plural, remember, serve, setting
 
 FRESH = 15 * 60
 LIMIT = 5000  # rows read at most, about 750 KB from Jellyfin
@@ -202,42 +202,50 @@ def screen_people():
     return _screen("People", f"Who watched what {_period()}.", cols, items, data)
 
 
+def _band(answer, data):
+    """The card band (plug-in API 1.14): when the figures were read, and a warning without Playback Reporting."""
+    if data.get("source") == "reporting":
+        return band(answer, "ok", data.get("at"))
+    return band(answer, "warning", data.get("at"), "Last plays only")
+
+
 def card_week():
     data = plays()
     week = [r for r in data["rows"] if r["at"] >= time.time() - 7 * 86400]
     people = len({r["who"] for r in week})
     note = (f"{hours(sum(r['seconds'] for r in week))} hours by {plural(people, 'person', 'people')}" if data.get("source") == "reporting"
             else "Playback Reporting is not installed in Jellyfin")
-    return {"value": len(week), "label": "plays this week", "note": note}
+    return _band({"value": len(week), "label": "plays this week", "note": note}, data)
 
 
 def card_top():
     data = plays()
     top = tops(data["rows"])[:10]
     if not top:
-        return {"items": [{"title": "Nothing watched yet", "detail": _period()}]}
-    return {"items": [{"title": name, "detail": f"{plural(len(x['people']), 'person', 'people')}, {plural(x['plays'], 'play')}"}
-                      for name, x in top]}
+        return _band({"items": [{"title": "Nothing watched yet", "detail": _period()}]}, data)
+    return _band({"items": [{"title": name, "detail": f"{plural(len(x['people']), 'person', 'people')}, {plural(x['plays'], 'play')}"}
+                            for name, x in top]}, data)
 
 
 def card_people():
     data = plays()
     rows = by_person(data["rows"])[:10]
     if not rows:
-        return {"items": [{"title": "Nobody has watched anything yet", "detail": _period()}]}
-    return {"items": [{"title": who, "detail": (f"{hours(x['seconds'])} hours, " if data.get("source") == "reporting" else "")
-                       + plural(x["plays"], "play") + (f", most {x['titles'].most_common(1)[0][0]}" if x["titles"] else "")}
-                      for who, x in rows]}
+        return _band({"items": [{"title": "Nobody has watched anything yet", "detail": _period()}]}, data)
+    return _band({"items": [{"title": who, "detail": (f"{hours(x['seconds'])} hours, " if data.get("source") == "reporting" else "")
+                             + plural(x["plays"], "play") + (f", most {x['titles'].most_common(1)[0][0]}" if x["titles"] else "")}
+                            for who, x in rows]}, data)
 
 
 def card_source():
     try:
         ok = has_reporting()
     except Exception as e:  # noqa: BLE001
-        return {"state": "problem", "text": f"Jellyfin did not answer: {e}"[:160]}
+        return band({"state": "problem", "text": f"Jellyfin did not answer: {e}"[:160]}, "problem", label="Jellyfin not answering")
     if ok:
-        return {"state": "ok", "text": "Reading Jellyfin's Playback Reporting"}
-    return {"state": "warning", "text": "Playback Reporting is not installed in Jellyfin. Add it in Settings, Jellyfin, or Jellyfin's catalogue."}
+        return band({"state": "ok", "text": "Reading Jellyfin's Playback Reporting"}, "ok", time.time())
+    return band({"state": "warning", "text": "Playback Reporting is not installed in Jellyfin. Add it in Settings, Jellyfin, or Jellyfin's catalogue."},
+                "needs_setup", time.time(), "Needs Playback Reporting")
 
 
 def refresh():
