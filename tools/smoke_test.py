@@ -6,7 +6,9 @@ answer with Starboard's own card check. Nothing real is touched. Needs Docker an
 Then the update from each plug-in's last published version (plug-in API 1.14, 15 November 2026): the old image, from
 the manifest at the commit in tools/previous-versions.json, runs and keeps its data; its settings move with Starboard's
 own migration code; the new image starts on the same data and must answer its health path within the update's health
-wait; its after step and its cards are checked, and then its before step must say it is ready.
+wait; its after step and its cards are checked, and then its before step must say it is ready. Then Roll back (DASH-423):
+the old image again on the same data with the settings kept from before, which must start, answer its cards and have
+its settings as they were.
 
 A local build of a plug-in's own image, before it is published: SMOKE_IMAGE_<ID> (such as SMOKE_IMAGE_PICTURE_SHRINKER),
 or SMOKE_IMAGE for the shared image. SMOKE_UPDATE=0 leaves the update pass out."""
@@ -333,6 +335,20 @@ def update_pass(port):
                     raise ValueError(f"the next update's before step said {said}")
                 post(base, info["after"]["path"], {"from": new["version"], "to": new["version"], "outcome": "rolled_back"})
                 words.append("before: ready")
+            # Roll back (DASH-423), as Starboard does it (plugin_life.rollback): the old image again on the same data,
+            # with the settings file kept from before the update put back whole. It must start, answer its cards, and
+            # find its settings as they were.
+            subprocess.run(["docker", "rm", "-f", name], capture_output=True)
+            json.dump(values, open(f"{run}/settings.json", "w"))
+            name = start(pid, old, run, port, old["containers"][0]["image"], extra)
+            took = healthy(base, 30)
+            if took is None:
+                raise ValueError(f"after Roll back, {old['version']} did not start on the data {new['version']} left")
+            for c in old.get("cards") or []:
+                plugin_cards.clean(c["type"], json.loads(urllib.request.urlopen(base + c["path"], timeout=20).read()), strict=False)
+            if json.load(open(f"{run}/settings.json")) != values:
+                raise ValueError("after Roll back, the settings were not as they were")
+            words.append(f"rolled back to {old['version']}: healthy in {took}s, settings as they were")
             print(f"{pid} update {old['version']} to {new['version']}: " + "; ".join(words + [f"settings: {', '.join(notes) or 'as they were'}"]))
         except Exception as e:  # noqa: BLE001
             print(f"{pid} update {old_row['version']} to {new['version']}: FAILED {e}")
