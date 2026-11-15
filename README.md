@@ -33,6 +33,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 | Plug-in | What it does |
 |---|---|
 | [Direct play](https://themightytrex.github.io/starboard-plugins/help/plugins/direct-play/index.html) | Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose. |
+| [Library clean-up](library-cleanup/) | Moves films and series everyone has watched, or nobody watches, to the holding folder after a Preview. It never deletes, and each can be put back. Needs Starboard 0.19.0. |
 | [Library health](https://themightytrex.github.io/starboard-plugins/help/plugins/library-health/index.html) | Films and series in Jellyfin with no poster, no description or no year, so you can fix them. |
 | [Most watched](https://themightytrex.github.io/starboard-plugins/help/plugins/most-watched/index.html) | The films and series most people watched in Jellyfin in the last week. |
 | [Picture shrinker](https://themightytrex.github.io/starboard-plugins/help/plugins/picture-shrinker/index.html) | Shrinks the posters and photos of people Jellyfin keeps, so they take less space. Each picture is checked before it replaces the one Jellyfin saved. |

@@ -51,6 +51,9 @@ LOGOS = {
                   f'<circle cx="24" cy="24" r="13" {S}/><path d="M24 24V11a13 13 0 0 1 12.4 16.9z" fill="{W}"/>'),
     "kavita": ("#1d6363", "An open book",
                f'<path d="M24 15c-3-2.6-8-3.2-13-2.2v21.5c5-1 10-.4 13 2.2 3-2.6 8-3.2 13-2.2V12.8c-5-1-10-.4-13 2.2z" {S}/><path d="M24 15v21" {S}/>'),
+    "library-cleanup": ("#4d5b16", "A storage box with an arrow going into it",
+                        f'<rect x="8.5" y="11" width="31" height="7.5" rx="2" fill="{W}"/><path d="M11.5 18.5v17a2.5 2.5 0 0 0 2.5 2.5h20a2.5 2.5 0 0 0 2.5-2.5v-17" {S}/>'
+                        f'<path d="M24 23v9.5M19.5 28.5l4.5 4.5 4.5-4.5" {S}/>'),
     "library-health": ("#6b4f1d", "A clipboard with a tick",
                        f'<rect x="12" y="12" width="24" height="27" rx="3" {S}/><rect x="18.5" y="8.5" width="11" height="6.5" rx="2" fill="{W}"/>'
                        f'<path d="M18 26.5l4 4 8-9" {S}/>'),
