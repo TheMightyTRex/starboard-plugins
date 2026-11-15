@@ -1,0 +1,103 @@
+{
+  "about": "The shared test pictures. Outcomes: shrunk (to width by height, same format), left (small enough or not smaller), failed (original kept), ignored (not a picture the shrinker looks at). Sizes assume the default rules in rules.json.",
+  "pictures": {
+    "People/A/Alice Example/folder.jpg": {
+      "outcome": "shrunk",
+      "why": "a photo of a person wider than 400 pixels",
+      "kind": "person",
+      "width": 400,
+      "height": 600,
+      "format": "JPEG"
+    },
+    "People/B/Bob Example/folder.png": {
+      "outcome": "shrunk",
+      "why": "a PNG photo stays PNG",
+      "kind": "person",
+      "width": 400,
+      "height": 400,
+      "format": "PNG"
+    },
+    "People/C/Cara Example/folder.jpg": {
+      "outcome": "left",
+      "why": "already no wider than 400 pixels",
+      "kind": "person",
+      "width": 300,
+      "height": 450,
+      "format": "JPEG"
+    },
+    "People/D/Dan Example/folder.jpg": {
+      "outcome": "shrunk",
+      "why": "a grey photo",
+      "kind": "person",
+      "width": 400,
+      "height": 400,
+      "format": "JPEG"
+    },
+    "collections/x/poster.jpg": {
+      "outcome": "ignored",
+      "why": "only library and People are looked at"
+    },
+    "library/0a/0a1b/backdrop.jpg": {
+      "outcome": "ignored",
+      "why": "backdrops are left alone"
+    },
+    "library/0a/0a1b/poster.jpg": {
+      "outcome": "shrunk",
+      "why": "a poster taller than 900 pixels",
+      "kind": "poster",
+      "width": 600,
+      "height": 900,
+      "format": "JPEG"
+    },
+    "library/1c/1c2d/poster.png": {
+      "outcome": "shrunk",
+      "why": "a PNG poster stays PNG",
+      "kind": "poster",
+      "width": 600,
+      "height": 900,
+      "format": "PNG"
+    },
+    "library/2e/2e3f/poster.webp": {
+      "outcome": "shrunk",
+      "why": "a WebP poster stays WebP",
+      "kind": "poster",
+      "width": 600,
+      "height": 900,
+      "format": "WEBP"
+    },
+    "library/3a/3a4b/poster.jpg": {
+      "outcome": "left",
+      "why": "already no taller than 900 pixels",
+      "kind": "poster",
+      "width": 400,
+      "height": 600,
+      "format": "JPEG"
+    },
+    "library/4c/4c5d/poster.jpg": {
+      "outcome": "failed",
+      "why": "it cannot be read as a picture",
+      "kind": "poster"
+    },
+    "library/5e/5e6f/poster.gif": {
+      "outcome": "ignored",
+      "why": "GIF is not one of the extensions"
+    },
+    "library/6a/6a7b/.poster.jpg": {
+      "outcome": "ignored",
+      "why": "hidden files are left alone"
+    },
+    "library/7b/7b8c/poster.jpg": {
+      "outcome": "shrunk",
+      "why": "1001 by 1800 gives 500.5 pixels wide, rounded half to even",
+      "kind": "poster",
+      "width": 500,
+      "height": 900,
+      "format": "JPEG"
+    },
+    "library/8d/8d9e/poster.jpg": {
+      "outcome": "failed",
+      "why": "a truncated picture does not decode in full",
+      "kind": "poster"
+    }
+  }
+}

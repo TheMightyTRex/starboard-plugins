@@ -1,7 +1,10 @@
 """Picture shrinker (DASH-432): the rules, the check before a picture replaces the original, runs, the schedule, the
 card and page, and the update steps. Makes its own small pictures with Pillow in a temporary metadata folder."""
 import datetime as dt
+import hashlib
+import json
 import os
+import shutil
 import sys
 import tempfile
 import threading
@@ -30,6 +33,10 @@ class PictureShrinker(unittest.TestCase):
         self.app = load("picture-shrinker", {})
         self.meta = tempfile.TemporaryDirectory()
         self.app.ROOT = self.meta.name
+        self.app.BACKUP = os.path.join(self.app._data, "originals")
+        self.jellyfin_plugins = []
+        self.app.sbplugin.jellyfin = lambda path: self.jellyfin_plugins  # Jellyfin's /Plugins, as the test sets it
+        self.app._jf.update(at=0.0, installed=False)
         self.app._stop.clear()
         self.app.sbplugin._work["hold"] = 0.0
 
@@ -133,6 +140,7 @@ class PictureShrinker(unittest.TestCase):
         backdrop = open(self.p("library", "aa", "1", "backdrop.jpg"), "rb").read()
         rec = self.app.run("now")
         self.assertEqual((rec["seen"], rec["shrunk"], rec["left"], rec["failed"]), (4, 2, 1, 1))
+        self.assertEqual((rec["backed_up"], rec["not_backed_up"]), (2, 0))
         self.assertGreater(rec["before"], rec["after"])
         self.assertEqual(open(self.p("library", "aa", "1", "backdrop.jpg"), "rb").read(), backdrop)
         self.assertFalse(os.path.exists(self.p("library", "aa", "1", ".poster.jpg.picture-shrinker-tmp")))
@@ -154,7 +162,7 @@ class PictureShrinker(unittest.TestCase):
         self.assertIn("Shrank 1 picture", said)
 
     def test_new_pictures_is_deactivated_when_added(self):
-        self.assertEqual(manifest("picture-shrinker")["settings"][4]["default"], False)
+        self.assertEqual(next(x for x in manifest("picture-shrinker")["settings"] if x["key"] == "new_pictures")["default"], False)
         self.assertEqual(self.app.job_new()["said"], "Shrinking new pictures is deactivated")
 
     def test_a_run_stops_at_its_limit_and_the_next_carries_on(self):
@@ -183,7 +191,7 @@ class PictureShrinker(unittest.TestCase):
         card, page = self.app.card(), self.app.screen()
         self.assertEqual(card["status"], "scheduled")
         self.assertGreater(card["value"], 0)
-        self.assertIn("Could not read", {i["group"] for i in page["items"]})
+        self.assertIn("Not shrunk", {i["group"] for i in page["items"]})
         if cleaners:
             plugin_cards, plugin_custom = cleaners
             plugin_cards.clean("stat", card, strict=True)
@@ -195,7 +203,8 @@ class PictureShrinker(unittest.TestCase):
             c = self.app.card()
         finally:
             self.app._job["progress"] = None
-        self.assertEqual((c["status"], c["status_label"], c["refresh_seconds"]), ("running", "12 shrunk so far", 30))
+        self.assertEqual(c["status"], "scheduled")  # only the figures change while it runs
+        self.assertIn("12 pictures shrunk of 30", c["note"])
 
     # Updates and health -----------------------------------------------------------------------------------------
     def test_before_update_stops_a_run_after_the_picture_it_is_on(self):
@@ -221,11 +230,195 @@ class PictureShrinker(unittest.TestCase):
 
     def test_manifest(self):
         m = manifest("picture-shrinker")
-        self.assertEqual(m["permissions"], ["jellyfin:metadata"])
+        self.assertEqual(m["permissions"], ["jellyfin:metadata", "jellyfin:key", "network:lan"])
+        self.assertEqual(m["containers"][0]["network"], "lan")
         self.assertEqual(m["containers"][0]["volumes"], ["data", "jellyfin-metadata"])
         self.assertEqual(m["containers"][0]["user"], "media")
         self.assertEqual([j.get("schedule") for j in m["jobs"]], ["when", None])
         self.assertTrue(m["jobs"][1]["quiet_hours"])
+
+
+SHARED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "picture-shrinker-shared")
+
+
+def hashes(top):
+    out = {}
+    for folder, _, names in os.walk(top):
+        for n in names:
+            path = os.path.join(folder, n)
+            out[os.path.relpath(path, top)] = hashlib.sha256(open(path, "rb").read()).hexdigest()
+    return out
+
+
+@unittest.skipIf(Image is None, "Pillow is not installed")
+class InStepWithTheJellyfinVersion(unittest.TestCase):
+    """Rules 1.1 (DASH-433): the rules file, the shared test pictures, backup and restore, the space figures, Delete
+    backup, staying idle when the Jellyfin version is installed, and a run that finishes quietly."""
+
+    tearDown = PictureShrinker.tearDown
+
+    def setUp(self):
+        PictureShrinker.setUp(self)
+        shutil.copytree(os.path.join(SHARED, "metadata"), self.meta.name, dirs_exist_ok=True)
+
+    # The rules file ---------------------------------------------------------------------------------------------
+    def test_the_code_follows_the_rules_file(self):
+        rules = json.load(open(os.path.join(os.path.dirname(SHARED), "..", "picture-shrinker", "rules.json")))
+        self.assertEqual(self.app.RULES, rules)
+        self.assertEqual(rules["rules_version"], "1.1")
+        self.assertEqual(self.app.QUALITY, rules["quality"]["default"])
+        self.assertEqual(self.app.EXTS, set(rules["extensions"]))
+        self.assertEqual(self.app.TMP, rules["temp_suffix"])
+        self.assertEqual(self.app.RUN_LIMIT, rules["run_limit_minutes"] * 60)
+        self.assertEqual(self.app.NEW_AGE, rules["new_pictures"]["min_age_seconds"])
+        self.assertEqual(self.app.sizes(), (rules["kinds"]["poster"]["default"], rules["kinds"]["person"]["default"]))
+        self.assertEqual(self.app.backup_on(), rules["backup"]["default"])
+        settings = {x["key"]: x for x in manifest("picture-shrinker")["settings"]}
+        for key, rule in (("poster_height", rules["kinds"]["poster"]), ("person_width", rules["kinds"]["person"]), ("quality", rules["quality"])):
+            self.assertEqual((settings[key]["default"], settings[key]["min"], settings[key]["max"]), (rule["default"], rule["min"], rule["max"]))
+        self.assertEqual(settings["backup"]["default"], rules["backup"]["default"])
+        self.assertEqual(settings["new_pictures"]["default"], rules["new_pictures"]["default"])
+        self.assertEqual(manifest("picture-shrinker")["version"].split(".")[:2], rules["rules_version"].split("."))
+
+    def test_the_shared_pictures_give_the_expected_results(self):
+        before = hashes(self.meta.name)
+        sizes = {k: os.path.getsize(os.path.join(self.meta.name, k)) for k in before}
+        rec = self.app.run("now")
+        expected = json.load(open(os.path.join(SHARED, "expected.json")))["pictures"]
+        after = hashes(self.meta.name)
+        failed = {f["file"] for f in rec["failures"]}
+        for rel, e in expected.items():
+            path = os.path.join(self.meta.name, rel)
+            if e["outcome"] == "shrunk":
+                with Image.open(path) as im:
+                    self.assertEqual((im.size, im.format), ((e["width"], e["height"]), e["format"]), rel)
+                self.assertLess(os.path.getsize(path), sizes[rel], rel)
+                self.assertTrue(os.path.exists(os.path.join(self.app.BACKUP, rel)), rel)
+            else:
+                self.assertEqual(before[rel], after[rel], rel)
+                self.assertEqual(e["outcome"] == "failed", rel in failed, rel)
+                self.assertFalse(os.path.exists(os.path.join(self.app.BACKUP, rel)), rel)
+        self.assertEqual(rec["shrunk"], sum(e["outcome"] == "shrunk" for e in expected.values()))
+        self.assertEqual((rec["failed"], rec["left"]), (2, 2))
+
+    # Backup and restore -----------------------------------------------------------------------------------------
+    def test_no_backup_means_no_replace(self):
+        blocker = os.path.join(self.app._data, "a-file")
+        open(blocker, "w").write("not a folder")
+        self.app.BACKUP = os.path.join(blocker, "originals")
+        before = hashes(self.meta.name)
+        rec = self.app.run("now")
+        self.assertEqual((rec["shrunk"], rec["not_backed_up"]), (0, 7))
+        self.assertIn("could not be backed up", rec["stopped"])
+        self.assertEqual(hashes(self.meta.name), before)
+
+    def test_short_of_space_means_no_replace(self):
+        before = hashes(self.meta.name)
+        real = shutil.disk_usage
+        try:
+            self.app.shutil.disk_usage = lambda p: real(p)._replace(free=1000)
+            rec = self.app.run("now")
+        finally:
+            self.app.shutil.disk_usage = real
+        self.assertEqual(rec["shrunk"], 0)
+        self.assertTrue(any("backup disk has only" in f["why"] for f in rec["failures"]))
+        self.assertEqual(hashes(self.meta.name), before)
+
+    def test_an_existing_backup_is_never_overwritten(self):
+        rel = os.path.join("library", "0a", "0a1b", "poster.jpg")
+        copy = os.path.join(self.app.BACKUP, rel)
+        os.makedirs(os.path.dirname(copy))
+        open(copy, "w").write("the first original")
+        self.assertIsNotNone(self.app.shrink_one(os.path.join(self.meta.name, rel), "poster", 900, 400))
+        self.assertEqual(open(copy).read(), "the first original")
+
+    def test_restore_puts_back_byte_identical_files(self):
+        original = hashes(self.meta.name)
+        self.app.run("now")
+        self.assertNotEqual(hashes(self.meta.name), original)
+        rec = self.app.restore()
+        self.assertEqual(rec["restored"], 7)
+        self.assertEqual(hashes(self.meta.name), original)
+        self.assertEqual((self.app.measure()["saved"], self.app.measure()["shrunk"]), (0, 0))  # nothing saved once all are back
+        self.assertEqual(self.app.restore()["already"], 7)  # the backup is kept
+
+    def test_backup_deactivated_shrinks_without_backup(self):
+        self.app._set(backup=False)
+        self.assertEqual(self.app.run("now")["shrunk"], 7)
+        self.assertFalse(os.path.exists(self.app.BACKUP))
+        self.assertIn("nobackup", {n["id"] for n in self.app.screen()["notices"]})
+
+    # Space and deleting the backup ------------------------------------------------------------------------------
+    def test_space_is_measured(self):
+        start = self.app.measure()
+        self.assertEqual((start["live_count"], start["backup_count"]), (11, 0))
+        rec = self.app.run("now")
+        end = self.app.measure()
+        self.assertEqual((end["backup_count"], end["backup_bytes"]), (7, rec["before"]))
+        self.assertEqual(end["saved"], rec["before"] - rec["after"])
+        self.assertEqual(end["live_bytes"], start["live_bytes"] - end["saved"])
+        self.assertEqual(self.app.remember("space")["backup_bytes"], rec["before"])  # kept for the card after the run
+
+    def test_delete_backup_deletes_only_inside_the_backup_folder(self):
+        self.app.run("now")
+        size = self.app.measure()["backup_bytes"]
+        outside = os.path.join(self.app._data, "keep-me.jpg")
+        open(outside, "w").write("outside")
+        not_ours = os.path.join(self.app.BACKUP, "notes.txt")
+        open(not_ours, "w").write("not a picture the shrinker made")
+        os.symlink(outside, os.path.join(self.app.BACKUP, "library", "link.jpg"))
+        os.symlink(self.meta.name, os.path.join(self.app.BACKUP, "People", "linked-folder"))
+        live = hashes(self.meta.name)
+        said = self.app.delete_backup()["said"]
+        self.assertIn("8 original pictures", said)  # seven originals and the link itself
+        self.assertIn(self.app.size_words(size), said)
+        self.assertEqual(open(outside).read(), "outside")
+        self.assertTrue(os.path.exists(not_ours))
+        self.assertEqual(hashes(self.meta.name), live)
+        self.assertFalse(os.path.exists(os.path.join(self.app.BACKUP, "library", "0a")))
+        self.assertEqual(self.app.measure()["backup_count"], 0)
+
+    def test_delete_backup_is_refused_during_a_run(self):
+        self.app.run("now")
+        self.app._job["thread"] = threading.Thread(target=time.sleep, args=(2,))
+        self.app._job["thread"].start()
+        self.assertIn("running", self.app.delete_backup()["said"])
+        self.app._job["thread"].join()
+        self.assertEqual(self.app.measure()["backup_count"], 7)
+
+    # The Jellyfin version ---------------------------------------------------------------------------------------
+    def test_idle_while_the_jellyfin_version_is_installed(self):
+        self.jellyfin_plugins = [{"Name": "Picture shrinker", "Id": "80bf9325d2994e24ac74c087aeec3011", "Status": "Active"}]
+        before = hashes(self.meta.name)
+        self.assertIn("Idle", self.app.job_shrink()["said"])
+        self.assertIn("Idle", self.app.shrink_now()["said"])
+        self.app._set(new_pictures=True)
+        self.assertIn("Idle", self.app.job_new()["said"])
+        self.assertEqual(hashes(self.meta.name), before)
+        self.assertEqual(self.app.card()["status"], "idle")
+        self.assertIn("jellyfin", {n["id"] for n in self.app.screen()["notices"]})
+
+    def test_a_deactivated_jellyfin_version_does_not_count(self):
+        self.jellyfin_plugins = [{"Name": "Picture shrinker", "Id": "80bf9325-d299-4e24-ac74-c087aeec3011", "Status": "Disabled"}]
+        self.assertFalse(self.app.jellyfin_version_installed(force=True))
+
+    def test_no_key_means_it_carries_on(self):
+        def no_key(path):
+            raise LookupError("Starboard has no Jellyfin key to give yet")
+        self.app.sbplugin.jellyfin = no_key
+        self.assertFalse(self.app.jellyfin_version_installed(force=True))
+
+    # Quiet runs -------------------------------------------------------------------------------------------------
+    def test_a_finished_run_raises_no_notification(self):
+        calls = []
+        self.app.sbplugin.fetch = lambda *a, **k: calls.append(a) or {}
+        self.app.sbplugin.starboard = lambda *a, **k: calls.append(a) or {}
+        self.app.job_shrink()
+        self.assertEqual(calls, [])  # no event sent to Starboard, so the Notifications plug-in hears nothing
+        self.assertEqual(self.app.card()["status"], "scheduled")
+        self.app.keep("_error", {"at": time.time(), "text": "OSError: the disk went away"})
+        self.assertEqual(self.app.card()["status"], "scheduled")  # an error shows on the page, not as an alert
+        self.assertIn("error", {n["id"] for n in self.app.screen()["notices"]})
 
 
 if __name__ == "__main__":

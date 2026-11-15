@@ -5,7 +5,7 @@ name: Picture shrinker image
 on:
   push:
     branches: [main]
-    paths: ["picture-shrinker/Dockerfile", "picture-shrinker/app.py", "picture-shrinker/sbplugin.py", ".github/workflows/picture-shrinker-image.yml"]
+    paths: ["picture-shrinker/Dockerfile", "picture-shrinker/app.py", "picture-shrinker/sbplugin.py", "picture-shrinker/rules.json", ".github/workflows/picture-shrinker-image.yml"]
   workflow_dispatch:
 permissions:
   contents: read
