@@ -20,9 +20,9 @@ How Library clean-up is built, for anyone who wants to change it or make one lik
 |---|---|---|---|---|---|
 | `main` | `lan` | `data`, `media:holding` | `media` | `when_needed`, rests after 15 minutes | 128 MB, 0.5 core |
 
-Its image is pinned by digest in the manifest once it is published. Until then the manifest names its tag:
+Its image is pinned by digest in the manifest:
 
-- `main`: `ghcr.io/themightytrex/starboard-plugin-library-cleanup:1.0.0`
+- `main`: `ghcr.io/themightytrex/starboard-plugin-library-cleanup@sha256:3628026fa40597cf465848f2e9daddcb444b44dc873cf7339925f4821e808cb6` (version 1.0.0)
 
 ## What Starboard calls
 

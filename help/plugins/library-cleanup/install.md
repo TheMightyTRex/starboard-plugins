@@ -27,7 +27,7 @@ What it runs:
 
 It is given the whole media folder, so add it only if you trust it. Its code has no call that deletes a file or a folder, and the collection's tests check that.
 
-Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest once it is published, so what you approved is what runs.
+Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 
 ## Memory and processor
 

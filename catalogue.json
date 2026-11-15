@@ -49,7 +49,7 @@
    "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGxvdWRzcGVha2VyIHdpdGggYSBwbHVzIHNpZ248L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjMmQ1YTg3Ii8+PHBhdGggZD0iTTggMjBoNmw4LTd2MjJsLTgtN0g4eiIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0zMyAxOHYxMk0yNyAyNGgxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A loudspeaker with a plus sign",
@@ -343,7 +343,7 @@
    "version": "1.0.0",
    "starboard_api": ">=1.15 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-cleanup/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHN0b3JhZ2UgYm94IHdpdGggYW4gYXJyb3cgZ29pbmcgaW50byBpdDwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiM0ZDViMTYiLz48cmVjdCB4PSI4LjUiIHk9IjExIiB3aWR0aD0iMzEiIGhlaWdodD0iNy41IiByeD0iMiIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0xMS41IDE4LjV2MTdhMi41IDIuNSAwIDAgMCAyLjUgMi41aDIwYTIuNSAyLjUgMCAwIDAgMi41LTIuNXYtMTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yNCAyM3Y5LjVNMTkuNSAyOC41bDQuNSA0LjUgNC41LTQuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A storage box with an arrow going into it"
@@ -602,7 +602,7 @@
    "version": "1.1.0",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/picture-shrinker/starboard-plugin.json",
-   "published": false,
+   "published": true,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHBpY3R1cmUgd2l0aCBhbiBhcnJvdyBwb2ludGluZyBpbnRvIGl0cyBjb3JuZXI8L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjOGE0YTBiIi8+PHJlY3QgeD0iOCIgeT0iMTYiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyMiIgcng9IjMiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNMTEuNSAzNC41bDYuNS04IDQuNSA1IDIuNS0zIDQgNnoiIGZpbGw9IiM4YTRhMGIiLz48Y2lyY2xlIGN4PSIyNSIgY3k9IjIyIiByPSIyLjUiIGZpbGw9IiM4YTRhMGIiLz48cGF0aCBkPSJNNDAgOGwtOCA4TTMyIDEwLjVWMTZoNS41IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4K",
    "logo_alt": "A picture with an arrow pointing into its corner"
