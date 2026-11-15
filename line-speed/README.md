@@ -19,6 +19,10 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 - **Test at**: Choose an hour when nothing is downloading.
 - **Test size**: Larger is more accurate on fast lines, and uses more of any data allowance.
 
+## Updating
+
+Before an update, it finishes any check or message it is part way through and starts no new one, so the update never cuts one short (plug-in API 1.14). What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.
+
 ## Add it
 
 In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:

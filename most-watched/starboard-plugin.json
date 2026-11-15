@@ -2,13 +2,13 @@
  "manifest_version": 1,
  "id": "most-watched",
  "name": "Most watched",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "The films and series most people watched in Jellyfin in the last week.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/most-watched",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.1 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "jellyfin:key",
   "network:lan"
@@ -16,7 +16,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:2fcdfff01a9722bc754efa9dd2a30aebd57fdef72eb2f526f085861c9876f8ff",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.0",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -57,8 +57,45 @@
       "title": "Slow Horses",
       "detail": "3 people, 11 plays"
      }
-    ]
+    ],
+    "status": "ok",
+    "updated": 1794694110
    }
+  }
+ ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A star"
+ },
+ "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card.",
+    "**Updates safely:** before an update it finishes what it is doing and starts nothing new."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
+  {
+   "version": "1.0.0",
+   "date": "2026-11-12",
+   "added": [
+    "The films and series most people watched in Jellyfin in the last week."
+   ]
   }
  ]
 }

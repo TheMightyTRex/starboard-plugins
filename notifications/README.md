@@ -34,7 +34,7 @@ Starboard runs its job **Send New this week on the chosen day** daily at 09:00.
 - **A disk is nearly full**: At the limit set for alerts in Settings, Alerts, or 90%.
 - **An update is ready**: For Starboard, your apps and your plug-ins.
 - **New this week**: Films, series and more that arrived in the last 7 days, once a week at 09:00.
-- **Send New this week on**
+- **Send New this week on**: The day New this week is sent, at 09:00.
 - **Starboard's address, for links**: Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address.
 
 ### Email
@@ -42,7 +42,7 @@ Starboard runs its job **Send New this week on the chosen day** daily at 09:00.
 - **Send by email**: Activate once the details below are filled in and the test arrives.
 - **Email server**: Such as smtp.example.com
 - **Port**
-- **Security**
+- **Security**: How the connection to your email server is protected. Your email service says which to use.
 - **User name**
 - **Password**: An app password where your email service offers one.
 - **Send from**: Such as starboard@example.com
@@ -109,6 +109,10 @@ then their email address, or `telegram` and their chat id. When their request is
 Signal has no official way for a server to send messages. If you already run
 [signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api) with a number registered, give its address
 and that number. Otherwise leave Signal deactivated.
+
+## Updating
+
+Before an update, it finishes any check or message it is part way through and starts no new one, so the update never cuts one short (plug-in API 1.14). What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.
 
 ## Add it
 

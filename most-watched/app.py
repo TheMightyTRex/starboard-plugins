@@ -1,7 +1,7 @@
 """Most watched: The films and series most people watched in Jellyfin in the last week."""
 import time
 from collections import defaultdict
-from sbplugin import every, jellyfin, keep, last_error, plural, remember, serve, setting
+from sbplugin import band, changed, every, jellyfin, keep, last_error, plural, remember, serve, setting
 
 
 def count():
@@ -24,8 +24,11 @@ def count():
 def card():
     top = remember("top", [])
     if not top:
-        return {"items": [{"title": "Nothing watched yet", "detail": last_error() or f"in the last {setting('days', 7)} days"}]}
-    return {"items": [{"title": t["title"], "detail": f"{t['people']} {'person' if t['people'] == 1 else 'people'}, {plural(t['plays'], 'play')}"} for t in top]}
+        err = last_error()
+        return band({"items": [{"title": "Nothing watched yet", "detail": err or f"in the last {setting('days', 7)} days"}]},
+                    "problem" if err else "idle", changed("top"))
+    return band({"items": [{"title": t["title"], "detail": f"{t['people']} {'person' if t['people'] == 1 else 'people'}, {plural(t['plays'], 'play')}"} for t in top]},
+                "ok", changed("top"))
 
 
 every(3600, count)

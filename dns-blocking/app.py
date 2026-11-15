@@ -1,12 +1,13 @@
 """Ad blocking: How many adverts and trackers Pi-hole or AdGuard Home blocked today."""
 import base64
-from sbplugin import fetch, serve, setting
+import time
+from sbplugin import band, fetch, serve, setting
 
 
 def card():
     base = str(setting("address", "")).rstrip("/")
     if not base:
-        raise ValueError("Add the address in the plug-in's settings")
+        return band({"value": 0, "label": "blocked", "note": "Add the address in the plug-in's settings"}, "needs_setup")
     if setting("kind", "Pi-hole") == "AdGuard Home":
         auth = base64.b64encode(f"{setting('username', '')}:{setting('password', '')}".encode()).decode()
         s = fetch(f"{base}/control/stats", {"Authorization": f"Basic {auth}"})
@@ -20,7 +21,7 @@ def card():
                 fetch(f"{base}/api/auth", {"X-FTL-SID": sid}, method="DELETE", raw=True)
         blocked, total = int(q.get("blocked") or 0), int(q.get("total") or 0)
     share = f"{round(100 * blocked / total)}% of {total:,} lookups" if total else "no lookups yet"
-    return {"value": blocked, "label": "blocked", "note": share}
+    return band({"value": blocked, "label": "blocked", "note": share}, "protected", time.time())
 
 
 serve({"/card": card})

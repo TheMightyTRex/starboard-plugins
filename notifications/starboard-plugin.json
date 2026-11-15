@@ -2,13 +2,13 @@
  "manifest_version": 1,
  "id": "notifications",
  "name": "Notifications",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/notifications",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.11 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "apps:read",
   "downloads:read",
@@ -19,7 +19,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:2fcdfff01a9722bc754efa9dd2a30aebd57fdef72eb2f526f085861c9876f8ff",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.0",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -102,6 +102,7 @@
    "type": "choice",
    "default": "monday",
    "group": "What to send",
+   "hint": "The day New this week is sent, at 09:00.",
    "choices": [
     {
      "value": "monday",
@@ -170,6 +171,7 @@
    "type": "choice",
    "default": "starttls",
    "group": "Email",
+   "hint": "How the connection to your email server is protected. Your email service says which to use.",
    "choices": [
     {
      "value": "starttls",
@@ -402,7 +404,9 @@
    "refresh_minutes": 60,
    "example": {
     "state": "ok",
-    "text": "Mon 09:00, New this week: sent by Email, Telegram"
+    "text": "Mon 09:00, New this week: sent by Email, Telegram",
+    "status": "ok",
+    "updated": 1794694110
    }
   },
   {
@@ -417,7 +421,9 @@
       "title": "Ready to watch: Dune (2021)",
       "detail": "Mon 12 Nov 20:15, sent by Email, Telegram"
      }
-    ]
+    ],
+    "status": "ok",
+    "updated": 1794694110
    }
   }
  ],
@@ -439,7 +445,33 @@
    "time_limit_minutes": 2
   }
  ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A bell"
+ },
  "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card.",
+    "**Updates safely:** before an update it finishes what it is doing and starts nothing new."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
   {
    "version": "1.0.0",
    "date": "2026-11-13",

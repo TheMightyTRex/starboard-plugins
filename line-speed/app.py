@@ -1,6 +1,6 @@
 """Line speed: Tests your internet download speed once a night, outside download hours, and keeps a week of results."""
 import time
-from sbplugin import every, fetch, keep, last_error, remember, serve, setting
+from sbplugin import band, every, fetch, keep, last_error, remember, serve, setting
 
 
 def test():
@@ -20,17 +20,26 @@ def nightly():
         test()
 
 
+def next_test():
+    return f"Next test at {int(setting('hour', 4)):02d}:00"
+
+
 def card():
     runs = remember("runs", [])
     if not runs:
-        return {"value": 0, "label": "Mbps", "note": last_error() or "Not tested yet"}
+        err = last_error()
+        return band({"value": 0, "label": "Mbps", "note": err or "Not tested yet"}, "problem" if err else "scheduled",
+                    label=None if err else next_test())
     r = runs[-1]
-    return {"value": r["mbps"], "label": "Mbps", "note": time.strftime("%a %H:%M", time.localtime(r["at"]))}
+    return band({"value": r["mbps"], "label": "Mbps", "note": time.strftime("%a %H:%M", time.localtime(r["at"]))}, "ok", r["at"])
 
 
 def week():
-    return {"items": [{"title": f"{r['mbps']} Mbps", "detail": time.strftime("%A %d %b, %H:%M", time.localtime(r["at"]))}
-                      for r in reversed(remember("runs", [])[-7:])]}
+    runs = remember("runs", [])
+    items = [{"title": f"{r['mbps']} Mbps", "detail": time.strftime("%A %d %b, %H:%M", time.localtime(r["at"]))} for r in reversed(runs[-7:])]
+    if not items:
+        return band({"items": [{"title": "Not tested yet", "detail": next_test()}]}, "scheduled", label=next_test())
+    return band({"items": items}, "ok", runs[-1]["at"])
 
 
 every(600, nightly)

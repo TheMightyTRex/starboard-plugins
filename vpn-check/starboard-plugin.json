@@ -2,20 +2,20 @@
  "manifest_version": 1,
  "id": "vpn-check",
  "name": "VPN check",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "Shows the address and country your downloads use through the VPN, and warns if it is your home address.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/vpn-check",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.1 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "network:vpn"
  ],
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:2fcdfff01a9722bc754efa9dd2a30aebd57fdef72eb2f526f085861c9876f8ff",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.0",
    "port": 7791,
    "network": "vpn",
    "volumes": [
@@ -66,8 +66,34 @@
    "path": "/card",
    "example": {
     "state": "ok",
-    "text": "185.65.134.12 in the Netherlands"
+    "text": "185.65.134.12 in the Netherlands",
+    "status": "protected",
+    "updated": 1794694110
    }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "A shield with a tick"
+ },
+ "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
+  {
+   "version": "1.0.0",
+   "date": "2026-11-12",
+   "added": [
+    "Shows the address and country your downloads use through the VPN, and warns if it is your home address."
+   ]
   }
  ]
 }

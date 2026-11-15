@@ -1,5 +1,6 @@
 """Watching now: Who is watching what in Jellyfin right now, with how far through they are."""
-from sbplugin import jellyfin, serve
+import time
+from sbplugin import band, jellyfin, serve
 
 
 def card():
@@ -15,7 +16,9 @@ def card():
         bits = [s.get("UserName"), s.get("DeviceName"), f"{round(100 * at / ticks)}%" if ticks else "",
                 "paused" if (s.get("PlayState") or {}).get("IsPaused") else ""]
         rows.append({"title": title, "detail": ", ".join(b for b in bits if b)})
-    return {"items": rows or [{"title": "Nobody is watching", "detail": "Jellyfin is quiet"}]}
+    if not rows:
+        return band({"items": [{"title": "Nobody is watching", "detail": "Jellyfin is quiet"}]}, "idle", time.time(), "Nobody watching")
+    return band({"items": rows}, "running", time.time(), f"{len(rows)} watching")
 
 
 serve({"/card": card})

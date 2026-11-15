@@ -2,20 +2,20 @@
  "manifest_version": 1,
  "id": "download-summary",
  "name": "Download summary",
- "version": "1.0.0",
+ "version": "1.1.0",
  "description": "How much has downloaded today and this week, from what Starboard sees in the queue.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/download-summary",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.1 <2.0",
+ "starboard_api": ">=1.14 <2.0",
  "permissions": [
   "downloads:read"
  ],
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:2fcdfff01a9722bc754efa9dd2a30aebd57fdef72eb2f526f085861c9876f8ff",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.0",
    "port": 8080,
    "volumes": [
     "data"
@@ -42,8 +42,34 @@
    "example": {
     "value": 12884901888,
     "label": "today",
-    "note": "41 GB this week"
+    "note": "41 GB this week",
+    "status": "ok",
+    "updated": 1794694110
    }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "An arrow down into a tray"
+ },
+ "changes": [
+  {
+   "version": "1.1.0",
+   "date": "2026-11-15",
+   "added": [
+    "**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
+    "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."
+   ],
+   "changed": [
+    "Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+   ]
+  },
+  {
+   "version": "1.0.0",
+   "date": "2026-11-12",
+   "added": [
+    "How much has downloaded today and this week, from what Starboard sees in the queue."
+   ]
   }
  ]
 }
