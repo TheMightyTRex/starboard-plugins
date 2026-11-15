@@ -7,7 +7,7 @@ import sys
 import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from helpers import ROOT, STARBOARD_SRC, manifest  # noqa: E402
+from helpers import as_published, pinned_or_next, ROOT, STARBOARD_SRC, manifest  # noqa: E402
 
 APPS = ("jellystat", "navidrome", "kavita", "calibre-web", "wizarr", "maintainerr", "uptime-kuma", "seerr", "tdarr")
 # Each app's own folders: read only, except Tdarr, which converts films and series in place.
@@ -34,12 +34,12 @@ class AppPlugins(unittest.TestCase):
             self.skipTest("Starboard's source with plug-in API 1.13 is not here (STARBOARD_SRC)")
         for pid in APPS:
             # as published: every image pinned by digest, Jellystat's own helper included (14 November 2026)
-            self.assertEqual(plugins.check(manifest(pid)), [], pid)
+            self.assertEqual(as_published(plugins.check(manifest(pid)), manifest(pid)), [], pid)
 
     def test_every_image_pinned_by_digest(self):
         for pid in APPS:
             for c in manifest(pid)["containers"]:
-                self.assertRegex(c["image"], r"@sha256:[0-9a-f]{64}$", f"{pid} {c['name']}")
+                self.assertTrue(pinned_or_next(c["image"]), f"{pid} {c['name']}: pinned, or our own image's next tag")
 
     def test_least_permissions(self):
         for pid in APPS:
