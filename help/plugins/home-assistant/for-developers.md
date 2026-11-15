@@ -29,8 +29,14 @@ Each image is pinned by digest in the manifest:
 | `GET /health` | Health: 200 while it can work |
 | `GET /card` | The Home card (status) |
 
+## How it works
+
+- `app.py` uses only Python's standard library and the shared helper `sbplugin.py`. It keeps nothing on disk and runs no background job: it asks only when Starboard asks for the card.
+- For each of the first 8 entity ids it reads `/api/states/<id>` from Home Assistant's REST API, with the token as a bearer token, and joins each friendly name, state and unit into one sentence.
+- The card answers with `band()`: `warning` when any state is in **Warn when any is**, otherwise `ok`, with the time it asked; `needs_setup` when the address, token or ids are missing. If any read fails, `/card` answers 502 and Starboard shows "No answer from Home Assistant".
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

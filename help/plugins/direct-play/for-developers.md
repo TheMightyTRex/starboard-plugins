@@ -43,8 +43,17 @@ Each image is pinned by digest in the manifest:
 
 - `quiet`: every 1 hour, only in quiet hours, 1 minutes at most.
 
+## How it works
+
+- A worker wakes once a minute and does nothing outside the hours set in **When it works**. In its hours it looks at the movies and tv folders with ffprobe, at most every 6 hours, reading only new or changed files, then fixes one file at a time, cheapest fix first.
+- ffmpeg runs with `nice` and `ionice` at the lowest priority, with two threads. Each new file is checked before it replaces the original, then Reelix rescans the film or series and Jellyfin is told the file changed.
+- Starboard's quiet-hours job (`POST /jobs/quiet`) wakes it each hour in Starboard's quiet hours.
+- The cards read a small status file the worker writes, at most as often as **Card updates every** says, so nothing is probed for a card. The **Direct play** card sends `converting`, `waiting`, `paused`, `done` or `needs_setup`.
+- Before an update it stops the file being converted and removes its unfinished copy, and after the update it carries on.
+- It runs as the owner of your media folder (`user: media`), so the new files are yours.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

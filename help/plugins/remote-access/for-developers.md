@@ -30,9 +30,18 @@ Each image is pinned by digest in the manifest:
 | `POST /test` | The Test remote access button |
 | `POST /restart` | The Start remote access again button |
 | `GET /screen` | The Addresses away from home page |
+| `POST /screen` | **Test** and **Test all** on that page |
+
+## How it works
+
+- `app.py` is one Python helper, standard library only, in an image built from pinned Tailscale, cloudflared and Python images (`Dockerfile`). It does not use `sbplugin.py`'s `serve()`: it has its own server, which refuses anything from inside the container, because a visitor through the tunnel arrives from `127.0.0.1`.
+- A supervisor looks every 10 seconds. It runs `tailscaled` in userspace networking (no device and no extra rights) or `cloudflared` with the token in its environment, never both, and none while **Connect with** is **Nothing yet** or the key is missing.
+- Shared apps are reached through small forwarders on `127.0.0.1` inside the container: 8095 to Starboard, 8096 to Jellyfin and 13378 to Audiobookshelf. Nothing else is forwarded. Jellyfin's and Audiobookshelf's addresses come from Starboard's apps (`apps:read`), read again every 5 minutes.
+- With Cloudflare, it reads the routes from `cloudflared` and stops the tunnel if any leads anywhere but the three forwarders, to an app not shared, or to Starboard without Cloudflare Access.
+- It has no update steps: Starboard stops it and starts the new version.
 
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

@@ -33,8 +33,17 @@ Each image is pinned by digest in the manifest:
 | `POST /update/before` | The update's before step, 60 seconds at most |
 | `POST /update/after` | The update's after step, 10 seconds at most |
 
+## How it works
+
+- `app.py` uses only Python's standard library and the shared helper `sbplugin.py`.
+- A background job looks every 10 minutes (`every(600, nightly)`) and tests once in the hour from **Test at** when there is no result for that day.
+- A test downloads **Test size** from `https://speed.cloudflare.com/__down`, with a 120 second time limit, and works out Mbps from the time it took.
+- Results go in `runs.json` in its `data` folder, the newest 14. A failed background test is kept by `every()` and shown on the **Line speed** card until there is a result.
+- Both cards answer with `band()`: `ok` with the newest test's time, or `scheduled` labelled "Next test at" and the hour.
+- It answers `POST /update/before` and `POST /update/after` from `sbplugin.py`, so an update waits for a test that is running.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

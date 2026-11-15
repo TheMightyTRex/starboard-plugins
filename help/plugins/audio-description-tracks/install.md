@@ -5,7 +5,9 @@ Add Audio description tracks from Starboard's **Catalogue**, where it is listed 
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
-- Jellyfin added to Starboard, in **Settings**, **Apps**. Audio description tracks works with it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. It uses the key Starboard keeps to find each title and ask Jellyfin to read it again. Without it, files say "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps".
+- Your films and series in the movies and tv folders of Starboard's media folder. It cannot add a track to a title anywhere else.
+- A description track you already have, such as one from AudioVault. It never downloads one for you.
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -19,7 +21,7 @@ Starboard lists these before you add it, each with its risk.
 
 What it runs:
 
-- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/audio-description-tracks`), the `movies` folder in your media folder, to read and change, the `tv` folder in your media folder, to read and change, the `audio-description` folder in your media folder, to read and change. It rests after 10 minutes with nothing to do, and Starboard wakes it when it is needed.
+- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/audio-description-tracks`), the `movies` folder in your media folder, to read and change, the `tv` folder in your media folder, to read and change, the `audio-description` folder in your media folder, to read and change. It runs as the owner of your media folder, so the files it adds are yours. It never downloads from or reads any website. It rests after 10 minutes with nothing to do, and Starboard wakes it when it is needed.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights, and its image is pinned by digest, so what you approved is what runs.
 
@@ -35,7 +37,13 @@ Measured: not measured yet. The figures above are the most it may use.
 2. Under **Accessibility**, find **Audio description tracks** and select **Install…**.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Audio description tracks**. To stop, select **Cancel**: nothing is installed.
-5. Audio description tracks's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+5. Audio description tracks' own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Starboard makes the audio-description folder in your media folder. Its state changes to **Active**.
+6. Put a description track in the audio-description folder, named as the film and its year, such as `Dune (2021).mp3`. Or open **Description tracks to add** on its tab and select **Upload a description track**.
+7. Select **Look in the folder now**.
+8. When the file shows **Added**, play the film in Jellyfin and choose the **English (Audio Description)** sound track.
+9. On **Description tracks to add**, in **Plays in step?**, choose **Yes: put the original away** or **No: take the track off**.
+
+To add the card, read [Dashboard card](dashboard-card.md). It goes with the [Audio description plug-in](../audio-description/install.md), whose **Search AudioVault** page links to AudioVault's search for each title without audio description.
 
 ### Add it by its address
 

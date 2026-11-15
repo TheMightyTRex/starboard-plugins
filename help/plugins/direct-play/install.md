@@ -5,7 +5,9 @@ Add Direct play from Starboard's **Catalogue**, where it is listed under **Jelly
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
-- Jellyfin added to Starboard, in **Settings**, **Apps**. Direct play works with it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. Direct play tells Jellyfin when a file changed. Reelix is told too, when you have it.
+- Your films in a movies folder and your series in a tv folder, in your media folder. Direct play works only there.
+- To know which devices everyone in your home watches on.
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -26,7 +28,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 ## Memory and processor
 
-- **main:** 512 MB of memory and 1 of a processor core at most.
+- **main:** 512 MB of memory and one processor core at most. ffmpeg runs only while a file is fixed, at the lowest processor and disk priority, with two threads at most.
 
 Measured: not measured yet. The figures above are the most it may use.
 
@@ -36,7 +38,13 @@ Measured: not measured yet. The figures above are the most it may use.
 2. Under **Jellyfin**, find **Direct play** and select **Install…**.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Direct play**. To stop, select **Cancel**: nothing is installed.
-5. Direct play's own tab opens under **Settings**, then **Plug-ins**. Select **Finish setting up**, choose its settings, then select **Activate**.
+5. Direct play's own tab opens under **Settings**, then **Plug-ins**. Select **Finish setting up**.
+6. In **Devices**, activate each kind of device anyone in your home watches on, and deactivate any you do not have.
+7. In **When it works**, choose when it may convert files. **At weekends** is chosen when you add it.
+8. Select **Activate**. Its state changes to **Active**.
+9. Add its cards to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+It starts by looking at your library, then fixes one file at a time in the hours you chose.
 
 Tip: Direct play is marked **Recommended** in the catalogue.
 

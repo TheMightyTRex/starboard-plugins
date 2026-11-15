@@ -8,10 +8,18 @@ start: Watch statistics is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
   Not supported -> 2
-  Active, but a card is wrong -> 3
+  Active, but a card or table is wrong -> q2
+q2: What does it say?
+  Needs Playback Reporting or Last plays only -> 3
+  No Jellyfin key -> 4
+  Jellyfin not answering -> 5
+  Figures look old or wrong -> 6
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
-3: Read what the card says #read-what-the-card-says
+3: Add Playback Reporting #add-playback-reporting
+4: Add Jellyfin to Starboard #add-jellyfin-to-starboard
+5: Read what the card says #read-what-the-card-says
+6: Read the figures again #read-the-figures-again
 ```
 
 ## Start it again
@@ -28,10 +36,36 @@ Your Starboard's plug-in API is outside what this version of Watch statistics wo
 1. Select **Look for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
+## Add Playback Reporting
+
+The source card says "Needs Playback Reporting", the other cards say "Last plays only", or a table says "Playback Reporting is not installed in Jellyfin". Without it, you see only each person's last play of each title, with no device or time watched.
+
+1. Add Playback Reporting in Starboard's **Settings**, then **Jellyfin**, or in Jellyfin's **Dashboard**, then **Plugins**, then **Catalogue**.
+2. Restart Jellyfin.
+3. On Watch statistics's tab, select **Read the figures again now**.
+
+Playback Reporting counts from the day it is added, so older plays stay as last plays only.
+
+## Add Jellyfin to Starboard
+
+A card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps".
+
+1. Go to **Settings**, then **Apps**.
+2. Add Jellyfin, with its address and API key.
+3. On Watch statistics's tab, select **Read the figures again now**.
+
+## Read the figures again
+
+- The figures are kept for 15 minutes, so a play can take that long to appear. Select **Read the figures again now** on its tab to read them straight away.
+- Someone missing: check they are not listed in **Leave out these people**.
+- A series counts all its episodes as one title.
+- It reads 5,000 plays at most. On a busy server, make **Over the last** shorter.
+
 ## Read what the card says
 
 - **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
-- **Problem** on the card: the words under it say what went wrong. Fix that, then wait for the next check.
+- **Jellyfin not answering** on the source card: it says "Jellyfin did not answer" and why. Check Jellyfin is running and its address in **Settings**, then **Apps**, is right.
+- **Problem** on another card: the words under it say what went wrong. Fix that, then select **Read the figures again now** on its tab.
 
 ## Report a problem
 

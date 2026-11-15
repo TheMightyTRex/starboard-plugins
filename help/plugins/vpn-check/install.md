@@ -6,6 +6,7 @@ Add VPN check from Starboard's **Catalogue**, where it is listed under **Downloa
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Your VPN set up in Starboard, with its Gluetun container running. VPN check runs inside that container's network, so it sees the internet as your downloads do.
 
 ## What it may do
 
@@ -17,7 +18,7 @@ Starboard lists these before you add it, each with its risk.
 
 What it runs:
 
-- **main:** reaches the internet through your VPN only, inside Gluetun's network. It can use its own folder in Starboard's data (`data/plugins/vpn-check`).
+- **main:** reaches the internet through your VPN only, inside Gluetun's network. It asks ipinfo.io which address the internet sees. It can use its own folder in Starboard's data (`data/plugins/vpn-check`).
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights, and its image is pinned by digest, so what you approved is what runs.
 
@@ -34,6 +35,10 @@ Measured: not measured yet. The figures above are the most it may use.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install VPN check**. To stop, select **Cancel**: nothing is installed.
 5. VPN check's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Optional: on its tab, enter **Your home's public address** and select **Save**, so the card warns you if the VPN ever shows it.
+7. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+It checks for the first time a few seconds after it starts. Read [Settings](settings.md).
 
 ### Add it by its address
 

@@ -8,10 +8,16 @@ start: Watching now is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
   Not supported -> 2
-  Active, but a card is wrong -> 3
+  Active, but the card is wrong -> q2
+q2: What does the card say?
+  No Jellyfin key -> 3
+  Nobody is watching, but someone is -> 4
+  Something else went wrong -> 5
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
-3: Read what the card says #read-what-the-card-says
+3: Add Jellyfin to Starboard #add-jellyfin-to-starboard
+4: Check what Jellyfin sees #check-what-jellyfin-sees
+5: Read what the card says #read-what-the-card-says
 ```
 
 ## Start it again
@@ -28,10 +34,26 @@ Your Starboard's plug-in API is outside what this version of Watching now works 
 1. Select **Look for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
+## Add Jellyfin to Starboard
+
+The card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps". Watching now asks Jellyfin with the key Starboard keeps, and Starboard does not have one yet.
+
+1. Go to **Settings**, then **Apps**.
+2. Add Jellyfin, with its address and API key.
+3. Go back to the dashboard and wait up to 30 seconds for the card to be asked again.
+
+## Check what Jellyfin sees
+
+The card says "Nobody is watching" while someone is watching.
+
+- The card is asked every 30 seconds, so someone who has just started can take that long to appear.
+- It lists only sessions Jellyfin saw in the last 2 minutes that are playing something. Someone who opened Jellyfin but has not started playing is not listed.
+- It asks the Jellyfin that Starboard knows, in **Settings**, then **Apps**. If you have more than one Jellyfin, check it is the one they are watching on.
+
 ## Read what the card says
 
 - **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
-- **Problem** on the card: the words under it say what went wrong. Fix that, then wait for the next check.
+- **Problem** on the card: the words under it say what went wrong. A message about a connection or a time-out means Jellyfin did not answer: check Jellyfin is running and its address in **Settings**, then **Apps**, is right. Fix that, then wait for the next check.
 
 ## Report a problem
 

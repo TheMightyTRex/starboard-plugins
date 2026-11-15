@@ -45,6 +45,14 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-spee
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
 
+## Set it up
+
+1. Go to **Settings**, then **Plug-ins**, then **Line speed**.
+2. In **Test at**, enter an hour when nothing is downloading, from 0 to 23. The default is 4, for 04:00.
+3. In **Test size**, enter how many MB each test downloads. The default is 25 MB.
+4. Add its cards to your dashboard. Read [Dashboard card](dashboard-card.md).
+5. To see a result now rather than after the night's test, select **Test now** in **Actions**.
+
 ## Remove it
 
 1. Go to **Settings**, then **Plug-ins**, then **Line speed**.

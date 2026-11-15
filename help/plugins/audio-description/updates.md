@@ -38,6 +38,7 @@ Changed:
 ## How an update is kept safe
 
 - **Before the update** Starboard asks Audio description to get ready: it starts nothing new and lets anything running finish, for up to 60 seconds. If it is not ready, nothing changes and Starboard says why.
+- If something is still running after about 50 seconds, Starboard says "Still busy with" and what it is, then "Try again in a few minutes". Nothing changes: try the update again later.
 - **After the update,** or after a Roll back, it carries on with its work.
 - Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
 - Your settings and its folder are kept.

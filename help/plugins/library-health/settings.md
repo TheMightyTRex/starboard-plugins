@@ -6,12 +6,15 @@ Library health has no settings of its own.
 
 These are on Library health's tab.
 
-- **Check now**
+- **Check now** checks every film and series in Jellyfin straight away, without waiting for the next check, and says how many titles there are to fix, such as "4 titles to fix of 1,240".
 
 ## Things to note
 
-- A setting you change is used straight away; you do not need to deactivate it first.
-- Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
+- It checks Jellyfin every 6 hours, starting a few seconds after it is active.
+- It needs Jellyfin added to Starboard first: go to **Settings**, then **Apps**.
+- It only reads from Jellyfin. To fix a title, change it in Jellyfin, such as by refreshing its metadata or adding a poster, then select **Check now**.
+- It checks films and series only, not episodes, music or books.
+- It keeps the last result in its folder, and the folder is kept when you update or deactivate it.
 
 ## Find out more
 

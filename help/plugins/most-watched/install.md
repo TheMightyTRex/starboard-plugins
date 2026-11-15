@@ -6,6 +6,7 @@ Add Most watched from Starboard's **Catalogue**, where it is listed under **Jell
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. Most watched uses the key Starboard keeps for it.
 
 ## What it may do
 
@@ -35,6 +36,10 @@ Measured: not measured yet. The figures above are the most it may use.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Most watched**. To stop, select **Cancel**: nothing is installed.
 5. Most watched's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. If you want to count over more or fewer than 7 days, change **Over the last** on its tab. Read [Settings](settings.md).
+7. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+The first count starts a few seconds after it is active, then runs once an hour.
 
 ### Add it by its address
 

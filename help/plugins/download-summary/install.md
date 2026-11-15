@@ -6,6 +6,7 @@ Add Download summary from Starboard's **Catalogue**, where it is listed under **
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Your download apps, or Reelix, added to Starboard in **Settings**, then **Apps**, so their downloads show in **Activity**, then **Downloads**. Read [Pause, resume and remove downloads, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/manage-downloads.html).
 
 ## What it may do
 
@@ -34,6 +35,9 @@ Measured: not measured yet. The figures above are the most it may use.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Download summary**. To stop, select **Cancel**: nothing is installed.
 5. Download summary's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+There is nothing else to set up: it has no settings of its own. It starts counting about a minute after you activate it, from 0 for that day.
 
 ### Add it by its address
 

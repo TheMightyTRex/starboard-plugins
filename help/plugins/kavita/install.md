@@ -24,11 +24,11 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 ## Memory and processor
 
-- **app:** 768 MB of memory and 1 of a processor core at most, and 256 processes.
+- **app:** 768 MB of memory and 1 processor core at most, and 256 processes.
 
 Measured:
 
-- 339.1 MiB at rest as Starboard runs it, with an empty library (13 November 2026).
+- 339.1 MiB at rest as Starboard runs it, with an empty library (13 November 2026). A real library uses more.
 
 ## Add it
 
@@ -51,6 +51,16 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 ### Open it
 
 Kavita's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+
+## Set it up
+
+1. On Kavita's tab, select **Activate** if it is not active yet.
+2. In **Its web page**, select **Open Kavita**.
+3. Make the first account. It is Kavita's admin, so give it a strong password.
+4. In Kavita, add a library for `/media/books`.
+5. Add a library for `/media/comics`.
+
+Kavita reads both folders only, so it cannot change or delete a file. Its sign-in key is made for this install when it first starts.
 
 ## Remove it
 

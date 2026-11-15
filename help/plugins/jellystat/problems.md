@@ -8,10 +8,18 @@ start: Jellystat is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
   Not supported -> 2
-  Active, but a card is wrong -> 3
+  Active, but the card is wrong -> q2
+q2: What does the card say?
+  No Jellyfin key -> 3
+  Jellystat is not answering yet -> 4
+  Did not accept the address and key -> 5
+  A restore did not work -> 6
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
-3: Read what the card says #read-what-the-card-says
+3: Add Jellyfin to Starboard #add-jellyfin-to-starboard
+4: Wait for Jellystat to start #wait-for-jellystat-to-start
+5: Check Jellyfin is running #check-jellyfin-is-running
+6: Read how the restore went #read-how-the-restore-went
 ```
 
 ## Start it again
@@ -21,6 +29,8 @@ q: What does its tab say?
 3. If it stopped soon after an update, select **Roll back to** and the version you had. Read [Updates](updates.md).
 4. Still failing: go to **System**, then **Logs**, and look for its name.
 
+If the card says **No answer from** and its name, it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
+
 ## Update it or update Starboard
 
 Your Starboard's plug-in API is outside what this version of Jellystat works with, so Starboard stopped it.
@@ -28,10 +38,38 @@ Your Starboard's plug-in API is outside what this version of Jellystat works wit
 1. Select **Look for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
-## Read what the card says
+## Add Jellyfin to Starboard
 
-- **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
-- **Problem** on the card: the words under it say what went wrong. Fix that, then wait for the next check.
+The card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps."
+
+1. Go to **Settings**, then **Apps**.
+2. Add Jellyfin, with its address and API key.
+3. Wait up to 2 minutes: it gives Jellystat the address and key by itself.
+
+## Wait for Jellystat to start
+
+The card says "Jellystat is not answering yet". Jellystat and its database take a while to start.
+
+1. Wait a few minutes. It asks again every 2 minutes.
+2. If it still says so, on Jellystat's tab select **Deactivate**, then **Activate**.
+3. Still not answering: go to **System**, then **Logs**, and look for its name.
+
+## Check Jellyfin is running
+
+The card says "Jellystat did not accept Jellyfin's address and key". Jellystat checks them against Jellyfin before saving them.
+
+1. Check Jellyfin is running and its address in **Settings**, then **Apps**, is right.
+2. Wait up to 2 minutes: it tries again by itself.
+
+## Read how the restore went
+
+1. On Jellystat's tab, open **Restore a Jellystat backup**. **Last restore** says what happened.
+2. "It is not a PostgreSQL backup made with pg_dump -Fc": use a backup made with `pg_dump -Fc`. Jellystat's own JSON backups are restored in Jellystat itself.
+3. "There is no" and the file's name: put the file in `data/plugins/jellystat/data/main/restore` and type its name only in **Backup file to restore**.
+4. "The backup did not restore, so nothing was changed": your figures are as they were. The words after it say why.
+5. "Jellystat kept its database busy": select **Deactivate** on its tab, then **Activate**, and select **Restore the backup** again.
+
+When a restore worked but Jellystat's pages still show the old figures, deactivate and activate Jellystat.
 
 ## Report a problem
 

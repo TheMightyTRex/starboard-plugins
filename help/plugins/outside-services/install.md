@@ -33,7 +33,7 @@ Measured: not measured yet. The figures above are the most it may use.
 2. Under **Network**, find **Outside services** and select **Install…**.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Outside services**. To stop, select **Cancel**: nothing is installed.
-5. Outside services's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+5. Outside services' own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
 
 ### Add it by its address
 
@@ -44,6 +44,15 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-s
 ```
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
+
+## Set it up
+
+1. Go to **Settings**, then **Plug-ins**, then **Outside services**.
+2. In **Addresses to check**, enter each address to check, one each, with a name first if you like, such as `Router http://192.0.2.1`.
+3. Select **Save**.
+4. In **Check every**, enter how many minutes between checks, from 1 to 60. The default is 5.
+5. Select **Deactivate**, then **Activate**, if you changed **Check every**.
+6. Add its cards to your dashboard. Read [Dashboard card](dashboard-card.md).
 
 ## Remove it
 

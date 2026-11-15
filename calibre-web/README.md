@@ -2,7 +2,7 @@
 
 Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books folder and never changes it.
 
-An app plug-in for Starboard (plug-in API 1.13): Calibre-Web runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.14 or later): Calibre-Web runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (8083 when it is free) and shows the address
 on the plug-in's page with **Open**.
 

@@ -5,7 +5,7 @@ Add Picture shrinker from Starboard's **Catalogue**, where it is listed under **
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
-- Jellyfin added to Starboard, in **Settings**, **Apps**. Picture shrinker works with it.
+- Jellyfin installed in Starboard, in **Settings**, then **Apps**. Picture shrinker works on Jellyfin's metadata folder.
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -37,6 +37,11 @@ Measured:
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Picture shrinker**. To stop, select **Cancel**: nothing is installed.
 5. Picture shrinker's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Check **When to shrink**. It runs every Sunday at 03:30 unless you change it. Read [Settings](settings.md).
+7. If you want new pictures shrunk each night, activate **Shrink new pictures in quiet hours**.
+8. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+To shrink straight away, select **Shrink now** on its tab.
 
 ### Add it by its address
 

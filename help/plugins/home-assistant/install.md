@@ -6,6 +6,7 @@ Add Home Assistant from Starboard's **Catalogue**, where it is listed under **Ho
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Home Assistant on your home network, and an account there that can make a long-lived access token.
 
 ## What it may do
 
@@ -44,6 +45,19 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assi
 ```
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
+
+## Set it up
+
+1. In Home Assistant, open your profile, then **Security**.
+2. Under **Long-lived access tokens**, select **Create token**.
+3. Copy the token Home Assistant shows.
+4. In Starboard, go to **Settings**, then **Plug-ins**, then **Home Assistant**.
+5. In **Home Assistant's address**, enter the address you open it at, such as `http://192.0.2.30:8123`.
+6. In **Long-lived access token**, paste the token.
+7. In **What to show**, enter the entity ids to show, one each, such as `binary_sensor.front_door`.
+8. In **Warn when any is**, keep `on, open, unlocked` or enter your own states, separated by commas.
+9. Select **Save**.
+10. Add the **Home** card to your dashboard. Read [Dashboard card](dashboard-card.md).
 
 ## Remove it
 

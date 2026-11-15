@@ -22,8 +22,8 @@ Added:
 
 ## How an update is kept safe
 
-- **Before the update** Starboard asks Picture shrinker to get ready: it starts nothing new and lets anything running finish, for up to 60 seconds. If it is not ready, nothing changes and Starboard says why.
-- **After the update,** or after a Roll back, it carries on with its work.
+- **Before the update** Starboard asks Picture shrinker to get ready: it stops after the picture it is on and starts no new run, so nothing is left half done. If a picture is still being shrunk, it says "A picture is still being shrunk. Try again in a minute" and nothing changes.
+- **After the update,** or after a Roll back, it says when the next run is. The next run carries on where it stopped.
 - Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
 - Your settings and its folder are kept.
 

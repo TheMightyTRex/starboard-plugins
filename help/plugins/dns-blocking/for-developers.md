@@ -29,8 +29,15 @@ Each image is pinned by digest in the manifest:
 | `GET /health` | Health: 200 while it can work |
 | `GET /card` | The Blocked today card (stat) |
 
+## How it works
+
+- `app.py` uses only Python's standard library and the shared helper `sbplugin.py`. It keeps nothing on disk and runs no background job: it asks only when Starboard asks for the card.
+- **Pi-hole 6:** it signs in at `/api/auth` with the password, reads `/api/stats/summary` and signs out again with `DELETE /api/auth`, so no session is left open.
+- **AdGuard Home:** it reads `/control/stats` with the user name and password (basic sign-in).
+- The card answer uses `band()`: `protected` with the time it asked, or `needs_setup` when there is no address. If Pi-hole or AdGuard Home fails, `/card` answers 502 and Starboard shows "No answer from Ad blocking".
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

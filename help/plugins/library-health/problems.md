@@ -8,10 +8,18 @@ start: Library health is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
   Not supported -> 2
-  Active, but a card is wrong -> 3
+  Active, but a card is wrong -> q2
+q2: What does the card say?
+  Checking soon -> 3
+  No Jellyfin key -> 4
+  A title is still listed after fixing -> 5
+  Something else went wrong -> 6
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
-3: Read what the card says #read-what-the-card-says
+3: Wait for the first check #wait-for-the-first-check
+4: Add Jellyfin to Starboard #add-jellyfin-to-starboard
+5: Check it again #check-it-again
+6: Read what the card says #read-what-the-card-says
 ```
 
 ## Start it again
@@ -28,10 +36,32 @@ Your Starboard's plug-in API is outside what this version of Library health work
 1. Select **Look for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
+## Wait for the first check
+
+The band says "Checking soon" and the number card says "Not checked yet". The first check starts a few seconds after Library health is active.
+
+1. Wait a minute.
+2. If it still says "Checking soon", select **Check now** on its tab. If that shows an error, read [Read what the card says](#read-what-the-card-says).
+
+## Add Jellyfin to Starboard
+
+The number card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps".
+
+1. Go to **Settings**, then **Apps**.
+2. Add Jellyfin, with its address and API key.
+3. On Library health's tab, select **Check now**.
+
+## Check it again
+
+A title you fixed in Jellyfin is still listed. The cards show the last check, and it checks every 6 hours.
+
+1. Check the title in Jellyfin has a poster, a description and a year.
+2. On Library health's tab, select **Check now**.
+
 ## Read what the card says
 
 - **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
-- **Problem** on the card: the words under it say what went wrong. Fix that, then wait for the next check.
+- **Problem** on the card: the words under the number say what went wrong. A message about a connection or a time-out means Jellyfin did not answer: check Jellyfin is running and its address in **Settings**, then **Apps**, is right. Fix that, then select **Check now** on its tab.
 
 ## Report a problem
 

@@ -6,7 +6,7 @@ Direct play's settings are on its own tab: go to **Settings**, then **Plug-ins**
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Files** | A page of its own on Direct play's tab. | None |
+| **Files** | A page of its own: every file in tables, **Converting now**, **Still to do**, **Not fixed** with the reason, and **Left alone**, such as HEVC files or files it cannot read. Its first lines say how many files are fixed, how much space is saved and which file was fixed last. You can search and filter it, but not change it. | None |
 
 ## Devices
 
@@ -25,7 +25,7 @@ Direct play's settings are on its own tab: go to **Settings**, then **Plug-ins**
 
 | Setting | What it does | Default |
 |---|---|---|
-| **When it works** | One file at a time, at the lowest priority. The file being converted always finishes. One of: At weekends, In Starboard's quiet hours, Any time. | At weekends |
+| **When it works** | One file at a time, at the lowest priority. The file being converted always finishes, so work can run past the end of the hours. One of: At weekends (all day Saturday and Sunday), In Starboard's quiet hours (your download hours if you set them, or 01:00 to 06:00), Any time. | At weekends |
 
 ## Shrink
 
@@ -48,13 +48,17 @@ Direct play's settings are on its own tab: go to **Settings**, then **Plug-ins**
 
 These are on Direct play's tab.
 
-- **Pause fixing**
-- **Resume fixing**
-- **Look at the library now**
+- **Pause fixing** stops the file being converted at once, removes its unfinished copy and leaves the original as it was. That file is done again later. Nothing new starts until you resume.
+- **Resume fixing** carries on, straight away when it is inside the hours set in **When it works**, or when they next start.
+- **Look at the library now** looks for new or changed files in your movies and tv folders straight away, at any hour, even while paused. Only new or changed files are read.
 
 ## Things to note
 
-- A setting you change is used straight away; you do not need to deactivate it first.
+- Choose your devices before you activate it. **Roku Express and older Rokus** is activated when you add it. A file is fixed only when one of the devices you chose cannot play it.
+- A setting you change is used from the next file; you do not need to deactivate it first. The file being converted finishes with the settings it started with.
+- It only works in your movies and tv folders, and never downloads anything.
+- With **Keep the originals**, the `.direct-play-originals` folders stay when you remove it. Delete them yourself when you are happy with the new files.
+- A file that failed its check is not tried again until the file changes.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 
 ## Find out more

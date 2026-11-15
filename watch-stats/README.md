@@ -19,7 +19,7 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
 ## In its section of Settings, Plug-ins
 
-- **Recent plays**: a table to read.
+- **Recent plays**: the newest 300 plays, by day, in a table to read.
 - **Top titles**: a table to read.
 - **People**: a table to read.
 
@@ -49,7 +49,7 @@ Before an update, it finishes any check or message it is part way through and st
 
 ## Add it
 
-In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
+Needs Starboard with plug-in API 1.14 or later, and Jellyfin added in **Settings**, **Apps**. In Starboard, open **Settings**, **Plug-ins**, **Catalogue**: it is under **Jellyfin**. Or give this address under **Add one from elsewhere**:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json`
 

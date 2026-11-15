@@ -29,8 +29,14 @@ Each image is pinned by digest in the manifest:
 | `GET /health` | Health: 200 while it can work |
 | `GET /card` | The Watching now card (list) |
 
+## How it works
+
+- Each time the card is asked, `app.py` asks Jellyfin for `/Sessions?ActiveWithinSeconds=120` through `jellyfin()` in `sbplugin.py`, and lists each session that has something playing. It keeps nothing, so it needs no folder.
+- The card's status comes from `band()`: `running` with how many are watching, or `idle` when nobody is.
+- Without a Jellyfin key, `jellyfin()` raises "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps", and the card answers 502 with that message.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

@@ -4,9 +4,9 @@ Most watched adds 1 card you can put on your dashboard. Each starts with a grey 
 
 ## Most watched
 
-Shows a short list, up to 10 lines.
+Shows a short list, up to 10 lines: the films and series watched by the most people over the days set in **Over the last**, most people first. Each line says how many people watched it and how many plays it had. A series counts as one title, with each episode watched counted as a play.
 
-- **How often it updates:** once a minute while the dashboard is open. Nothing is asked while the browser tab is hidden.
+- **How often it updates:** Most watched counts once an hour, and the card is asked once a minute while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:**
   - Slow Horses: 3 people, 11 plays
 
@@ -14,9 +14,11 @@ Shows a short list, up to 10 lines.
 
 | Status | Means |
 |---|---|
-| **OK** | TODO |
-| **Idle** | TODO |
-| **Problem** | TODO |
+| **OK** | The list is ready. The band says when it was last counted. |
+| **Idle** | Nothing was watched in the last days set in **Over the last**, or the first count has not finished. The card says "Nothing watched yet" and "in the last 7 days" or the days you set. |
+| **Problem** | The count went wrong before there was a list. The card says "Nothing watched yet" with what went wrong under it, such as "LookupError: Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps". |
+
+Once there is a list, the card keeps showing the last good list if a later count goes wrong.
 
 ## Add it to your dashboard
 

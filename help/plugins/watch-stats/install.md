@@ -5,7 +5,8 @@ Add Watch statistics from Starboard's **Catalogue**, where it is listed under **
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
-- Jellyfin added to Starboard, in **Settings**, **Apps**. Watch statistics works with it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. Watch statistics uses the key Starboard keeps for it.
+- Playback Reporting in Jellyfin, for the full figures. Without it, Watch statistics shows only each person's last play of each title.
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -38,6 +39,9 @@ Measured:
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Watch statistics**. To stop, select **Cancel**: nothing is installed.
 5. Watch statistics's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Look at its **Watch statistics source** card or its tables. If they say "Playback Reporting is not installed in Jellyfin", go on to the next step. Otherwise, you are done.
+7. Add Playback Reporting in Starboard's **Settings**, then **Jellyfin**, or in Jellyfin's **Dashboard**, then **Plugins**, then **Catalogue**.
+8. Restart Jellyfin. Playback Reporting counts from then on, so the figures grow from that day.
 
 ### Add it by its address
 

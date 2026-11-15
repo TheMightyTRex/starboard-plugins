@@ -6,6 +6,7 @@ Add Ad blocking from Starboard's **Catalogue**, where it is listed under **Netwo
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Pi-hole 6 or AdGuard Home running on your home network, with its address and password. For AdGuard Home, its user name too.
 
 ## What it may do
 
@@ -44,6 +45,18 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-block
 ```
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
+
+## Set it up
+
+1. Go to **Settings**, then **Plug-ins**, then **Ad blocking**.
+2. In **Which one**, choose **Pi-hole** or **AdGuard Home**.
+3. In **Its address**, enter the address you open it at, such as `http://192.0.2.2`.
+4. For AdGuard Home only, enter its **User name**.
+5. Enter its **Password**.
+6. Select **Save**.
+7. Add the **Blocked today** card to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+Within a minute the card shows today's number and the status **Protected**.
 
 ## Remove it
 

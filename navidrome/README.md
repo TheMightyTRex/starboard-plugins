@@ -2,7 +2,7 @@
 
 Navidrome, a music server for Subsonic apps on phones and in the car. It reads your music folder and never changes it.
 
-An app plug-in for Starboard (plug-in API 1.13): Navidrome runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.14 or later): Navidrome runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (4533 when it is free) and shows the address
 on the plug-in's page with **Open**.
 

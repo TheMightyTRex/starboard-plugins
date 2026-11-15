@@ -2,7 +2,7 @@
 
 Wizarr, invitation links for Jellyfin: send someone a link and they make their own Jellyfin account, with the libraries you choose.
 
-An app plug-in for Starboard (plug-in API 1.13): Wizarr runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.14 or later): Wizarr runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (5690 when it is free) and shows the address
 on the plug-in's page with **Open**.
 

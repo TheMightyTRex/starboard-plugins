@@ -1,6 +1,6 @@
 # Ad blocking: Problems
 
-Find what is wrong with Ad blocking, then follow the numbered answer.
+Find what is wrong with Ad blocking from what its tab or its card says, then follow the numbered answer.
 
 ```flow
 title: Find your answer
@@ -8,10 +8,16 @@ start: Ad blocking is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
   Not supported -> 2
-  Active, but a card is wrong -> 3
+  Active, but the card is wrong -> q2
+q2: What does the card say?
+  Needs setting up -> 3
+  No answer from Ad blocking -> 4
+  Protected, but 0 blocked -> 5
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
-3: Read what the card says #read-what-the-card-says
+3: Add the address #add-the-address
+4: Check the address and password #check-the-address-and-password
+5: Check what is counted #check-what-is-counted
 ```
 
 ## Start it again
@@ -28,10 +34,32 @@ Your Starboard's plug-in API is outside what this version of Ad blocking works w
 1. Select **Look for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
-## Read what the card says
+## Add the address
 
-- **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
-- **Problem** on the card: the words under it say what went wrong. Fix that, then wait for the next check.
+The card says "Add the address in the plug-in's settings": **Its address** is empty.
+
+1. Go to **Settings**, then **Plug-ins**, then **Ad blocking**.
+2. Enter **Its address** and **Password**, and for AdGuard Home the **User name**.
+3. Select **Save**.
+4. Wait a minute for the card to ask again.
+
+## Check the address and password
+
+Ad blocking asked Pi-hole or AdGuard Home and got no numbers back, or did not answer Starboard within 3 seconds.
+
+1. Open the address in **Its address** in your browser. If it does not open, Pi-hole or AdGuard Home is not running at that address.
+2. Check **Which one** matches what you run.
+3. Enter the password again and select **Save**. A saved password is never shown, so typing it again is the only way to be sure.
+4. For Pi-hole, check it is Pi-hole 6. Ad blocking uses the way Pi-hole 6 answers, and an older Pi-hole gives it no numbers.
+5. For AdGuard Home, check **User name**, and that the address includes its port, such as `http://192.0.2.2:3000`.
+6. Wait a minute for the card to ask again.
+
+## Check what is counted
+
+The card shows 0 blocked with "no lookups yet": Pi-hole or AdGuard Home answered, but has counted no lookups today.
+
+- Check your router or your devices use Pi-hole or AdGuard Home for their lookups (DNS). If none does, there is nothing to count.
+- Open Pi-hole or AdGuard Home itself and compare its own count for today.
 
 ## Report a problem
 

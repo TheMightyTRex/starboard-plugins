@@ -34,6 +34,9 @@ Measured: not measured yet. The figures above are the most it may use.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Disk forecast**. To stop, select **Cancel**: nothing is installed.
 5. Disk forecast's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+There is nothing else to set up: it has no settings of its own. Its card says **Measuring** at first, and the first forecast comes the day after you activate it.
 
 Tip: Disk forecast is marked **Recommended** in the catalogue.
 

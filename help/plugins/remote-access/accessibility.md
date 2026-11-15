@@ -9,6 +9,10 @@ Starboard draws everything Remote access shows in Starboard: its settings, butto
 - **Its cards** say their status in words with an icon, never by colour alone. A screen reader hears the card's heading, then its status and when it last changed. Nothing on a card interrupts a screen reader when it refreshes.
 - **Starboard's own parts** (settings, buttons, dialogs and cards) are checked with axe, a keyboard walk and the reading order in each Starboard release. Read [How Starboard is tested](https://themightytrex.github.io/starboard/help/accessibility/how-starboard-is-tested.html).
 
+## Not checked
+
+- **Tailscale's and Cloudflare's own pages,** such as the Tailscale sign-in page and Cloudflare's dashboard, are made by others. Starboard did not check them for accessibility: not checked.
+
 ## Find out more
 
 - [Accessibility in Starboard](https://themightytrex.github.io/starboard/help/accessibility/overview.html)

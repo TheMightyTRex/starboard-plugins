@@ -1,12 +1,13 @@
 # Seerr: Install
 
-Add Seerr from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Seerr is active, with its own page on your home network.
+Add Seerr from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Seerr is active, with its own page on your home network, and set up.
 
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Jellyfin added to Starboard, in **Settings**, **Apps**. Seerr works with it.
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Reelix already has requests in Starboard, in **Downloads**, **Requests**, so most people do not need Seerr. It is for people whose Jellyfin users already know Seerr's page.
 
 ## What it may do
 
@@ -49,9 +50,16 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/seerr/sta
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
 
-### Open it
+## Set it up
 
-Seerr's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+Seerr's tab shows its address on your home network, under **Its web page**.
+
+1. On Seerr's tab, under **Its web page**, select **Open Seerr**. Its page opens in a new tab.
+2. Sign in with your Jellyfin account.
+3. When Seerr's set-up asks for Jellyfin's address, enter `http://host.docker.internal:8096`.
+4. Choose your libraries.
+
+If you also use Reelix's requests, choose one place for people to ask, so requests are not made twice.
 
 ## Remove it
 

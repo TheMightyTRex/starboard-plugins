@@ -33,8 +33,14 @@ Each image is pinned by digest in the manifest:
 | `POST /update/before` | The update's before step, 60 seconds at most |
 | `POST /update/after` | The update's after step, 10 seconds at most |
 
+## How it works
+
+- `app.py` checks every 6 hours with `every()` from `sbplugin.py`, and when **Check now** sends `POST /check`. It asks Jellyfin for every film and series with its description, year and poster, in one request.
+- A title with no poster, no description or no year is kept in `/data/result.json`, with how many titles there were. Both cards read that file, so they never wait on Jellyfin.
+- The cards' status comes from `band()`: `waiting` before the first check, `problem` when the first check failed, `warning` with titles to fix and `ok` with none.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

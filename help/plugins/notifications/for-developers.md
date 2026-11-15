@@ -47,8 +47,18 @@ Each image is pinned by digest in the manifest:
 
 - `weekly`: daily at 09:00, 2 minutes at most.
 
+## How it works
+
+- Starboard drives it: each event is a `POST /events`, and New this week is a daily job at 09:00 that sends only on the chosen day, once a week. The container rests 5 minutes after the last one (`start: when_needed`).
+- `POST /events` answers at once and sends in the background, because Starboard waits 3 seconds and tries again once. The same event sent twice within 10 minutes is sent once.
+- `item.added` is not sent: it is kept in `/data/week.json`, 8 days at most, for New this week. New this week also reads Starboard's `recent`, what the download apps imported.
+- One message at a time. The last 20 results are kept in `/data/log.json`, cleaned of every secret first, for both cards.
+- Secrets are read from the settings each time and never written to the log, the cards or `/data`.
+- Words: meaning is always in the words, never in a symbol or colour, and a link has words before it, "Open Starboard:" and the address.
+- Cards set their status with `band()` from `sbplugin.py`. Its before update step holds new runs and waits for one that is running.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

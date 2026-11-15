@@ -6,11 +6,14 @@ Most watched's settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Over the last** | A number from 1 to 90 days. | 7 days |
+| **Over the last** | How many days back to count, from 1 to 90. | 7 days |
 
 ## Things to note
 
-- A setting you change is used straight away; you do not need to deactivate it first.
+- A change to **Over the last** is used at the next count, which runs once an hour. You do not need to deactivate it first.
+- It needs Jellyfin added to Starboard first: go to **Settings**, then **Apps**. Starboard gives it Jellyfin's address and key.
+- It counts what each Jellyfin user has marked as played, looking at up to 200 of each person's most recently played films and episodes. A person counts once for each title, however many times they watched it.
+- It only reads from Jellyfin and never changes anything there. It keeps the last list in its folder.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 
 ## Find out more

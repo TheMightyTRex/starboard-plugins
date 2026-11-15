@@ -1,6 +1,13 @@
 # Calibre-Web: Dashboard card
 
-Calibre-Web has no dashboard card. Open Calibre-Web from its tab, with **Open**, or from **Apps**.
+Calibre-Web has no dashboard card. It is a whole app with its own page on your home network.
+
+## Open Calibre-Web
+
+- On its tab, in **Settings**, then **Plug-ins**, then **Calibre-Web**, select **Open Calibre-Web** under **Its web page**.
+- In the list in **Settings**, then **Plug-ins**, select **Open** beside Calibre-Web. It is there while it is active.
+
+Its page opens in a new tab.
 
 ## Find out more
 

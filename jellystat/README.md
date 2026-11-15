@@ -2,7 +2,7 @@
 
 Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page.
 
-An app plug-in for Starboard (plug-in API 1.13): Jellystat runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.14 or later): Jellystat runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (3000 when it is free) and shows the address
 on the plug-in's page with **Open**.
 

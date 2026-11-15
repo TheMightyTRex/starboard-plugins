@@ -3,7 +3,7 @@
 Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on
 your router. Download apps are never shared.
 
-A Starboard plug-in by TheMightyTRexUK, MIT licence. Needs Starboard with plug-in API 1.8 or later.
+A Starboard plug-in by TheMightyTRexUK, MIT licence. Needs Starboard with plug-in API 1.14 or later.
 
 Its image is for 64-bit computers only (amd64 and arm64): Cloudflare does not make cloudflared for 32-bit Arm, so
 there is no arm/v7 build for older Raspberry Pis.
@@ -67,6 +67,3 @@ In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/remote-access/starboard-plugin.json`
 
 Or run `python3 install.py` in this folder.
-
-Until its image is published, the manifest names it by tag, so only Starboard's plug-in tester (development mode)
-takes it: build it with `docker build -t ghcr.io/themightytrex/starboard-plugin-remote-access:1.0.0 remote-access`.

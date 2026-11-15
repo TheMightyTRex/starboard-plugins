@@ -49,8 +49,8 @@ changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows 
 
 ## Add it
 
-Needs Starboard with plug-in API 1.14 and Jellyfin. In Starboard, open **Settings**, **Plug-ins**, **Catalogue**: it
-is under **Jellyfin**. Starboard never adds it by itself. Or give this address under **Add a plug-in**:
+Needs Starboard with plug-in API 1.14 or later, and Jellyfin. In Starboard, open **Settings**, **Plug-ins**, **Catalogue**: it
+is under **Jellyfin**. Starboard never adds it by itself. Or give this address under **Add one from elsewhere**:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/picture-shrinker/starboard-plugin.json`
 

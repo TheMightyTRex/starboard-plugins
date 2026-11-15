@@ -6,6 +6,7 @@ Add Tdarr from Starboard's **Catalogue**, where it is listed under **Apps you ca
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- If the main install already runs Tdarr: bring it in before you activate the plug-in, so its libraries, flows and history carry over. Read [Set it up](#set-it-up).
 
 ## What it may do
 
@@ -24,7 +25,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 ## Memory and processor
 
-- **server:** 2048 MB of memory and 2 of a processor core at most, and 512 processes.
+- **server:** 2048 MB of memory and 2 processor cores at most, and 512 processes.
 
 Measured:
 
@@ -49,9 +50,30 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/tdarr/sta
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
 
+## Set it up
+
+### If the main install already runs Tdarr
+
+Do this before you activate the plug-in.
+
+1. On Tdarr's tab, under **Your Tdarr**, select **Bring in the Tdarr you already have…**.
+2. Read which folders Starboard copies: Tdarr's `server`, `configs` and `logs` folders.
+3. Enter your Starboard password and select **Copy**.
+4. Select **Activate**. Its page is on your home network at port 8265 when that is free, as it is once your old Tdarr is stopped.
+5. Check the plug-in shows your libraries, then remove Tdarr from the main install: go to **Settings**, then **Install apps**, untick Tdarr and apply.
+
+Starboard stops your Tdarr to copy its files whole. It does not remove it, and its own folders are never moved, changed or deleted. Its cache, the files part way through converting, is not copied. Its old folders (`config/tdarr`, beside the other apps' settings) stay until you move them to the holding folder in **System**, **Clean up**.
+
+### A new Tdarr
+
+1. Select **Activate** on Tdarr's tab.
+2. Go to **Settings**, then **Apps**, and select **Search for new apps**, so Starboard finds Tdarr and gives it a key.
+3. If its tab says **Tdarr is not connected yet** under **Settings**, select **Connect Tdarr**. Tdarr restarts once.
+4. Choose its libraries, what it does and when. Read [Settings](settings.md).
+
 ### Open it
 
-Tdarr's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+Tdarr's tab shows its address on your home network, under **Its web page**, with **Open Tdarr**. Anyone on your home network can open that page.
 
 ## Remove it
 

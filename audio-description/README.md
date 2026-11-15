@@ -49,7 +49,7 @@ from any of them.
 - It uses Reelix's key, which Starboard keeps: to add the Audio description format and score it.
 - It reaches your home network, where Jellyfin and Reelix are.
 - It runs one small container (64 MB of memory at most) that rests when it is not needed. Starboard wakes it for the
-  nightly check, when Starboard starts, and when you open its screens or buttons.
+  nightly check, when Starboard starts, and when you open its pages or select its buttons.
 
 ## What it never does
 
@@ -82,7 +82,7 @@ track once per film or series. Both are listed in Starboard's accessibility rese
 
 ## Add it
 
-Version 1.1.0 needs Starboard with plug-in API 1.12, for links on its lists. In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
+Needs Starboard with plug-in API 1.14 or later. An older Starboard keeps version 1.1.0. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it there. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json`
 

@@ -21,7 +21,7 @@ Before an update, it finishes any check or message it is part way through and st
 
 ## Add it
 
-In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
+Needs Starboard with plug-in API 1.14 or later, and Jellyfin added in **Settings**, **Apps**. In Starboard, open **Settings**, **Plug-ins**, **Catalogue**: it is under **Jellyfin**. Or give this address under **Add one from elsewhere**:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json`
 

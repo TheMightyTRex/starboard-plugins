@@ -6,6 +6,7 @@ Add Library health from Starboard's **Catalogue**, where it is listed under **Je
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. Library health uses the key Starboard keeps for it.
 
 ## What it may do
 
@@ -35,6 +36,9 @@ Measured: not measured yet. The figures above are the most it may use.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Library health**. To stop, select **Cancel**: nothing is installed.
 5. Library health's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Add its cards to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+Its first check starts a few seconds after it is active. There is nothing else to set up.
 
 ### Add it by its address
 

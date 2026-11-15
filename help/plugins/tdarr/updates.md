@@ -9,6 +9,8 @@ Tdarr 1.1.0 is the latest version. It needs Starboard with plug-in API 1.14 or l
 | 1.1.0 | 1.14 or later | 2026-11-15 |
 | 1.0.2 | 1.13 or later | 2026-11-13 |
 
+Versions 1.0.1 and 1.0.0, from 13 November 2026, are no longer offered.
+
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
 
 ## What is new in 1.1.0
@@ -27,11 +29,24 @@ Changed:
 
 - Files are converted in a tdarr-cache folder on your media drives, not on the system disk, so working copies of large films cannot fill it. Starboard points its Films and Series libraries there.
 
+## What is new in 1.0.1
+
+Fixed:
+
+- The worker can download Tdarr's plug-ins: it has a folder it may write to.
+
+## What is new in 1.0.0
+
+Added:
+
+- Tdarr as a plug-in, outside the main install, on its own page on your home network.
+
 ## How an update is kept safe
 
 - Tdarr has no step before an update: Starboard stops it, installs the new version and starts it again.
 - It has no health check of its own, so Starboard waits for its containers to start. If they do not, Starboard goes back to the version you had by itself.
-- Your settings and its folder are kept.
+- Your settings and its folder are kept, with Tdarr's libraries, flows and history.
+- Files Tdarr already converted stay as they are.
 - **Roll back** brings back the older Tdarr and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
 
 ## Update it

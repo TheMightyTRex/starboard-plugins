@@ -1,11 +1,12 @@
 # Calibre-Web: Install
 
-Add Calibre-Web from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Calibre-Web is active, with its own page on your home network.
+Add Calibre-Web from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Calibre-Web is active, with its own page on your home network, and set up.
 
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- A Calibre library in the `books` folder of your media folder: a folder with `metadata.db` in it. Calibre-Web reads it and never changes it.
 
 ## What it may do
 
@@ -48,9 +49,16 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/calibre-w
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
 
-### Open it
+## Set it up
 
-Calibre-Web's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+Calibre-Web's tab shows its address on your home network, under **Its web page**.
+
+1. On Calibre-Web's tab, under **Its web page**, select **Open Calibre-Web**. Its page opens in a new tab.
+2. Sign in with Calibre-Web's own first sign-in: `admin`, with the password `admin123`.
+3. In Calibre-Web, go to **Admin**, then **Edit user**, and change the password straight away. Anyone on your home network can open the page.
+4. For **Location of Calibre database**, enter `/media/books`, the folder with `metadata.db`, and save.
+
+The books folder is read only, so uploading and editing books in Calibre-Web are not possible. Add and edit books with Calibre itself.
 
 ## Remove it
 

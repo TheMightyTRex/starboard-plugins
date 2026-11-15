@@ -28,7 +28,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 Measured:
 
-- 20.0 MiB at rest as Starboard runs it, with an empty library (13 November 2026).
+- 20.0 MiB at rest as Starboard runs it, with an empty library (13 November 2026). A real library uses more.
 
 ## Add it
 
@@ -51,6 +51,14 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 ### Open it
 
 Navidrome's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+
+## Set it up
+
+1. On Navidrome's tab, select **Activate** if it is not active yet.
+2. In **Its web page**, select **Open Navidrome**.
+3. Make the first account. It is Navidrome's admin, so give it a strong password.
+4. Put your music in `music` in your media folder. Navidrome reads it there, read only.
+5. In your Subsonic app, such as Symfonium, Substreamer, Amperfy or play:Sub, add a server with the address Starboard shows, such as `http://192.168.1.20:4533`, and the account you made.
 
 ## Remove it
 

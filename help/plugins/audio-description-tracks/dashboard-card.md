@@ -1,22 +1,23 @@
 # Audio description tracks: Dashboard card
 
-Audio description tracks adds 1 card you can put on your dashboard. Each starts with a grey band: Audio description tracks's logo and name, a status in words, and when it last changed.
+Audio description tracks adds 1 card you can put on your dashboard. Each starts with a grey band: Audio description tracks' logo and name, a status in words, and when it last changed.
 
 ## Description tracks to check
 
-Shows a number, with a few words under it.
+Shows how many added tracks are waiting for you to say whether they play in step. Under it, how many other files need a look, such as one with no match or lengths that differ, or "Nothing else waiting".
 
-- **How often it updates:** every 1 hour while the dashboard is open. Nothing is asked while the browser tab is hidden.
+- **How often it updates:** once an hour while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:** 2 to check, Nothing else waiting
 
 ## What the status says
 
 | Status | Means |
 |---|---|
-| **OK** | TODO |
-| **Working** | TODO |
-| **Warning** | TODO |
-| **Problem** | TODO |
+| **OK** | Nothing is waiting for you. Every file in the folder is confirmed, already described or already added. |
+| **Working** | Shown as **Adding tracks**. It is looking in the folder and checking new files now. |
+| **Warning** | Files need you, such as "3 tracks to check": added tracks to play and confirm, and files it could not add, such as **Lengths differ**, **No match** or **Choose the title**. |
+
+To see each file and what to do, open **Description tracks to add** on its tab. Read [Settings](settings.md).
 
 ## Add it to your dashboard
 

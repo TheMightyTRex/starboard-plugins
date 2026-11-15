@@ -39,8 +39,16 @@ Each image is pinned by digest in the manifest:
 | `POST /update/before` | The update's before step, 60 seconds at most |
 | `POST /update/after` | The update's after step, 10 seconds at most |
 
+## How it works
+
+- `app.py` asks Jellyfin for its plug-ins. With Playback Reporting, it sends one query to Playback Reporting's own table through Jellyfin's API (`/user_usage_stats/submit_custom_query`), 5,000 rows at most. Without it, it reads each user's played films, episodes and audio, 200 a user at most.
+- The answer is kept in `/data/plays.json` for 15 minutes, or until **Over the last** changes, and every card and table is worked out from it. **Read the figures again now** (`POST /refresh`) reads it again straight away.
+- The three tables are read only: a change sent to them answers "These figures are read only".
+- The cards' status comes from `band()`: `ok` with Playback Reporting, `warning` ("Last plays only") without it. The source card sends `ok`, `needs_setup` or `problem`.
+- It starts when needed and stops after 5 minutes with nothing to do.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

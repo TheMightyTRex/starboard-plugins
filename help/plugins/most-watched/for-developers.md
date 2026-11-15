@@ -31,8 +31,14 @@ Each image is pinned by digest in the manifest:
 | `POST /update/before` | The update's before step, 60 seconds at most |
 | `POST /update/after` | The update's after step, 10 seconds at most |
 
+## How it works
+
+- `app.py` counts once an hour with `every()` from `sbplugin.py`, starting 5 seconds after it starts. For each Jellyfin user it asks for up to 200 films and episodes marked as played, newest first, and keeps those played within **Over the last** (`days`).
+- Titles are ranked by how many people watched them, then by plays. The top 10 are kept in `/data/top.json`, and the card reads that file, so the card never waits on Jellyfin.
+- The card's status comes from `band()`: `ok` with a list, `idle` with no list and no error, `problem` with no list and the last error from `last_error()`.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

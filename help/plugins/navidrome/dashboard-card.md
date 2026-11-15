@@ -1,6 +1,6 @@
 # Navidrome: Dashboard card
 
-Navidrome has no dashboard card. Open Navidrome from its tab, with **Open**, or from **Apps**.
+Navidrome has no dashboard card. To open Navidrome, go to **Settings**, then **Plug-ins**, then **Navidrome**, and in **Its web page** select **Open Navidrome**.
 
 ## Find out more
 

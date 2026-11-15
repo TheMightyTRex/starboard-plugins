@@ -6,6 +6,7 @@ Add Watching now from Starboard's **Catalogue**, where it is listed under **Jell
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. Watching now uses the key Starboard keeps for it. Without it, the card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps".
 
 ## What it may do
 
@@ -35,6 +36,9 @@ Measured: not measured yet. The figures above are the most it may use.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Watching now**. To stop, select **Cancel**: nothing is installed.
 5. Watching now's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+There is nothing else to set up: it has no settings of its own.
 
 ### Add it by its address
 

@@ -6,6 +6,7 @@ Add Notifications from Starboard's **Catalogue**, where it is listed under **Sys
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- The details for at least one way to send: an email account that can send by SMTP, a Telegram bot, a Discord webhook, a Pushover account, an ntfy topic, a webhook address, or signal-cli-rest-api you already run.
 
 ## What it may do
 
@@ -31,7 +32,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 Measured:
 
-- About 14 MB for about a second while it sends a message; it rests the rest of the time.
+- About 14 MB for about a second while it sends a message, from its README. It rests the rest of the time.
 
 ## Add it
 
@@ -39,7 +40,15 @@ Measured:
 2. Under **System**, find **Notifications** and select **Install…**.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Notifications**. To stop, select **Cancel**: nothing is installed.
-5. Notifications's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+5. Notifications' own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. On its tab, fill in the details for one way to send, such as **Email**, and select **Save**.
+7. Select that channel's test button, such as **Send a test email**, and check the test arrives.
+8. Activate **Send by** that channel, such as **Send by email**.
+9. Optional: under **What to send**, deactivate what you do not want, and give **Starboard's address, for links**.
+10. Optional: under **People**, give one line for each person who should hear when their request is ready.
+11. Add its cards to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+Read [Settings](settings.md) for each way to send.
 
 Tip: Notifications is marked **Recommended** in the catalogue.
 

@@ -15,7 +15,7 @@ Starboard lists these before you add it, each with its risk.
 |---|---|
 | Add styles to Display: colours, corners, a font and shadows, checked for accessibility (`appearance:styles`) | Low |
 
-Styles runs nothing: it only adds styles, which Starboard writes itself after checking them.
+Styles runs nothing: no container, no code and no network access. It only adds styles, which Starboard writes itself after checking their contrast in light and dark (WCAG 2.2: 4.5:1 for text, 3:1 for edges and the focus ring). A style that fails cannot be added.
 
 ## Memory and processor
 
@@ -27,7 +27,10 @@ None: it runs no container.
 2. Under **Look**, find **Styles** and select **Install…**.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Styles**. To stop, select **Cancel**: nothing is installed.
-5. Styles's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+5. Styles' own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Select **Display** in the header.
+7. Under **Style**, choose a style.
+8. Select **Done**.
 
 ### Add it by its address
 
@@ -46,9 +49,9 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
-Its containers stop and go, and its API key stops working. Nothing is deleted.
+Its styles are no longer offered in **Display**. Nothing is deleted.
 
-To stop it for a while instead, select **Deactivate** on its tab: its settings and folder are kept.
+To stop it for a while instead, select **Deactivate** on its tab. While it is deactivated, its styles are not offered in **Display**.
 
 ## Find out more
 

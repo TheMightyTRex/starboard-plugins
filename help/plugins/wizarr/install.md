@@ -1,12 +1,13 @@
 # Wizarr: Install
 
-Add Wizarr from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Wizarr is active, with its own page on your home network.
+Add Wizarr from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Wizarr is active, with its own page on your home network, and set up.
 
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Jellyfin added to Starboard, in **Settings**, **Apps**. Wizarr works with it.
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- An API key for Wizarr, made in Jellyfin's **Dashboard**, **API keys**. Starboard does not hand Wizarr its own key.
 
 ## What it may do
 
@@ -49,9 +50,16 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/wizarr/st
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
 
-### Open it
+## Set it up
 
-Wizarr's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+Wizarr's tab shows its address on your home network, under **Its web page**.
+
+1. On Wizarr's tab, under **Its web page**, select **Open Wizarr**. Its page opens in a new tab.
+2. Make Wizarr's admin account. Anyone on your home network can open the page, so do this straight away.
+3. Add your Jellyfin in Wizarr: the address `http://host.docker.internal:8096` and the API key you made in Jellyfin.
+4. Choose the libraries each invitation gives, and an expiry if you want one, then make your first invitation link.
+
+Invitation links work on your home network. For people away from home, use the [Remote access](../remote-access/install.md) plug-in or your own address.
 
 ## Remove it
 

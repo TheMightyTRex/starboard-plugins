@@ -5,7 +5,7 @@ Add Jellystat from Starboard's **Catalogue**, where it is listed under **Apps yo
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
-- Jellyfin added to Starboard, in **Settings**, **Apps**. Jellystat works with it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. Starboard gives Jellystat your Jellyfin's address and key, so you do not type them.
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -54,9 +54,12 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/jellystat
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
 
-### Open it
+### Set it up
 
-Jellystat's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+1. Wait for its **Jellystat** card or tab to say "Jellystat has your Jellyfin." or "Gave Jellystat your Jellyfin's address and key."
+2. On Jellystat's tab, select **Open**. Jellystat's own page opens, at its address on your home network.
+3. Make Jellystat's own account. The first account is its admin. Anyone on your home network can open that page, so do this straight away.
+4. Optional: bring in the figures from a Jellystat you had before. Read [Settings](settings.md).
 
 ## Remove it
 

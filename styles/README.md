@@ -31,6 +31,8 @@ API 1.2).
 
 ## Install
 
+Needs Starboard with plug-in API 1.14 or later. An older Starboard keeps version 1.3.0.
+
 1. Run `python3 install.py` and give your Starboard's address. Your browser opens Settings, Plug-ins, Catalogue
    with Styles ready to add.
 2. Select **Install**, read what it may do (add styles to Display, nothing else), type your Starboard password

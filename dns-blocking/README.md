@@ -1,6 +1,6 @@
 # Ad blocking
 
-How many adverts and trackers Pi-hole or AdGuard Home blocked today.
+How many adverts and trackers Pi-hole or AdGuard Home blocked today. It works with Pi-hole 6 and AdGuard Home, and only reads their numbers.
 
 An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 

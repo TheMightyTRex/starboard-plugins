@@ -1,6 +1,6 @@
 # Notifications: Settings
 
-Notifications's settings are on its own tab: go to **Settings**, then **Plug-ins**, then **Notifications**. Starboard draws them and keeps them; secrets are never shown again once saved.
+Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins**, then **Notifications**. Starboard draws them and keeps them; secrets are never shown again once saved.
 
 ## What to send
 
@@ -85,20 +85,21 @@ Notifications's settings are on its own tab: go to **Settings**, then **Plug-ins
 
 ## Buttons
 
-These are on Notifications's tab.
+These are on Notifications' tab.
 
-- **Send a test email**
-- **Send a test to Telegram**
-- **Send a test to Discord**
-- **Send a test by Signal**
-- **Send a test by Pushover**
-- **Send a test by ntfy**
-- **Send a test to the webhooks**
-- **Send New this week now**
+- **Send a test email**, **Send a test to Telegram**, **Send a test to Discord**, **Send a test by Signal**, **Send a test by Pushover**, **Send a test by ntfy** and **Send a test to the webhooks** each send "A test from Starboard" by that one channel, with the details saved, even before you activate it. Starboard says "Test sent by" and the channel, or "Test not sent" and why.
+- **Send New this week now** sends New this week straight away, on any day, by every active channel. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
 
 ## Things to note
 
-- A setting you change is used straight away; you do not need to deactivate it first.
+- A setting you change is used for the next message; you do not need to deactivate it first.
+- Fill in a channel's details, select its test button, and activate **Send by** that channel only once the test arrives.
+- Each message goes by every active channel. One channel failing never stops the others.
+- Under **People**, give one line for each person, such as `Sam, sam@example.com` or `Sam, telegram 123456`. The name must be the one they use in Reelix or Seerr. Only email and Telegram can tell a person.
+- New this week is sent at 09:00 on the day you choose, once a week. A week with nothing new sends nothing.
+- Passwords, tokens, keys and webhook addresses are secret: Starboard never shows them again, and the plug-in never writes them to its log, its cards or its folder.
+- On ntfy.sh anyone who knows the topic can read it, so make the topic hard to guess.
+- Signal works only if you already run signal-cli-rest-api with a number registered. Otherwise leave **Send by Signal** deactivated.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 
 ## Find out more

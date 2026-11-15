@@ -4,21 +4,19 @@ Picture shrinker adds 1 card you can put on your dashboard. Each starts with a g
 
 ## Space saved
 
-Shows a number, with a few words under it.
+Shows how much space Picture shrinker has saved. Under it, how many pictures are shrunk and when it runs next, or how far the run it is on has gone.
 
-- **How often it updates:** every 1 minute while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
+- **How often it updates:** every 30 seconds while a run is going, and every 10 minutes the rest of the time, while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
 - **Example:** 41.20 GB saved, 18,402 pictures shrunk. Next run Sunday 16 November at 03:30
 
 ## What the status says
 
 | Status | Means |
 |---|---|
-| **Done** | TODO |
-| **Running** | TODO |
-| **Scheduled** | TODO |
-| **Problem** | TODO |
-| **Failed** | TODO |
-| **Stopped** | TODO |
+| **Running** | It is shrinking pictures now. The band says how many so far, such as "120 shrunk so far", and the card says "Shrinking now" with how many it has looked at. |
+| **Scheduled** | Nothing is being shrunk. The band says when it runs next, such as "Next Sun 03:30", or "First run" and when before its first run. |
+| **Done** | The last run finished and no next run is set in **When to shrink**. |
+| **Problem** | The last run did not finish. The band says "Last run failed" and the card says "The last run did not finish" and why. |
 
 ## Add it to your dashboard
 

@@ -4,21 +4,21 @@ Jellystat adds 1 card you can put on your dashboard. Each starts with a grey ban
 
 ## Jellystat
 
-Shows one line saying whether all is well.
+Shows one line saying whether Jellystat has your Jellyfin, or that a backup is being restored. The figures themselves are on Jellystat's own page: open it from its tab with **Open**.
 
 - **How often it updates:** every 10 minutes while the dashboard is open. Nothing is asked while the browser tab is hidden.
-- **Example:** Connected to Jellyfin. Open Jellystat from its page in Settings, Plug-ins.
+- **Example:** Jellystat has your Jellyfin.
 
 ## What the status says
 
 | Status | Means |
 |---|---|
-| **OK** | TODO |
-| **Working** | TODO |
-| **Running** | TODO |
-| **Waiting** | TODO |
-| **Warning** | TODO |
-| **Problem** | TODO |
+| **OK** | Jellystat has your Jellyfin's address and key. The card says "Jellystat has your Jellyfin." or "Gave Jellystat your Jellyfin's address and key." |
+| **Working** | A backup is being restored. The band says "Restoring a backup" and the card says which file. |
+| **Waiting** | It has just started and has not asked Jellystat yet. The band and the card say "Starting". |
+| **Warning** | Jellystat does not have your Jellyfin yet. The card says why: "Jellystat is not answering yet", "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps." or "Jellystat did not accept Jellyfin's address and key". |
+
+It asks Jellystat every 2 minutes, starting 20 seconds after it starts.
 
 ## Add it to your dashboard
 

@@ -24,8 +24,8 @@ Added:
 
 ## How an update is kept safe
 
-- **Before the update** Starboard asks Direct play to get ready: it starts nothing new and lets anything running finish, for up to 60 seconds. If it is not ready, nothing changes and Starboard says why.
-- **After the update,** or after a Roll back, it carries on with its work.
+- **Before the update** Starboard asks Direct play to get ready: it stops the file being converted, removes its unfinished copy and starts no new file, as **Pause fixing** does. The original stays as it was. If a file is still being converted after 30 seconds, it says "A file is still being converted. Try again in a minute" and nothing changes.
+- **After the update,** or after a Roll back, it carries on, and converts that file again from the start.
 - Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
 - Your settings and its folder are kept.
 

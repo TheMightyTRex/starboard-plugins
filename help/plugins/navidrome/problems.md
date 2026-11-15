@@ -1,6 +1,6 @@
 # Navidrome: Problems
 
-Find what is wrong with Navidrome, then follow the numbered answer.
+Find what is wrong with Navidrome from what its tab says or what you see, then follow the numbered answer.
 
 ```flow
 title: Find your answer
@@ -8,8 +8,16 @@ start: Navidrome is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
   Not supported -> 2
+  Active -> q2
+q2: What is wrong?
+  Its page will not open -> 3
+  Music is missing -> 4
+  A Subsonic app cannot connect -> 5
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
+3: Open its web page #open-its-web-page
+4: Put the music in the music folder #put-the-music-in-the-music-folder
+5: Connect a Subsonic app #connect-a-subsonic-app
 ```
 
 ## Start it again
@@ -26,9 +34,31 @@ Your Starboard's plug-in API is outside what this version of Navidrome works wit
 1. Select **Look for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
+## Open its web page
+
+1. Go to **Settings**, then **Plug-ins**, then **Navidrome**.
+2. Check its state is **Active**. If not, select **Activate**.
+3. In **Its web page**, select **Open Navidrome**. Use the address shown there: Starboard chooses the port, 4533 when it is free, so it may be a different one.
+4. Open it from a device on your home network. The page is not on the internet.
+
+## Put the music in the music folder
+
+Navidrome reads only `music` in your media folder, as `/media/music`. Music anywhere else is not shown.
+
+1. Put your music in `music` in your media folder.
+2. Open Navidrome to check the music is there. When it looks for new music is set in Navidrome itself: read [Navidrome's own help](https://www.navidrome.org).
+
+It reads the folder only, so it cannot fix a file's name or tags for you.
+
+## Connect a Subsonic app
+
+1. In the app, use the address in **Its web page**, such as `http://192.168.1.20:4533`, with `http://` and the port.
+2. Sign in with an account you made in Navidrome, not your Starboard account.
+3. Use the app on your home network. Remote access shares only Starboard, Jellyfin and Audiobookshelf, so Navidrome does not answer away from home through it.
+
 ## Report a problem
 
-If none of these helps, tell its maker, with what its tab and the card say: [the plug-ins' issues on GitHub](https://github.com/TheMightyTRex/starboard-plugins/issues).
+If none of these helps, tell its maker, with what its tab says: [the plug-ins' issues on GitHub](https://github.com/TheMightyTRex/starboard-plugins/issues). For a problem inside Navidrome itself, read [Navidrome's own help](https://www.navidrome.org).
 
 ## Find out more
 

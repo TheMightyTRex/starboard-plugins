@@ -1,6 +1,6 @@
 # Line speed: Problems
 
-Find what is wrong with Line speed, then follow the numbered answer.
+Find what is wrong with Line speed from what its tab or its cards say, then follow the numbered answer.
 
 ```flow
 title: Find your answer
@@ -8,10 +8,18 @@ start: Line speed is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
   Not supported -> 2
-  Active, but a card is wrong -> 3
+  Active -> q2
+q2: What do you see?
+  Not tested yet -> 3
+  Problem on the card -> 4
+  Did not answer after Test now -> 5
+  A slower speed than expected -> 6
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
-3: Read what the card says #read-what-the-card-says
+3: Wait for the first test #wait-for-the-first-test
+4: Check the internet connection #check-the-internet-connection
+5: Wait for the test to finish #wait-for-the-test-to-finish
+6: Make the test fairer #make-the-test-fairer
 ```
 
 ## Start it again
@@ -28,14 +36,42 @@ Your Starboard's plug-in API is outside what this version of Line speed works wi
 1. Select **Look for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
-## Read what the card says
+## Wait for the first test
 
-- **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
-- **Problem** on the card: the words under it say what went wrong. Fix that, then wait for the next check.
+The cards say "Not tested yet" and **Next test at** with the hour from **Test at**. Nothing is wrong: Line speed tests once a night, so the first result comes at that hour.
+
+To see a result now:
+
+1. Go to **Settings**, then **Plug-ins**, then **Line speed**.
+2. In **Actions**, select **Test now**.
+
+## Check the internet connection
+
+The **Line speed** card says **Problem** and the reason, such as a time-out: the last test could not download its test file. This is shown only until the first test works.
+
+1. Check this computer can reach the internet.
+2. Check nothing on your network blocks `speed.cloudflare.com`, where the test file comes from.
+3. Select **Test now** to try again.
+
+## Wait for the test to finish
+
+Starboard waits 10 seconds for a button. A test on a slower line can take longer, so Starboard says "Line speed did not answer", but the test carries on.
+
+1. Wait a minute or two.
+2. Look at the **Line speed** card: the new result is there when the test is done.
+3. If tests often take this long, choose a smaller **Test size**.
+
+## Make the test fairer
+
+Line speed times one download of **Test size**, so anything else using the line at the same time slows it.
+
+- Choose a **Test at** hour when nothing is downloading or streaming.
+- On a fast line, choose a larger **Test size**: a small file finishes before the line reaches full speed.
+- It measures download speed only, not upload.
 
 ## Report a problem
 
-If none of these helps, tell its maker, with what its tab and the card say: [the plug-ins' issues on GitHub](https://github.com/TheMightyTRex/starboard-plugins/issues).
+If none of these helps, tell its maker, with what its tab and the cards say: [the plug-ins' issues on GitHub](https://github.com/TheMightyTRex/starboard-plugins/issues).
 
 ## Find out more
 

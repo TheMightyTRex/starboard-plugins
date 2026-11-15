@@ -1,16 +1,16 @@
 # Seerr: Accessibility
 
-Starboard draws everything Seerr shows in Starboard: its settings, buttons and messages, with the same parts as the rest of Starboard. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
+Starboard draws everything Seerr shows in Starboard: its tab, its buttons and its messages, with the same parts as the rest of Starboard. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
 
 ## What was checked
 
-- **The plug-in tester:** accessibility passed, checking settings, cards and actions. Starboard runs it before the plug-in is added, every time.
+- **The plug-in tester:** accessibility passed. Starboard runs it before the plug-in is added, every time. Seerr has no settings, card or actions in Starboard, so there was little to check.
 - **Its logo** has a text description, "A speech bubble with a plus sign", for where it is shown without its name.
 - **Starboard's own parts** (settings, buttons, dialogs and cards) are checked with axe, a keyboard walk and the reading order in each Starboard release. Read [How Starboard is tested](https://themightytrex.github.io/starboard/help/accessibility/how-starboard-is-tested.html).
 
 ## Not checked
 
-- **Seerr's own web page** is made by others. Starboard did not check it for accessibility: not checked.
+- **Seerr's own web page** is made by others. Starboard did not check it for accessibility: not checked. Its link, **Open Seerr**, says that it opens in a new tab, for screen reader users.
 
 ## Find out more
 

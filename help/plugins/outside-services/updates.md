@@ -44,7 +44,7 @@ Added:
 
 ## Roll it back
 
-1. On Outside services's tab, in **Versions**, select **Roll back to** and the version you had.
+1. On Outside services' tab, in **Versions**, select **Roll back to** and the version you had.
 2. Enter your Starboard password and select **Roll back**.
 3. When the dialog says it is back on that version, select **Done**.
 
@@ -53,5 +53,5 @@ Rolling back needs no download, and only one earlier version is kept.
 ## Find out more
 
 - [Update a plug-in and roll it back, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html)
-- [Outside services's changes, in full](../../../outside-services/CHANGELOG.md)
+- [Outside services' changes, in full](../../../outside-services/CHANGELOG.md)
 - [Problems](problems.md)

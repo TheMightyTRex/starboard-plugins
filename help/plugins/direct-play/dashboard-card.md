@@ -4,9 +4,13 @@ Direct play adds 2 cards you can put on your dashboard. Each starts with a grey 
 
 ## Direct play
 
-Shows a short list, up to 10 lines.
+Shows a short list, up to 6 lines:
 
-- **How often it updates:** every 30 seconds while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
+- **Converting now:** the film or episode, what is being done, how far it is as a percentage and about how long is left. When nothing is being converted, the first line says why instead, such as "Waiting for the weekend", "Paused" or "Nothing left to do", and when it next runs.
+- **Next:** the next four files and what will be done to each.
+- **Totals:** how many files are fixed, how much space is saved and how many are still to do.
+
+- **How often it updates:** every 30 seconds while the dashboard is open and in view, or as often as **Card updates every** says. Nothing is asked while the browser tab is hidden.
 - **Example:**
   - Converting now: Dune (2021): Shrink, 34% done, about 1 hour 5 minutes left
   - Next: Slow Horses, series 1 episode 3: Add a playable sound track
@@ -14,7 +18,7 @@ Shows a short list, up to 10 lines.
 
 ## Space saved by Direct play
 
-Shows a number, with a few words under it.
+Shows how much space Direct play has saved, with how many files are fixed and how many are still to do under it.
 
 - **How often it updates:** every 10 minutes while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:** 1.03 TB saved, 1,173 files fixed, 40 files to do
@@ -23,14 +27,13 @@ Shows a number, with a few words under it.
 
 | Status | Means |
 |---|---|
-| **OK** | TODO |
-| **Done** | TODO |
-| **Converting** | TODO |
-| **Waiting** | TODO |
-| **Idle** | TODO |
-| **Paused** | TODO |
-| **Warning** | TODO |
-| **Stopped** | TODO |
+| **Converting** | A file is being fixed now. |
+| **Waiting** | Nothing is being converted yet: it is outside the hours set in **When it works**, it is looking at the library, it is about to start the next file, or an update is about to start. The **Direct play** card says which, such as "Waiting for the weekend" or "Waiting for quiet hours". |
+| **Paused** | Someone selected **Pause fixing**. The **Direct play** card says "Resume it on the plug-in's page in Settings, Plug-ins". |
+| **Done** | Every file is looked at and nothing is left to do. New films and series are looked at when it next runs. |
+| **Needs setting up** | On the **Direct play** card only: no device is chosen in **Devices**. The card says "No devices chosen". |
+
+The band's time on the **Space saved by Direct play** card is when the last file was fixed. If a pass goes wrong, the cards do not say so: the **Files** page on its tab says "The last pass did not finish" and why.
 
 ## Add it to your dashboard
 

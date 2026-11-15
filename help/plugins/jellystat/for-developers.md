@@ -37,8 +37,16 @@ Each image is pinned by digest in the manifest:
 | `POST /update/before` | The update's before step, 60 seconds at most |
 | `POST /update/after` | The update's after step, 10 seconds at most |
 
+## How it works
+
+- `main` is a small helper beside Jellystat (`app`) and its PostgreSQL (`db`). Every 2 minutes it asks Jellystat whether it has a Jellyfin. While it has none, it gives Jellystat Starboard's Jellyfin address and key through Jellystat's own set-up call, which checks them against Jellyfin before saving.
+- **Restore the backup** (`POST /restore-now`) checks the file is a `pg_dump -Fc` backup, restores it into a new database, then renames the current database to `jfstat_before_` and the date and swaps the new one in. A failed restore is kept as `jfstat_failed_` and the date, and the current database is not touched.
+- A restore runs inside `working()` from `sbplugin.py`, so an update waits for it or is refused.
+- The card's status comes from `band()`: `working`, `waiting`, `ok` or `warning`.
+- The database password and Jellystat's sign-in secret are made for this install by Starboard (`{secret:...}` in the manifest).
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

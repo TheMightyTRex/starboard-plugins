@@ -7,7 +7,7 @@ Remote access's settings are on its own tab: go to **Settings**, then **Plug-ins
 | Setting | What it does | Default |
 |---|---|---|
 | **Connect with** | Tailscale joins your phone to home privately. Cloudflare Tunnel gives a web address of your own, behind Cloudflare Access. One of: Nothing yet, Tailscale (recommended), Cloudflare Tunnel. | Nothing yet |
-| **Addresses away from home** | A page of its own on Remote access's tab. | None |
+| **Addresses away from home** | A page of its own on Remote access's tab. It shows how it connects and the state of the connection, the Tailscale sign-in link when one is needed, and each shared app's address away from home with **Test**. It also lists the download apps, which are never shared. **Test all** tests every shared app. | None |
 
 ## Tailscale
 
@@ -35,12 +35,20 @@ Remote access's settings are on its own tab: go to **Settings**, then **Plug-ins
 
 These are on Remote access's tab.
 
-- **Test remote access**
-- **Start remote access again**
+- **Test remote access** checks that each shared app answers Remote access. With Cloudflare Tunnel, it also checks that Starboard answers to the name on its route. Starboard says what it found in **Actions**, and each app's result shows in **Addresses away from home**.
+- **Start remote access again** stops Tailscale or Cloudflare Tunnel and starts it with the saved settings. Use it after fixing something outside Starboard, such as a route in Cloudflare's dashboard.
+
+The buttons are in **Actions**, and work only while Remote access is active.
 
 ## Things to note
 
-- A setting you change is used straight away; you do not need to deactivate it first.
+- **Connect with**, **Sign in with** and the switches are saved as soon as you change them. Select **Save** to keep a key, token or name.
+- When you change how it connects, the key, the token or the name, Remote access stops and starts again with them, within about 10 seconds.
+- Only Starboard, Jellyfin and Audiobookshelf can be shared. qBittorrent, NZBGet, SABnzbd, Reelix and the other apps are never reachable this way.
+- **Share Audiobookshelf** and **Share Jellyfin** work only for apps in Starboard's apps. Remote access looks there for their addresses every 5 minutes.
+- With Cloudflare Tunnel, a route to an app you have not shared stops the tunnel. Share the app or delete the route.
+- Starboard answers only to names it knows. To open Starboard by a Cloudflare name, or by its name on your tailnet, add that name to `STARBOARD_ALLOWED_HOSTS` in Starboard's settings file.
+- Keys and tokens never go on a command line or in the log.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 
 ## Find out more

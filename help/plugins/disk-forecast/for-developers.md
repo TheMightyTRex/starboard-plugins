@@ -29,8 +29,16 @@ Each image is pinned by digest in the manifest:
 | `GET /health` | Health: 200 while it can work |
 | `GET /card` | The Disk forecast card (status) |
 
+## How it works
+
+- Once an hour, in a background job, it asks Starboard's API for `system` with its own key and reads each disk's label (or mount or name), used and total.
+- It keeps one reading a day for each disk, the last 35 days, in `/data/history.json`.
+- `GET /card` compares the newest reading with the oldest for each disk. The status is `problem` under 14 days, `warning` under 60 days and `ok` otherwise, set with `band()` from `sbplugin.py`, with `updated` as when `history.json` last changed.
+- Before it has any reading, the card is `waiting` with the label "Measuring", or `problem` with the last error from the background job.
+- It declares no update steps, so Starboard stops it, updates it and starts it again.
+
 ## Find out more
 
-- [The plug-in collection's developer pages](../../developers/plug-in-api-1-14.md)
+- [The plug-in collection's developer pages](../../developers/plug-in-api.md)
 - [Plug-in manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html)
 - [Plug-in API reference](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html)

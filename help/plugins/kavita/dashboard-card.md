@@ -1,6 +1,6 @@
 # Kavita: Dashboard card
 
-Kavita has no dashboard card. Open Kavita from its tab, with **Open**, or from **Apps**.
+Kavita has no dashboard card. To open Kavita, go to **Settings**, then **Plug-ins**, then **Kavita**, and in **Its web page** select **Open Kavita**.
 
 ## Find out more
 

@@ -29,7 +29,7 @@ Added:
 
 ## How an update is kept safe
 
-- Styles has no step before an update: Starboard stops it, installs the new version and starts it again.
+- Styles runs no container, so there is nothing to stop or wait for: Starboard checks the new version's styles and installs it.
 - Your settings and its folder are kept.
 
 ## Update it
@@ -42,7 +42,7 @@ Added:
 
 ## Roll it back
 
-1. On Styles's tab, in **Versions**, select **Roll back to** and the version you had.
+1. On Styles' tab, in **Versions**, select **Roll back to** and the version you had.
 2. Enter your Starboard password and select **Roll back**.
 3. When the dialog says it is back on that version, select **Done**.
 
@@ -51,5 +51,5 @@ Rolling back needs no download, and only one earlier version is kept.
 ## Find out more
 
 - [Update a plug-in and roll it back, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html)
-- [Styles's changes, in full](../../../styles/CHANGELOG.md)
+- [Styles' changes, in full](../../../styles/CHANGELOG.md)
 - [Problems](problems.md)

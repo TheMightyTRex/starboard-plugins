@@ -1,11 +1,12 @@
 # Watching now: Settings
 
-Watching now has no settings of its own.
+Watching now has no settings of its own, and no buttons. It asks Jellyfin with the key Starboard keeps.
 
 ## Things to note
 
-- A setting you change is used straight away; you do not need to deactivate it first.
-- Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
+- It needs Jellyfin added to Starboard first: go to **Settings**, then **Apps**. Starboard gives it Jellyfin's address and key, so you never type them here.
+- It only reads from Jellyfin. It never changes anything there and keeps nothing in its folder.
+- It only asks Jellyfin when its card is asked, every 30 seconds while the dashboard is open and in view.
 
 ## Find out more
 

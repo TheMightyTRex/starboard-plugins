@@ -40,8 +40,8 @@ Then Reelix rescans the film or series, and Jellyfin is told the file changed.
 
 ## Add it
 
-Needs Starboard with plug-in API 1.14. In Starboard, open **Settings**, **Plug-ins**, **Catalogue**: it is under
-**Recommended**. Or give this address under **Add a plug-in**:
+Needs Starboard with plug-in API 1.14 or later, and Jellyfin. In Starboard, open **Settings**, **Plug-ins**,
+**Catalogue**: it is under **Jellyfin**, marked **Recommended**. Or give this address under **Add one from elsewhere**:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/direct-play/starboard-plugin.json`
 

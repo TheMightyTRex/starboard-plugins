@@ -1,6 +1,13 @@
 # Seerr: Dashboard card
 
-Seerr has no dashboard card. Open Seerr from its tab, with **Open**, or from **Apps**.
+Seerr has no dashboard card. It is a whole app with its own page on your home network.
+
+## Open Seerr
+
+- On its tab, in **Settings**, then **Plug-ins**, then **Seerr**, select **Open Seerr** under **Its web page**.
+- In the list in **Settings**, then **Plug-ins**, select **Open** beside Seerr. It is there while it is active.
+
+Its page opens in a new tab.
 
 ## Find out more
 

@@ -2,7 +2,7 @@
 
 Seerr, a requests page for Jellyfin users. Reelix already has requests in Starboard, so most people do not need it.
 
-An app plug-in for Starboard (plug-in API 1.13): Seerr runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.14 or later): Seerr runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (5055 when it is free) and shows the address
 on the plug-in's page with **Open**.
 

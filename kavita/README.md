@@ -2,7 +2,7 @@
 
 Kavita, a reader for comics, manga and books in the browser and in e-reader apps (OPDS). It reads your books and comics folders and never changes them.
 
-An app plug-in for Starboard (plug-in API 1.13): Kavita runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.14 or later): Kavita runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (5000 when it is free) and shows the address
 on the plug-in's page with **Open**.
 

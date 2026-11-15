@@ -2,7 +2,7 @@
 
 Maintainerr, clean-up rules for Jellyfin, such as films everyone has watched. It changes nothing until you give it keys and a rule that removes.
 
-An app plug-in for Starboard (plug-in API 1.13): Maintainerr runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.14 or later): Maintainerr runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (6246 when it is free) and shows the address
 on the plug-in's page with **Open**.
 

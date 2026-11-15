@@ -1,11 +1,12 @@
 # Uptime Kuma: Install
 
-Add Uptime Kuma from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Uptime Kuma is active, with its own page on your home network.
+Add Uptime Kuma from Starboard's **Catalogue**, where it is listed under **Apps you can add**. Starboard shows what it may do and tests it before anything is added. At the end, Uptime Kuma is active, with its own page on your home network, and set up.
 
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- Starboard already watches your apps and sends alerts, so most people do not need Uptime Kuma. It is for checks beyond your apps: websites, a router, ports and certificates.
 
 ## What it may do
 
@@ -48,9 +49,15 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/uptime-ku
 
 Or run its installer, `install.py` in its folder, on any computer with Python, and give your Starboard's address.
 
-### Open it
+## Set it up
 
-Uptime Kuma's tab shows its address on your home network, with **Open**. Anyone on your home network can open that page, so set the app's own password straight away.
+Uptime Kuma's tab shows its address on your home network, under **Its web page**.
+
+1. On Uptime Kuma's tab, under **Its web page**, select **Open Uptime Kuma**. Its page opens in a new tab.
+2. Make Uptime Kuma's admin account. Anyone on your home network can open the page, so do this straight away.
+3. Add the checks you want.
+
+Its status pages are on your home network only, unless you share them yourself.
 
 ## Remove it
 

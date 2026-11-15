@@ -11,9 +11,14 @@ Home Assistant's settings are on its own tab: go to **Settings**, then **Plug-in
 | **What to show** | One entity id each, such as binary_sensor.front_door or sensor.lounge_temperature. One a line. | Empty |
 | **Warn when any is** | States that turn the card amber, separated by commas. Words. | on, open, unlocked |
 
+Home Assistant has no buttons. Select **Save** to keep the settings.
+
 ## Things to note
 
-- A setting you change is used straight away; you do not need to deactivate it first.
+- A setting you change is used the next time the card asks, within a minute; you do not need to deactivate it first.
+- **What to show** takes entity ids, exactly as Home Assistant shows them, such as `sensor.lounge_temperature`. The card shows the first 8.
+- **Warn when any is** does not mind capital letters: `Open` and `open` are the same.
+- It only reads states. It never changes anything in Home Assistant.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 
 ## Find out more

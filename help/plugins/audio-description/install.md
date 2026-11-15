@@ -1,11 +1,12 @@
 # Audio description: Install
 
-Add Audio description from Starboard's **Catalogue**, where it is listed under **Accessibility**. Starboard shows what it may do and tests it before anything is added. At the end, Audio description is active and its card is ready for your dashboard.
+Add Audio description from Starboard's **Catalogue**, where it is listed under **Accessibility**. Starboard shows what it may do and tests it before anything is added. At the end, Audio description is active and its cards are ready for your dashboard. Starboard's first set-up also offers it, unticked.
 
 ## Before you begin
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
-- Jellyfin added to Starboard, in **Settings**, **Apps**. Audio description works with it.
+- Jellyfin added to Starboard, in **Settings**, then **Apps**. Audio description uses the key Starboard keeps for it. Without it, its card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps".
+- Optional: Reelix added to Starboard, in **Settings**, then **Apps**, so it can prefer releases with audio description. Without it, **Apply the Reelix choice now** says "Starboard has no Reelix key to give yet: add Reelix in Settings, Apps".
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -20,7 +21,7 @@ Starboard lists these before you add it, each with its risk.
 
 What it runs:
 
-- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/audio-description`). It rests after 10 minutes with nothing to do, and Starboard wakes it when it is needed.
+- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`, to reach Jellyfin and Reelix. It never downloads from or reads any website. It can use its own folder in Starboard's data (`data/plugins/audio-description`). It rests after 10 minutes with nothing to do, and Starboard wakes it when it is needed.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights, and its image is pinned by digest, so what you approved is what runs.
 
@@ -37,6 +38,12 @@ Measured: not measured yet. The figures above are the most it may use.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Audio description**. To stop, select **Cancel**: nothing is installed.
 5. Audio description's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Open **People who want audio description** on its tab.
+7. Activate each person who wants audio description.
+8. Optional: select **Look for described titles now**, so you do not wait for tonight's check.
+9. Add its cards to your dashboard. Read [Dashboard card](dashboard-card.md).
+
+When Starboard starts, it adds the **Audio description** format to Reelix and prefers it. To stop that, deactivate **Prefer releases with audio description**. Read [Settings](settings.md).
 
 ### Add it by its address
 

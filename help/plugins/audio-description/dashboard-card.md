@@ -4,16 +4,16 @@ Audio description adds 2 cards you can put on your dashboard. Each starts with a
 
 ## Audio description
 
-Shows a number, with a few words under it.
+Shows how many films and series in Jellyfin have a described sound track, with how many films and episodes it checked under it.
 
-- **How often it updates:** every 1 hour while the dashboard is open. Nothing is asked while the browser tab is hidden.
+- **How often it updates:** once an hour while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:** 42 described, of 1,240 films and episodes
 
 ## Recently found with audio description
 
-Shows a short list, up to 10 lines.
+Shows the 10 films and series it found most recently with a described sound track. A film shows its described track's name, and a series shows how many of its episodes are described. Before anything is found, it says "None found yet".
 
-- **How often it updates:** every 1 hour while the dashboard is open. Nothing is asked while the browser tab is hidden.
+- **How often it updates:** once an hour while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:**
   - Slow Horses: 12 of 18 episodes described
 
@@ -21,10 +21,11 @@ Shows a short list, up to 10 lines.
 
 | Status | Means |
 |---|---|
-| **OK** | TODO |
-| **Scheduled** | TODO |
-| **Warning** | TODO |
-| **Problem** | TODO |
+| **OK** | It has checked the library. The time in the band is when the last check finished. |
+| **Scheduled** | Shown as **Checks tonight**. It has not checked the library yet. The number card says "Not checked yet". |
+| **Problem** | Only on the **Audio description** card, before the first check: the last check failed, and the words under the number say why, such as "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps". |
+
+Both cards change once a night, after the check at 04:20, or a minute or two after you select **Look for described titles now**.
 
 ## Add it to your dashboard
 
