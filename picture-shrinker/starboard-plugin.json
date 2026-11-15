@@ -18,7 +18,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-picture-shrinker:1.0.0",
+   "image": "ghcr.io/themightytrex/starboard-plugin-picture-shrinker@sha256:aa8c586d5766acd23fe9bacb6ca68d236387b2949881fc9c6417bf5e261a3cad",
    "port": 8080,
    "volumes": [
     "data",

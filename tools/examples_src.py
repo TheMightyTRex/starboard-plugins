@@ -505,8 +505,7 @@ serve({"/card": card})
 # 1.2.0 (15 November 2026, plug-in API 1.14): every example's card answers the band's status and updated, and sbplugin
 # answers the update steps, so every plug-in in the image names this tag until it is built and pinned again.
 IMAGE_VERSION = "1.2.0"
-NEW_IN_IMAGE = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking", "home-assistant",
-                "outside-services", "download-summary", "disk-forecast", "notifications", "watch-stats"}
+NEW_IN_IMAGE = set()
 
 
 def _switch(key, label, hint, group, default=True):

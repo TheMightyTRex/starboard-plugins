@@ -26,7 +26,7 @@ People who want every figure Jellystat gives (libraries, people, devices and a l
 
 It runs read only, as a user that is not root, with no extra rights, like every plug-in. Its images, pinned by digest:
 
-- `main`: `ghcr.io/themightytrex/starboard-plugin-jellystat:1.0.0`
+- `main`: `ghcr.io/themightytrex/starboard-plugin-jellystat:1.1.0` (pinned by its digest in the manifest)
 - `app`: `docker.io/cyfershepard/jellystat@sha256:e61c759ec706da378bc8374e797da1dfd298ab30f804cefd82d192c301a888c7`
 - `db`: `docker.io/library/postgres@sha256:fc41cfa8a90c09e84dd723ee764be4b2f59ba6c98b1e5b3fca540adddf68a5ba`
 

@@ -20,7 +20,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-direct-play:1.0.0",
+   "image": "ghcr.io/themightytrex/starboard-plugin-direct-play@sha256:5f98e9a8583c7cfaf909f939047777adccc235792ed67b9c7961bc33ca418830",
    "port": 8080,
    "network": "lan",
    "volumes": [
