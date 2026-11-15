@@ -1,0 +1,214 @@
+{
+  "name": "Starboard plug-ins",
+  "title": "Starboard plug-ins help",
+  "repo": "https://github.com/TheMightyTRex/starboard-plugins",
+  "site": "https://themightytrex.github.io/starboard-plugins/help/",
+  "help_dir": "help",
+  "logo_file": "help/images/logo.svg",
+  "leave_out": [
+    "HOW-THIS-HELP-IS-WRITTEN.md"
+  ],
+  "search_example": "Type a plug-in or what you want it to do, such as \"watching now\" or \"disk space\".",
+  "front_door": true,
+  "home": {
+    "title": "Welcome to the plug-ins help",
+    "intro": "Every plug-in in the collection has the same eight pages, in the same order, so you always know where to look."
+  },
+  "areas": [
+    {
+      "key": "start",
+      "none": "The pages for getting started with plug-ins are still to be written. Until then, read Add a plug-in in Starboard's help."
+    },
+    {
+      "key": "use",
+      "none": "The pages for using plug-ins are still to be written. Each plug-in's own pages are under Plug-ins."
+    },
+    {
+      "key": "plugins",
+      "intro": "Every plug-in in the collection, by group. Each has the same eight pages."
+    },
+    {
+      "key": "a11y",
+      "none": "The accessibility pages for the collection are still to be written. Each plug-in has its own Accessibility page."
+    },
+    {
+      "key": "fix",
+      "none": "The pages for fixing problems are still to be written. Each plug-in has its own Problems page."
+    },
+    {
+      "key": "dev",
+      "none": "The developers' pages are still to be written. Until then, read Make your first plug-in in Starboard's help."
+    }
+  ],
+  "journey": {
+    "title": "Plug-ins, step by step",
+    "intro": "Follow the path, or go straight to any stage.",
+    "stages": [
+      {
+        "label": "Choose",
+        "icon": "search",
+        "tone": "start",
+        "cards": [
+          {
+            "title": "Every plug-in",
+            "line": "By group, with what each one does",
+            "to": "areas/plugins.html"
+          },
+          {
+            "title": "What a plug-in can change",
+            "line": "Read it before you add one",
+            "to": "https://themightytrex.github.io/starboard/help/basics/what-plugins-can-change.html"
+          }
+        ]
+      },
+      {
+        "label": "Add",
+        "icon": "puzzle",
+        "tone": "step",
+        "cards": [
+          {
+            "title": "Add a plug-in",
+            "line": "From the collection or a link",
+            "to": "https://themightytrex.github.io/starboard/help/topics/add-a-plugin.html"
+          },
+          {
+            "title": "The plug-in collection",
+            "line": "Where the plug-ins come from",
+            "to": "https://themightytrex.github.io/starboard/help/basics/plugin-collection.html"
+          }
+        ]
+      },
+      {
+        "label": "Use",
+        "icon": "layout-grid",
+        "tone": "step",
+        "cards": [
+          {
+            "title": "Dashboard cards",
+            "line": "Add a plug-in's card",
+            "to": "https://themightytrex.github.io/starboard/help/topics/use-the-dashboard.html"
+          }
+        ]
+      },
+      {
+        "label": "Update or remove",
+        "icon": "wrench",
+        "tone": "fix",
+        "cards": [
+          {
+            "title": "Update a plug-in",
+            "line": "And roll it back if you need to",
+            "to": "https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html"
+          }
+        ]
+      }
+    ]
+  },
+  "plugins": {
+    "catalogue": "catalogue.json",
+    "overview": "{id}/README.md",
+    "pages": "help/plugins/{id}/{page}.md",
+    "groups": [
+      {
+        "label": "Watching and library",
+        "ids": [
+          "watching-now",
+          "most-watched",
+          "watch-stats",
+          "library-health",
+          "audio-description",
+          "audio-description-tracks"
+        ]
+      },
+      {
+        "label": "Server and downloads",
+        "ids": [
+          "disk-forecast",
+          "notifications",
+          "download-summary",
+          "vpn-check"
+        ]
+      },
+      {
+        "label": "Network and safety",
+        "ids": [
+          "remote-access",
+          "dns-blocking",
+          "line-speed",
+          "outside-services"
+        ]
+      },
+      {
+        "label": "Home and look",
+        "ids": [
+          "home-assistant",
+          "styles"
+        ]
+      },
+      {
+        "label": "Apps you can add",
+        "ids": [
+          "jellystat",
+          "navidrome",
+          "kavita",
+          "calibre-web",
+          "wizarr",
+          "maintainerr",
+          "uptime-kuma",
+          "seerr",
+          "tdarr"
+        ]
+      }
+    ],
+    "details": {
+      "watching-now": {
+        "icon": "tv"
+      },
+      "most-watched": {
+        "icon": "star"
+      },
+      "watch-stats": {
+        "icon": "chart-line"
+      },
+      "library-health": {
+        "icon": "heart-pulse"
+      },
+      "audio-description": {
+        "icon": "headphones"
+      },
+      "audio-description-tracks": {
+        "icon": "mic"
+      },
+      "disk-forecast": {
+        "icon": "hard-drive"
+      },
+      "notifications": {
+        "icon": "bell"
+      },
+      "download-summary": {
+        "icon": "download"
+      },
+      "vpn-check": {
+        "icon": "shield-check"
+      },
+      "remote-access": {
+        "icon": "globe"
+      },
+      "dns-blocking": {
+        "icon": "ban"
+      },
+      "line-speed": {
+        "icon": "gauge"
+      },
+      "outside-services": {
+        "icon": "server"
+      },
+      "home-assistant": {
+        "icon": "house"
+      },
+      "styles": {
+        "icon": "sparkles"
+      }
+    }
+  }
+}
