@@ -73,7 +73,11 @@ def readme(pid, m, extra=""):
         lines += ["## Updating", "", "Before an update, it finishes any check or message it is part way through and starts no new one, "
                   "so the update never cuts one short (plug-in API 1.14). What changed in each version is in "
                   "[CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.", ""]
-    lines += ["## Add it", "", "In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:", "",
+    api = m["starboard_api"].split()[0].lstrip(">=")
+    needs = "".join(f", and {n.capitalize()} added in **Settings**, then **Apps**" for n in m.get("needs") or [])
+    lines += ["## Add it", "", f"Needs Starboard with plug-in API {api} or later{needs}; a Starboard with an older plug-in API is offered "
+              "the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under "
+              f"**{KINDS.get(pid, 'its kind')}**. Or, under **Add one from elsewhere**, give this address:", "",
               f"`https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json`", "",
               "Or run `python3 install.py` in this folder.", ""]
     return "\n".join(lines)

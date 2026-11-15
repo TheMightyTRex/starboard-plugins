@@ -8,6 +8,10 @@ in the grey band at the top, and the ones that work in the background update saf
 API, such as 0.17.0 with 1.13, is still offered the version before from the catalogue, which keeps it at the commit it
 was published from. Starboard says so when you add one it cannot run yet.
 
+**Help:** every plug-in has the same eight pages (what it does, install and remove, settings, its dashboard card,
+updates and roll back, accessibility, problems, and for developers) in the
+[plug-ins help centre](https://themightytrex.github.io/starboard-plugins/help/), built from `help/` and each README.
+
 | Plug-in | What it does | Install address | Download |
 |---|---|---|---|
 | [Styles](styles/) | Twenty-one accessible styles for Starboard's Display settings, with gradients, textures and glass (needs Starboard 0.16.5) | `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/styles/starboard-plugin.json` | [styles.zip](https://github.com/TheMightyTRex/starboard-plugins/raw/main/zips/styles.zip) |
@@ -57,11 +61,12 @@ plug-in; Starboard's System, Logs does its job.
 
 ## Add a plug-in
 
-1. In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**.
-2. Copy the plug-in's install address into **The plug-in's manifest address**.
-3. Check what it may do, then add it. Activate it when you are ready.
+1. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find the plug-in under its kind.
+2. Select **Install…**, read what it may do, enter your Starboard password and select **Install** and its name.
+3. Select **Activate** when you are ready.
 
-Or download its zip, unzip it and run `python3 install.py` inside, or choose its `starboard-plugin.json` under
+A plug-in from elsewhere: paste its install address into **The plug-in's manifest address**, under **Add one from
+elsewhere**. Or download its zip, unzip it and run `python3 install.py` inside, or choose its `starboard-plugin.json` under
 **Or its manifest file**.
 
 Read [Add a plug-in](https://github.com/TheMightyTRex/starboard/blob/main/docs/help/topics/add-a-plugin.md) and

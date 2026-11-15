@@ -17,11 +17,27 @@
   "areas": [
     {
       "key": "start",
-      "none": "The pages for getting started with plug-ins are still to be written. Until then, read Add a plug-in in Starboard's help."
+      "intro": "Choose the plug-ins that suit your server, and add your first one.",
+      "groups": [
+        {
+          "key": "first",
+          "label": "Your first plug-in"
+        }
+      ]
     },
     {
       "key": "use",
-      "none": "The pages for using plug-ins are still to be written. Each plug-in's own pages are under Plug-ins."
+      "intro": "Dashboard cards, what each plug-in may do, memory, and keeping plug-ins up to date.",
+      "groups": [
+        {
+          "key": "cards",
+          "label": "Dashboard cards"
+        },
+        {
+          "key": "everyday",
+          "label": "Day to day"
+        }
+      ]
     },
     {
       "key": "plugins",
@@ -29,15 +45,41 @@
     },
     {
       "key": "a11y",
-      "none": "The accessibility pages for the collection are still to be written. Each plug-in has its own Accessibility page."
+      "intro": "How the plug-ins are checked, and the plug-ins made for accessibility.",
+      "groups": [
+        {
+          "key": "checks",
+          "label": "How they are checked"
+        },
+        {
+          "key": "features",
+          "label": "Plug-ins for accessibility"
+        }
+      ]
     },
     {
       "key": "fix",
-      "none": "The pages for fixing problems are still to be written. Each plug-in has its own Problems page."
+      "intro": "Find out why a plug-in is not working. Each plug-in also has its own Problems page.",
+      "groups": [
+        {
+          "key": "problems",
+          "label": "Plug-in problems"
+        }
+      ]
     },
     {
       "key": "dev",
-      "none": "The developers' pages are still to be written. Until then, read Make your first plug-in in Starboard's help."
+      "intro": "Plug-in API 1.14 as the collection uses it, and how to add a plug-in of your own.",
+      "groups": [
+        {
+          "key": "build",
+          "label": "Build a plug-in"
+        },
+        {
+          "key": "ai",
+          "label": "With an AI assistant"
+        }
+      ]
     }
   ],
   "journey": {
@@ -55,6 +97,11 @@
             "to": "areas/plugins.html"
           },
           {
+            "title": "Choose your plug-ins",
+            "line": "What each one is for, and its memory",
+            "to": "start/choose-plug-ins.md"
+          },
+          {
             "title": "What a plug-in can change",
             "line": "Read it before you add one",
             "to": "https://themightytrex.github.io/starboard/help/basics/what-plugins-can-change.html"
@@ -66,6 +113,11 @@
         "icon": "puzzle",
         "tone": "step",
         "cards": [
+          {
+            "title": "Add your first plug-in",
+            "line": "Five steps, about five minutes",
+            "to": "start/add-your-first-plug-in.md"
+          },
           {
             "title": "Add a plug-in",
             "line": "From the collection or a link",
@@ -84,6 +136,11 @@
         "tone": "step",
         "cards": [
           {
+            "title": "Every dashboard card",
+            "line": "What each shows and how often",
+            "to": "use/dashboard-cards.md"
+          },
+          {
             "title": "Dashboard cards",
             "line": "Add a plug-in's card",
             "to": "https://themightytrex.github.io/starboard/help/topics/use-the-dashboard.html"
@@ -96,13 +153,30 @@
         "tone": "fix",
         "cards": [
           {
+            "title": "Update and roll back",
+            "line": "What is new first, the way back kept",
+            "to": "use/update-and-roll-back.md"
+          },
+          {
             "title": "Update a plug-in",
             "line": "And roll it back if you need to",
             "to": "https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html"
+          },
+          {
+            "title": "A plug-in is not working",
+            "line": "Find your answer",
+            "to": "fix/a-plug-in-is-not-working.md"
           }
         ]
       }
     ]
+  },
+  "featured": {
+    "chip": "New and recommended",
+    "title": "Direct play",
+    "text": "Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play. It works one file at a time, in the hours you choose, and checks each file before it replaces it.",
+    "to": "plugins/direct-play/index.html",
+    "flow": "start: A file your devices cannot play\nstepfix: Repackage or add a sound track\nstepcheck: Check the new file\nend: Plays directly"
   },
   "plugins": {
     "catalogue": "catalogue.json",
@@ -217,6 +291,39 @@
       "picture-shrinker": {
         "icon": "image"
       }
+    }
+  },
+  "solver": {
+    "title": "Problem solver",
+    "intro": "Answer up to three questions to find the right fix.",
+    "start": {
+      "question": "What is wrong?",
+      "answers": [
+        {
+          "label": "A plug-in will not add",
+          "to": "fix/a-plug-in-will-not-add.md"
+        },
+        {
+          "label": "A plug-in I added is not working",
+          "next": {
+            "question": "What does its tab say?",
+            "answers": [
+              {
+                "label": "Needs setting up, Did not start, Failed or Not supported",
+                "to": "fix/a-plug-in-is-not-working.md"
+              },
+              {
+                "label": "Active, but its card says No answer",
+                "to": "fix/a-card-says-no-answer.md"
+              }
+            ]
+          }
+        },
+        {
+          "label": "Something about one plug-in",
+          "to": "areas/plugins.html"
+        }
+      ]
     }
   }
 }

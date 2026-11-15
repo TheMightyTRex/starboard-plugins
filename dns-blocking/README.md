@@ -1,6 +1,6 @@
 # Ad blocking
 
-How many adverts and trackers Pi-hole or AdGuard Home blocked today. It works with Pi-hole 6 and AdGuard Home, and only reads their numbers.
+How many adverts and trackers Pi-hole or AdGuard Home blocked today.
 
 An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
@@ -22,7 +22,7 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
 ## Add it
 
-In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
+Needs Starboard with plug-in API 1.14 or later; a Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **Network**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json`
 

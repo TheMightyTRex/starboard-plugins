@@ -22,7 +22,7 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
 ## Add it
 
-In Starboard, open **Settings**, **Plug-ins**, **Add a plug-in**, and give this address:
+Needs Starboard with plug-in API 1.14 or later; a Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **Home**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assistant/starboard-plugin.json`
 

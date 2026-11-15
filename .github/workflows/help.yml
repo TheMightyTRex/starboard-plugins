@@ -1,0 +1,56 @@
+name: Help centre
+# Builds the plug-ins help centre from help/, each plug-in's README.md and help-centre.json with the design system's
+# help centre builder (tools/help_centre in TheMightyTRex/design-system), and publishes it on GitHub Pages:
+# https://themightytrex.github.io/starboard-plugins/help/
+on:
+  push:
+    branches: [main]
+    paths:
+      - "help/**"
+      - "*/README.md"
+      - "catalogue.json"
+      - "help-centre.json"
+      - "tools/check_help.py"
+      - ".github/workflows/help.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check the help
+        run: python tools/check_help.py
+      - uses: actions/checkout@v4
+        with:
+          repository: TheMightyTRex/design-system
+          path: _design-system
+          persist-credentials: false
+      - name: Build the pages
+        run: |
+          pip install markdown==3.7 pymdown-extensions==10.9
+          python _design-system/tools/help_centre/build.py --config help-centre.json --out _site --strict
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}help/
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
