@@ -1,0 +1,47 @@
+# Builds and publishes the Picture shrinker plug-in's image when it changes, for amd64, arm64 and arm/v7:
+#   ghcr.io/<owner>/starboard-plugin-picture-shrinker:<version> and :latest
+# The digest is printed in the run's summary; put it in picture-shrinker/starboard-plugin.json in place of the tag.
+name: Picture shrinker image
+on:
+  push:
+    branches: [main]
+    paths: ["picture-shrinker/Dockerfile", "picture-shrinker/app.py", "picture-shrinker/sbplugin.py", ".github/workflows/picture-shrinker-image.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pillow for the tests, which make small sample pictures with it
+        run: python3 -m pip install --quiet pillow
+      - name: The plug-in compiles and its tests pass
+        run: python3 -m py_compile picture-shrinker/app.py && python3 -m unittest tests.test_picture_shrinker
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: version
+        run: echo "v=$(python3 -c "import json;print(json.load(open('picture-shrinker/starboard-plugin.json'))['version'])")" >> "$GITHUB_OUTPUT"
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: picture-shrinker
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: |
+            ghcr.io/themightytrex/starboard-plugin-picture-shrinker:${{ steps.version.outputs.v }}
+            ghcr.io/themightytrex/starboard-plugin-picture-shrinker:latest
+          labels: |
+            org.opencontainers.image.title=Starboard picture shrinker plug-in
+            org.opencontainers.image.description=Shrinks the posters and photos Jellyfin keeps, with Pillow
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+      - name: Digest
+        run: |
+          echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"
