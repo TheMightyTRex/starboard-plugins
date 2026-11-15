@@ -1,3 +1,55 @@
 # Styles: Updates
 
-This page is still to be written.
+Styles 1.4.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+
+## Versions
+
+| Version | Needs plug-in API | Released |
+|---|---|---|
+| 1.4.0 | 1.14 or later | 2026-11-15 |
+| 1.3.0 | 1.2 or later | 2026-11-12 |
+
+The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.4.0
+
+Added:
+
+- **A logo** in Settings, Plug-ins and in the Catalogue.
+
+Changed:
+
+- Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.3.0.
+
+## What is new in 1.3.0
+
+Added:
+
+- Six styles that reskin the whole look: Studio, Expressive, Swiss, Neon, Clay and Mica.
+
+## How an update is kept safe
+
+- Styles has no step before an update: Starboard stops it, installs the new version and starts it again.
+- Your settings and its folder are kept.
+
+## Update it
+
+1. Go to **Settings**, then **Plug-ins**. When a newer version is known, Styles has an **Update** chip in **Manage**.
+2. Select **Styles** to open its tab.
+3. In **Versions**, select **Update to** and the new version.
+4. Read **What is new since** your version and **How the update is kept safe**, enter your Starboard password, and select **Update Styles**.
+5. When the dialog says it is updated, select **Done**.
+
+## Roll it back
+
+1. On Styles's tab, in **Versions**, select **Roll back to** and the version you had.
+2. Enter your Starboard password and select **Roll back**.
+3. When the dialog says it is back on that version, select **Done**.
+
+Rolling back needs no download, and only one earlier version is kept.
+
+## Find out more
+
+- [Update a plug-in and roll it back, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html)
+- [Styles's changes, in full](../../../styles/CHANGELOG.md)
+- [Problems](problems.md)

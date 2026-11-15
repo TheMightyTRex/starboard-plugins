@@ -117,7 +117,9 @@
           "watch-stats",
           "library-health",
           "audio-description",
-          "audio-description-tracks"
+          "audio-description-tracks",
+          "direct-play",
+          "picture-shrinker"
         ]
       },
       {
@@ -208,6 +210,12 @@
       },
       "styles": {
         "icon": "sparkles"
+      },
+      "direct-play": {
+        "icon": "play"
+      },
+      "picture-shrinker": {
+        "icon": "image"
       }
     }
   }

@@ -1,3 +1,57 @@
 # Home Assistant: Updates
 
-This page is still to be written.
+Home Assistant 1.1.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+
+## Versions
+
+| Version | Needs plug-in API | Released |
+|---|---|---|
+| 1.1.0 | 1.14 or later | 2026-11-15 |
+| 1.0.0 | 1.1 or later | 2026-11-12 |
+
+The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.0
+
+Added:
+
+- **A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.
+- **Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card.
+
+Changed:
+
+- Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0.
+
+## What is new in 1.0.0
+
+Added:
+
+- Your house in one sentence on the dashboard: the things you choose from Home Assistant.
+
+## How an update is kept safe
+
+- Home Assistant has no step before an update: Starboard stops it, installs the new version and starts it again.
+- Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
+- Your settings and its folder are kept.
+
+## Update it
+
+1. Go to **Settings**, then **Plug-ins**. When a newer version is known, Home Assistant has an **Update** chip in **Manage**.
+2. Select **Home Assistant** to open its tab.
+3. In **Versions**, select **Update to** and the new version.
+4. Read **What is new since** your version and **How the update is kept safe**, enter your Starboard password, and select **Update Home Assistant**.
+5. When the dialog says it is updated, select **Done**.
+
+## Roll it back
+
+1. On Home Assistant's tab, in **Versions**, select **Roll back to** and the version you had.
+2. Enter your Starboard password and select **Roll back**.
+3. When the dialog says it is back on that version, select **Done**.
+
+Rolling back needs no download, and only one earlier version is kept.
+
+## Find out more
+
+- [Update a plug-in and roll it back, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html)
+- [Home Assistant's changes, in full](../../../home-assistant/CHANGELOG.md)
+- [Problems](problems.md)

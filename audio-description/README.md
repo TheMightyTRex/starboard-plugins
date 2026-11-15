@@ -1,6 +1,6 @@
 # Audio description
 
-Audio description is a second sound track in which a narrator says what is happening on screen, for blind and
+Audio description is a second sound track in which a narrator says what is happening in the picture, for blind and
 partially sighted people. This plug-in finds the films and series in Jellyfin that have one, prefers releases with one
 in Reelix, and helps each person who wants it keep the described track.
 

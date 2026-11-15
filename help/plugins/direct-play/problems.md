@@ -1,0 +1,52 @@
+# Direct play: Problems
+
+Find what is wrong with Direct play, then follow the numbered answer.
+
+```flow
+title: Find your answer
+start: Direct play is not working as it should
+q: What does its tab say?
+  Needs setting up -> 1
+  Failed or Not answering -> 2
+  Not supported -> 3
+  Active, but a card is wrong -> 4
+1: Finish setting it up #finish-setting-it-up
+2: Start it again #start-it-again
+3: Update it or update Starboard #update-it-or-update-starboard
+4: Read what the card says #read-what-the-card-says
+```
+
+## Finish setting it up
+
+1. Go to **Settings**, then **Plug-ins**, then **Direct play**.
+2. Select **Finish setting up**. The first setting it needs has the focus.
+3. Fill it in, save, then select **Activate**.
+
+## Start it again
+
+1. On Direct play's tab, read the message under its state: it says why it stopped.
+2. Select **Try again**.
+3. If it stopped soon after an update, select **Roll back to** and the version you had. Read [Updates](updates.md).
+4. Still failing: go to **System**, then **Logs**, and look for its name.
+
+## Update it or update Starboard
+
+Your Starboard's plug-in API is outside what this version of Direct play works with, so Starboard stopped it.
+
+1. Select **Look for an update** on its tab.
+2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
+
+## Read what the card says
+
+- **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
+- **Problem** on the card: the words under it say what went wrong. Fix that, then wait for the next check.
+
+## Report a problem
+
+If none of these helps, tell its maker, with what its tab and the card say: [the plug-ins' issues on GitHub](https://github.com/TheMightyTRex/starboard-plugins/issues).
+
+## Find out more
+
+- [Settings](settings.md)
+- [Updates](updates.md)
+- [If a plug-in will not add, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/add-a-plugin.html#if-it-does-not-work)

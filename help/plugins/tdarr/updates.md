@@ -1,3 +1,57 @@
 # Tdarr: Updates
 
-This page is still to be written.
+Tdarr 1.1.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+
+## Versions
+
+| Version | Needs plug-in API | Released |
+|---|---|---|
+| 1.1.0 | 1.14 or later | 2026-11-15 |
+| 1.0.2 | 1.13 or later | 2026-11-13 |
+
+The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.0
+
+Added:
+
+- **A logo** in Settings, Plug-ins and in the Catalogue.
+
+Changed:
+
+- Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.2.
+
+## What is new in 1.0.2
+
+Changed:
+
+- Files are converted in a tdarr-cache folder on your media drives, not on the system disk, so working copies of large films cannot fill it. Starboard points its Films and Series libraries there.
+
+## How an update is kept safe
+
+- Tdarr has no step before an update: Starboard stops it, installs the new version and starts it again.
+- It has no health check of its own, so Starboard waits for its containers to start. If they do not, Starboard goes back to the version you had by itself.
+- Your settings and its folder are kept.
+- **Roll back** brings back the older Tdarr and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
+
+## Update it
+
+1. Go to **Settings**, then **Plug-ins**. When a newer version is known, Tdarr has an **Update** chip in **Manage**.
+2. Select **Tdarr** to open its tab.
+3. In **Versions**, select **Update to** and the new version.
+4. Read **What is new since** your version and **How the update is kept safe**, enter your Starboard password, and select **Update Tdarr**.
+5. When the dialog says it is updated, select **Done**.
+
+## Roll it back
+
+1. On Tdarr's tab, in **Versions**, select **Roll back to** and the version you had.
+2. Enter your Starboard password and select **Roll back**.
+3. When the dialog says it is back on that version, select **Done**.
+
+Rolling back needs no download, and only one earlier version is kept.
+
+## Find out more
+
+- [Update a plug-in and roll it back, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html)
+- [Tdarr's changes, in full](../../../tdarr/starboard-plugin.json)
+- [Problems](problems.md)
