@@ -25,7 +25,7 @@ import urllib.parse
 from collections import defaultdict
 
 import sbplugin
-from sbplugin import fetch, keep, plural, remember, serve, setting
+from sbplugin import band, changed, fetch, keep, plural, remember, serve, setting
 
 # Release names: TRaSH Guides' "WiTH AD" pattern (a word before "AD", so "A.D." in a title never counts) with the
 # longer phrases added (research, part (a) 1). Reelix's patterns are case-insensitive already; (?i) keeps Python the same.
@@ -380,9 +380,12 @@ def audiovault(body=None):
 def count():
     r = remember("result")
     if not r:
-        return {"value": 0, "label": "titles", "note": sbplugin.last_error() or "Not checked yet"}
+        err = sbplugin.last_error()
+        return band({"value": 0, "label": "titles", "note": err or "Not checked yet"}, "problem" if err else "scheduled",
+                    label=None if err else "Checks tonight")
     n = len(r.get("films", [])) + len(r.get("series", []))
-    return {"value": n, "label": "described" if n != 1 else "described title", "note": f"of {r.get('total', 0):,} films and episodes"}
+    return band({"value": n, "label": "described" if n != 1 else "described title", "note": f"of {r.get('total', 0):,} films and episodes"},
+                "ok", changed("result"))
 
 
 def recent():
@@ -392,14 +395,18 @@ def recent():
     rows += [(seen.get(f"series:{s['name']}", 0), s["name"], f"{s['described']:,} of {plural(s['episodes'], 'episode')} described") for s in r.get("series", [])]
     rows.sort(key=lambda x: -x[0])
     items = [{"title": name, "detail": detail} for _, name, detail in rows[:10]]
-    return {"items": items or [{"title": "None found yet", "detail": "Titles with a described sound track show here after the nightly check"}]}
+    if not items:
+        return band({"items": [{"title": "None found yet", "detail": "Titles with a described sound track show here after the nightly check"}]},
+                    "scheduled" if not r else "ok", changed("result"), "Checks tonight" if not r else None)
+    return band({"items": items}, "ok", changed("result"))
 
 
 def _background(job, label):
     """A button answers within 10 seconds, so the work goes on in the background and the result is kept."""
     def go():
         try:
-            keep(f"_{label}", {"at": time.time(), "said": job().get("said", "Done")})
+            with sbplugin.working(label):  # an update waits for it (plug-in API 1.14)
+                keep(f"_{label}", {"at": time.time(), "said": job().get("said", "Done")})
             keep("_error", None)
         except Exception as e:  # noqa: BLE001 - kept for the card, never fatal
             keep("_error", {"at": time.time(), "text": f"{type(e).__name__}: {e}"[:200]})

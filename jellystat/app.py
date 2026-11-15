@@ -130,8 +130,9 @@ def restore_in_background():
 
     def run():
         try:
-            sb.keep("restore", {"state": "running", "said": f"Restoring {name}…", "at": _now()})
-            sb.keep("restore", {"state": "ok", "said": restore(name), "at": _now()})
+            with sb.working("restoring a backup"):  # an update waits for it, or is refused (plug-in API 1.14)
+                sb.keep("restore", {"state": "running", "said": f"Restoring {name}…", "at": _now()})
+                sb.keep("restore", {"state": "ok", "said": restore(name), "at": _now()})
         except Exception as e:  # noqa: BLE001 - said on the restore screen
             sb.keep("restore", {"state": "problem", "said": str(e)[:300], "at": _now()})
         finally:
@@ -146,8 +147,11 @@ def status_card():
     c = sb.remember("connect", {}) or {}
     r = sb.remember("restore", {}) or {}
     if r.get("state") == "running":
-        return {"state": "warning", "text": r["said"]}
-    return {"state": "ok" if c.get("ok") else "warning", "text": c.get("said") or "Starting…"}
+        return sb.band({"state": "warning", "text": r["said"]}, "working", sb.changed("restore"), "Restoring a backup")
+    if not c:
+        return sb.band({"state": "warning", "text": "Starting…"}, "waiting", label="Starting")
+    return sb.band({"state": "ok" if c.get("ok") else "warning", "text": c.get("said") or "Starting…"},
+                   "ok" if c.get("ok") else "warning", sb.changed("connect"))
 
 
 def screen():
