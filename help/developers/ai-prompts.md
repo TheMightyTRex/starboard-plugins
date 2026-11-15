@@ -3,7 +3,7 @@
 
 # Make a plug-in with an AI assistant
 
-An AI assistant can write a plug-in for plug-in API 1.14 if you give it the rules. Starboard's help has a prompt for
+An AI assistant can write a plug-in for plug-in API 1.15 if you give it the rules. Starboard's help has a prompt for
 each kind of plug-in in the collection.
 
 ## Before you begin
@@ -23,11 +23,11 @@ each kind of plug-in in the collection.
 
 - Each prompt carries a checklist the assistant must follow: permissions, memory limits, accessibility, updates,
   card refresh times and the content rules.
-- For a plug-in in this repository, also give it [Plug-in API 1.14 for the collection](plug-in-api.md) and
+- For a plug-in in this repository, also give it [Plug-in API 1.15 for the collection](plug-in-api.md) and
   [Direct play's card, worked through](a-card-worked-through.md).
 - Starboard's help centre has a plain list of its developer pages for AI tools, `llms.txt`.
 
 ## Find out more
 
 - [Make a plug-in for the collection](make-a-plug-in-for-the-collection.md)
-- [Plug-in API 1.14 for the collection](plug-in-api.md)
+- [Plug-in API 1.15 for the collection](plug-in-api.md)

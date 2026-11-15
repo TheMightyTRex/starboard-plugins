@@ -22,8 +22,9 @@ q: What does Starboard say?
 
 ## 1. Update Starboard
 
-Every plug-in here needs plug-in API 1.14, in Starboard 0.18.0 or later. An older Starboard is offered each plug-in's
-version before, from the catalogue. Read
+Every plug-in here needs plug-in API 1.14, in Starboard 0.18.0 or later, and Library clean-up needs plug-in API 1.15,
+in Starboard 0.19.0 or later. An older Starboard is offered each plug-in's version before, from the catalogue, except
+Library clean-up, which has no earlier version. Read
 [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
 ## 2. Give Starboard access to Docker

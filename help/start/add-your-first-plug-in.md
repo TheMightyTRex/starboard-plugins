@@ -9,6 +9,7 @@ active and its card is on your dashboard. It takes about five minutes.
 ## Before you begin
 
 - Starboard 0.18.0 or later, with plug-in API 1.14. An older Starboard is offered each plug-in's version before.
+  Library clean-up needs Starboard 0.19.0 or later, with plug-in API 1.15.
 - Your Starboard password.
 - For a plug-in that works with Jellyfin, Jellyfin added in **Settings**, then **Apps**.
 

@@ -11,7 +11,7 @@ it is tested, listed and ready to publish.
 - A copy of [the starboard-plugins repository](https://github.com/TheMightyTRex/starboard-plugins) and of
   [Starboard](https://github.com/TheMightyTRex/starboard), for the plug-in tester.
 - Python 3, and Docker to build and smoke-test an image.
-- Read [Plug-in API 1.14 for the collection](plug-in-api.md).
+- Read [Plug-in API 1.15 for the collection](plug-in-api.md).
 
 ## Steps
 

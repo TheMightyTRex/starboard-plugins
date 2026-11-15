@@ -74,7 +74,7 @@ Measured on 15 November 2026 against the Jellyfin version, one at a time, on a s
 posters at 2,000 by 3,000 pixels and 240 photos at 1,365 by 2,048, 776.3 MB), with backup activated in both. This one
 ran as Starboard runs it (128 MB, half a processor); the Jellyfin version in a throwaway Jellyfin 10.11.11.
 
-| | Jellyfin version | Starboard version (this plug-in) |
+| What | Jellyfin version | Starboard version (this plug-in) |
 |---|---|---|
 | Where it runs | Inside Jellyfin | Its own container beside Jellyfin |
 | Memory at rest | At most about 15 MB more than Jellyfin without it (164 MB against 148 MB; the samples overlap) | 13 MB (its whole container) |

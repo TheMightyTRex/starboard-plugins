@@ -44,7 +44,8 @@ A setting it needs is empty, or it has never been set up.
 Your Starboard's plug-in API is outside what this version works with, so Starboard stopped it.
 
 1. Select **Look for an update** on its tab.
-2. If there is none, update Starboard. Every plug-in here needs plug-in API 1.14, in Starboard 0.18.0 or later.
+2. If there is none, update Starboard. Every plug-in here needs plug-in API 1.14, in Starboard 0.18.0 or later, and Library clean-up
+   needs plug-in API 1.15, in Starboard 0.19.0 or later.
 
 ## 4. Roll it back
 
