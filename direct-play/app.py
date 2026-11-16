@@ -22,6 +22,7 @@ How it works:
 Lightweight: the worker wakes once a minute and does nothing outside its hours. The card reads a small status file
 the worker writes while converting, at most as often as Card updates every says (30 seconds unless changed): no probing for the card.
 """
+import contextlib
 import json
 import os
 import re
@@ -33,7 +34,7 @@ import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 
 import sbplugin
-from sbplugin import fetch, keep, plural, remember, serve, setting
+from sbplugin import fetch, keep, plural, remember, serve
 
 ROOTS = {"movies": os.environ.get("DIRECT_PLAY_MOVIES", "/media/movies"), "tv": os.environ.get("DIRECT_PLAY_TV", "/media/tv")}
 VIDEO = re.compile(r"\.(mkv|mp4|avi|m4v|mov|wmv|ts|m2ts|mpg|mpeg|divx|flv|webm)$", re.I)
@@ -74,6 +75,7 @@ CODEC_WORDS = {"hevc": "HEVC", "h264": "H.264", "mpeg4": "MPEG-4 (DivX or Xvid)"
                "ac3": "Dolby Digital", "eac3": "Dolby Digital Plus", "aac": "AAC", "mp3": "MP3", "opus": "Opus", "vorbis": "Vorbis"}
 
 _lock = threading.Lock()
+_pass = threading.local()  # the settings the worker read once for its pass (see setting)
 _current = {"proc": None, "path": None}
 _wake = threading.Event()
 _survey_now = threading.Event()
@@ -84,6 +86,30 @@ def words(codec):
 
 
 # Settings ------------------------------------------------------------------------------------------------------
+
+def setting(key, default=None):
+    """One setting. The worker reads settings.json once for each pass and once after each file, not each time it
+    asks: a pass with nothing to do asked about ninety times, and each read woke the worker about six times, so it
+    woke about 570 times a minute at rest (measured 16 November 2026). Anything else, the card included, and the
+    worker while it converts a file, read the file each time, as before."""
+    held = getattr(_pass, "settings", None)
+    if held is None:
+        return sbplugin.setting(key, default)
+    v = held.get(key)
+    return default if v in (None, "") else v
+
+
+@contextlib.contextmanager
+def _as_they_change():
+    """While a file is converted, settings are read as they change (Card updates every, Pause); afterwards the pass
+    reads them once again."""
+    held, _pass.settings = getattr(_pass, "settings", None), None
+    try:
+        yield
+    finally:
+        if held is not None:
+            _pass.settings = sbplugin.settings()
+
 
 def chosen():
     """The devices chosen in settings: their keys, in the table's order."""
@@ -596,19 +622,34 @@ def quiet_job():
 
 # State and the worker ------------------------------------------------------------------------------------------
 
-_cache = {"mtime": None, "recs": []}
-
-
 def surveyed():
-    """The survey's facts, read again only when the file changed: the card and the page ask often."""
-    path = os.path.join(sbplugin.DATA, "survey.json")
+    """The survey's facts, read from its file each time: they are not kept in memory between asks (a library of 50,000
+    files is about 48 MB of them), as the cards use todo_head() instead."""
+    return remember("survey", []) or []
+
+
+def _stamp(name):
     try:
-        mtime = os.stat(path).st_mtime_ns
+        st = os.stat(os.path.join(sbplugin.DATA, f"{name}.json"))
+        return st.st_ino, st.st_mtime_ns, st.st_size
     except OSError:
-        return []
-    if _cache["mtime"] != mtime:
-        _cache.update(mtime=mtime, recs=remember("survey", []) or [])
-    return _cache["recs"]
+        return None
+
+
+_head = {"key": None, "count": 0, "head": []}
+HEAD = 5  # the card shows the next four, and one more in case the first is the file being converted
+
+
+def todo_head():
+    """(how many files are still to do, the first few in order): what the cards and the idle reason need. Worked out
+    again only when the survey, the state or the devices and options changed, so the card asked every 30 seconds costs
+    a look at two files' times, not a read of the whole survey."""
+    prof, opts = profile(), options()
+    key = (_stamp("survey"), _stamp("state"), tuple(sorted(prof["devices"])) if prof else None, json.dumps(opts, sort_keys=True))
+    if _head["key"] != key:
+        todo = todo_list(prof=prof, opts=opts)
+        _head.update(key=key, count=len(todo), head=todo[:HEAD])
+    return _head["count"], _head["head"]
 
 
 def _state():
@@ -634,7 +675,7 @@ def todo_list(recs=None, prof=None, opts=None, state=None):
 
 def status(rec=None, bucket=None, pct=None, left=None, force=False, reason=None):
     """The small file the card reads: what is being converted, how far, and why nothing is when nothing is."""
-    st = remember("now", {}) or {}
+    st = (remember("now", {}) or {}) if rec else {}  # only a file being converted needs what it said before
     if not force and rec and st.get("path") == rec["path"] and now() - float(st.get("at") or 0) < card_seconds():
         return
     out = {"at": now()}
@@ -658,11 +699,19 @@ def why_idle():
         return {"weekends": "Waiting for the weekend", "quiet": "Waiting for quiet hours"}.get(options()["when"], "Waiting")
     if not s.get("surveyed"):
         return "Looking at the library"
-    return "Nothing left to do" if not todo_list() else "Starting the next file"
+    return "Nothing left to do" if not todo_head()[0] else "Starting the next file"
 
 
 def work_once():
     """One pass: survey when it is due, then fix files one at a time while the hours allow. Returns files fixed."""
+    _pass.settings = sbplugin.settings()  # read once for the pass (see setting)
+    try:
+        return _work()
+    finally:
+        _pass.settings = None
+
+
+def _work():
     if _survey_now.is_set():  # Look at the library now: at any hour, even while paused
         _survey_now.clear()
         status(reason="Looking at the library")
@@ -675,7 +724,7 @@ def work_once():
     if not in_hours():
         status(reason=why_idle())
         return 0
-    if now() - float(_state().get("surveyed") or 0) > SURVEY_HOURS * 3600:
+    if now() - float(s.get("surveyed") or 0) > SURVEY_HOURS * 3600:
         status(reason="Looking at the library")
         survey()
         library()
@@ -685,19 +734,20 @@ def work_once():
         if s.get("paused") or not in_hours() or sbplugin.holding():
             break
         prof, opts = profile(), options()
-        todo = todo_list(prof=prof, opts=opts, state=s)
-        if not todo:
+        left, head = todo_head()  # read again only when the survey, the state or the settings changed
+        if not left:
             break
-        rec = todo[0]
+        rec = head[0]
         if not os.path.exists(rec["path"]):
             survey()
             continue
-        try:
-            err = fix(rec, rec["bucket"], prof, opts)
-        except Stopped:
-            break
-        except Exception as e:  # noqa: BLE001
-            err = f"error: {e}"[:200]
+        with _as_they_change():
+            try:
+                err = fix(rec, rec["bucket"], prof, opts)
+            except Stopped:
+                break
+            except Exception as e:  # noqa: BLE001
+                err = f"error: {e}"[:200]
         s = _state()
         if err:
             s["failed"][rec["path"]] = {"why": err, "size": rec["size"], "mtime": rec["mtime"], "title": title(rec["path"]), "at": now()}
@@ -727,7 +777,7 @@ def worker():
     while True:
         try:
             work_once()
-            keep("_error", None)
+            sbplugin.clear_error()
         except Exception as e:  # noqa: BLE001 - kept for the page, never fatal
             keep("_error", {"at": now(), "text": f"{type(e).__name__}: {e}"[:200]})
         _wake.wait(TICK)
@@ -752,7 +802,7 @@ def time_words(seconds):
 
 def totals():
     s = _state()
-    return f"{plural(s['done'], 'file')} fixed, {size_words(s['saved_bytes'])} saved, {plural(len(todo_list(state=s)), 'file')} still to do"
+    return f"{plural(s['done'], 'file')} fixed, {size_words(s['saved_bytes'])} saved, {plural(todo_head()[0], 'file')} still to do"
 
 
 def card():
@@ -776,7 +826,7 @@ def card():
             items[-1]["detail"] = "Choose your devices on the plug-in's page in Settings, Plug-ins"
         elif reason == "Nothing left to do":
             items[-1]["detail"] = "New films and series are checked " + ("when it next runs" if not in_hours() else "every few hours")
-    nxt = [r for r in todo_list() if r["path"] != st.get("path") or not converting][:4]
+    nxt = [r for r in todo_head()[1] if r["path"] != st.get("path") or not converting][:4]
     items += [{"title": f"Next: {title(r['path'])}", "detail": WORDS[r["bucket"]]} for r in nxt]
     items.append({"title": "Totals", "detail": totals()})
     state = "converting" if converting else {"Paused": "paused", "Nothing left to do": "done", "No devices chosen": "needs_setup"}.get(items[0]["title"], "waiting")
@@ -786,7 +836,7 @@ def card():
 
 def summary_card():
     s = _state()
-    left = len(todo_list(state=s))
+    left = todo_head()[0]
     answer = {"value": int(s["saved_bytes"]), "label": "saved", "note": f"{plural(s['done'], 'file')} fixed, {plural(left, 'file')} to do"}
     at = (s.get("last") or {}).get("at")
     if _current["path"]:

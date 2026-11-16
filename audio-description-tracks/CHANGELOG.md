@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2 (16 November 2026)
+
+### Changed
+- Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second.
+- Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
+
+
 ## 1.1.1 (15 November 2026)
 
 ### Fixed

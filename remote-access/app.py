@@ -652,4 +652,5 @@ if __name__ == "__main__":
     threading.Thread(target=supervisor, daemon=True).start()
     port = int(os.environ.get("PORT", 8080))
     print(f"Listening on {BIND}:{port}", flush=True)
-    ThreadingHTTPServer((BIND, port), Handler).serve_forever()
+    # A look for a shutdown once a minute, not twice a second: nothing stops it but the container ending.
+    ThreadingHTTPServer((BIND, port), Handler).serve_forever(poll_interval=60)

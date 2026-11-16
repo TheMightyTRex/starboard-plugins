@@ -1,14 +1,22 @@
 # Library clean-up: Updates
 
-Library clean-up 1.0.0 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
+Library clean-up 1.0.1 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.1 | 1.14 or later | 2026-11-16 |
 | 1.0.0 | 1.15 or later | 2026-11-15 |
 
 The catalogue offers each Starboard the newest version it can run. 1.0.0 is the first version, so a Starboard with plug-in API 1.14 or earlier is not offered Library clean-up until Starboard is updated.
+
+## What is new in 1.0.1
+
+Changed:
+
+- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second.
+- **Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## What is new in 1.0.0
 

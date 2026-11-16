@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description-tracks",
  "name": "Audio description tracks",
- "version": "1.1.1",
+ "version": "1.1.2",
  "description": "Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -19,7 +19,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks@sha256:ac5e278daf3e262ba227b1cf55a1fc29c347a6abaacb6bc8e36bb0d552169fac",
+   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks:1.1.2",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -168,6 +168,14 @@
   "alt": "A loudspeaker with a plus sign"
  },
  "changes": [
+  {
+   "version": "1.1.2",
+   "date": "2026-11-16",
+   "changed": [
+    "**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second.",
+    "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
+   ]
+  },
   {
    "version": "1.1.1",
    "date": "2026-11-15",

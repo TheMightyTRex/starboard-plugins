@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 (16 November 2026)
+
+### Changed
+- Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second; its minute's look for work reads its settings once, not about ninety times; and it writes nothing to its folder when a run goes well.
+- Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
+- Lighter dashboard card: the cards and the minute's look for work no longer read every file's details each time; with 50,000 files the card answers in about 4 ms instead of 230 ms, and about 45 MB less memory is held.
+
+
 ## 1.0.0 (14 November 2026)
 
 ### Added

@@ -1,16 +1,24 @@
 # Jellystat: Updates
 
-Jellystat 1.1.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Jellystat 1.1.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.2 | 1.14 or later | 2026-11-16 |
 | 1.1.1 | 1.14 or later | 2026-11-15 |
 | 1.1.0 | 1.14 or later | 2026-11-15 |
 | 1.0.0 | 1.13 or later | 2026-11-13 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.2
+
+Changed:
+
+- **Lighter at rest:** its helper wakes about once a minute while nothing asks it anything, not twice a second.
+- **Starts faster:** its helper's image comes with Python's modules already compiled.
 
 ## What is new in 1.1.1
 

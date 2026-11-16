@@ -4,7 +4,9 @@ be built now). Each is: what it does, its manifest, and app.py. tools/make_examp
 COMMON = {"manifest_version": 1, "author": "TheMightyTRexUK", "licence": "MIT",
           "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues", "starboard_api": ">=1.14 <2.0"}
 # 1.1.0 (plug-in API 1.14, 15 November 2026): a logo, the card band's status and updated, and the update tools.
-VERSION = "1.1.0"
+# 1.1.1 (16 November 2026, DASH-453): lighter at rest and faster to start; Library health a page at a time.
+VERSION = "1.1.1"
+VERSION_110 = "1.1.0"
 
 
 def image(pid):
@@ -17,13 +19,14 @@ def image(pid):
 _STEPS = {"before": {"path": "/update/before", "time_limit_seconds": 60}, "after": {"path": "/update/after", "time_limit_seconds": 10}}
 UPDATE_STEPS = {pid: _STEPS for pid in ("line-speed", "most-watched", "library-health", "notifications", "watch-stats")}
 RELEASED = "2026-11-15"
+RELEASED_111 = "2026-11-16"
 FIRST = "2026-11-12"
 
 
 def changes_for(pid, m):
     """What is new in each version (plug-in API 1.10, shown before an update from API 1.14): 1.1.0 first, then the
     plug-in's own list, or its first version."""
-    earlier = [c for c in m.get("changes") or [] if c.get("version") != VERSION] or [
+    earlier = [c for c in m.get("changes") or [] if c.get("version") not in (VERSION, VERSION_110)] or [
         {"version": "1.0.0", "date": FIRST, "added": [m["description"]]}]
     added = ["**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
              "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."]
@@ -31,7 +34,11 @@ def changes_for(pid, m):
         added.append("**Updates safely:** before an update it finishes what it is doing and starts nothing new.")
     if any(c.get("refresh_seconds") for c in m.get("cards") or []):
         added.append("**Kept up to date:** its card is asked every 30 seconds while the dashboard is open.")
-    return [{"version": VERSION, "date": RELEASED, "added": added,
+    light = ["**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.", "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."]
+    fixed = (["**Large libraries:** it asks Jellyfin a page of 500 titles at a time, so a large library no longer makes the check "
+              "fail."] if pid == "library-health" else [])
+    newest = {"version": VERSION, "date": RELEASED_111, "changed": light, **({"fixed": fixed} if fixed else {})}
+    return [newest, {"version": VERSION_110, "date": RELEASED, "added": added,
              "changed": ["Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."]}] + earlier
 
 
@@ -231,18 +238,33 @@ EXAMPLES["library-health"] = ({
 }, '''from sbplugin import band, changed, every, jellyfin, keep, last_error, plural, remember, serve
 
 
+PAGE = 500  # titles in each answer from Jellyfin: a large library never arrives, or is held, all at once
+
+
+def titles():
+    """Every film and series, a page at a time."""
+    start = 0
+    while True:
+        got = jellyfin("/Items?Recursive=true&IncludeItemTypes=Movie,Series&Fields=Overview,ProductionYear&EnableImageTypes=Primary"
+                       f"&EnableUserData=false&StartIndex={start}&Limit={PAGE}") or {}
+        items = got.get("Items") or []
+        yield from items
+        start += len(items)
+        if len(items) < PAGE or start >= int(got.get("TotalRecordCount") or start + 1):
+            return
+
+
 def check():
-    got = jellyfin("/Items?Recursive=true&IncludeItemTypes=Movie,Series&Fields=Overview,ProductionYear&EnableImageTypes=Primary") or {}
-    items = got.get("Items") or []
-    bad = []
-    for it in items:
+    total, bad = 0, []
+    for it in titles():
+        total += 1
         why = [w for w, missing in (("no poster", "Primary" not in (it.get("ImageTags") or {})),
                                     ("no description", not it.get("Overview")), ("no year", not it.get("ProductionYear"))) if missing]
         if why:
             bad.append({"title": f"{it.get('Name')}" + (f" ({it['ProductionYear']})" if it.get("ProductionYear") else ""),
                         "detail": ", ".join(why).capitalize()})
-    keep("result", {"bad": bad, "total": len(items)})
-    return {"said": f"{plural(len(bad), 'title')} to fix of {len(items):,}"}
+    keep("result", {"bad": bad, "total": total})
+    return {"said": f"{plural(len(bad), 'title')} to fix of {total:,}"}
 
 
 def state():
@@ -504,8 +526,10 @@ serve({"/card": card})
 # pinned on 14 November 2026 with Notifications and Watch statistics.
 # 1.2.0 (15 November 2026, plug-in API 1.14): every example's card answers the band's status and updated, and sbplugin
 # answers the update steps, so every plug-in in the image names this tag until it is built and pinned again.
-IMAGE_VERSION = "1.2.0"
-NEW_IN_IMAGE = set()
+# 1.2.1 (16 November 2026, DASH-453): every example in the image names this tag until it is built and pinned.
+IMAGE_VERSION = "1.2.1"
+NEW_IN_IMAGE = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking",
+                "home-assistant", "outside-services", "download-summary", "disk-forecast", "notifications", "watch-stats"}
 
 
 def _switch(key, label, hint, group, default=True):
@@ -514,7 +538,7 @@ def _switch(key, label, hint, group, default=True):
 
 # 11. Notifications (DASH-401) -------------------------------------------------------------------------------------
 EXAMPLES["notifications"] = ({
-    "name": "Notifications", "version": "1.1.0",
+    "name": "Notifications", "version": VERSION,
     "description": "Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week.",
     "starboard_api": ">=1.14 <2.0",
     "permissions": ["apps:read", "downloads:read", "media:read", "system:read", "network:lan"],
@@ -614,7 +638,7 @@ and that number. Otherwise leave Signal deactivated.
 
 # 12. Watch statistics (DASH-402) ----------------------------------------------------------------------------------
 EXAMPLES["watch-stats"] = ({
-    "name": "Watch statistics", "version": "1.1.0",
+    "name": "Watch statistics", "version": VERSION,
     "description": "What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database.",
     "starboard_api": ">=1.14 <2.0",
     "permissions": ["jellyfin:key", "network:lan"],
