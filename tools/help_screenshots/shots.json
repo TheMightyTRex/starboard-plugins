@@ -1,0 +1,210 @@
+{
+  "about": "Library clean-up's help pictures, taken by tools/help-screenshots.sh with Starboard's help_shoot.mjs. phase: absent (not added yet) or present (added and active). Files go to help/images/library-cleanup.",
+  "shots": [
+    {
+      "phase": "absent",
+      "file": "install-1-catalogue.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Library clean-up')); row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$li.row[data-shot=lc] button",
+          "step": 2,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "The Catalogue under Jellyfin, with Install… beside Library clean-up (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "phase": "absent",
+      "file": "install-2-what-it-may-do.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Library clean-up')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const li = [...document.querySelectorAll('#side-panel li')].find((x) => x.textContent.startsWith('Your media folder')); li.dataset.shot = 'media'; li.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "$#side-panel li[data-shot=media]",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        3
+      ],
+      "alt": "The Install Library clean-up? slide-out, High risk, with the line about your media folder under It can change (step 3) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "phase": "absent",
+      "file": "install-3-password.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Library clean-up')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const pw = document.querySelector('#side-panel input[type=password]'); pw.value = 'example-password'; pw.closest('.field')?.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "Install Library clean-up",
+          "step": 4,
+          "side": "top",
+          "tail": 70
+        }
+      ],
+      "steps": [
+        4
+      ],
+      "alt": "The foot of the install slide-out, with Your Starboard password filled in and Install Library clean-up (step 4) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "phase": "present",
+      "file": "settings-1-rules.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const tab = async (t) => { [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t).click(); await w(1200); }; await w(1500); await tab('Rules'); const sw = document.querySelector('main section:not(.topic-off) input[role=switch], main section:not(.topic-off) input[type=checkbox]'); let row = sw; while (row && !row.textContent.includes('Move items each day')) row = row.parentElement; row.dataset.shot = 'active';",
+      "marks": [
+        {
+          "t": "$[data-shot=active]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Library clean-up's Rules, with Move items each day, deactivated, outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=library-cleanup"
+    },
+    {
+      "phase": "present",
+      "file": "settings-2-preview.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const tab = async (t) => { [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t).click(); await w(1200); }; await w(1500); await tab('Preview'); const f = [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Films')); f.click(); await w(1000); const row = [...document.querySelectorAll('main tr')].find((r) => r.textContent.includes('A quiet harbour')); row.dataset.shot = 'row'; row.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "$main tr[data-shot=row]",
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [],
+      "alt": "Library clean-up's Preview, with the total it would free at the top and one film's row, with why it would move and its space, outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=library-cleanup"
+    },
+    {
+      "phase": "present",
+      "file": "settings-3-holding-folder.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const tab = async (t) => { [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t).click(); await w(1200); }; await w(1500); await tab('Holding folder'); const pb = [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Put back')); pb.dataset.shot = 'putback';",
+      "marks": [
+        {
+          "t": "$[data-shot=putback]",
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [],
+      "alt": "Library clean-up's Holding folder, three items in holding, with Put back beside the first outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=library-cleanup"
+    },
+    {
+      "phase": "present",
+      "file": "settings-4-libraries.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const tab = async (t) => { [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t).click(); await w(1200); }; await w(1500); await tab('Libraries'); const r = [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Activate') && b.closest('li, .row')?.textContent.includes(\"Children's films\")); r.dataset.shot = 'lib';",
+      "marks": [
+        {
+          "t": "$[data-shot=lib]",
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [],
+      "alt": "Library clean-up's Libraries, with Children's films Left alone and Activate beside it outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=library-cleanup"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-1-add.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('Library clean-up'))); s.value = [...s.options].find((o) => o.textContent.includes('Library clean-up')).value; s.dataset.shot = 'add'; window.scrollTo(0, 0); await w(300);",
+      "after": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const b = btn('Cancel'); if (b) b.click();",
+      "marks": [
+        {
+          "t": "$[data-shot=add]",
+          "step": 2,
+          "side": "bottom",
+          "tail": 60
+        },
+        {
+          "t": "Save",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        2,
+        3
+      ],
+      "alt": "Edit dashboard, with Holding folder (Library clean-up) chosen in Add a card (step 2) and Save (step 3) outlined",
+      "topic": "dashboard-card",
+      "page": "dashboard.html"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-2-light.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('Library clean-up'))); s.value = [...s.options].find((o) => o.textContent.includes('Library clean-up')).value; s.dispatchEvent(new Event('change', { bubbles: true })); await w(1000); btn('Save').click(); await w(3000); const card = document.querySelector('[data-card=\"plugin:library-cleanup:held\"]'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The Holding folder card in the light theme: the band with Library clean-up's logo and Deactivated, 38.7 GB in the holding folder and what Preview would move",
+      "topic": "dashboard-card",
+      "page": "dashboard.html"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-3-dark.png",
+      "scheme": "dark",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(2000); const card = document.querySelector('[data-card=\"plugin:library-cleanup:held\"]'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The same Holding folder card in the dark theme",
+      "topic": "dashboard-card",
+      "page": "dashboard.html"
+    },
+    {
+      "phase": "present",
+      "file": "install-4-activate.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Deactivate')).click(); await w(2500); const a = [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Activate')); a.dataset.shot = 'activate'; [...document.querySelectorAll('main p, main div')].filter((x) => x.children.length === 0 && x.textContent.includes('Example data: Docker')).forEach((x) => { x.hidden = true; });",
+      "after": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const b = [...document.querySelectorAll('main button')].find((x) => x.textContent.trim().startsWith('Activate')); if (b) { b.click(); await w(2500); }",
+      "marks": [
+        {
+          "t": "$[data-shot=activate]",
+          "step": 5,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        5
+      ],
+      "alt": "Library clean-up's own tab on State, with Activate (step 5) outlined",
+      "topic": "install",
+      "page": "settings-plugin.html?id=library-cleanup"
+    }
+  ]
+}

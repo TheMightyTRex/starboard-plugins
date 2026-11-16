@@ -19,3 +19,12 @@ The plug-ins help follows the design system's guides, as Starboard's help does:
   ```bash
   python3 <design-system>/tools/help_centre/build.py --config help-centre.json --out _site
   ```
+- **Pictures** go in `images/<plug-in id>/`, marked up with a red outline, a curved arrow and the step's number.
+  They are taken from Starboard's example server with made-up data, never from a real server:
+
+  ```bash
+  tools/help-screenshots.sh <starboard checkout>
+  ```
+
+  The shots are listed in `tools/help_screenshots/shots.json` (Library clean-up's so far). Open every picture before
+  committing it.
