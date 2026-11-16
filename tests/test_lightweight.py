@@ -7,6 +7,9 @@ leaves what they do unchanged.
 - Every Python image compiles the modules its app imports when it is built, so a start does not (read-only images).
 - Direct play's cards, asked every 30 seconds, read the survey only when it, the state or the devices changed, and the
   survey is not held in memory between asks.
+- Direct play's worker reads its settings once for each pass, not about ninety times: each read is several system calls
+  that can each wake it, so with nothing to do it woke about 570 times a minute (measured 16 November 2026). A change
+  of settings still counts from the next pass, and while a file is converted.
 """
 import importlib.util
 import json
@@ -263,6 +266,36 @@ class DirectPlayCards(unittest.TestCase):
         with open(os.path.join(self.app._runp, "settings.json"), "w") as f:
             json.dump({"when": "any", "device_shield": True}, f)
         self.assertEqual(self.app.todo_head(), self.full())
+
+    def settings_reads(self, call):
+        real, n = self.app.sbplugin.settings, [0]
+
+        def counting():
+            n[0] += 1
+            return real()
+        self.app.sbplugin.settings = counting
+        try:
+            out = call()
+        finally:
+            self.app.sbplugin.settings = real
+        return n[0], out
+
+    def test_a_pass_with_nothing_to_do_reads_the_settings_once(self):
+        self.app.keep("survey", [])
+        self.app.work_once()
+        self.assertEqual(self.settings_reads(self.app.work_once), (1, 0))
+        self.assertEqual(self.app.remember("now")["reason"], "Nothing left to do")
+        for values, why in (({"when": "weekends", "device_roku_express": True}, "Waiting for the weekend"),
+                            ({"when": "any", "device_roku_express": False}, "No devices chosen")):
+            with open(os.path.join(self.app._runp, "settings.json"), "w") as f:
+                json.dump(values, f)
+            self.app.localtime = lambda t: time.struct_time((2026, 11, 16, 12, 0, 0, 0, 320, 0))  # a Monday
+            self.assertEqual(self.settings_reads(self.app.work_once), (1, 0))
+            self.assertEqual(self.app.remember("now")["reason"], why)
+
+    def test_outside_a_pass_each_ask_reads_the_settings(self):
+        n, _ = self.settings_reads(lambda: (self.app.options(), self.app.profile()))
+        self.assertGreater(n, 2)
 
     def test_the_survey_is_not_kept_in_memory(self):
         self.app.card()

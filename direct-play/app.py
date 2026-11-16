@@ -22,6 +22,7 @@ How it works:
 Lightweight: the worker wakes once a minute and does nothing outside its hours. The card reads a small status file
 the worker writes while converting, at most as often as Card updates every says (30 seconds unless changed): no probing for the card.
 """
+import contextlib
 import json
 import os
 import re
@@ -33,7 +34,7 @@ import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 
 import sbplugin
-from sbplugin import fetch, keep, plural, remember, serve, setting
+from sbplugin import fetch, keep, plural, remember, serve
 
 ROOTS = {"movies": os.environ.get("DIRECT_PLAY_MOVIES", "/media/movies"), "tv": os.environ.get("DIRECT_PLAY_TV", "/media/tv")}
 VIDEO = re.compile(r"\.(mkv|mp4|avi|m4v|mov|wmv|ts|m2ts|mpg|mpeg|divx|flv|webm)$", re.I)
@@ -74,6 +75,7 @@ CODEC_WORDS = {"hevc": "HEVC", "h264": "H.264", "mpeg4": "MPEG-4 (DivX or Xvid)"
                "ac3": "Dolby Digital", "eac3": "Dolby Digital Plus", "aac": "AAC", "mp3": "MP3", "opus": "Opus", "vorbis": "Vorbis"}
 
 _lock = threading.Lock()
+_pass = threading.local()  # the settings the worker read once for its pass (see setting)
 _current = {"proc": None, "path": None}
 _wake = threading.Event()
 _survey_now = threading.Event()
@@ -84,6 +86,30 @@ def words(codec):
 
 
 # Settings ------------------------------------------------------------------------------------------------------
+
+def setting(key, default=None):
+    """One setting. The worker reads settings.json once for each pass and once after each file, not each time it
+    asks: a pass with nothing to do asked about ninety times, and each read woke the worker about six times, so it
+    woke about 570 times a minute at rest (measured 16 November 2026). Anything else, the card included, and the
+    worker while it converts a file, read the file each time, as before."""
+    held = getattr(_pass, "settings", None)
+    if held is None:
+        return sbplugin.setting(key, default)
+    v = held.get(key)
+    return default if v in (None, "") else v
+
+
+@contextlib.contextmanager
+def _as_they_change():
+    """While a file is converted, settings are read as they change (Card updates every, Pause); afterwards the pass
+    reads them once again."""
+    held, _pass.settings = getattr(_pass, "settings", None), None
+    try:
+        yield
+    finally:
+        if held is not None:
+            _pass.settings = sbplugin.settings()
+
 
 def chosen():
     """The devices chosen in settings: their keys, in the table's order."""
@@ -649,7 +675,7 @@ def todo_list(recs=None, prof=None, opts=None, state=None):
 
 def status(rec=None, bucket=None, pct=None, left=None, force=False, reason=None):
     """The small file the card reads: what is being converted, how far, and why nothing is when nothing is."""
-    st = remember("now", {}) or {}
+    st = (remember("now", {}) or {}) if rec else {}  # only a file being converted needs what it said before
     if not force and rec and st.get("path") == rec["path"] and now() - float(st.get("at") or 0) < card_seconds():
         return
     out = {"at": now()}
@@ -678,6 +704,14 @@ def why_idle():
 
 def work_once():
     """One pass: survey when it is due, then fix files one at a time while the hours allow. Returns files fixed."""
+    _pass.settings = sbplugin.settings()  # read once for the pass (see setting)
+    try:
+        return _work()
+    finally:
+        _pass.settings = None
+
+
+def _work():
     if _survey_now.is_set():  # Look at the library now: at any hour, even while paused
         _survey_now.clear()
         status(reason="Looking at the library")
@@ -690,7 +724,7 @@ def work_once():
     if not in_hours():
         status(reason=why_idle())
         return 0
-    if now() - float(_state().get("surveyed") or 0) > SURVEY_HOURS * 3600:
+    if now() - float(s.get("surveyed") or 0) > SURVEY_HOURS * 3600:
         status(reason="Looking at the library")
         survey()
         library()
@@ -707,12 +741,13 @@ def work_once():
         if not os.path.exists(rec["path"]):
             survey()
             continue
-        try:
-            err = fix(rec, rec["bucket"], prof, opts)
-        except Stopped:
-            break
-        except Exception as e:  # noqa: BLE001
-            err = f"error: {e}"[:200]
+        with _as_they_change():
+            try:
+                err = fix(rec, rec["bucket"], prof, opts)
+            except Stopped:
+                break
+            except Exception as e:  # noqa: BLE001
+                err = f"error: {e}"[:200]
         s = _state()
         if err:
             s["failed"][rec["path"]] = {"why": err, "size": rec["size"], "mtime": rec["mtime"], "title": title(rec["path"]), "at": now()}
