@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description",
  "name": "Audio description",
- "version": "1.2.0",
+ "version": "1.2.1",
  "description": "Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -20,7 +20,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:83b980f1828cdee537bcdf03702ddf6458710cba53f9009938225df430d34d9e",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.1",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -194,6 +194,14 @@
   "alt": "A loudspeaker with sound waves"
  },
  "changes": [
+  {
+   "version": "1.2.1",
+   "date": "2026-11-16",
+   "changed": [
+    "**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.",
+    "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
+   ]
+  },
   {
    "version": "1.2.0",
    "date": "2026-11-15",

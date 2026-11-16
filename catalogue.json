@@ -13,20 +13,20 @@
     "reelix:key",
     "network:lan"
    ],
-   "version": "1.2.0",
+   "version": "1.2.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGxvdWRzcGVha2VyIHdpdGggc291bmQgd2F2ZXM8L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjMGI2NjcwIi8+PHBhdGggZD0iTTEwIDIwaDZsOC03djIybC04LTdoLTZ6IiBmaWxsPSIjZmZmZmZmIi8+PHBhdGggZD0iTTMwIDE4LjVhNy41IDcuNSAwIDAgMSAwIDExTTM0LjUgMTRhMTQgMTQgMCAwIDEgMCAyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A loudspeaker with sound waves",
    "versions": [
     {
-     "version": "1.2.0",
+     "version": "1.2.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Updates safely: before an update it finishes what it is doing and starts nothing new. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.1.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.1.0",
@@ -46,20 +46,20 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.1",
+   "version": "1.1.2",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGxvdWRzcGVha2VyIHdpdGggYSBwbHVzIHNpZ248L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjMmQ1YTg3Ii8+PHBhdGggZD0iTTggMjBoNmw4LTd2MjJsLTgtN0g4eiIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0zMyAxOHYxMk0yNyAyNGgxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A loudspeaker with a plus sign",
    "versions": [
     {
-     "version": "1.1.1",
+     "version": "1.1.2",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
-     "changelog": "Its card says when it last looked: the grey band now shows when it last looked in the folder or a track last changed. Before, it never showed a time."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -117,10 +117,10 @@
     "reelix:key",
     "network:lan"
    ],
-   "version": "1.0.0",
+   "version": "1.0.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/direct-play/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": true,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHBsYXkgc3ltYm9sIG9uIGEgc2NyZWVuPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzFmNWY5OSIvPjxyZWN0IHg9IjgiIHk9IjExIiB3aWR0aD0iMzIiIGhlaWdodD0iMjIiIHJ4PSIzIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNMjEgMTYuNXYxMWw5LTUuNXoiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNMTcgMzhoMTQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
    "logo_alt": "A play symbol on a screen"
@@ -134,20 +134,20 @@
    "permissions": [
     "system:read"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": true,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGRpc2sgZHJpdmUsIHBhcnRseSBmdWxsPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzNkNGY2MyIvPjxyZWN0IHg9IjkiIHk9IjEzIiB3aWR0aD0iMzAiIGhlaWdodD0iMjIiIHJ4PSIzIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNOSAyOGgzMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHJlY3QgeD0iMTQiIHk9IjE4IiB3aWR0aD0iMTMiIGhlaWdodD0iNSIgcng9IjEiIGZpbGw9IiNmZmZmZmYiLz48Y2lyY2xlIGN4PSIzMyIgY3k9IjMxLjUiIHI9IjEuOCIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPgo=",
    "logo_alt": "A disk drive, partly full",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -166,20 +166,20 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGNpcmNsZSB3aXRoIGEgbGluZSB0aHJvdWdoIGl0PC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iI2EzMzAyYiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjEzIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTE1IDMzbDE4LTE4IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A circle with a line through it",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -198,20 +198,20 @@
    "permissions": [
     "downloads:read"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/download-summary/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BbiBhcnJvdyBkb3duIGludG8gYSB0cmF5PC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzJlNmIzMCIvPjxwYXRoIGQ9Ik0yNCA5djE4TTE2IDIwbDggOCA4LTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSAyOXY3aDI2di03IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4K",
    "logo_alt": "An arrow down into a tray",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/download-summary/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -230,20 +230,20 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assistant/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGhvdXNlIHdpdGggbGluZXMgb2Ygd3JpdGluZzwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiMwZjY4NTciLz48cGF0aCBkPSJNOSAyNEwyNCAxMWwxNSAxMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTE0IDIxdjE2aDIwVjIxIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNMTkgMjhoMTBNMTkgMzIuNWg3IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A house with lines of writing",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assistant/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -264,20 +264,20 @@
     "network:lan",
     "network:port"
    ],
-   "version": "1.1.1",
+   "version": "1.1.2",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/jellystat/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHBpZSBjaGFydDwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiM4YTNiMTIiLz48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSIxMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTI0IDI0VjExYTEzIDEzIDAgMCAxIDEyLjQgMTYuOXoiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4K",
    "logo_alt": "A pie chart",
    "versions": [
     {
-     "version": "1.1.1",
+     "version": "1.1.2",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/jellystat/starboard-plugin.json",
-     "changelog": "Its card's example in the Catalogue and on Edit dashboard now shows what the card really says: \"Jellystat has your Jellyfin.\""
+     "changelog": "Lighter at rest: its helper wakes about once a minute while nothing asks it anything, not twice a second. Starts faster: its helper's image comes with Python's modules already compiled."
     },
     {
      "version": "1.0.0",
@@ -340,10 +340,10 @@
     "library:holding",
     "network:lan"
    ],
-   "version": "1.0.0",
+   "version": "1.0.1",
    "starboard_api": ">=1.15 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-cleanup/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHN0b3JhZ2UgYm94IHdpdGggYW4gYXJyb3cgZ29pbmcgaW50byBpdDwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiM0ZDViMTYiLz48cmVjdCB4PSI4LjUiIHk9IjExIiB3aWR0aD0iMzEiIGhlaWdodD0iNy41IiByeD0iMiIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0xMS41IDE4LjV2MTdhMi41IDIuNSAwIDAgMCAyLjUgMi41aDIwYTIuNSAyLjUgMCAwIDAgMi41LTIuNXYtMTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yNCAyM3Y5LjVNMTkuNSAyOC41bDQuNSA0LjUgNC41LTQuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A storage box with an arrow going into it"
@@ -358,20 +358,20 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGNsaXBib2FyZCB3aXRoIGEgdGljazwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiM2YjRmMWQiLz48cmVjdCB4PSIxMiIgeT0iMTIiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNyIgcng9IjMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxyZWN0IHg9IjE4LjUiIHk9IjguNSIgd2lkdGg9IjExIiBoZWlnaHQ9IjYuNSIgcng9IjIiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNMTggMjYuNWw0IDQgOC05IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4K",
    "logo_alt": "A clipboard with a tick",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Updates safely: before an update it finishes what it is doing and starts nothing new. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time. Large libraries: it asks Jellyfin a page of 500 titles at a time, so a large library no longer makes the check fail."
     },
     {
      "version": "1.0.0",
@@ -390,20 +390,20 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-speed/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHNwZWVkIGdhdWdlPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzk4NGEwMCIvPjxwYXRoIGQ9Ik0xMC41IDMyYTEzLjUgMTMuNSAwIDEgMSAyNyAwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTI0IDMybDcuNS04LjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMzIiIHI9IjMiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4K",
    "logo_alt": "A speed gauge",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-speed/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Updates safely: before an update it finishes what it is doing and starts nothing new. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -460,20 +460,20 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/most-watched/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHN0YXI8L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjOGUyYTZiIi8+PHBhdGggZD0iTTI0IDkuNWw0LjQgOS4zIDEwLjEgMS4yLTcuNSA3IDIgMTAuMUwyNCAzMi4xbC05IDUgMi0xMC4xLTcuNS03IDEwLjEtMS4yeiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPgo=",
    "logo_alt": "A star",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/most-watched/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Updates safely: before an update it finishes what it is doing and starts nothing new. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -533,20 +533,20 @@
     "system:read",
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": true,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGJlbGw8L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjYTMzYzE3Ii8+PHBhdGggZD0iTTI0IDEwLjVhOC41IDguNSAwIDAgMC04LjUgOC41djYuNWwtMy41IDUuNWgyNGwtMy41LTUuNVYxOWE4LjUgOC41IDAgMCAwLTguNS04LjV6IiBmaWxsPSIjZmZmZmZmIi8+PGNpcmNsZSBjeD0iMjQiIGN5PSIzNSIgcj0iMy4yIiBmaWxsPSIjZmZmZmZmIi8+PC9zdmc+Cg==",
    "logo_alt": "A bell",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Updates safely: before an update it finishes what it is doing and starts nothing new. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -565,20 +565,20 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGdsb2JlPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzMzNDQ5ZSIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjEzIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48ZWxsaXBzZSBjeD0iMjQiIGN5PSIyNCIgcng9IjYiIHJ5PSIxMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSAyNGgyNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
    "logo_alt": "A globe",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -599,10 +599,10 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/picture-shrinker/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHBpY3R1cmUgd2l0aCBhbiBhcnJvdyBwb2ludGluZyBpbnRvIGl0cyBjb3JuZXI8L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjOGE0YTBiIi8+PHJlY3QgeD0iOCIgeT0iMTYiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyMiIgcng9IjMiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNMTEuNSAzNC41bDYuNS04IDQuNSA1IDIuNS0zIDQgNnoiIGZpbGw9IiM4YTRhMGIiLz48Y2lyY2xlIGN4PSIyNSIgY3k9IjIyIiByPSIyLjUiIGZpbGw9IiM4YTRhMGIiLz48cGF0aCBkPSJNNDAgOGwtOCA4TTMyIDEwLjVWMTZoNS41IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4K",
    "logo_alt": "A picture with an arrow pointing into its corner"
@@ -617,20 +617,20 @@
     "apps:read",
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/remote-access/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHBob25lIHdpdGggc2lnbmFsIHdhdmVzPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzBiNWM4NiIvPjxyZWN0IHg9IjEwIiB5PSIxNiIgd2lkdGg9IjE1IiBoZWlnaHQ9IjI0IiByeD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTE2IDM0LjVoMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTMwIDE0YTcgNyAwIDAgMSA1IDVNMzAgOGExMyAxMyAwIDAgMSAxMSAxMSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "A phone with signal waves",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/remote-access/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its card says how things are: a status and when it last changed, in the grey band at the top of the card. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -792,20 +792,20 @@
    "permissions": [
     "network:vpn"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/vpn-check/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIHNoaWVsZCB3aXRoIGEgdGljazwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiMyYzRmN2MiLz48cGF0aCBkPSJNMjQgOS41bDEyLjUgNC41djkuNWMwIDgtNS4zIDEzLjItMTIuNSAxNS41LTcuMi0yLjMtMTIuNS03LjUtMTIuNS0xNS41VjE0eiIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0xOC41IDI0LjVsNCA0IDcuNS04LjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJjNGY3YyIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
    "logo_alt": "A shield with a tick",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/vpn-check/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -825,20 +825,20 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BIGJhciBjaGFydDwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiM0YTNhOGMiLz48cmVjdCB4PSIxMi41IiB5PSIyNSIgd2lkdGg9IjUuNSIgaGVpZ2h0PSIxMSIgcng9IjEiIGZpbGw9IiNmZmZmZmYiLz48cmVjdCB4PSIyMS4yNSIgeT0iMTgiIHdpZHRoPSI1LjUiIGhlaWdodD0iMTgiIHJ4PSIxIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iMzAiIHk9IjEyIiB3aWR0aD0iNS41IiBoZWlnaHQ9IjI0IiByeD0iMSIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0xMCAzOWgyOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
    "logo_alt": "A bar chart",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Updates safely: before an update it finishes what it is doing and starts nothing new. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",
@@ -858,20 +858,20 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.0",
+   "version": "1.1.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BbiBleWU8L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjN2EyZjhmIi8+PHBhdGggZD0iTTcuNSAyNGM0LTcgMTAtMTAuNSAxNi41LTEwLjVTMzYuNSAxNyA0MC41IDI0Yy00IDctMTAgMTAuNS0xNi41IDEwLjVTMTEuNSAzMSA3LjUgMjR6IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSI1IiBmaWxsPSIjZmZmZmZmIi8+PC9zdmc+Cg==",
    "logo_alt": "An eye",
    "versions": [
     {
-     "version": "1.1.0",
+     "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-15",
+     "released": "2026-11-16",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json",
-     "changelog": "A logo in Settings, Plug-ins, in the Catalogue and on its dashboard cards. Its cards say how things are: a status and when they last changed, in the grey band at the top of each card. Kept up to date: its card is asked every 30 seconds while the dashboard is open. Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."
+     "changelog": "Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well. Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
     },
     {
      "version": "1.0.0",

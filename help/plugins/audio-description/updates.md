@@ -1,15 +1,23 @@
 # Audio description: Updates
 
-Audio description 1.2.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description 1.2.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.2.1 | 1.14 or later | 2026-11-16 |
 | 1.2.0 | 1.14 or later | 2026-11-15 |
 | 1.1.0 | 1.12 or later | 2026-11-13 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.2.1
+
+Changed:
+
+- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.
+- **Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## What is new in 1.2.0
 

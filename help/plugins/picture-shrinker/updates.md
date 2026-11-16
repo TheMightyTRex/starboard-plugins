@@ -6,9 +6,17 @@ Picture shrinker 1.0.0 is the latest version. It needs Starboard with plug-in AP
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.1 | 1.14 or later | 2026-11-16 |
 | 1.0.0 | 1.14 or later | 2026-11-15 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.1
+
+Changed:
+
+- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second.
+- **Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## What is new in 1.0.0
 

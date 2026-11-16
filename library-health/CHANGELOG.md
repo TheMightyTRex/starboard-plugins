@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1 (16 November 2026)
+
+### Changed
+- Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.
+- Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
+
+### Fixed
+- Large libraries: it asks Jellyfin a page of 500 titles at a time, so a large library no longer makes the check fail.
+
 ## 1.1.0 (15 November 2026)
 
 ### Added
