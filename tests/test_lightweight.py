@@ -4,6 +4,7 @@ leaves what they do unchanged.
 - An idle plug-in's HTTP server wakes once a minute, not twice a second (no serve_forever() with its 0.5 s default).
 - A background run that works does not write /data/_error.json to say nothing went wrong.
 - Library health asks Jellyfin a page of 500 titles at a time, so a large library is never one answer of over 4 MB.
+- Every Python image compiles the modules its app imports when it is built, so a start does not (read-only images).
 - Direct play's cards, asked every 30 seconds, read the survey only when it, the state or the devices changed, and the
   survey is not held in memory between asks.
 """
@@ -55,6 +56,17 @@ class Idle(unittest.TestCase):
         finally:
             sys.path.remove(os.path.join(ROOT, "_shared"))
             sys.modules.pop("sbplugin", None)
+
+
+class Bytecode(unittest.TestCase):
+    def test_every_python_image_compiles_what_its_app_imports(self):
+        files = ["Dockerfile"] + [os.path.join(pid, "Dockerfile") for pid in IDS if os.path.isfile(os.path.join(ROOT, pid, "Dockerfile"))]
+        for f in files:
+            with open(os.path.join(ROOT, f), encoding="utf-8") as fh:
+                src = fh.read()
+            run = src.index("modulefinder.ModuleFinder")
+            self.assertLess(src.index("sbplugin.py"), run, f)
+            self.assertLess(run, src.index("USER "), f)  # as root, before the image's own user
 
 
 class Stop(Exception):
