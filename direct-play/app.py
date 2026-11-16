@@ -596,19 +596,34 @@ def quiet_job():
 
 # State and the worker ------------------------------------------------------------------------------------------
 
-_cache = {"mtime": None, "recs": []}
-
-
 def surveyed():
-    """The survey's facts, read again only when the file changed: the card and the page ask often."""
-    path = os.path.join(sbplugin.DATA, "survey.json")
+    """The survey's facts, read from its file each time: they are not kept in memory between asks (a library of 50,000
+    files is about 48 MB of them), as the cards use todo_head() instead."""
+    return remember("survey", []) or []
+
+
+def _stamp(name):
     try:
-        mtime = os.stat(path).st_mtime_ns
+        st = os.stat(os.path.join(sbplugin.DATA, f"{name}.json"))
+        return st.st_ino, st.st_mtime_ns, st.st_size
     except OSError:
-        return []
-    if _cache["mtime"] != mtime:
-        _cache.update(mtime=mtime, recs=remember("survey", []) or [])
-    return _cache["recs"]
+        return None
+
+
+_head = {"key": None, "count": 0, "head": []}
+HEAD = 5  # the card shows the next four, and one more in case the first is the file being converted
+
+
+def todo_head():
+    """(how many files are still to do, the first few in order): what the cards and the idle reason need. Worked out
+    again only when the survey, the state or the devices and options changed, so the card asked every 30 seconds costs
+    a look at two files' times, not a read of the whole survey."""
+    prof, opts = profile(), options()
+    key = (_stamp("survey"), _stamp("state"), tuple(sorted(prof["devices"])) if prof else None, json.dumps(opts, sort_keys=True))
+    if _head["key"] != key:
+        todo = todo_list(prof=prof, opts=opts)
+        _head.update(key=key, count=len(todo), head=todo[:HEAD])
+    return _head["count"], _head["head"]
 
 
 def _state():
@@ -658,7 +673,7 @@ def why_idle():
         return {"weekends": "Waiting for the weekend", "quiet": "Waiting for quiet hours"}.get(options()["when"], "Waiting")
     if not s.get("surveyed"):
         return "Looking at the library"
-    return "Nothing left to do" if not todo_list() else "Starting the next file"
+    return "Nothing left to do" if not todo_head()[0] else "Starting the next file"
 
 
 def work_once():
@@ -727,7 +742,7 @@ def worker():
     while True:
         try:
             work_once()
-            keep("_error", None)
+            sbplugin.clear_error()
         except Exception as e:  # noqa: BLE001 - kept for the page, never fatal
             keep("_error", {"at": now(), "text": f"{type(e).__name__}: {e}"[:200]})
         _wake.wait(TICK)
@@ -752,7 +767,7 @@ def time_words(seconds):
 
 def totals():
     s = _state()
-    return f"{plural(s['done'], 'file')} fixed, {size_words(s['saved_bytes'])} saved, {plural(len(todo_list(state=s)), 'file')} still to do"
+    return f"{plural(s['done'], 'file')} fixed, {size_words(s['saved_bytes'])} saved, {plural(todo_head()[0], 'file')} still to do"
 
 
 def card():
@@ -776,7 +791,7 @@ def card():
             items[-1]["detail"] = "Choose your devices on the plug-in's page in Settings, Plug-ins"
         elif reason == "Nothing left to do":
             items[-1]["detail"] = "New films and series are checked " + ("when it next runs" if not in_hours() else "every few hours")
-    nxt = [r for r in todo_list() if r["path"] != st.get("path") or not converting][:4]
+    nxt = [r for r in todo_head()[1] if r["path"] != st.get("path") or not converting][:4]
     items += [{"title": f"Next: {title(r['path'])}", "detail": WORDS[r["bucket"]]} for r in nxt]
     items.append({"title": "Totals", "detail": totals()})
     state = "converting" if converting else {"Paused": "paused", "Nothing left to do": "done", "No devices chosen": "needs_setup"}.get(items[0]["title"], "waiting")
@@ -786,7 +801,7 @@ def card():
 
 def summary_card():
     s = _state()
-    left = len(todo_list(state=s))
+    left = todo_head()[0]
     answer = {"value": int(s["saved_bytes"]), "label": "saved", "note": f"{plural(s['done'], 'file')} fixed, {plural(left, 'file')} to do"}
     at = (s.get("last") or {}).get("at")
     if _current["path"]:
