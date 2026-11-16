@@ -1,6 +1,6 @@
 # Watching now: Dashboard card
 
-Watching now adds 1 card you can put on your dashboard. Each starts with a grey band: Watching now's logo and name, a status in words, and when it last changed.
+Watching now adds 1 card you can put on your dashboard. Each starts with a grey band: Watching now's logo and name and a status in words. A lighter grey footer says when it last changed.
 
 ## Watching now
 

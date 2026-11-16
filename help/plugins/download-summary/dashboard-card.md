@@ -1,6 +1,6 @@
 # Download summary: Dashboard card
 
-Download summary adds 1 card you can put on your dashboard. Each starts with a grey band: Download summary's logo and name, a status in words, and when it last changed.
+Download summary adds 1 card you can put on your dashboard. Each starts with a grey band: Download summary's logo and name and a status in words. A lighter grey footer says when it last changed.
 
 ## Downloaded today
 

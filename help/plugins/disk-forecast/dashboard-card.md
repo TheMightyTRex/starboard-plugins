@@ -1,6 +1,6 @@
 # Disk forecast: Dashboard card
 
-Disk forecast adds 1 card you can put on your dashboard. Each starts with a grey band: Disk forecast's logo and name, a status in words, and when it last changed.
+Disk forecast adds 1 card you can put on your dashboard. Each starts with a grey band: Disk forecast's logo and name and a status in words. A lighter grey footer says when it last changed.
 
 ## Disk forecast
 

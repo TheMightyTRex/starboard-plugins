@@ -1,6 +1,6 @@
 # Remote access: Dashboard card
 
-Remote access adds 1 card you can put on your dashboard. It starts with a grey band: Remote access's logo and name, a status in words, and when the connection last changed.
+Remote access adds 1 card you can put on your dashboard. It starts with a grey band: Remote access's logo and name and a status in words. A lighter grey footer says when the connection last changed.
 
 ## Away from home
 
