@@ -700,10 +700,10 @@ def work_once():
         if s.get("paused") or not in_hours() or sbplugin.holding():
             break
         prof, opts = profile(), options()
-        todo = todo_list(prof=prof, opts=opts, state=s)
-        if not todo:
+        left, head = todo_head()  # read again only when the survey, the state or the settings changed
+        if not left:
             break
-        rec = todo[0]
+        rec = head[0]
         if not os.path.exists(rec["path"]):
             survey()
             continue
