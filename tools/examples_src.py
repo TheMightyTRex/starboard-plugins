@@ -528,8 +528,8 @@ serve({"/card": card})
 # answers the update steps, so every plug-in in the image names this tag until it is built and pinned again.
 # 1.2.1 (16 November 2026, DASH-453): every example in the image names this tag until it is built and pinned.
 IMAGE_VERSION = "1.2.1"
-NEW_IN_IMAGE = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking",
-                "home-assistant", "outside-services", "download-summary", "disk-forecast", "notifications", "watch-stats"}
+# Built and pinned on 16 November 2026 (sha256:54691dcbaf88...): every example runs from the pinned image again.
+NEW_IN_IMAGE = set()
 
 
 def _switch(key, label, hint, group, default=True):
