@@ -141,4 +141,5 @@ def serve(routes, port=8080):
 
     port = int(os.environ.get("PORT", port))
     print(f"Listening on {port}", flush=True)
-    ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()  # inside its own container  # nosec B104
+    # A look for a shutdown once a minute, not twice a second: nothing stops it but the container ending.
+    ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever(poll_interval=60)  # inside its own container  # nosec B104

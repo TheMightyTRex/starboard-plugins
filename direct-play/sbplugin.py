@@ -5,7 +5,8 @@
 - jellyfin(path): Jellyfin's API with the key Starboard keeps (only for plug-ins allowed jellyfin:key).
 - fetch(url): any address, JSON or bytes, with a time limit and a size limit.
 - remember(name) and keep(name, value): a small JSON file in /data, the plug-in's own folder.
-- every(seconds, job): a background job; serve(routes): the HTTP answers Starboard asks for (cards, buttons, health).
+- every(seconds, job): a background job; serve(routes): the HTTP answers Starboard asks for (cards, buttons, health),
+  waking about once a minute when nothing asks.
   A POST answer that takes one argument is given the JSON body Starboard sent, such as an event (64 KB at most).
   A ("FILE", path) answer is given a file Starboard streams to it (the name, the item, its length and the stream),
   which it reads a piece at a time (Audio description tracks, DASH-410).
@@ -29,6 +30,7 @@ RUN = os.environ.get("PLUGIN_RUN", "/run/starboard")
 API = os.environ.get("STARBOARD_API", "http://starboard:8095/api/v1/")
 AGENT = "Starboard plug-in"
 MAX = 4 * 1024 * 1024
+POLL_SECONDS = 60  # how often the idle HTTP server looks for a shutdown that never comes
 
 
 def _json_file(path, default):
@@ -92,7 +94,7 @@ def keep(name, value):
 
 def every(seconds, job, first=5):
     """Runs job() now (after `first` seconds) and then every `seconds`, in the background. Errors are kept for the
-    status card, never fatal."""
+    status card, never fatal. A run that works clears the kept error, writing the file only when there was one."""
     def loop():
         time.sleep(first)
         while True:
@@ -101,11 +103,18 @@ def every(seconds, job, first=5):
             try:
                 with working(getattr(job, "__name__", "a background job")):
                     job()
-                keep("_error", None)
+                clear_error()
             except Exception as e:  # noqa: BLE001 - a plug-in keeps running and says what went wrong
                 keep("_error", {"at": time.time(), "text": f"{type(e).__name__}: {e}"[:200]})
             time.sleep(seconds)
     threading.Thread(target=loop, daemon=True).start()
+
+
+def clear_error():
+    """After a run that worked: empties /data/_error.json, writing it only when it holds an error, so a plug-in at rest
+    never writes to the disk just to say nothing went wrong."""
+    if remember("_error") is not None:
+        keep("_error", None)
 
 
 def last_error():
@@ -249,4 +258,6 @@ def serve(routes, port=8080):
 
     port = int(os.environ.get("PORT", port))
     print(f"Listening on {port}", flush=True)
-    ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()  # inside its own container  # nosec B104
+    # A look for a shutdown once a minute, not twice a second: nothing stops the server but the container ending, so an
+    # idle plug-in wakes about once a minute instead of 120 times.
+    ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever(poll_interval=POLL_SECONDS)  # inside its own container  # nosec B104
