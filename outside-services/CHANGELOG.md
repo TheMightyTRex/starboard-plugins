@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2 (17 November 2026)
+
+### Changed
+- Shared helper: the helper every example shares sends Jellyfin's key the way Jellyfin 12 asks for it. This plug-in does not ask Jellyfin anything, so it works as before.
+
 ## 1.1.1 (16 November 2026)
 
 ### Changed

@@ -101,7 +101,7 @@ def jellyfin(path, data=None, method=None):
     jf = _run_file("jellyfin.json")
     if not jf.get("url") or not jf.get("api_key"):
         raise LookupError("Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps")
-    return fetch(jf["url"].rstrip("/") + path, {"X-Emby-Token": jf["api_key"]}, data=data, method=method, timeout=30)
+    return fetch(jf["url"].rstrip("/") + path, sbplugin.jellyfin_headers(jf["api_key"]), data=data, method=method, timeout=30)
 
 
 def reelix(path, data=None, method=None):

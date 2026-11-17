@@ -5,7 +5,9 @@ COMMON = {"manifest_version": 1, "author": "TheMightyTRexUK", "licence": "MIT",
           "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues", "starboard_api": ">=1.14 <2.0"}
 # 1.1.0 (plug-in API 1.14, 15 November 2026): a logo, the card band's status and updated, and the update tools.
 # 1.1.1 (16 November 2026, DASH-453): lighter at rest and faster to start; Library health a page at a time.
-VERSION = "1.1.1"
+# 1.1.2 (17 November 2026, DASH-458): sbplugin sends Jellyfin's key in Authorization too, for Jellyfin 12.
+VERSION = "1.1.2"
+VERSION_111 = "1.1.1"
 VERSION_110 = "1.1.0"
 
 
@@ -20,13 +22,14 @@ _STEPS = {"before": {"path": "/update/before", "time_limit_seconds": 60}, "after
 UPDATE_STEPS = {pid: _STEPS for pid in ("line-speed", "most-watched", "library-health", "notifications", "watch-stats")}
 RELEASED = "2026-11-15"
 RELEASED_111 = "2026-11-16"
+RELEASED_112 = "2026-11-17"
 FIRST = "2026-11-12"
 
 
 def changes_for(pid, m):
     """What is new in each version (plug-in API 1.10, shown before an update from API 1.14): 1.1.0 first, then the
     plug-in's own list, or its first version."""
-    earlier = [c for c in m.get("changes") or [] if c.get("version") not in (VERSION, VERSION_110)] or [
+    earlier = [c for c in m.get("changes") or [] if c.get("version") not in (VERSION, VERSION_111, VERSION_110)] or [
         {"version": "1.0.0", "date": FIRST, "added": [m["description"]]}]
     added = ["**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
              "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."]
@@ -37,10 +40,18 @@ def changes_for(pid, m):
     light = ["**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.", "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."]
     fixed = (["**Large libraries:** it asks Jellyfin a page of 500 titles at a time, so a large library no longer makes the check "
               "fail."] if pid == "library-health" else [])
-    newest = {"version": VERSION, "date": RELEASED_111, "changed": light, **({"fixed": fixed} if fixed else {})}
-    return [newest, {"version": VERSION_110, "date": RELEASED, "added": added,
+    v111 = {"version": VERSION_111, "date": RELEASED_111, "changed": light, **({"fixed": fixed} if fixed else {})}
+    newest = {"version": VERSION, "date": RELEASED_112, **({"fixed": JELLYFIN_12} if pid in CALLS_JELLYFIN else {"changed": SHARED_ONLY})}
+    return [newest, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
              "changed": ["Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."]}] + earlier
 
+
+# 1.1.2 (DASH-458): Jellyfin 12 with legacy authorisation off refuses the key in X-Emby-Token alone.
+CALLS_JELLYFIN = {"watching-now", "most-watched", "library-health", "watch-stats"}
+JELLYFIN_12 = ["**Jellyfin 12:** it sends Jellyfin's key the way Jellyfin 12 asks for it, so Jellyfin no longer refuses its "
+               "requests where legacy authorisation is off. Older Jellyfin still works."]
+SHARED_ONLY = ["**Shared helper:** the helper every example shares sends Jellyfin's key the way Jellyfin 12 asks for it. "
+               "This plug-in does not ask Jellyfin anything, so it works as before."]
 
 EXAMPLES = {}
 
@@ -527,9 +538,11 @@ serve({"/card": card})
 # 1.2.0 (15 November 2026, plug-in API 1.14): every example's card answers the band's status and updated, and sbplugin
 # answers the update steps, so every plug-in in the image names this tag until it is built and pinned again.
 # 1.2.1 (16 November 2026, DASH-453): every example in the image names this tag until it is built and pinned.
-IMAGE_VERSION = "1.2.1"
-# Built and pinned on 16 November 2026 (sha256:54691dcbaf88...): every example runs from the pinned image again.
-NEW_IN_IMAGE = set()
+# 1.2.2 (17 November 2026, DASH-458): sbplugin's Jellyfin key fix, so every example names this tag until it is built
+# and pinned again.
+IMAGE_VERSION = "1.2.2"
+NEW_IN_IMAGE = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking",
+                "home-assistant", "outside-services", "download-summary", "disk-forecast", "notifications", "watch-stats"}
 
 
 def _switch(key, label, hint, group, default=True):

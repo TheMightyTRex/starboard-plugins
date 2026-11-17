@@ -77,7 +77,13 @@ def jellyfin(path):
     jf = _json_file(os.path.join(RUN, "jellyfin.json"), {}) or {}
     if not jf.get("url") or not jf.get("api_key"):
         raise LookupError("Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps")
-    return fetch(jf["url"].rstrip("/") + path, {"X-Emby-Token": jf["api_key"]})
+    return fetch(jf["url"].rstrip("/") + path, jellyfin_headers(jf["api_key"]))
+
+
+def jellyfin_headers(key):
+    """The key as Jellyfin wants it. Jellyfin 12 with legacy authorisation off refuses it in X-Emby-Token alone (401),
+    so it goes in Authorization too; X-Emby-Token stays for older Jellyfin and Emby (DASH-458)."""
+    return {"Authorization": f'MediaBrowser Token="{key}"', "X-Emby-Token": key}
 
 
 def remember(name, default=None):

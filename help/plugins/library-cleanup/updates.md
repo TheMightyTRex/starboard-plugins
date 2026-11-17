@@ -1,15 +1,22 @@
 # Library clean-up: Updates
 
-Library clean-up 1.0.1 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
+Library clean-up 1.0.2 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.2 | 1.15 or later | 2026-11-17 |
 | 1.0.1 | 1.14 or later | 2026-11-16 |
 | 1.0.0 | 1.15 or later | 2026-11-15 |
 
 The catalogue offers each Starboard the newest version it can run. 1.0.0 is the first version, so a Starboard with plug-in API 1.14 or earlier is not offered Library clean-up until Starboard is updated.
+
+## What is new in 1.0.2
+
+Fixed:
+
+- **Jellyfin 12:** it sends Jellyfin's key the way Jellyfin 12 asks for it, so Jellyfin no longer refuses its requests where legacy authorisation is off. Older Jellyfin still works.
 
 ## What is new in 1.0.1
 
