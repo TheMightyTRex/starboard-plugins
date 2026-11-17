@@ -793,6 +793,25 @@
    }
   },
   {
+   "id": "tv-station",
+   "name": "TV station",
+   "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with idents, trailers, Coming up next cards and your own on-screen logo.",
+   "kind": "Jellyfin",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "jellyfin:key",
+    "network:lan",
+    "network:port"
+   ],
+   "version": "0.1.0",
+   "starboard_api": ">=1.15 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/tv-station/starboard-plugin.json",
+   "published": false,
+   "recommended": false,
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5UViBzdGF0aW9uIGxvZ288L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjNmEzZDlhIi8+PHBhdGggZD0iTTE4IDlsNiA2IDYtNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxyZWN0IHg9IjciIHk9IjE1IiB3aWR0aD0iMzQiIGhlaWdodD0iMjMiIHJ4PSIzIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cmVjdCB4PSIzMCIgeT0iMTkiIHdpZHRoPSI3IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSIjZmZmZmZmIi8+PC9zdmc+Cg==",
+   "logo_alt": "TV station logo"
+  },
+  {
    "id": "uptime-kuma",
    "name": "Uptime Kuma",
    "description": "Uptime Kuma, status checks for websites and services, with alerts and status pages. Starboard already watches your apps; this is for more.",

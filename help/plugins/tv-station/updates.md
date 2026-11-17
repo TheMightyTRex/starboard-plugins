@@ -1,0 +1,30 @@
+# TV station: Updates
+
+TV station 0.1.0 is the latest version. It needs Starboard with plug-in API 1.15 or later.
+
+## Versions
+
+| Version | Needs plug-in API | Released |
+|---|---|---|
+| 0.1.0 | 1.15 or later | Not yet released |
+
+The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.1.0
+
+Added:
+
+- **Your own channels:** name the station and each channel, with its number, logo and colour, and fill it from series, films, collections, playlists, genres or decades, in order or shuffled, with episodes of a series in a row.
+- **In Jellyfin's Live TV, first:** numbered from 1 in your order, with a 7-day guide of titles, episode names, synopses, pictures and New or Repeat. Tuning in joins part way through, as on television.
+- **Breaks:** idents, Jellyfin's trailers, your own clips, and Coming up next and Later cards with the programme's picture, title, date and time and a short synopsis.
+- **On-screen logo:** the channel's logo or name in a corner you choose, with its size, opacity, a clock, a New, Repeat or Live label and a backing plate, for the station or each channel, with a preview.
+- **Light:** nothing runs until someone chooses a channel, viewers of a channel share one stream, and it stops 30 seconds after the last one leaves.
+
+## How it updates
+
+Before an update, TV station stops any channel playing, so the update never cuts a conversion short; anyone watching can choose the channel again after it. Your channels, idents, clips and logos stay in its folder. Select **Roll back to** on its tab to go back to the version before.
+
+## Find out more
+
+- [Update and roll back](../../use/update-and-roll-back.md)
+- [Problems](problems.md)

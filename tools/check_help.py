@@ -61,6 +61,11 @@ ALLOWED = [(f, w, RENAMED) for f, w in [
     ("picture-shrinker/starboard-plugin.json", "**Just shrink, with no backup** is now"),
     ("help/plugins/picture-shrinker/updates.md", "**Just shrink, with no backup** is now"),
 ]]
+# TV station (DASH-477): "on-screen logo" is the name of the logo a channel draws on the television picture (the DOG),
+# and the corner it sits in is a corner of that picture, not a place on a page.
+ALLOWED += [(f, w, "the television picture, not a page") for f in
+            ["tv-station/README.md"] + [f"help/plugins/tv-station/{p}.md" for p, _ in PAGES]
+            for w in ("on-screen", "On-screen", "Top right", "Top left", "Bottom right", "Bottom left")]
 API_LINE = re.compile(r"<!--\s*plugin-api:\s*([\d.]+)\s*-->")
 
 
