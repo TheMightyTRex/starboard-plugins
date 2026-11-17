@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "picture-shrinker",
  "name": "Picture shrinker",
- "version": "1.2.1",
+ "version": "1.2.2",
  "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or shrink without a backup.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -44,6 +44,12 @@
    "label": "Space saved",
    "type": "custom",
    "choices": "/saved"
+  },
+  {
+   "key": "by_type",
+   "label": "Saved by type",
+   "type": "custom",
+   "choices": "/saved-by-type"
   },
   {
    "key": "originals",
@@ -301,10 +307,40 @@
    "example": {
     "value": 41200000000,
     "label": "saved",
-    "note": "18,402 pictures shrunk; backup 1.1 GB. Next run Sunday 16 November at 03:30",
+    "note": "18,402 pictures shrunk; backup 1.1 GB. Next run Sunday 23 November at 03:30",
     "status": "scheduled",
     "status_label": "Scheduled",
     "updated": 1794694110,
+    "refresh_seconds": 600
+   }
+  },
+  {
+   "id": "by-type",
+   "title": "Space saved by type",
+   "type": "list",
+   "path": "/card/by-type",
+   "refresh_seconds": 60,
+   "example": {
+    "items": [
+     {
+      "title": "Backdrops: 24.6 GB",
+      "detail": "6,120 pictures shrunk, from 31.0 GB to 6.4 GB"
+     },
+     {
+      "title": "Posters: 11.3 GB",
+      "detail": "7,804 pictures shrunk, from 14.9 GB to 3.6 GB"
+     },
+     {
+      "title": "Photos of cast and crew: 5.3 GB",
+      "detail": "4,478 pictures shrunk, from 6.8 GB to 1.5 GB"
+     },
+     {
+      "title": "Last run: Sun 16 Nov 2026, 03:42",
+      "detail": "On its schedule: 212 pictures shrunk, 480.3 MB saved, 18,190 left as they were"
+     }
+    ],
+    "status": "scheduled",
+    "updated": 1794805320,
     "refresh_seconds": 600
    }
   }
@@ -349,6 +385,19 @@
   "alt": "Picture shrinker logo"
  },
  "changes": [
+  {
+   "version": "1.2.2",
+   "date": "2026-11-17",
+   "added": [
+    "**Space saved by type:** a dashboard card with the space each type of picture saved, such as posters, backdrops and photos of cast and crew, how many of each were shrunk, and the last run.",
+    "**Saved by type** in its settings: a table of the same figures, with the size before and now. Pictures shrunk before 1.2.2 were not counted by type, so they share one row."
+   ],
+   "changed": [
+    "**Space saved card:** with nothing shrunk yet, it says so and what to do next: choose a backup in Original pictures first, then Shrink now or the next run.",
+    "**Sizes as Starboard shows them:** a kilobyte is 1,024 bytes in its words too, so the figures on its cards and pages agree with the number Starboard draws on the Space saved card.",
+    "**Light as before:** both cards read the figures kept after each run; nothing is measured or scanned when a card asks."
+   ]
+  },
   {
    "version": "1.2.1",
    "date": "2026-11-17",

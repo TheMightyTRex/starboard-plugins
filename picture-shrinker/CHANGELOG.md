@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.2 (17 November 2026)
+
+### Added
+- Space saved by type: a dashboard card with the space each type of picture saved, such as posters, backdrops and photos of cast and crew, how many of each were shrunk, and the last run.
+- Saved by type in its settings: a table of the same figures, with the size before and now. Pictures shrunk before 1.2.2 were not counted by type, so they share one row.
+
+### Changed
+- Space saved card: with nothing shrunk yet, it says so and what to do next: choose a backup in Original pictures first, then Shrink now or the next run. Its note no longer runs past what the card shows.
+- Sizes as Starboard shows them: a kilobyte is 1,024 bytes in its words too, so the figures on its cards and pages agree with the number Starboard draws on the Space saved card.
+- Light as before: both cards read the figures kept after each run; nothing is measured or scanned when a card asks.
+
 ## 1.2.1 (17 November 2026)
 
 ### Changed

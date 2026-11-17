@@ -105,11 +105,21 @@ runs next. Then comes a table of each run: when, what started it, how many pictu
 left as they were or could not be read, and the space saved. Pictures it could not read are listed under **Could not
 read**, with the reason.
 
-## The card on your dashboard
+**Saved by type**, also in its section of **Settings**, **Plug-ins**, shows the space each type of picture has saved,
+such as posters, backdrops and photos of cast and crew, with how many were shrunk and their size before and now.
+Pictures shrunk before version 1.2.2 were not counted by type and share one row.
 
-Add the **Space saved** card in **Edit dashboard**. It shows the space saved, how many pictures are shrunk and the size
-of the backup. The card's band shows the Picture shrinker logo, its name and its status. The card says when it runs next. A finished
-run changes only these figures: it sends no notification and raises no alert.
+## The cards on your dashboard
+
+Add them in **Edit dashboard**. Each card's band shows the Picture shrinker logo, its name and its status.
+
+- **Space saved** shows the space saved so far, how many pictures are shrunk, the size of the backup and when it runs
+  next.
+- **Space saved by type** shows the space each type of picture saved, the most first, and the last run.
+
+Before anything is shrunk, both say "Nothing shrunk yet" and what to do: choose an option in **Original pictures**
+first, then **Shrink now** or wait for the next run. Both read the figures kept after each run, so they add no work
+for your server. A finished run changes only these figures: it sends no notification and raises no alert.
 
 ## Jellyfin's own version
 
