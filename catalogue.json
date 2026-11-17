@@ -591,7 +591,7 @@
   {
    "id": "picture-shrinker",
    "name": "Picture shrinker",
-   "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. Each original is backed up and each picture checked before it replaces the original.",
+   "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or just shrink.",
    "kind": "Jellyfin",
    "author": "TheMightyTRexUK",
    "permissions": [
@@ -599,7 +599,7 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.1",
+   "version": "1.2.0",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/picture-shrinker/starboard-plugin.json",
    "published": true,
