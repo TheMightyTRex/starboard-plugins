@@ -19,7 +19,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks:1.1.4",
+   "image": "ghcr.io/themightytrex/starboard-plugin-audio-description-tracks@sha256:7440b1fc86c948b632ea97d4a965266cbf4c5854a7004ac9b3681e7c0412f267",
    "port": 8080,
    "network": "lan",
    "volumes": [

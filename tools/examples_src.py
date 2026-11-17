@@ -569,8 +569,8 @@ serve({"/card": card})
 # pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
 # manifest.
 IMAGE_VERSION = "1.2.3"
-# Built and pinned on 17 November 2026 (sha256:ccd38ab9d0a8...): every example runs from the pinned image again.
-NEW_IN_IMAGE = {"line-speed", "watching-now", "library-health", "outside-services", "disk-forecast", "notifications"}
+# 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
+NEW_IN_IMAGE = set()
 
 
 def _switch(key, label, hint, group, default=True):
