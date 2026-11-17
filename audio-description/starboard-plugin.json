@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description",
  "name": "Audio description",
- "version": "1.4.0",
+ "version": "1.5.0",
  "description": "Finds and tags films and series in Jellyfin with a described sound track for blind and partially sighted people, plays it for the people who choose it, and prefers releases with one in Reelix.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -85,6 +85,74 @@
    "type": "address",
    "group": "Your library",
    "hint": "The address you open Jellyfin at in a browser, such as http://192.168.1.10:8096. Each title on Titles with audio description opens its page there. Left empty, Starboard's own address for Jellyfin is used when a browser can open it."
+  },
+  {
+   "key": "films_shown",
+   "label": "Films to list",
+   "type": "choice",
+   "choices": [
+    {
+     "value": "all",
+     "label": "All"
+    },
+    {
+     "value": "10",
+     "label": "Last 10"
+    },
+    {
+     "value": "20",
+     "label": "Last 20"
+    },
+    {
+     "value": "50",
+     "label": "Last 50"
+    },
+    {
+     "value": "100",
+     "label": "Last 100"
+    },
+    {
+     "value": "500",
+     "label": "Last 500"
+    }
+   ],
+   "default": "20",
+   "group": "Your library",
+   "hint": "On Titles with audio description, the films most recently added to Jellyfin, newest first. Last 20 by default."
+  },
+  {
+   "key": "series_shown",
+   "label": "Series to list",
+   "type": "choice",
+   "choices": [
+    {
+     "value": "all",
+     "label": "All"
+    },
+    {
+     "value": "10",
+     "label": "Last 10"
+    },
+    {
+     "value": "20",
+     "label": "Last 20"
+    },
+    {
+     "value": "50",
+     "label": "Last 50"
+    },
+    {
+     "value": "100",
+     "label": "Last 100"
+    },
+    {
+     "value": "500",
+     "label": "Last 500"
+    }
+   ],
+   "default": "20",
+   "group": "Your library",
+   "hint": "On Titles with audio description, the series with the most recently added described episodes, newest first, each with all its described episodes. Last 20 by default."
   },
   {
    "key": "elsewhere",
@@ -213,13 +281,33 @@
   "after": {
    "path": "/update/after",
    "time_limit_seconds": 10
-  }
+  },
+  "migrations": [
+   {
+    "version": "1.5.0",
+    "defaults": {
+     "films_shown": "20",
+     "series_shown": "20"
+    }
+   }
+  ]
  },
  "logo": {
   "file": "logo.svg",
   "alt": "Audio description logo"
  },
  "changes": [
+  {
+   "version": "1.5.0",
+   "date": "2026-11-17",
+   "added": [
+    "**Films to list and Series to list:** how many Titles with audio description lists of each: All, or the last 10, 20, 50, 100 or 500 added to Jellyfin, newest first. Last 20 by default. A series counts by its newest described episode and still lists all its described episodes.",
+    "**The page says how many it shows,** such as \"Showing the last 20 of 143 films\", and where to change it."
+   ],
+   "changed": [
+    "**Newest first:** the films and series are listed by when they were added to Jellyfin, newest first. The nightly check keeps that date; select **Check for described titles now** once after updating."
+   ]
+  },
   {
    "version": "1.4.0",
    "date": "2026-11-17",

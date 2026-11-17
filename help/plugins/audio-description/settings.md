@@ -21,6 +21,8 @@ Audio description's settings are on its own tab: go to **Settings**, then **Plug
 |---|---|---|
 | **Add them to the Audio description collection** | The films and series with a described track go into one Jellyfin collection called Audio description, and the ones without are taken out. Every Jellyfin app shows it. Deactivated, the collection stays as it is. Activated or deactivated. | Activated |
 | **Titles with audio description** | A page of its own that lists every film and every episode with a described sound track, from the last check. Read [Titles with audio description](#titles-with-audio-description). | Not a setting |
+| **Films to list** | How many films **Titles with audio description** lists: **All**, or the **Last 10**, **Last 20**, **Last 50**, **Last 100** or **Last 500** added to Jellyfin, newest first. | Last 20 |
+| **Series to list** | How many series **Titles with audio description** lists, by their newest described episode: **All**, or the **Last 10**, **Last 20**, **Last 50**, **Last 100** or **Last 500**, newest first. Each series still lists all its described episodes. | Last 20 |
 | **Jellyfin address for links** | The address you open Jellyfin at in a browser, such as http://192.168.1.10:8096. Each title on **Titles with audio description** opens its page there. Left empty, Starboard's own address for Jellyfin is used when a browser can open it; when Starboard reaches Jellyfin at an address only it can use, such as host.docker.internal, the titles have no link until you enter this. | Empty |
 
 ## Titles with audio description
@@ -28,7 +30,7 @@ Audio description's settings are on its own tab: go to **Settings**, then **Plug
 The same page, with the same columns and words, as **Titles with audio description** in Jellyfin's own Audio description plug-in. It lists what the last check found, so it opens straight away and asks Jellyfin nothing.
 
 1. Go to **Settings**, then **Plug-ins**, then **Audio description**, then **Titles with audio description**.
-2. The first line says how many films, and how many episodes in how many series, have a described sound track, and when it last checked.
+2. The first line says how many films, and how many episodes in how many series, have a described sound track, and when it last checked. Then how many it shows, such as "Showing the last 20 of 143 films and all 6 series, newest first". To change how many, choose **Films to list** and **Series to list** under **Your library**.
 3. Choose **Films** or **Series**. Each says its count, such as "3 titles with audio description", and **Series** how many series. **Back to Titles with audio description** returns to the choice.
 4. Under **Films**, each film is a row with its name and year, **Described track:** and the track's name, and its status, **Described**.
 5. Under **Series**, each series is a row with its name and year, how many of its episodes are described, such as "3 of 6 episodes described" or "All 6 episodes described", and its described track. Choose a series to list its described episodes, in order, such as "S1 E3: Part three", each with its described track and **Described**.
@@ -41,7 +43,7 @@ The same page, with the same columns and words, as **Titles with audio descripti
 | **Status** | **Described** for a film or episode; for a series, how many of its episodes are described |
 | **Link** | Opens the title's page in Jellyfin, in a new tab, when Starboard knows an address a browser can open |
 
-More than 150 series open by first letter, with each series as a heading. Up to 4,000 titles are listed. A list kept by version 1.3.0 or earlier has no years, episodes or links: select **Check for described titles now** once to fill it.
+Films and series are listed newest first, by when they were added to Jellyfin; a series by its newest described episode. More than 150 series open by first letter, with each series as a heading. Up to 4,000 titles are listed. A list kept by version 1.3.0 or earlier has no years, episodes or links: select **Check for described titles now** once to fill it.
 
 ## Elsewhere
 

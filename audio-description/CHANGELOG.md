@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 (17 November 2026)
+
+### Added
+- Films to list and Series to list: how many Titles with audio description lists of each: All, or the last 10, 20, 50, 100 or 500 added to Jellyfin, newest first. Last 20 by default. A series counts by its newest described episode and still lists all its described episodes.
+- The page says how many it shows, such as "Showing the last 20 of 143 films", and where to change it.
+
+### Changed
+- Newest first: the films and series are listed by when they were added to Jellyfin, newest first. The nightly check keeps that date; select Check for described titles now once after updating.
+
 ## 1.4.0 (17 November 2026)
 
 ### Added
