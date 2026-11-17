@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 (17 November 2026)
+
+### Changed
+- Clearer words: Read the figures again now is now Check now, as on the other plug-ins.
+- Logo description: where its logo stands on its own, a screen reader says "Watch statistics logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.1.2 (17 November 2026)
 
 ### Fixed

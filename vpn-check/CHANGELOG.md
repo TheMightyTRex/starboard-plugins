@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 (17 November 2026)
+
+### Changed
+- Clearer words: the hint and the card's example use addresses kept for examples, and the hint says the card says Problem, not what colour it turns.
+- Logo description: where its logo stands on its own, a screen reader says "VPN check logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.1.2 (17 November 2026)
 
 ### Changed

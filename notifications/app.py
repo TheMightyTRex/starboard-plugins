@@ -65,7 +65,7 @@ def words(event, data):
                 f"{d.get('app') or 'An app'} {d.get('latest')} is ready.{have} Update it in Starboard's Settings, Updates.", "info")
     if event == "test":
         return "A test from Starboard", "This is a test message from Starboard's Notifications plug-in. If you can read it, it works.", "info"
-    return f"Starboard: {event}", "Something happened in Starboard.", "info"
+    return f"Starboard: {event}", "Starboard has an alert. Open Starboard for the details.", "info"
 
 
 def link():
@@ -82,7 +82,7 @@ def with_link(body):
 def _missing(*keys):
     gone = [k for k in keys if not str(setting(k, "") or "").strip()]
     if gone:
-        raise ValueError("Fill in " + ", ".join(k.replace("_", " ") for k in gone) + " first")
+        raise ValueError("Enter " + ", ".join(k.replace("_", " ") for k in gone) + " first")
 
 
 def _list(key):
@@ -397,7 +397,7 @@ def recent():
         return band({"items": [{"title": "Nothing sent yet", "detail": "Messages appear here as Starboard sends them"}]},
                     "ready" if active() else "needs_setup")
     failed = sum(1 for x in log if x["failed"])
-    return band({"items": rows}, "warning" if failed else "ok", log[-1]["at"], f"{failed} not sent" if failed else None)
+    return band({"items": rows}, "warning" if failed else "ok", log[-1]["at"], "Not sent" if failed else None)
 
 
 ROUTES = {"/card": card, "/recent": recent, ("POST", "/events"): on_event, ("POST", "/jobs/weekly"): lambda: weekly(),

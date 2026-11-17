@@ -71,7 +71,7 @@ ASIDE = AGAIN["aside_suffix"]  # a picture moved aside by Start again, beside it
 SETTLE_EVERY = AGAIN["settle_every_minutes"] * 60
 PUT_BACK_AFTER = AGAIN["put_back_after_hours"] * 3600
 REFRESH_PAUSE = AGAIN["pause_between_refreshes_ms"] / 1000
-CHOOSE = "Not shrunk: choose Keep a backup copy or Just shrink, in its settings, first"
+CHOOSE = "Not shrunk: in its settings, choose 'Keep a backup copy of each original' or 'Shrink without a backup' first"
 now = time.time  # replaced in tests
 
 _lock = threading.Lock()
@@ -942,14 +942,14 @@ def card():
     if not backup_choice():
         return band({"value": saved, "label": "saved", "note": CHOOSE}, "needs_setup", None, "Choose a backup", refresh=600)
     nxt = next_run()
-    label = f"Next {when_words(nxt, True)}" if nxt else None
+    label = None  # the band says Scheduled; the next run's time is in the note (a chip holds no number or time)
     if p:
         return band({"value": saved + int(p["before"] - p["after"]), "label": "saved",
-                     "note": f"{plural(p['shrunk'], 'picture')} shrunk of {p['seen']:,} looked at so far"},
+                     "note": f"{plural(p['shrunk'], 'picture')} shrunk of {p['seen']:,} checked so far"},
                     "scheduled", None, label, refresh=60)
     if not s["runs"]:
         return band({"value": 0, "label": "saved", "note": f"First run {when_words(nxt)}"}, "scheduled", None,
-                    f"First run {when_words(nxt, True)}", refresh=600)
+                    None, refresh=600)
     last = s["runs"][-1]
     return band({"value": saved, "label": "saved", "note": f"{plural(s['shrunk'], 'picture')} shrunk{backup}. Next run {when_words(nxt)}"[:120]},
                 "scheduled" if nxt else "done", last["end"], label, refresh=600)
@@ -974,9 +974,9 @@ def screen():
                         "text": "Check that Jellyfin is installed in Settings, Apps, then deactivate and activate this plug-in."})
     if not backup_choice():
         notices.append({"id": "choose", "tone": "warning", "title": "Choose whether to keep a backup",
-                        "text": "Nothing is shrunk until you choose, in Original pictures in its settings: Keep a backup copy of each original, or Just shrink, with no backup."})
+                        "text": "Nothing is shrunk until you choose, in 'Original pictures' in its settings: 'Keep a backup copy of each original' or 'Shrink without a backup'."})
     elif not backup_on():
-        notices.append({"id": "nobackup", "tone": "info", "title": "Just shrinking, with no backup",
+        notices.append({"id": "nobackup", "tone": "info", "title": "Shrinking without a backup",
                         "text": "Pictures shrunk from now on cannot be put back from a backup. Start again in Actions has Jellyfin download them again, but pictures you added yourself in Jellyfin are lost."})
     if p and _job["kind"] in ("again_pictures", "again_all"):
         notices.append({"id": "now", "tone": "info", "title": f"Running now: {WHAT[_job['kind']]}",
@@ -993,7 +993,7 @@ def screen():
                                  f"put back after a day without a new one: {a['put_back']:,}.")[:300], "dismiss": True})
     if p:
         notices.append({"id": "now", "tone": "info", "title": f"Running now: {WHAT.get(_job['kind'], '')}",
-                        "text": f"{plural(p['shrunk'], 'picture')} shrunk, {p['left']:,} left as they were, {p['seen']:,} looked at. Choose Stop shrinking in Actions to stop after the picture it is on."})
+                        "text": f"{plural(p['shrunk'], 'picture')} shrunk, {p['left']:,} left as they were, {p['seen']:,} checked. Choose 'Stop shrinking' in 'Actions' to stop after the picture it is on."})
     err = remember("_error")
     if isinstance(err, dict) and err.get("text"):
         notices.append({"id": "error", "tone": "danger", "title": "The last run did not finish", "text": err["text"][:300], "dismiss": True})

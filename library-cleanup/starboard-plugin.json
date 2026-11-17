@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "library-cleanup",
  "name": "Library clean-up",
- "version": "1.0.2",
+ "version": "1.0.3",
  "description": "Moves films and series everyone has watched, or nobody has watched for a long time, to the holding folder, so your disks do not fill up. It never deletes, and each can be put back.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -21,7 +21,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-library-cleanup@sha256:3ad6d2f6e2212b75b3d69b2949be0114300dbc49109570b4707503d3335e2c6e",
+   "image": "ghcr.io/themightytrex/starboard-plugin-library-cleanup:1.0.3",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -47,7 +47,7 @@
    "type": "switch",
    "default": false,
    "group": "Rules",
-   "hint": "Once a day in quiet hours, moves what the rules find to the holding folder. Look at Preview first: nothing moves until you activate this."
+   "hint": "Once a day in quiet hours, moves what the rules find to the holding folder. Check Preview first: nothing moves until you activate this."
   },
   {
    "key": "watched",
@@ -82,7 +82,7 @@
    "type": "switch",
    "default": true,
    "group": "Rules",
-   "hint": "Nobody has watched it for the time below, and it was added longer ago than that, so nothing new is moved."
+   "hint": "Nobody has watched it for the time in Not watched for, and it was added longer ago than that, so nothing new is moved."
   },
   {
    "key": "unwatched_months",
@@ -175,7 +175,7 @@
    "example": {
     "value": 186400000000,
     "label": "in the holding folder",
-    "note": "41 items held. Next look in quiet hours",
+    "note": "41 items held. Next check in quiet hours",
     "status": "scheduled",
     "status_label": "Next in quiet hours",
     "updated": 1794694110,
@@ -205,9 +205,17 @@
  },
  "logo": {
   "file": "logo.svg",
-  "alt": "A storage box with an arrow going into it"
+  "alt": "Library clean-up logo"
  },
  "changes": [
+  {
+   "version": "1.0.3",
+   "date": "2026-11-17",
+   "changed": [
+    "**Clearer words:** **Libraries** says **Checked** for each library the rules check, the card says \"Next check in quiet hours\", and its hints name the setting they mean.",
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Library clean-up logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.0.2",
    "date": "2026-11-17",

@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "wizarr",
  "name": "Wizarr",
- "version": "1.1.0",
+ "version": "1.1.1",
  "description": "Wizarr, invitation links for Jellyfin: send someone a link and they make their own Jellyfin account, with the libraries you choose.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -43,9 +43,16 @@
  },
  "logo": {
   "file": "logo.svg",
-  "alt": "An envelope"
+  "alt": "Wizarr logo"
  },
  "changes": [
+  {
+   "version": "1.1.1",
+   "date": "2026-11-17",
+   "changed": [
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Wizarr logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.1.0",
    "date": "2026-11-15",

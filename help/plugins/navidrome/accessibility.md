@@ -5,7 +5,7 @@ Starboard draws everything Navidrome shows in Starboard: its settings, buttons a
 ## What was checked
 
 - **The plug-in tester:** accessibility passed, checking settings, cards and actions. Starboard runs it before the plug-in is added, every time.
-- **Its logo** has a text description, "A music note", for where it is shown without its name.
+- **Its logo**, a music note, has the text description "Navidrome logo" where it is shown without its name. Beside its name, screen readers skip it, so the name is read once.
 - **Starboard's own parts** (settings, buttons, dialogs and cards) are checked with axe, a keyboard walk and the reading order in each Starboard release. Read [How Starboard is tested](https://themightytrex.github.io/starboard/help/accessibility/how-starboard-is-tested.html).
 
 ## Not checked

@@ -39,7 +39,7 @@ the **Space saved** page.
 
 ## The backup
 
-**Original pictures** has no default: you choose **Keep a backup copy of each original** or **Just shrink, with no
+**Original pictures** has no default: you choose **Keep a backup copy of each original** or **Shrink without a
 backup** after you add it, and again after the update to 1.2.0 (rules 1.2). Nothing is shrunk until you choose, and the
 card says **Choose a backup**. A backup you already have is kept whatever you choose.
 
@@ -64,7 +64,7 @@ nothing if Jellyfin does not answer.
 
 - **Start again: the pictures it shrinks** moves each poster, backdrop and photo of a person aside, to a hidden
   `.<name>.picture-shrinker-old` beside it, and asks Jellyfin to refresh that film, series or person with every
-  picture looked at again and nothing replaced, so Jellyfin downloads the missing one. A check every 10 minutes, only
+  picture checked again and nothing replaced, so Jellyfin downloads the missing one. A check every 10 minutes, only
   while pictures are waiting, deletes the old one once Jellyfin has a new one, and puts it back after 24 hours without
   one, so a poster you added yourself is never lost.
 - **Start again: every picture** asks Jellyfin to refresh each library and each person with every picture replaced,

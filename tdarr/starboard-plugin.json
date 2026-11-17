@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tdarr",
  "name": "Tdarr",
- "version": "1.1.0",
+ "version": "1.1.1",
  "description": "Tdarr converts films and series to save space, in Starboard's quiet hours. It can copy the Tdarr you already have, with its libraries and history.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -65,9 +65,16 @@
  },
  "logo": {
   "file": "logo.svg",
-  "alt": "Two arrows in a circle"
+  "alt": "Tdarr logo"
  },
  "changes": [
+  {
+   "version": "1.1.1",
+   "date": "2026-11-17",
+   "changed": [
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Tdarr logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.1.0",
    "date": "2026-11-15",

@@ -347,7 +347,7 @@ def look():
     """One pass over the folder: unzips, then matches and checks each new file. One pass at a time."""
     with _lock:
         if _pass["running"]:
-            return {"said": "Already looking in the folder"}
+            return {"said": "Already checking the folder"}
         _pass.update(running=True, done=0, total=0)
     try:
         os.makedirs(INBOX, exist_ok=True)
@@ -440,7 +440,7 @@ def _row(name, rec):
         diff = rec["track_seconds"] - rec["film_seconds"]
         row.update(state="warning", state_label="Lengths differ", link=link,
                    detail=(f"{t}: the track is {length_words(diff)} {'longer' if diff > 0 else 'shorter'} than the film, so it is "
-                           "probably for another cut, such as an extended one. Look for one for this cut.")[:200])
+                           "probably for another cut, such as an extended one. Find one for this cut.")[:200])
     elif st == "choose":
         row.update(state="warning", state_label="Choose the title", detail="More than one title could match. Choose the right one.")
     elif st == "no_match":
@@ -463,7 +463,7 @@ def _row(name, rec):
     elif st == "new":
         row.update(state="unknown", state_label="Waiting", detail="Waiting to be checked.")
     else:
-        row.update(state="problem", state_label="Not added", detail=(rec.get("said") or "Something went wrong")[:200])
+        row.update(state="problem", state_label="Not added", detail=(rec.get("said") or "The track was not added. Check that the file plays, then put it in the folder again.")[:200])
     options = [[m["id"], m["title"][:40]] for m in rec.get("maybe") or []][:11]
     if item.get("id") and item["id"] not in [o[0] for o in options]:
         options = [[item["id"], t[:40]]] + options[:10]
@@ -477,11 +477,11 @@ def _notices():
     out = []
     if _pass["running"]:
         total = max(_pass["total"], 1)
-        out.append({"id": "looking", "tone": "info", "title": "Looking in the folder",
+        out.append({"id": "looking", "tone": "info", "title": "Checking the folder",
                     "text": f"{_pass['done']} of {plural(_pass['total'], 'file')} checked", "progress": int(100 * _pass["done"] / total)})
     err = remember("_error")
     if isinstance(err, dict) and err.get("text"):
-        out.append({"id": "error", "tone": "danger", "title": "The last look did not finish", "text": err["text"][:300], "dismiss": True})
+        out.append({"id": "error", "tone": "danger", "title": "The last check did not finish", "text": err["text"][:300], "dismiss": True})
     if not os.path.isdir(INBOX):
         out.append({"id": "nofolder", "tone": "warning", "title": "No audio-description folder yet",
                     "text": "Starboard makes it when the plug-in is activated. Activate it again in State if it is missing."})
@@ -587,7 +587,7 @@ def upload(name, item, length, stream):
 
 def look_now():
     look_soon()
-    return {"said": "Looking in the folder. The list updates in a minute"}
+    return {"said": "Checking the folder. The list updates in a minute"}
 
 
 def job():
@@ -601,13 +601,13 @@ def count():
     waiting = sum(1 for r in recs.values() if r.get("status") == "added")
     check_ = sum(1 for r in recs.values() if r.get("status") not in ("added", "confirmed", "described", "exists"))
     answer = {"value": waiting, "label": "to check" if waiting != 1 else "track to check",
-              "note": f"{plural(check_, 'file')} {'needs' if check_ == 1 else 'need'} a look" if check_ else "Nothing else waiting"}
+              "note": f"{plural(check_, 'file')} {'needs' if check_ == 1 else 'need'} checking" if check_ else "Nothing else waiting"}
     # When it last looked, or when a track last changed (DASH-441: its records have no "at" of their own).
     at = max(float((remember("last", {}) or {}).get("at") or 0), float(sbplugin.changed("files") or 0)) or None
     if _pass["running"]:
         return band(answer, "working", at, "Adding tracks")
     if waiting or check_:
-        return band(answer, "warning", at, f"{plural(waiting + check_, 'track')} to check")
+        return band(answer, "warning", at, "To check")
     return band(answer, "ok", at)
 
 

@@ -28,8 +28,7 @@ def card():
     runs = remember("runs", [])
     if not runs:
         err = last_error()
-        return band({"value": 0, "label": "Mbps", "note": err or "Not tested yet"}, "problem" if err else "scheduled",
-                    label=None if err else next_test())
+        return band({"value": 0, "label": "Mbps", "note": err or f"Not tested yet. {next_test()}"}, "problem" if err else "scheduled")
     r = runs[-1]
     return band({"value": r["mbps"], "label": "Mbps", "note": time.strftime("%a %H:%M", time.localtime(r["at"]))}, "ok", r["at"])
 
@@ -38,7 +37,7 @@ def week():
     runs = remember("runs", [])
     items = [{"title": f"{r['mbps']} Mbps", "detail": time.strftime("%A %d %b, %H:%M", time.localtime(r["at"]))} for r in reversed(runs[-7:])]
     if not items:
-        return band({"items": [{"title": "Not tested yet", "detail": next_test()}]}, "scheduled", label=next_test())
+        return band({"items": [{"title": "Not tested yet", "detail": next_test()}]}, "scheduled")
     return band({"items": items}, "ok", runs[-1]["at"])
 
 

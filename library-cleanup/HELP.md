@@ -4,7 +4,7 @@ A small server's disks fill up with films and series that everyone has watched, 
 Library clean-up finds them by the rules you choose and moves them to a holding folder. It never deletes anything:
 each item can be put back, and you delete what is in the holding folder yourself when you are sure.
 
-Starboard never adds it by itself: you choose to add it from the catalogue. Nothing moves until you have looked at
+Starboard never adds it by itself: you choose to add it from the catalogue. Nothing moves until you have checked
 **Preview** and activated **Move items each day**.
 
 ## What it moves
@@ -44,7 +44,7 @@ a few seconds on a large library; the page updates by itself. It is worked out a
 six hours, or when you choose **Preview again** in **Actions**.
 
 Nothing moves from **Preview**. If something is listed that you want to keep, tag it `keep` in Jellyfin, or change
-the rules, and look again.
+the rules, and check again.
 
 ## Start moving
 
@@ -79,8 +79,8 @@ still used.
 
 ## The card on your dashboard
 
-Add the **Holding folder** card in **Edit dashboard**. It shows how much is in the holding folder. The grey band at the
-top shows the Library clean-up logo, its name and a status: **Deactivated** with what Preview would move, **Next in
+Add the **Holding folder** card in **Edit dashboard**. It shows how much is in the holding folder. The card's band
+shows the Library clean-up logo, its name and a status: **Deactivated** with what Preview would move, **Next in
 quiet hours** once it is moving items each day, or **Working** while it works out Preview or moves items.
 
 ## What it may do

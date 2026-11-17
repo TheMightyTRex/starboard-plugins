@@ -1,6 +1,6 @@
 # Outside services
 
-Up or down for things that are not on this server: your router, a NAS, a website.
+Up or down for things that are not on this server: your router, a NAS (network storage device), a website.
 
 An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 

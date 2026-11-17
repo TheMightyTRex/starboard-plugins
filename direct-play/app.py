@@ -698,7 +698,7 @@ def why_idle():
     if not in_hours():
         return {"weekends": "Waiting for the weekend", "quiet": "Waiting for quiet hours"}.get(options()["when"], "Waiting")
     if not s.get("surveyed"):
-        return "Looking at the library"
+        return "Checking the library"
     return "Nothing left to do" if not todo_head()[0] else "Starting the next file"
 
 
@@ -714,7 +714,7 @@ def work_once():
 def _work():
     if _survey_now.is_set():  # Look at the library now: at any hour, even while paused
         _survey_now.clear()
-        status(reason="Looking at the library")
+        status(reason="Checking the library")
         survey()
         library()
     s = _state()
@@ -725,7 +725,7 @@ def _work():
         status(reason=why_idle())
         return 0
     if now() - float(s.get("surveyed") or 0) > SURVEY_HOURS * 3600:
-        status(reason="Looking at the library")
+        status(reason="Checking the library")
         survey()
         library()
     fixed = 0
@@ -874,8 +874,8 @@ def screen():
     else:
         reason = why_idle()
         notices.append({"id": "idle", "tone": "warning" if reason in ("Paused", "No devices chosen") else "info", "title": reason,
-                        "text": ("Choose Resume fixing in Actions to carry on." if reason == "Paused" else
-                                 "Choose your devices in Devices." if reason == "No devices chosen" else f"Next runs {next_run()}.")})
+                        "text": ("Choose 'Resume fixing' in 'Actions' to carry on." if reason == "Paused" else
+                                 "Choose your devices in 'Devices'." if reason == "No devices chosen" else f"Next runs {next_run()}.")})
     err = remember("_error")
     if isinstance(err, dict) and err.get("text"):
         notices.append({"id": "error", "tone": "danger", "title": "The last pass did not finish", "text": err["text"][:300], "dismiss": True})
@@ -942,7 +942,7 @@ def after_update(body=None):
 def survey_now():
     _survey_now.set()
     _wake.set()
-    return {"said": "Looking at the library. Only new or changed files are read"}
+    return {"said": "Checking the library. Only new or changed files are read"}
 
 
 ROUTES = {"/card": card, "/summary": summary_card, "/files": screen, ("POST", "/files"): screen_post,

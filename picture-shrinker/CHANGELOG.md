@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 (17 November 2026)
+
+### Changed
+- Clearer words: Just shrink, with no backup is now Shrink without a backup. The card's band says Scheduled, and the card says when it runs next.
+- Logo description: where its logo stands on its own, a screen reader says "Picture shrinker logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.2.0 (17 November 2026)
 
 ### Added

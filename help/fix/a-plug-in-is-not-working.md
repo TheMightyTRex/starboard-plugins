@@ -36,14 +36,14 @@ A setting it needs is empty, or it has never been set up.
 
 1. Read the message under its state: it says why it stopped.
 2. Select **Try again**.
-3. If it stops again, go to **System**, then **Logs**, and look for its name.
+3. If it stops again, go to **System**, then **Logs**, and find its name.
 4. Read the plug-in's own Problems page, such as [Direct play's](../plugins/direct-play/problems.md).
 
 ## 3. Update it or update Starboard
 
 Your Starboard's plug-in API is outside what this version works with, so Starboard stopped it.
 
-1. Select **Look for an update** on its tab.
+1. Select **Check for an update** on its tab.
 2. If there is none, update Starboard. Every plug-in here needs plug-in API 1.14, in Starboard 0.18.0 or later, and Library clean-up
    needs plug-in API 1.15, in Starboard 0.19.0 or later.
 

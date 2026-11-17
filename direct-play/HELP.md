@@ -9,7 +9,7 @@ It is a recommended plug-in in Starboard's catalogue. Starboard never adds it by
 
 ## What it does
 
-Direct play looks at the films in your movies folder and the series in your tv folder. For each file a device you
+Direct play checks the films in your movies folder and the series in your tv folder. For each file a device you
 chose cannot play directly, it does one of these:
 
 - **Repackage as MKV:** the file is in an old kind of container, such as AVI. The picture and sound are copied into
@@ -62,9 +62,9 @@ The file being converted always finishes, so work can run past the end of the ho
 ### Shrink
 
 - **Shrink very large H.264 files:** activated when you add it.
-- **Shrink 1080p files above:** 15 Mbps.
-- **Shrink 720p files above:** 8 Mbps.
-- **Shrink smaller files above:** 5 Mbps.
+- **Shrink 1080p files over:** 15 Mbps.
+- **Shrink 720p files over:** 8 Mbps.
+- **Shrink smaller files over:** 5 Mbps.
 
 ### More
 
@@ -91,7 +91,7 @@ do**, and when it next runs. The card shows only while the plug-in is active.
 
 The **Space saved by Direct play** card shows only the space saved.
 
-The grey band at the top of each card shows the Direct play logo, the plug-in's name and a status: **Converting**,
+Each card's band shows the Direct play logo, the plug-in's name and a status: **Converting**,
 **Waiting**, **Paused**, **Done** or **Needs setting up** when no device is chosen. Beside it is when the card last
 changed, such as **2 minutes ago**.
 
@@ -124,7 +124,7 @@ goes back to the version you had, with your settings as they were.
 
 - **Pause:** in **Settings**, **Plug-ins**, **Direct play**, choose **Pause fixing**. The file being converted stops
   at once, its unfinished copy is removed, and the original stays as it was. Choose **Resume fixing** to carry on.
-- **Look again now:** **Look at the library now** checks for new or changed files straight away. Only those are read.
+- **Check again now:** **Check the library now** checks for new or changed files straight away. Only those are read.
 - **Stop it for a while:** choose **Deactivate**. Its settings and what it has done are kept.
 - **Remove it:** choose **Remove**. The files it already fixed stay as they are. If you used **Keep the originals**,
   the `.direct-play-originals` folders stay too, for you to delete.

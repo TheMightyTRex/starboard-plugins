@@ -146,7 +146,7 @@ class AudioVault(unittest.TestCase):
         app = load()
         out = app.audiovault()
         self.assertEqual(out["items"], [])
-        self.assertIn("Activate it under Sources", out["intro"])
+        self.assertIn("Activate it under 'Sources'", out["intro"])
         self.assertFalse(manifest()["settings"][[s["key"] for s in manifest()["settings"]].index("audiovault_links")]["default"])
 
     def test_links_for_titles_without_a_described_track(self):

@@ -6,7 +6,10 @@ COMMON = {"manifest_version": 1, "author": "TheMightyTRexUK", "licence": "MIT",
 # 1.1.0 (plug-in API 1.14, 15 November 2026): a logo, the card band's status and updated, and the update tools.
 # 1.1.1 (16 November 2026, DASH-453): lighter at rest and faster to start; Library health a page at a time.
 # 1.1.2 (17 November 2026, DASH-458): sbplugin sends Jellyfin's key in Authorization too, for Jellyfin 12.
-VERSION = "1.1.2"
+# 1.1.3 (17 November 2026, design system audit): clearer words, chips with no numbers, and the logo's alt text is the
+# plug-in's name. Not published until the owner's OK: the changed apps name the image's next tag until then.
+VERSION = "1.1.3"
+VERSION_112 = "1.1.2"
 VERSION_111 = "1.1.1"
 VERSION_110 = "1.1.0"
 
@@ -23,13 +26,14 @@ UPDATE_STEPS = {pid: _STEPS for pid in ("line-speed", "most-watched", "library-h
 RELEASED = "2026-11-15"
 RELEASED_111 = "2026-11-16"
 RELEASED_112 = "2026-11-17"
+RELEASED_113 = "2026-11-17"
 FIRST = "2026-11-12"
 
 
 def changes_for(pid, m):
     """What is new in each version (plug-in API 1.10, shown before an update from API 1.14): 1.1.0 first, then the
     plug-in's own list, or its first version."""
-    earlier = [c for c in m.get("changes") or [] if c.get("version") not in (VERSION, VERSION_111, VERSION_110)] or [
+    earlier = [c for c in m.get("changes") or [] if c.get("version") not in (VERSION, VERSION_112, VERSION_111, VERSION_110)] or [
         {"version": "1.0.0", "date": FIRST, "added": [m["description"]]}]
     added = ["**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
              "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."]
@@ -41,8 +45,11 @@ def changes_for(pid, m):
     fixed = (["**Large libraries:** it asks Jellyfin a page of 500 titles at a time, so a large library no longer makes the check "
               "fail."] if pid == "library-health" else [])
     v111 = {"version": VERSION_111, "date": RELEASED_111, "changed": light, **({"fixed": fixed} if fixed else {})}
-    newest = {"version": VERSION, "date": RELEASED_112, **({"fixed": JELLYFIN_12} if pid in CALLS_JELLYFIN else {"changed": SHARED_ONLY})}
-    return [newest, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
+    v112 = {"version": VERSION_112, "date": RELEASED_112, **({"fixed": JELLYFIN_12} if pid in CALLS_JELLYFIN else {"changed": SHARED_ONLY})}
+    newest = {"version": VERSION, "date": RELEASED_113, "changed": WORDS_113.get(pid, []) + [
+        f"**Logo description:** where its logo stands on its own, a screen reader says \"{m['name']} logo\", the plug-in's name, "
+        "instead of a description of the symbol."]}
+    return [newest, v112, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
              "changed": ["Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."]}] + earlier
 
 
@@ -52,6 +59,25 @@ JELLYFIN_12 = ["**Jellyfin 12:** it sends Jellyfin's key the way Jellyfin 12 ask
                "requests where legacy authorisation is off. Older Jellyfin still works."]
 SHARED_ONLY = ["**Shared helper:** the helper every example shares sends Jellyfin's key the way Jellyfin 12 asks for it. "
                "This plug-in does not ask Jellyfin anything, so it works as before."]
+
+# 1.1.3 (design system audit, 17 November 2026): what changed in each example's words.
+WORDS_113 = {
+    "vpn-check": ["**Clearer words:** the hint and the card's example use addresses kept for examples, and the hint says the card "
+                  "says Problem, not what colour it turns."],
+    "line-speed": ["**Clearer words:** **Test now** asks \"Download a test file now? It uses some of any data allowance.\" Before the "
+                   "first test, the band says **Scheduled** and the card says when the next test is."],
+    "watching-now": ["**Clearer words:** the band says **Watching**, and the card lists each person."],
+    "library-health": ["**Clearer words:** the band says **To fix**, and the number card says how many."],
+    "home-assistant": ["**Clearer words:** **Warn when any is** says the card gives a warning, not what colour it turns."],
+    "outside-services": ["**Clearer words:** the band says **Not answering**, and the card names each one. Its description spells "
+                         "out NAS."],
+    "download-summary": ["**Clearer words:** its description says it counts the download queue in Starboard."],
+    "disk-forecast": ["**Clearer words:** the band says **Filling fast**, and the card says when each disk fills."],
+    "notifications": ["**Clearer words:** each channel's switch says what to enter before you activate it, the band says **Not "
+                      "sent**, and a message about an event it does not know says \"Starboard has an alert. Open Starboard for the "
+                      "details.\""],
+    "watch-stats": ["**Clearer words:** **Read the figures again now** is now **Check now**, as on the other plug-ins."],
+}
 
 EXAMPLES = {}
 
@@ -63,10 +89,10 @@ EXAMPLES["vpn-check"] = ({
                     "env": {"PORT": "7791"}}],
     "resources": {"main": {"memory": 48, "cpus": 0.1}}, "health": "/health",
     "settings": [{"key": "home_address", "label": "Your home's public address", "type": "text",
-                  "hint": "Optional, such as 81.2.69.160. If the VPN ever shows this address, the card turns red."},
+                  "hint": "Optional, such as 203.0.113.7. If the VPN ever shows this address, the card says Problem."},
                  {"key": "minutes", "label": "Check every", "type": "number", "unit": "minutes", "default": 15, "min": 5, "max": 240}],
     "actions": [{"id": "check", "label": "Check now", "path": "/check"}],
-    "cards": [{"id": "status", "title": "VPN", "type": "status", "path": "/card", "example": {"state": "ok", "text": "185.65.134.12 in the Netherlands", "status": "protected", "updated": 1794694110}}],
+    "cards": [{"id": "status", "title": "VPN", "type": "status", "path": "/card", "example": {"state": "ok", "text": "198.51.100.23 in the Netherlands", "status": "protected", "updated": 1794694110}}],
 }, '''import os
 import time
 from sbplugin import band, every, fetch, keep, last_error, remember, serve, setting
@@ -110,7 +136,7 @@ EXAMPLES["line-speed"] = ({
                   "hint": "Choose an hour when nothing is downloading."},
                  {"key": "megabytes", "label": "Test size", "type": "number", "unit": "MB", "default": 25, "min": 5, "max": 200,
                   "hint": "Larger is more accurate on fast lines, and uses more of any data allowance."}],
-    "actions": [{"id": "test", "label": "Test now", "path": "/test", "confirm": "Downloads a test file now. Continue?"}],
+    "actions": [{"id": "test", "label": "Test now", "path": "/test", "confirm": "Download a test file now? It uses some of any data allowance."}],
     "cards": [{"id": "speed", "title": "Line speed", "type": "stat", "path": "/card", "format": "number", "example": {"value": 72, "label": "Mbps", "note": "04:00 today", "status": "ok", "updated": 1794694110}},
               {"id": "week", "title": "Line speed this week", "type": "list", "path": "/week", "example": {"items": [{"title": "72 Mbps", "detail": "Wednesday 04:00"}], "status": "ok", "updated": 1794694110}}],
 }, '''import time
@@ -142,8 +168,7 @@ def card():
     runs = remember("runs", [])
     if not runs:
         err = last_error()
-        return band({"value": 0, "label": "Mbps", "note": err or "Not tested yet"}, "problem" if err else "scheduled",
-                    label=None if err else next_test())
+        return band({"value": 0, "label": "Mbps", "note": err or f"Not tested yet. {next_test()}"}, "problem" if err else "scheduled")
     r = runs[-1]
     return band({"value": r["mbps"], "label": "Mbps", "note": time.strftime("%a %H:%M", time.localtime(r["at"]))}, "ok", r["at"])
 
@@ -152,7 +177,7 @@ def week():
     runs = remember("runs", [])
     items = [{"title": f"{r['mbps']} Mbps", "detail": time.strftime("%A %d %b, %H:%M", time.localtime(r["at"]))} for r in reversed(runs[-7:])]
     if not items:
-        return band({"items": [{"title": "Not tested yet", "detail": next_test()}]}, "scheduled", label=next_test())
+        return band({"items": [{"title": "Not tested yet", "detail": next_test()}]}, "scheduled")
     return band({"items": items}, "ok", runs[-1]["at"])
 
 
@@ -167,7 +192,7 @@ EXAMPLES["watching-now"] = ({
     "containers": [{"name": "main", "image": image("watching-now"), "port": 8080, "network": "lan"}],
     "resources": {"main": {"memory": 48, "cpus": 0.1}}, "health": "/health",
     "cards": [{"id": "now", "title": "Watching now", "type": "list", "path": "/card", "refresh_seconds": 30,
-               "example": {"items": [{"title": "Dune: Part Two", "detail": "Sam, living room TV, 40%"}], "status": "running", "status_label": "1 watching", "updated": 1794694110}}],
+               "example": {"items": [{"title": "Dune: Part Two", "detail": "Sam, living room TV, 40%"}], "status": "running", "status_label": "Watching", "updated": 1794694110}}],
 }, '''import time
 from sbplugin import band, jellyfin, serve
 
@@ -187,7 +212,7 @@ def card():
         rows.append({"title": title, "detail": ", ".join(b for b in bits if b)})
     if not rows:
         return band({"items": [{"title": "Nobody is watching", "detail": "Jellyfin is quiet"}]}, "idle", time.time(), "Nobody watching")
-    return band({"items": rows}, "running", time.time(), f"{len(rows)} watching")
+    return band({"items": rows}, "running", time.time(), "Watching")
 
 
 serve({"/card": card})
@@ -283,7 +308,7 @@ def state():
     if not r:
         return ("problem", None) if last_error() else ("waiting", "Checking soon")
     n = len(r.get("bad", []))
-    return ("warning", plural(n, "title") + " to fix") if n else ("ok", "Nothing to fix")
+    return ("warning", "To fix") if n else ("ok", "Nothing to fix")
 
 
 def count():
@@ -355,7 +380,7 @@ EXAMPLES["home-assistant"] = ({
                  {"key": "entities", "label": "What to show", "type": "list",
                   "hint": "One entity id each, such as binary_sensor.front_door or sensor.lounge_temperature."},
                  {"key": "alert_on", "label": "Warn when any is", "type": "text", "default": "on, open, unlocked",
-                  "hint": "States that turn the card amber, separated by commas."}],
+                  "hint": "States that give the card a warning, separated by commas."}],
     "cards": [{"id": "house", "title": "Home", "type": "status", "path": "/card", "example": {"state": "ok", "text": "Front door: closed. Lounge: 20.5 °C", "status": "ok", "updated": 1794694110}}],
 }, '''import time
 from sbplugin import band, fetch, serve, setting
@@ -383,7 +408,7 @@ serve({"/card": card})
 
 # 8. Outside services -----------------------------------------------------------------------------------------------
 EXAMPLES["outside-services"] = ({
-    "name": "Outside services", "description": "Up or down for things that are not on this server: your router, a NAS, a website.",
+    "name": "Outside services", "description": "Up or down for things that are not on this server: your router, a NAS (network storage device), a website.",
     "permissions": ["network:lan"],
     "containers": [{"name": "main", "image": image("outside-services"), "port": 8080, "network": "lan", "volumes": ["data"]}],
     "resources": {"main": {"memory": 48, "cpus": 0.1}}, "health": "/health",
@@ -428,7 +453,7 @@ def status():
                     "needs_setup" if not targets() else "waiting")
     down = [r["name"] for r in rows if not r["up"]]
     return band({"state": "problem" if down else "ok", "text": f"Not answering: {', '.join(down)}" if down else f"All {len(rows)} answer"},
-                "problem" if down else "ok", changed("rows"), f"{len(down)} not answering" if down else None)
+                "problem" if down else "ok", changed("rows"), "Not answering" if down else None)
 
 
 def card():
@@ -437,7 +462,7 @@ def card():
     out = {"items": [{"title": r["name"], "detail": f"Up, {r['ms']} ms" if r["up"] else "Not answering", "link": r["url"]} for r in rows][:10]}
     if not rows:
         return band(out, "needs_setup" if not targets() else "waiting")
-    return band(out, "problem" if down else "ok", changed("rows"), f"{down} not answering" if down else None)
+    return band(out, "problem" if down else "ok", changed("rows"), "Not answering" if down else None)
 
 
 every(60 * float(setting("minutes", 5)), check, first=2)
@@ -446,7 +471,7 @@ serve({"/status": status, "/card": card})
 
 # 9. Download summary -----------------------------------------------------------------------------------------------
 EXAMPLES["download-summary"] = ({
-    "name": "Download summary", "description": "How much has downloaded today and this week, from what Starboard sees in the queue.",
+    "name": "Download summary", "description": "How much has downloaded today and this week, from the download queue in Starboard.",
     "permissions": ["downloads:read"],
     "containers": [{"name": "main", "image": image("download-summary"), "port": 8080, "volumes": ["data"]}],
     "resources": {"main": {"memory": 48, "cpus": 0.1}}, "health": "/health",
@@ -522,7 +547,7 @@ def card():
         worst = left if worst is None else min(worst, left)
         parts.append(f"{name}: full in about {round(left):,} days")
     state = "problem" if worst is not None and worst < 14 else "warning" if worst is not None and worst < 60 else "ok"
-    label = f"Full in {round(worst):,} days" if worst is not None and worst < 60 else None
+    label = "Filling fast" if worst is not None and worst < 60 else None  # the days are in the text
     return band({"state": state, "text": ". ".join(parts)}, state, changed("history"), label)
 
 
@@ -540,9 +565,12 @@ serve({"/card": card})
 # 1.2.1 (16 November 2026, DASH-453): every example in the image names this tag until it is built and pinned.
 # 1.2.2 (17 November 2026, DASH-458): sbplugin's Jellyfin key fix, so every example names this tag until it is built
 # and pinned again.
-IMAGE_VERSION = "1.2.2"
+# 1.2.3 (17 November 2026, design system audit): the examples whose app.py changed name this tag until it is built and
+# pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
+# manifest.
+IMAGE_VERSION = "1.2.3"
 # Built and pinned on 17 November 2026 (sha256:ccd38ab9d0a8...): every example runs from the pinned image again.
-NEW_IN_IMAGE = set()
+NEW_IN_IMAGE = {"line-speed", "watching-now", "library-health", "outside-services", "disk-forecast", "notifications"}
 
 
 def _switch(key, label, hint, group, default=True):
@@ -571,7 +599,7 @@ EXAMPLES["notifications"] = ({
          "choices": [{"value": d.lower(), "label": d} for d in ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")]},
         {"key": "starboard_address", "label": "Starboard's address, for links", "type": "address", "group": "What to send",
          "hint": "Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address."},
-        _switch("email_active", "Send by email", "Activate once the details below are filled in and the test arrives.", "Email", False),
+        _switch("email_active", "Send by email", "Activate once the email details are entered and the test arrives.", "Email", False),
         {"key": "smtp_host", "label": "Email server", "type": "text", "group": "Email", "hint": "Such as smtp.example.com"},
         {"key": "smtp_port", "label": "Port", "type": "number", "default": 587, "min": 1, "max": 65535, "group": "Email"},
         {"key": "smtp_security", "label": "Security", "type": "choice", "default": "starttls", "group": "Email",
@@ -582,7 +610,7 @@ EXAMPLES["notifications"] = ({
         {"key": "smtp_password", "label": "Password", "type": "secret", "group": "Email", "hint": "An app password where your email service offers one."},
         {"key": "email_from", "label": "Send from", "type": "text", "group": "Email", "hint": "Such as starboard@example.com"},
         {"key": "email_to", "label": "Send email to", "type": "list", "group": "Email", "hint": "One address a line."},
-        _switch("telegram_active", "Send by Telegram", "Activate once the details below are filled in and the test arrives.", "Telegram", False),
+        _switch("telegram_active", "Send by Telegram", "Activate once the bot token and chat are entered and the test arrives.", "Telegram", False),
         {"key": "telegram_token", "label": "Bot token", "type": "secret", "group": "Telegram", "hint": "From @BotFather in Telegram."},
         {"key": "telegram_chat", "label": "Telegram chat", "type": "list", "group": "Telegram",
          "hint": "One chat id a line. Send your bot a message first, so it may write to you."},
@@ -593,7 +621,7 @@ EXAMPLES["notifications"] = ({
         {"key": "signal_api", "label": "signal-cli-rest-api address", "type": "address", "group": "Signal", "hint": "Such as http://192.0.2.10:8080"},
         {"key": "signal_number", "label": "Send from number", "type": "text", "group": "Signal", "hint": "The number registered with it, such as +447700900123."},
         {"key": "signal_to", "label": "Send Signal messages to", "type": "list", "group": "Signal", "hint": "One number or group id a line."},
-        _switch("pushover_active", "Send by Pushover", "Activate once the keys below are filled in and the test arrives.", "Pushover", False),
+        _switch("pushover_active", "Send by Pushover", "Activate once both keys are entered and the test arrives.", "Pushover", False),
         {"key": "pushover_user", "label": "User key", "type": "secret", "group": "Pushover"},
         {"key": "pushover_token", "label": "Application token", "type": "secret", "group": "Pushover", "hint": "Make an application for Starboard on pushover.net."},
         _switch("ntfy_active", "Send by ntfy", "Activate once the topic is filled in and the test arrives.", "ntfy", False),
@@ -604,7 +632,7 @@ EXAMPLES["notifications"] = ({
         {"key": "webhooks", "label": "Webhook addresses", "type": "secret", "group": "Webhooks",
          "hint": "One or more, separated by spaces. Each gets title, body and type as JSON, as the Apprise API's notify address takes them."},
         {"key": "people", "label": "People", "type": "list", "group": "People",
-         "hint": "One person a line: the name they use in Reelix or Seerr, a comma, then their email address or telegram and their chat id."},
+         "hint": "One person a line: the name they use in Reelix or Seerr, a comma, then their email address, or \"telegram\" and their chat id."},
     ],
     "actions": [{"id": "test-email", "label": "Send a test email", "path": "/test/email"},
                 {"id": "test-telegram", "label": "Send a test to Telegram", "path": "/test/telegram"},
@@ -667,7 +695,7 @@ EXAMPLES["watch-stats"] = ({
         {"key": "leave_out", "label": "Leave out these people", "type": "list",
          "hint": "One Jellyfin user name a line, such as an account for testing."},
     ],
-    "actions": [{"id": "refresh", "label": "Read the figures again now", "path": "/refresh"}],
+    "actions": [{"id": "refresh", "label": "Check now", "path": "/refresh"}],
     "cards": [{"id": "week", "title": "Plays this week", "type": "stat", "path": "/card/week", "format": "number", "refresh_minutes": 30,
                "example": {"value": 23, "label": "plays this week", "note": "14.5 hours by 3 people", "status": "ok", "updated": 1794694110}},
               {"id": "top", "title": "Top titles", "type": "list", "path": "/card/top", "refresh_minutes": 30,
@@ -695,6 +723,6 @@ itself: each person's last play of each title, with no device or time watched.
 ## In place of Jellystat
 
 Jellystat needs two containers and PostgreSQL (about 60 MB measured on a small server, 150 to 250 MB on a busy one).
-This plug-in rests when no one is looking, and uses about 14 MB for a few seconds when a card or table asks.
+This plug-in rests when nobody is using it, and uses about 14 MB for a few seconds when a card or table asks.
 """,
 }, "file")

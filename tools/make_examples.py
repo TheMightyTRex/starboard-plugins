@@ -39,9 +39,9 @@ CMD ["python3", "/app/app.py"]
 """
 
 WORDS = {"network:vpn": "runs inside your VPN", "network:lan": "reaches your home network and the internet",
-         "jellyfin:key": "uses Jellyfin's key, which Starboard keeps", "downloads:read": "sees what is downloading",
-         "system:read": "sees processor, memory and disk use", "appearance:styles": "adds styles to Display",
-         "media:read": "sees your library", "apps:read": "sees your apps and whether they answer"}
+         "jellyfin:key": "uses Jellyfin's key, which Starboard keeps", "downloads:read": "reads what is downloading",
+         "system:read": "reads processor, memory and disk use", "appearance:styles": "adds styles to Display",
+         "media:read": "reads your library", "apps:read": "reads your apps and whether they answer"}
 
 
 def readme(pid, m, extra=""):
@@ -107,7 +107,7 @@ def main():
              "homepage": f"https://github.com/TheMightyTRex/starboard-plugins/tree/main/{pid}", **spec}
         # Plug-in API 1.14 (15 November 2026): a logo, What is new for every version, and update steps for those that
         # work in the background (tools/examples_src.py UPDATE_STEPS).
-        m["logo"] = make_logos.entry(pid)
+        m["logo"] = make_logos.entry(pid, m["name"])
         m["changes"] = changes_for(pid, m)
         if pid in UPDATE_STEPS:
             m["update"] = UPDATE_STEPS[pid]
@@ -146,7 +146,7 @@ def main():
 # worked out from each manifest by published() below.
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
-         "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Look", "styles": "Look",
+         "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Appearance", "styles": "Appearance",
          "notifications": "System", "watch-stats": "Jellyfin"}
 KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 KINDS["audio-description-tracks"] = "Accessibility"  # hand-made, its own image with ffmpeg (DASH-410)

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.3 (17 November 2026)
+
+### Changed
+- Clearer words: Look for described titles now is now Check for described titles now, and its job is Check for titles with audio description. Its messages put the settings they name in quotation marks and spell out RNIB.
+- Logo description: where its logo stands on its own, a screen reader says "Audio description logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.2.2 (17 November 2026)
 
 ### Fixed

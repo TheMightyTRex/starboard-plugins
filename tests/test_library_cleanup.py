@@ -380,7 +380,7 @@ class PreviewAndScreens(Base):
         out = self.app.preview_screen()
         self.assertEqual([i["title"] for i in out["items"]], ["Old Film (2001)"])
         self.assertTrue(out["intro"].startswith("1 item would move to the holding folder, freeing 1.0 KB."))
-        self.assertIn("Nothing moves until you activate Move items each day", out["intro"])
+        self.assertIn("Nothing moves until you activate 'Move items each day'", out["intro"])
         self.assertTrue(os.path.isdir(self.m("movies", "Old Film (2001)")))
 
     def test_a_changed_setting_works_it_out_again(self):
@@ -409,7 +409,7 @@ class PreviewAndScreens(Base):
     def test_card_when_deactivated(self):
         c = self.app.card()
         self.assertEqual((c["status"], c["status_label"]), ("inactive", "Deactivated"))
-        self.assertEqual(c["note"], "Deactivated. Open Preview to see what would move")
+        self.assertEqual(c["note"], "Deactivated. Open 'Preview' to find what would move")
 
 
 class Safety(unittest.TestCase):

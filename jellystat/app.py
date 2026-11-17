@@ -50,7 +50,7 @@ def connect():
         sb.keep("connect", {"ok": False, "said": f"Jellystat is not answering yet: {e}"[:200], "at": _now()})
         return
     if state:  # 1: Jellyfin given, no Jellystat user yet; 2: ready
-        sb.keep("connect", {"ok": True, "state": state, "said": "Jellystat has your Jellyfin.", "at": _now()})
+        sb.keep("connect", {"ok": True, "state": state, "said": "Jellystat is connected to Jellyfin.", "at": _now()})
         return
     jf = sb._json_file(os.path.join(sb.RUN, "jellyfin.json"), {}) or {}
     if not jf.get("url") or not jf.get("api_key"):
@@ -124,7 +124,7 @@ def restore(name, stamp=None):
 def restore_in_background():
     name = str(sb.setting("restore_file", "") or "").strip()
     if not name:
-        return {"said": "Type the file's name in Backup file to restore first"}
+        return {"said": "Enter the file's name in 'Backup file to restore' first"}
     if not _lock.acquire(blocking=False):
         return {"said": "A restore is already running"}
 
@@ -138,7 +138,7 @@ def restore_in_background():
         finally:
             _lock.release()
     threading.Thread(target=run, daemon=True).start()
-    return {"said": f"Restoring {name}. The Restore screen says when it is done."}
+    return {"said": f"Restoring {name}. The Restore page says when it is done."}
 
 
 # What Starboard shows -----------------------------------------------------------------------------------------------
@@ -165,10 +165,10 @@ def screen():
                          "state": {"ok": "ok", "running": "warning", "problem": "problem"}.get(r.get("state"), "unknown"), "actions": []})
     return {"type": "list", "title": "Restore a Jellystat backup",
             "intro": ("Put a PostgreSQL backup of Jellystat's database (made with pg_dump -Fc) in the plug-in's restore "
-                      "folder, data/plugins/jellystat/data/main/restore in Starboard's data folder. Type its name in "
-                      "Backup file to restore, then choose Restore the backup. Your current figures are kept in the "
+                      "folder, data/plugins/jellystat/data/main/restore in Starboard's data folder. Enter its name in "
+                      "'Backup file to restore', then choose 'Restore the backup'. Your current figures are kept in the "
                       "database beside it, never deleted.") if not files else
-                     "Files in the restore folder. Type the name of the one to restore in Backup file to restore, then choose Restore the backup.",
+                     "Files in the restore folder. Enter the name of the one to restore in 'Backup file to restore', then choose 'Restore the backup'.",
             "items": items}
 
 

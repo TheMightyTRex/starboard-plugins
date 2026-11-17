@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3 (17 November 2026)
+
+### Changed
+- Clearer words: Look at the library now is now Check the library now, and the size settings are Shrink 1080p files over, Shrink 720p files over and Shrink smaller files over. Its messages put the settings they name in quotation marks.
+- Logo description: where its logo stands on its own, a screen reader says "Direct play logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.0.2 (17 November 2026)
 
 ### Fixed

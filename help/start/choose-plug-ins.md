@@ -8,7 +8,7 @@ Starboard adds none by itself, and each one you add uses a little memory and pro
 
 ## When would you use it
 
-- You want to see what the collection offers before you add anything.
+- You want to know what the collection offers before you add anything.
 - You need to know which plug-ins suit a small server, such as a Raspberry Pi with 1 or 2 GB of memory.
 
 ## Watching and library
@@ -42,12 +42,12 @@ Starboard adds none by itself, and each one you add uses a little memory and pro
 | [Line speed](../../line-speed/README.md) | Your internet download speed, tested once a night | 64 MB |
 | [Outside services](../../outside-services/README.md) | Up or down for things not on this server, such as your router | 48 MB |
 
-## Home and look
+## Home and appearance
 
 | Plug-in | What it does | Memory at most |
 |---|---|---|
 | [Home Assistant](../../home-assistant/README.md) | Your house in one sentence on the dashboard | 48 MB |
-| [Styles](../../styles/README.md) | Twenty-one accessible styles for **Display** | None: it runs nothing |
+| [Styles](../../styles/README.md) | 21 accessible styles for **Display** | None: it runs nothing |
 
 ## Apps you can add
 

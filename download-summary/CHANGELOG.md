@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 (17 November 2026)
+
+### Changed
+- Clearer words: its description says it counts the download queue in Starboard.
+- Logo description: where its logo stands on its own, a screen reader says "Download summary logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.1.2 (17 November 2026)
 
 ### Changed
@@ -23,4 +29,4 @@
 ## 1.0.0 (12 November 2026)
 
 ### Added
-- How much has downloaded today and this week, from what Starboard sees in the queue.
+- How much has downloaded today and this week, from the download queue in Starboard.

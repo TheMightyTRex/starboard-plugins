@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 (17 November 2026)
+
+### Changed
+- Clearer words: the band says Not answering, and the card names each one. Its description spells out NAS.
+- Logo description: where its logo stands on its own, a screen reader says "Outside services logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.1.2 (17 November 2026)
 
 ### Changed
@@ -23,4 +29,4 @@
 ## 1.0.0 (12 November 2026)
 
 ### Added
-- Up or down for things that are not on this server: your router, a NAS, a website.
+- Up or down for things that are not on this server: your router, a NAS (network storage device), a website.

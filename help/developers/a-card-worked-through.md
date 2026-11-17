@@ -9,7 +9,7 @@ card that shows work in progress.
 ## When would you use it
 
 - You are making a card for a plug-in that works in the background, such as a converter.
-- You want to see the card band, `refresh_seconds` and `updated` used together.
+- You want an example of the card band, `refresh_seconds` and `updated` used together.
 
 ## In the manifest
 

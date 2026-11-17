@@ -43,7 +43,7 @@ Settings, Apps". Fix that, then wait for the next check. Each plug-in's Problems
 A card must answer in 3 seconds, in 64 KB at most and in the right shape.
 
 1. On the plug-in's tab, select **Deactivate**, then **Activate**.
-2. If the card still says **No answer from**, go to **System**, then **Logs**, and look for the plug-in's name.
+2. If the card still says **No answer from**, go to **System**, then **Logs**, and find the plug-in's name.
 3. Tell its maker, at the [plug-ins' issues on GitHub](https://github.com/TheMightyTRex/starboard-plugins/issues).
 
 ## Find out more

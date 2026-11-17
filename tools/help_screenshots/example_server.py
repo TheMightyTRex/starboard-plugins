@@ -69,14 +69,14 @@ def screen(key, held, off):
         libs = [("films", "Films", "films", "/media/movies"), ("series", "Series", "series", "/media/tv"),
                 ("children", "Children's films", "films", "/media/children")]
         return {"type": "list", "title": "Libraries",
-                "intro": "The rules look only at the libraries activated here. A library you add to Jellyfin is looked at until you deactivate it.",
+                "intro": "The rules check only the libraries activated here. A library you add to Jellyfin is checked until you deactivate it.",
                 "items": [{"id": i, "title": t, "detail": ("Films" if k == "films" else "Series") + ": " + where,
                            "group": "Films" if k == "films" else "Series", "on": i not in off,
-                           "state": "ok" if i not in off else "off", "state_label": "Looked at" if i not in off else "Left alone",
+                           "state": "ok" if i not in off else "off", "state_label": "Checked" if i not in off else "Left alone",
                            "actions": ["toggle"]} for i, t, k, where in libs]}
     return {"type": "list", "title": "Holding folder",
             "intro": f"{len(held)} items in media/.holding/library-cleanup, 38.7 GB. Put back returns each to where it was, and Reelix "
-                     "follows it again. Nothing here is deleted; to free the space for good, delete them yourself.",
+                     "follows it again. Nothing here is deleted; to free the space permanently, delete them yourself.",
             "items": [{**h, "state": "off", "state_label": "In holding", "actions": ["restore"]} for h in held]}
 
 
@@ -101,7 +101,7 @@ def cleanup(data_dir):
                 said = f"Put back {gone['title']}. This is example data, so nothing moved"
         if body is not None and body.get("action") == "toggle":
             lid = str(body.get("id") or "")
-            said = "The rules look at this library again" if lid in off else "The rules leave this library alone"
+            said = "The rules check this library again" if lid in off else "The rules leave this library alone"
             off.symmetric_difference_update({lid})
         out = plugin_custom.clean(screen(key, held, off))
         if body is not None:
@@ -112,7 +112,7 @@ def cleanup(data_dir):
         if pid != "library-cleanup":
             return real_answer(d, pid, cid, opener)
         active = any(x["key"] == "active" and x["value"] for x in plugins_admin.public_settings(d, "library-cleanup"))
-        card = ({"value": 41553759436, "label": "in the holding folder", "note": "3 items held. Next look in quiet hours",
+        card = ({"value": 41553759436, "label": "in the holding folder", "note": "3 items held. Next check in quiet hours",
                  "status": "scheduled", "status_label": "Next in quiet hours"} if active else
                 {"value": 41553759436, "label": "in the holding folder", "note": "Deactivated. Preview: 3 items, 24.5 GB",
                  "status": "inactive", "status_label": "Deactivated"})

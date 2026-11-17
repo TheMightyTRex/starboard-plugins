@@ -1,4 +1,4 @@
-"""Download summary: How much has downloaded today and this week, from what Starboard sees in the queue."""
+"""Download summary: How much has downloaded today and this week, from the download queue in Starboard."""
 import time
 from sbplugin import band, changed, every, keep, last_error, remember, serve, starboard
 

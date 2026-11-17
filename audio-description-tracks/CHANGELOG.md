@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.4 (17 November 2026)
+
+### Changed
+- Clearer words: Look in the folder now is now Check the folder now, and its job is Check for new description tracks. Its card's band says To check, with the numbers on the card, and a track that was not added says what to do next.
+- Logo description: where its logo stands on its own, a screen reader says "Audio description tracks logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.1.3 (17 November 2026)
 
 ### Fixed

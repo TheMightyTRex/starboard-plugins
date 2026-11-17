@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "styles",
  "name": "Styles",
- "version": "1.4.0",
- "description": "Twenty-one accessible styles for Display: six reskin the whole look (cards, buttons, tabs, menus), checked for contrast.",
+ "version": "1.4.1",
+ "description": "21 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/styles",
@@ -136,7 +136,7 @@
   {
    "id": "bento",
    "name": "Bento",
-   "description": "Rounded boxes in soft pastels, like a bento box layout.",
+   "description": "Rounded boxes in soft pastels, in a grid of different sizes.",
    "radius": 20,
    "font": "rounded",
    "shadow": "soft",
@@ -252,7 +252,7 @@
   {
    "id": "retro",
    "name": "Retro",
-   "description": "A nod to old terminals: square corners, a monospace font and amber.",
+   "description": "Old terminal colours: square corners, a monospace font and amber.",
    "radius": 0,
    "font": "mono",
    "shadow": "none",
@@ -697,7 +697,7 @@
   {
    "id": "editorial",
    "name": "Editorial",
-   "description": "A magazine look: serif headings, crisp white pages and a deep red rule.",
+   "description": "Magazine style: serif headings, crisp white pages and a deep red rule.",
    "radius": 2,
    "font": "system",
    "heading_font": "serif",
@@ -882,7 +882,7 @@
   {
    "id": "large-clear",
    "name": "Large and clear",
-   "description": "Strong contrast, heavy headings, wide focus rings and layered depth on a calm gradient, for easy reading.",
+   "description": "Strong contrast, heavy headings, wide focus rings and layered depth on a calm gradient, for reading with low vision.",
    "radius": 8,
    "font": "hyperlegible",
    "heading_font": "hyperlegible",
@@ -976,7 +976,7 @@
   {
    "id": "studio",
    "name": "Studio",
-   "description": "A quiet product look: hairline borders, one indigo accent, tight headings and outlined buttons.",
+   "description": "A quiet product style: hairline borders, one indigo accent, tight headings and outlined buttons.",
    "radius": 6,
    "font": "system",
    "heading_weight": 600,
@@ -1266,7 +1266,7 @@
   {
    "id": "mica",
    "name": "Mica",
-   "description": "A calm desktop look: tinted see-through menus, small corners and an accent bar on the chosen item.",
+   "description": "A calm desktop style: tinted transparent menus, small corners and an accent bar on the chosen item.",
    "radius": 6,
    "font": "system",
    "heading_weight": 600,
@@ -1319,9 +1319,17 @@
  ],
  "logo": {
   "file": "logo.svg",
-  "alt": "A painter's palette"
+  "alt": "Styles logo"
  },
  "changes": [
+  {
+   "version": "1.4.1",
+   "date": "2026-11-17",
+   "changed": [
+    "**Clearer words:** its description says \"21 accessible styles\", and the descriptions of Editorial, Large and clear, Studio, Mica, Retro and Bento are plainer.",
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Styles logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.4.0",
    "date": "2026-11-15",

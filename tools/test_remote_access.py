@@ -33,7 +33,7 @@ class Keys(unittest.TestCase):
 
     def test_cloudflare_token(self):
         self.assertEqual(app.check_cloudflare_token("  "), "missing")
-        self.assertIn("not a Cloudflare tunnel token", app.check_cloudflare_token("abc"))
+        self.assertIn("not a Cloudflare Tunnel token", app.check_cloudflare_token("abc"))
         self.assertEqual(app.check_cloudflare_token(fake_token()), "")
         # the whole command, pasted from Cloudflare's dashboard, still works
         self.assertEqual(app.check_cloudflare_token("cloudflared tunnel run --token " + fake_token()), "")
