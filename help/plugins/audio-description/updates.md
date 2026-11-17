@@ -1,11 +1,12 @@
 # Audio description: Updates
 
-Audio description 1.3.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description 1.4.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.4.0 | 1.14 or later | 17 November 2026 |
 | 1.3.0 | 1.14 or later | 17 November 2026 |
 | 1.2.3 | 1.14 or later | 17 November 2026 |
 | 1.2.2 | 1.14 or later | 17 November 2026 |
@@ -14,6 +15,21 @@ Audio description 1.3.0 is the latest version. It needs Starboard with plug-in A
 | 1.1.0 | 1.12 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.4.0
+
+Added:
+
+- **Titles with audio description:** every film, and every described episode by series, with its year, its described track and its status in words. Films and Series show their counts, and each title opens its page in Jellyfin. The same page as in Jellyfin's own Audio description plug-in.
+- **Jellyfin address for links:** the address you open Jellyfin at, for the links on Titles with audio description, when Starboard reaches Jellyfin at an address a browser cannot open.
+
+Changed:
+
+- **The nightly check keeps a little more:** each title's Jellyfin id and year, and which episodes are described, for the page. Select **Check for described titles now** once after updating to fill it.
+
+Fixed:
+
+- **Films in the collection:** the nightly check asks Jellyfin for each film, not the Audio description collection in their place, so once the collection was made, films in it no longer dropped out of the check and lost their tag.
 
 ## What is new in 1.3.0
 

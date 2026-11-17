@@ -11,6 +11,10 @@ A Starboard plug-in by TheMightyTRexUK, MIT licence. Starboard's first set-up of
 - **Your library:** once a night, in quiet hours, it reads the sound tracks of every film and episode in Jellyfin and
   lists those with a track named as audio description, such as "English (Audio Description)", "AD" or "Descriptive
   audio". Commentary tracks never count.
+- **Titles with audio description:** a page that lists every film and every described episode, by series, with its
+  year, its described track and its status in words, under **Films** and **Series** with their counts. Each title opens
+  its page in Jellyfin. It is drawn from what the nightly check keeps, and is the same page as in Jellyfin's own
+  Audio description plug-in.
 - **Reelix searches:** it checks how Reelix treats releases with audio description, using Reelix's own
   **Audio description** format, and says where to prefer them: **Settings**, **Reelix**, **Picture quality**. It never
   changes Reelix itself, as only an admin key may (issue #144).
@@ -85,7 +89,10 @@ track once per film or series. Both are listed in Starboard's accessibility rese
 - **Prefer releases with audio description**: reminds you to set Reelix's own Audio description format to Prefer in
   Settings, Reelix, Picture quality, when Reelix does not prefer it.
 - **People who want audio description**: activate each person.
-- **Titles with audio description**: the list, by films and series.
+- **Titles with audio description**: every film and described episode, by films and series, each linking to its page
+  in Jellyfin.
+- **Jellyfin address for links**: the address you open Jellyfin at, for those links, when Starboard reaches Jellyfin at
+  an address a browser cannot open.
 - **Audio description elsewhere**: places with audio description in their own apps.
 - **Sources**: AudioVault search links, YouDescribe search links, MovieReading and Earcatch.
 - **Search AudioVault**: the links, by films and series, opening by first letter when the list is long.
