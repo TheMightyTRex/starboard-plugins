@@ -11,7 +11,7 @@
   2026: no "see" or "look"): see, look, above, below, please, just, simply, easy, advanced, type for entering and
   drive for a disk.
 - The same banned words in the other text people read: every manifest's labels, hints, descriptions, card texts and
-  newest changes, the strings in each app.py and _shared/sbplugin.py, and help-centre.json. A genuine exception, such
+  newest changes, the strings in each app.py, helper.py and _shared/sbplugin.py, and help-centre.json. A genuine exception, such
   as another app's label quoted exactly, goes in ALLOWED with its reason.
 - The developers' pages describe the newest plug-in API any plug-in here needs: when a manifest asks for a newer one
   than the "<!-- plugin-api: 1.14 -->" line in help/developers/plug-in-api.md, update those pages first.
@@ -88,7 +88,7 @@ def allowed(rel, line):
 NOT_WORDS = {"id", "key", "path", "image", "file", "homepage", "support_url", "starboard_api", "permissions", "needs", "env",
              "volumes", "network", "type", "health", "choices_path", "manifest", "version", "date", "status", "state", "icon",
              "unit_key", "group_key", "events", "daily", "time", "default", "colours", "fonts", "css", "font", "vars",
-             # An app plug-in's helper code and the app's settings file (17 November 2026): the helper's own app.py is
+             # An app plug-in's helper code and the app's settings file (17 November 2026): the helper's own helper.py is
              # checked as each app.py is, and its run command is not words.
              "files", "command", "entrypoint"}
 
@@ -136,7 +136,7 @@ def check_other_text(problems):
         rel = path.relative_to(ROOT)
         for where, text in strings(json.loads(path.read_text(encoding="utf-8"))):
             check_words(rel, where, text, problems)
-    for path in sorted(list(ROOT.glob("*/app.py")) + [ROOT / "_shared" / "sbplugin.py"]):
+    for path in sorted(list(ROOT.glob("*/app.py")) + list(ROOT.glob("*/helper.py")) + [ROOT / "_shared" / "sbplugin.py"]):
         rel = path.relative_to(ROOT)
         for line, text in app_strings(path):
             check_words(rel, line, text, problems)

@@ -6,7 +6,7 @@
 - The Check now button asks checkrr to start a check straight away rather than on Sunday night.
 
 Python's standard library only. Starboard writes this file into the helper's own folder (files in the manifest) and
-runs it in the official Python image, so no image of ours is built. tools/make_app_helpers.py copies it into the
+runs it in the official Python image, so no image of ours is built. tools/make_app_helpers.py copies this file, helper.py, into the
 manifest; the file name carries the version, so an update writes the new one beside the old.
 """
 import datetime as dt

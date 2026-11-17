@@ -5,12 +5,12 @@ How Checkrr is built, for anyone who wants to change it or make one like it. It 
 ## Its files
 
 - [`starboard-plugin.json`](../../../checkrr/starboard-plugin.json)
-- [`app.py`](../../../checkrr/app.py), the helper
+- [`helper.py`](../../../checkrr/helper.py), the helper
 - [`checkrr.yaml`](../../../checkrr/checkrr.yaml), Checkrr's settings file
 - [`install.py`](../../../checkrr/install.py)
 - [`logo.svg`](../../../checkrr/logo.svg)
 - [`tests/test_app_helpers.py`](../../../tests/test_app_helpers.py) and [`tests/test_app_plugins.py`](../../../tests/test_app_plugins.py)
-- [`tools/make_app_helpers.py`](../../../tools/make_app_helpers.py), which copies `app.py` and `checkrr.yaml` into the manifest
+- [`tools/make_app_helpers.py`](../../../tools/make_app_helpers.py), which copies `helper.py` and `checkrr.yaml` into the manifest
 
 ## Containers
 
@@ -35,7 +35,7 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- **No image of ours.** The helper, `app.py`, is Python's standard library only. It is in the manifest's `files` as `app-1.0.0.py`: Starboard writes it once into the helper's own folder before its first start, and `command` runs it in the official Python image. The version in the file name means an update writes the new helper beside the old one.
+- **No image of ours.** The helper, `helper.py`, is Python's standard library only. It is in the manifest's `files` as `app-1.0.0.py`: Starboard writes it once into the helper's own folder before its first start, and `command` runs it in the official Python image. The version in the file name means an update writes the new helper beside the old one.
 - **Checkrr's settings** are `checkrr.yaml`, also in `files`, written once into Checkrr's folder, which is mounted at `/etc/checkrr`. Checkrr finds it there by itself, so the image runs as it is, with no command. Its database (`checkrr.db`) and list of bad files (`badfiles.csv`) go in the same folder.
 - **Report only.** The settings file names no Radarr, Sonarr or Lidarr. Checkrr's own replacing (`DeleteMovieFiles`, then a search) needs one of them, so it never runs, and with none Checkrr only records a bad file in its database and list. Checkrr has no code that deletes a file itself, and the `movies` and `tv` folders are mounted read only.
 - **Not given Reelix.** Reelix answers Radarr's and Sonarr's API, but Checkrr's replacing deletes the file first. Reelix does not answer that delete today, but it is not given the chance: the plug-in asks for no `reelix:key`.

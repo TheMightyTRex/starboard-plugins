@@ -20,8 +20,8 @@ import sys
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 # plug-in id: {container: {file name in the container's folder (with {version}): source file in the plug-in's folder}}
 HELPERS = {
-    "themearr": {"main": {"app-{version}.py": "app.py"}},
-    "checkrr": {"main": {"app-{version}.py": "app.py"}, "app": {"checkrr.yaml": "checkrr.yaml"}},
+    "themearr": {"main": {"app-{version}.py": "helper.py"}},
+    "checkrr": {"main": {"app-{version}.py": "helper.py"}, "app": {"checkrr.yaml": "checkrr.yaml"}},
 }
 LIMIT = 16384  # Starboard's limit for each file's text
 
