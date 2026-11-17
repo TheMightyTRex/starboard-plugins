@@ -5,9 +5,7 @@ name: Image
 on:
   push:
     branches: [main]
-    # Not the app plug-ins' helpers (Themearr, Checkrr), which run in the official Python image from their manifests'
-    # files and are not in this image, so a change to them builds and publishes nothing (17 November 2026).
-    paths: ["Dockerfile", "_shared/**", "*/app.py", "!themearr/**", "!checkrr/**", ".github/workflows/image.yml"]
+    paths: ["Dockerfile", "_shared/**", "*/app.py", ".github/workflows/image.yml"]
   workflow_dispatch:
 permissions:
   contents: read
