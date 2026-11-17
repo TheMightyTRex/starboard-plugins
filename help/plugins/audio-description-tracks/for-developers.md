@@ -10,6 +10,7 @@ How Audio description tracks is built, for anyone who wants to change it or make
 - [`Dockerfile`](../../../audio-description-tracks/Dockerfile)
 - [`install.py`](../../../audio-description-tracks/install.py)
 - [`logo.svg`](../../../audio-description-tracks/logo.svg)
+- [`rules.json`](../../../audio-description-tracks/rules.json), shared with the Jellyfin version and copied by `tools/sync_audio_description_rules.py`
 - [`CHANGELOG.md`](../../../audio-description-tracks/CHANGELOG.md)
 - [`tests/test_audio_description_tracks.py`](../../../tests/test_audio_description_tracks.py)
 

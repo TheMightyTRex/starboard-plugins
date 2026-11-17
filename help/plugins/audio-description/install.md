@@ -6,7 +6,7 @@ Add Audio description from Starboard's **Catalogue**, where it is listed under *
 
 - Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
 - Jellyfin added to Starboard, in **Settings**, then **Apps**. Audio description uses the key Starboard keeps for it. Without it, its card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps".
-- Optional: Reelix added to Starboard, in **Settings**, then **Apps**, so it can prefer releases with audio description. Without it, **Apply the Reelix choice now** says "Starboard has no Reelix key to give yet: add Reelix in Settings, Apps".
+- Optional: Reelix added to Starboard, in **Settings**, then **Apps**, so it can check whether Reelix prefers releases with audio description. Without it, **Check the Reelix choice now** says "Starboard has no Reelix key to give yet: add Reelix in Settings, Apps".
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -17,6 +17,9 @@ Starboard lists these before you add it, each with its risk.
 |---|---|
 | Use Jellyfin's API key, kept by Starboard (`jellyfin:key`) | High |
 | Use Reelix's API key, kept by Starboard (`reelix:key`) | High |
+| Your films, series and books (the media folder, read only, and the library) (`media:read`) | Medium |
+
+It asks for `media:read` only to hear Starboard's **When someone starts playing something** event, for **Play the described track**. It reads no files.
 | Reach other computers on your home network, and the internet (`network:lan`) | Medium |
 
 What it runs:

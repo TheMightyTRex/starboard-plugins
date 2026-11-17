@@ -5,28 +5,29 @@
   {
    "id": "audio-description",
    "name": "Audio description",
-   "description": "Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix.",
+   "description": "Finds and tags films and series in Jellyfin with a described sound track for blind and partially sighted people, plays it for the people who choose it, and prefers releases with one in Reelix.",
    "kind": "Accessibility",
    "author": "TheMightyTRexUK",
    "permissions": [
     "jellyfin:key",
     "reelix:key",
+    "media:read",
     "network:lan"
    ],
-   "version": "1.2.3",
+   "version": "1.3.0",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
    "published": true,
    "recommended": false,
-   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BdWRpbyBkZXNjcmlwdGlvbiBsb2dvPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzBiNjY3MCIvPjxwYXRoIGQ9Ik0xMCAyMGg2bDgtN3YyMmwtOC03aC02eiIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0zMCAxOC41YTcuNSA3LjUgMCAwIDEgMCAxMU0zNC41IDE0YTE0IDE0IDAgMCAxIDAgMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5BdWRpbyBkZXNjcmlwdGlvbiBsb2dvPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzBiNjY3MCIvPjxyZWN0IHg9IjYiIHk9IjgiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyMSIgcng9IjMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNMTEgMTIuNWgyTTE3IDEyLjVoMk0yMyAxMi41aDJNMjkgMTIuNWgwLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yMyAyMWgxNmE0IDQgMCAwIDEgNCA0djhhNCA0IDAgMCAxLTQgNGgtOWwtNSA0LjV2LTQuNWgtMmE0IDQgMCAwIDEtNC00di04YTQgNCAwIDAgMSA0LTR6IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiMwYjY2NzAiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTI1LjUgMjdoM2w0LTMuNXYxMWwtNC0zLjVoLTN6IiBmaWxsPSIjMGI2NjcwIi8+PHBhdGggZD0iTTM1IDI2LjVhNCA0IDAgMCAxIDAgNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMGI2NjcwIiBzdHJva2Utd2lkdGg9IjIuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "Audio description logo",
    "versions": [
     {
-     "version": "1.2.3",
+     "version": "1.3.0",
      "starboard_api": ">=1.14 <2.0",
      "released": "2026-11-17",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
-     "changelog": "Clearer words: Look for described titles now is now Check for described titles now, and its job is Check for titles with audio description. Its messages put the settings they name in quotation marks and spell out RNIB. Logo description: where its logo stands on its own, a screen reader says \"Audio description logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Find and tag: each film and episode with a described sound track, and its series, gets the tag Audio description in Jellyfin at the nightly check, and the tag comes off when the track goes. Every Jellyfin app, televisions included, can filter by it. The Audio description collection: activated by default, the films and series with a described track are in one Jellyfin collection. Deactivate Add them to the Audio description collection to leave it as it is. Play the described track: for each person you activate on its page, inactive until chosen. When they start a title with a described track an"
     },
     {
      "version": "1.1.0",
@@ -46,7 +47,7 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.4",
+   "version": "1.2.0",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
    "published": true,
@@ -55,11 +56,11 @@
    "logo_alt": "Audio description tracks logo",
    "versions": [
     {
-     "version": "1.1.4",
+     "version": "1.2.0",
      "starboard_api": ">=1.14 <2.0",
      "released": "2026-11-17",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
-     "changelog": "Clearer words: Look in the folder now is now Check the folder now, and its job is Check for new description tracks. Its card's band says To check, with the numbers on the card, and a track that was not added says what to do next. Logo description: where its logo stands on its own, a screen reader says \"Audio description tracks logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Rules 1.0: the track words, how a file name is read, how close the lengths must be (5 seconds by default), the languages and the new track's name and title come from the same rules file as Jellyfin's own Audio description plug-in, so the two add tracks in the same way. Idle beside the Jellyfin version: when Jellyfin's own Audio description plug-in is installed, this one adds nothing and its card says Idle, so the two never add the same track. Add tracks in Jellyfin instead."
     },
     {
      "version": "1.0.0",

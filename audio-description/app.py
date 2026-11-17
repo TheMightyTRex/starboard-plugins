@@ -14,6 +14,11 @@ Sources (DASH-410): each is its own switch in Sources, and only links out. Audio
 for automated use and limits each account to 25 downloads a day, so the plug-in links to AudioVault's own search for
 each title without audio description and never reads AudioVault. Adding a track the person already holds is the
 separate Audio description tracks plug-in, which needs write access to the media folder.
+
+Rules 1.0 (17 November 2026): the words that mean audio description, the tag, the collection and Play the described
+track come from rules.json, shared with the Jellyfin version (TheMightyTRex/jellyfin-plugins, audio-description; its
+SYNC.md says what must match). tools/sync_audio_description_rules.py copies it here. When the Jellyfin version is
+installed, this plug-in leaves the tag, the collection and Play the described track to it, and says so on its card.
 """
 import json
 import os
@@ -31,13 +36,23 @@ from sbplugin import band, changed, fetch, keep, plural, remember, serve, settin
 # longer phrases added (research, part (a) 1). Reelix's patterns are case-insensitive already; (?i) keeps Python the same.
 RELEASE_AD = (r"(?i)\b(?:(?:WiTH|MULTi|FRENCH|ENG(?:LISH)?|(?:BA?|A)SL[ ._-]and)[ ._-](?:AD|Audio[ ._-]?Description)"
               r"|Audio[ ._-]?Descri(?:ption|bed)|Descriptive[ ._-](?:Audio|Video)|Described[ ._-]Video|DVS)\b")
+# The rules shared with the Jellyfin version (rules.json, beside this file in the image).
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "rules.json"), encoding="utf-8") as _f:
+    RULES = json.load(_f)
 # Track titles in the library: short, so a bare AD counts there. Jellyfin does not pass on the visual impaired flag
 # (research, part (a) 5), so the title, display title and comment are what can be read.
-TRACK_AD = re.compile(r"(?i)(?:\baudio[ ._-]?descri(?:ption|bed)\b|\bdescriptive[ ._-]?(?:audio|video)\b|\bdescribed\b"
-                      r"|\bDVS\b|(?:^|[\s\[(._-])AD(?:$|[\s\])._-]))")
-COMMENTARY = re.compile(r"(?i)comment(?:ary)?")
+TRACK_AD = re.compile(RULES["described_track"]["pattern"])
+COMMENTARY = re.compile(RULES["described_track"]["ruled_out_pattern"])
+TAG = RULES["tag"]
+COLLECTION = RULES["collection"]["name"]
+PLAY = RULES["play_described_track"]
+JELLYFIN_PLUGIN = "7a591954-9c27-4ba7-80c3-dc5f0a140692"  # the Jellyfin version's id (SYNC.md)
+JELLYFIN_CHECK_EVERY = 600  # seconds between asks of Jellyfin's plug-in list
+IDLE = ("Idle: Jellyfin's own Audio description plug-in is installed, so it does the tag, the collection and Play the "
+        "described track, and this one does not")
+now = time.time  # replaced in tests
+_jf = {"at": 0.0, "installed": False}
 FORMAT_NAME = "Audio description"
-PREFER = 100  # the score Starboard writes for Prefer (reelix_quality.PREFER)
 PAGE = 200
 # Legal places with audio description, opened in their own apps (research, part (a) 2 to 4). Nothing is fetched.
 ELSEWHERE = [
@@ -128,7 +143,7 @@ def _items():
     """Every film and episode, a page at a time, with its streams only."""
     start = 0
     while True:
-        q = urllib.parse.urlencode({"Recursive": "true", "IncludeItemTypes": "Movie,Episode", "Fields": "MediaStreams",
+        q = urllib.parse.urlencode({"Recursive": "true", "IncludeItemTypes": "Movie,Episode", "Fields": "MediaStreams,Tags",
                                     "EnableImages": "false", "EnableUserData": "false", "StartIndex": start, "Limit": PAGE})
         got = jellyfin(f"/Items?{q}") or {}
         items = got.get("Items") or []
@@ -141,9 +156,19 @@ def _items():
 def scan():
     """Reads every film and episode's audio tracks and keeps which have audio description."""
     films, series, total, without = [], {}, 0, []
+    tags = {"want": set(), "have": set(), "series": set(), "films": []}  # for Find and tag, ids only
     for it in _items():
         total += 1
         track = described_track(it.get("MediaStreams"))
+        iid = str(it.get("Id") or "")
+        if iid and TAG.lower() in [str(t).lower() for t in it.get("Tags") or []]:
+            tags["have"].add(iid)
+        if iid and track:
+            tags["want"].add(iid)
+            if it.get("Type") == "Episode" and it.get("SeriesId"):
+                tags["series"].add(str(it["SeriesId"]))
+            elif it.get("Type") == "Movie":
+                tags["films"].append(iid)
         if it.get("Type") == "Episode":
             name = str(it.get("SeriesName") or "Unknown series")
             row = series.setdefault(name, {"name": name, "described": 0, "episodes": 0, "track": ""})
@@ -168,59 +193,250 @@ def scan():
     keep("without", {"at": now, "films": sorted(without, key=lambda f: (f[0].lower(), f[1])),
                      "series": sorted(([s["name"], s["described"], s["episodes"]] for s in series.values() if s["described"] < s["episodes"]),
                                       key=lambda x: x[0].lower())})
-    return {"said": f"Found {plural(len(films), 'film')} and {plural(len(series_rows), 'series', 'series')} with audio description, of {total:,} films and episodes"}
+    said = f"Found {plural(len(films), 'film')} and {plural(len(series_rows), 'series', 'series')} with audio description, of {total:,} films and episodes"
+    if jellyfin_version_installed(force=True):
+        keep("tagged", {"at": time.time(), "idle": True})
+        return {"said": said + ". " + IDLE}
+    done = find_and_tag(tags)
+    return {"said": said + f". Tagged {done['tagged']:,}, took the tag off {done['untagged']:,}"}
+
+
+# Find and tag (rules 1.0) ------------------------------------------------------------------------------------------
+
+def jellyfin_version_installed(force=False):
+    """True when Jellyfin's own Audio description plug-in is installed and not deactivated (asked of Jellyfin's
+    /Plugins at most every 10 minutes). Then this one leaves the tag, the collection and Play the described track to
+    it. When Jellyfin cannot be asked, it carries on as before."""
+    if not force and now() - _jf["at"] < JELLYFIN_CHECK_EVERY:
+        return _jf["installed"]
+    try:
+        plugins = jellyfin("/Plugins") or []
+        _jf["installed"] = any(str(p.get("Id") or "").replace("-", "").lower() == JELLYFIN_PLUGIN.replace("-", "")
+                               and str(p.get("Status") or "") not in ("Disabled", "Deleted", "Superseded", "NotSupported")
+                               for p in plugins if isinstance(p, dict))
+    except Exception:  # noqa: BLE001 - no key yet, or Jellyfin is restarting: keep the last answer
+        pass
+    _jf["at"] = now()
+    return _jf["installed"]
+
+
+def _ids(query):
+    """Every item a query finds, a page at a time: [{Id, Tags}]."""
+    start, out = 0, []
+    while True:
+        got = jellyfin("/Items?" + urllib.parse.urlencode({**query, "Recursive": "true", "EnableImages": "false", "EnableUserData": "false",
+                                                           "StartIndex": start, "Limit": PAGE})) or {}
+        items = got.get("Items") or []
+        out += items
+        start += len(items)
+        if len(items) < PAGE or start >= int(got.get("TotalRecordCount") or 0):
+            return out
+
+
+def _full_item(iid):
+    """The whole item, as Jellyfin's metadata editor reads it before saving (10.9 and later; else through a person)."""
+    q = urllib.parse.quote(iid)
+    try:
+        return jellyfin(f"/Items/{q}") or {}
+    except urllib.error.HTTPError as e:
+        if e.code not in (404, 405):
+            raise
+    uid = next((str(u.get("Id")) for u in jellyfin("/Users") or [] if isinstance(u, dict) and (u.get("Policy") or {}).get("IsAdministrator")), "")
+    return jellyfin(f"/Users/{urllib.parse.quote(uid)}/Items/{q}") or {}
+
+
+def set_tag(iid, want):
+    """Adds or takes off the tag, keeping every other tag, as the metadata editor saves an item."""
+    item = _full_item(iid)
+    tags = [t for t in item.get("Tags") or [] if str(t).lower() != TAG.lower()]
+    item["Tags"] = tags + [TAG] if want else tags
+    jellyfin(f"/Items/{urllib.parse.quote(iid)}", data=item, method="POST")
+
+
+def plan_tags(want, have):
+    """(ids to tag, ids to take the tag off): only what changes is written."""
+    return sorted(want - have), sorted(have - want)
+
+
+def find_and_tag(tags):
+    """Tags each film and episode with a described track, and each series with one, and takes the tag off the rest.
+    While the collection is activated, keeps the collection's films and series the same as the tagged ones."""
+    series = _ids({"IncludeItemTypes": "Series", "Fields": "Tags"})
+    have_series = {str(x.get("Id")) for x in series if TAG.lower() in [str(t).lower() for t in x.get("Tags") or []]}
+    add, take = plan_tags(tags["want"] | tags["series"], tags["have"] | have_series)
+    for iid in add:
+        set_tag(iid, True)
+    for iid in take:
+        set_tag(iid, False)
+    done = {"at": now(), "tagged": len(add), "untagged": len(take), "collection": None}
+    if setting("collection", RULES["collection"]["default"]) is True:
+        done["collection"] = keep_collection(set(tags["films"]) | tags["series"])
+    keep("tagged", done)
+    return done
+
+
+def keep_collection(want):
+    """The collection named in rules.json holds exactly the films and series with a described track."""
+    boxes = (jellyfin("/Items?" + urllib.parse.urlencode({"IncludeItemTypes": "BoxSet", "Recursive": "true", "searchTerm": COLLECTION})) or {}).get("Items") or []
+    box = next((b for b in boxes if str(b.get("Name") or "").lower() == COLLECTION.lower()), None)
+    if not box:
+        if not want:
+            return {"added": 0, "taken": 0}
+        jellyfin("/Collections?" + urllib.parse.urlencode({"Name": COLLECTION, "Ids": ",".join(sorted(want)), "IsLocked": "false"}), data=b"", method="POST")
+        return {"added": len(want), "taken": 0}
+    bid = urllib.parse.quote(str(box["Id"]))
+    members = {str(x.get("Id")) for x in _ids({"ParentId": str(box["Id"])})}
+    add, take = sorted(want - members), sorted(members - want)
+    for chunk in range(0, len(add), 100):
+        jellyfin(f"/Collections/{bid}/Items?Ids=" + ",".join(add[chunk:chunk + 100]), data=b"", method="POST")
+    for chunk in range(0, len(take), 100):
+        jellyfin(f"/Collections/{bid}/Items?Ids=" + ",".join(take[chunk:chunk + 100]), method="DELETE")
+    return {"added": len(add), "taken": len(take)}
+
+
+# Play the described track (rules 1.0) ------------------------------------------------------------------------------
+
+def index_to_play(streams, playing):
+    """The described track's Index when it should be chosen, or None: none, or it is already playing."""
+    track = described_track(streams)
+    return None if not track or track["index"] == playing else track["index"]
+
+
+def accepts(session):
+    cmds = session.get("SupportedCommands") or (session.get("Capabilities") or {}).get("SupportedCommands") or []
+    return PLAY["command"] in cmds
+
+
+def play_described(body=None):
+    """Starboard's playback.started event: for each session of a person who chose it, playing a title with a described
+    track while another plays, sends Jellyfin's SetAudioStreamIndex command. An app that does not accept it is left
+    alone, and the plug-in notes it for the Play the described track page."""
+    chosen = set(remember("play", []) or [])
+    if not chosen:
+        return {"ok": True, "said": "Nobody chose Play the described track"}
+    if jellyfin_version_installed():
+        return {"ok": True, "said": IDLE}
+    sent, notes = remember("play_sent", {}) or {}, []
+    for s in jellyfin("/Sessions?ActiveWithinSeconds=120") or []:
+        item = (s or {}).get("NowPlayingItem") or {}
+        if str(s.get("UserId") or "").replace("-", "") not in {c.replace("-", "") for c in chosen} or not item.get("Id"):
+            continue
+        key = f"{s.get('Id')}|{item['Id']}"
+        if key in sent:
+            continue  # once for each start: the person may choose another track themselves
+        got = (jellyfin("/Items?" + urllib.parse.urlencode({"Ids": item["Id"], "Fields": "MediaStreams"})) or {}).get("Items") or [{}]
+        idx = index_to_play(got[0].get("MediaStreams"), (s.get("PlayState") or {}).get("AudioStreamIndex"))
+        if idx is None:
+            continue
+        sent[key] = now()
+        if not accepts(s):
+            notes.append(f"{s.get('Client') or 'An app'} on {s.get('DeviceName') or 'a device'} does not accept the command to change the sound track")
+            continue
+        jellyfin(f"/Sessions/{urllib.parse.quote(str(s['Id']))}/Command", data={"Name": PLAY["command"], "Arguments": {PLAY["argument"]: str(idx)}}, method="POST")
+        notes.append(f"Chose the described track of {item.get('Name') or 'a title'} on {s.get('Client') or 'an app'}")
+    keep("play_sent", {k: t for k, t in sent.items() if now() - t < 86400})
+    if notes:
+        keep("play_last", {"at": now(), "notes": notes[-5:]})
+    return {"ok": True, "said": "; ".join(notes) or "Nothing to change"}
+
+
+def on_event(body=None):
+    if (body or {}).get("event") != "playback.started":
+        return {"ok": True, "said": "Not an event it uses"}
+    return play_described(body)
+
+
+def play_screen(said=""):
+    chosen = set(remember("play", []) or [])
+    users = jellyfin("/Users") or []
+    items = [{"id": str(u.get("Id")), "title": str(u.get("Name") or "Unnamed"), "on": str(u.get("Id")) in chosen, "actions": ["toggle"],
+              "state": "ok" if str(u.get("Id")) in chosen else "off",
+              "detail": "The described track is chosen when they start a title that has one" if str(u.get("Id")) in chosen else "Inactive"}
+             for u in users if isinstance(u, dict) and u.get("Id")]
+    last = remember("play_last") or {}
+    intro = ("Inactive until you activate a person. When they start a title with a described track and another plays, Starboard asks their "
+             "app to change to it, within about half a minute. Not every Jellyfin app accepts this: one that does not plays as it is.")
+    if last.get("notes"):
+        intro += " Last: " + last["notes"][-1] + "."
+    out = {"type": "list", "title": "Play the described track", "intro": intro[:400], "items": items}
+    if jellyfin_version_installed():
+        out["notices"] = [{"id": "jellyfin", "tone": "info", "title": "Idle: Jellyfin's own Audio description is installed",
+                           "text": "Choose the people in Jellyfin's own Audio description plug-in instead. This list does nothing while it is installed."}]
+    return {**out, "said": said} if said else out
+
+
+def play(body=None):
+    if not body:
+        return play_screen()
+    if body.get("action") != "toggle" or not body.get("id"):
+        raise ValueError("Choose a person to activate or deactivate")
+    uid = str(body["id"])
+    users = {str(u.get("Id")): str(u.get("Name") or "Unnamed") for u in jellyfin("/Users") or [] if isinstance(u, dict)}
+    if uid not in users:
+        raise ValueError("That person is not in Jellyfin any more. Reload the page")
+    chosen = list(remember("play", []) or [])
+    want = uid not in chosen
+    chosen = chosen + [uid] if want else [c for c in chosen if c != uid]
+    keep("play", chosen)
+    return play_screen(f"Play the described track activated for {users[uid]}" if want else f"Play the described track deactivated for {users[uid]}")
 
 
 # Reelix ----------------------------------------------------------------------------------------------------------
 
-def reelix_format():
-    """The Audio description custom format, as Reelix keeps it."""
-    return {"name": FORMAT_NAME, "include_in_rename": False,
-            "specifications": [{"name": "Audio description in the name", "type": "release_title", "value": RELEASE_AD,
-                                "negate": False, "required": True}]}
+def _reelix_or_none(path):
+    """A Reelix answer, or None when Reelix has no such route (404, 405) or the key may not read it (403)."""
+    try:
+        return reelix(path)
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 404, 405):
+            return None
+        raise
 
 
-def plan_profiles(profiles, format_id, prefer):
-    """Which video quality levels change, and how: Prefer scores the format PREFER (a score someone set themselves is
-    kept); deactivated, the format's score goes back to 0 (neutral). Returns [(profile, new profile)]."""
-    out = []
-    for p in profiles or []:
-        if not isinstance(p, dict) or p.get("family", "video") != "video" or "id" not in p:
-            continue
-        items = [dict(i) for i in p.get("format_items") or [] if isinstance(i, dict)]
-        mine = next((i for i in items if int(i.get("format_id", -1)) == format_id), None)
-        score = int((mine or {}).get("score") or 0)
-        if prefer and score <= 0:
-            items = [i for i in items if i is not mine] + [{"format_id": format_id, "score": PREFER}]
-        elif not prefer and score > 0:
-            items = [i for i in items if i is not mine]
-        else:
-            continue
-        out.append((p, {**p, "format_items": items}))
-    return out
+def find_reelix_format():
+    """Reelix's own Audio description format: its built-in one, or on an older Reelix, one of that name. Reelix lets
+    only an admin key add formats or change quality levels, and Starboard never gives plug-ins one (issue #144), so the
+    plug-in only reads."""
+    found = _reelix_or_none("/customformats/builtin/audio_description")
+    if isinstance(found, dict) and "id" in found:
+        return found
+    formats = _reelix_or_none("/customformats") or []
+    return next((f for f in formats if isinstance(f, dict) and str(f.get("name", "")).lower() == FORMAT_NAME.lower()), None)
+
+
+def preferring_levels(profiles, format_id):
+    """How many video quality levels give the format a score of more than 0."""
+    return sum(1 for p in profiles or [] if isinstance(p, dict) and p.get("family", "video") == "video"
+               and any(int(i.get("format_id", -1)) == format_id and int(i.get("score") or 0) > 0 for i in p.get("format_items") or []))
+
+
+REELIX_PLACE = "Settings, Reelix, Picture quality"
 
 
 def apply_reelix():
-    """Keeps Reelix in step with the setting: the format there, and scored in every video quality level."""
+    """Says how Reelix treats releases with audio description, and where to change it. It never writes to Reelix and
+    never fails the job for this (issue #144): Reelix's own format is set to Prefer in Starboard's Settings, Reelix,
+    Picture quality."""
     prefer = bool(setting("prefer_in_reelix", True))
-    formats = reelix("/customformats") or []
-    found = next((f for f in formats if isinstance(f, dict) and str(f.get("name", "")).lower() == FORMAT_NAME.lower()), None)
-    if not found and not prefer:
-        keep("reelix", {"at": time.time(), "prefer": False, "levels": 0})
-        return {"said": "Reelix has no Audio description format, so there is nothing to change"}
+    try:
+        found = find_reelix_format()
+        levels = None
+        if found:
+            profiles = _reelix_or_none("/qualityprofiles")
+            levels = None if profiles is None else preferring_levels(profiles, int(found["id"]))
+    except (LookupError, OSError, ValueError) as e:
+        keep("reelix", {"at": time.time(), "prefer": prefer, "levels": 0, "said": str(e)[:150]})
+        return {"said": f"{e}"[:200]}
     if not found:
-        found = reelix("/customformats", data=reelix_format(), method="POST") or {}
-        if "id" not in found:
-            raise LookupError("Reelix did not add the Audio description format")
-    changes = plan_profiles(reelix("/qualityprofiles") or [], int(found["id"]), prefer)
-    for old, new in changes:
-        reelix(f"/qualityprofiles/{int(old['id'])}", data=new, method="PUT")
-    levels = sum(1 for p in reelix("/qualityprofiles") or [] if isinstance(p, dict) and p.get("family", "video") == "video"
-                 and any(int(i.get("format_id", -1)) == int(found["id"]) and int(i.get("score") or 0) > 0 for i in p.get("format_items") or []))
-    keep("reelix", {"at": time.time(), "prefer": prefer, "levels": levels})
-    if prefer:
-        return {"said": f"Reelix prefers releases with audio description in {plural(levels, 'quality level')}"}
-    return {"said": f"Reelix no longer prefers audio description ({plural(len(changes), 'quality level')} changed)"}
+        said = "Reelix has no Audio description format yet. It comes with the next Reelix update"
+    elif levels:
+        said = f"Reelix prefers releases with audio description in {plural(levels, 'quality level')}"
+    elif prefer:
+        said = f"To prefer releases with audio description, set Audio description to Prefer in {REELIX_PLACE}"
+    else:
+        said = f"Reelix does not prefer releases with audio description. To change that, set Audio description to Prefer in {REELIX_PLACE}"
+    keep("reelix", {"at": time.time(), "prefer": prefer, "levels": levels or 0, "said": said})
+    return {"said": said}
 
 
 # People ----------------------------------------------------------------------------------------------------------
@@ -384,6 +600,9 @@ def count():
         return band({"value": 0, "label": "titles", "note": err or "Not checked yet"}, "problem" if err else "scheduled",
                     label=None if err else "Checks tonight")
     n = len(r.get("films", [])) + len(r.get("series", []))
+    if jellyfin_version_installed():
+        return band({"value": n, "label": "described" if n != 1 else "described title", "note": "Idle: Jellyfin's own Audio description tags them"},
+                    "idle", changed("result"), "Idle")
     return band({"value": n, "label": "described" if n != 1 else "described title", "note": f"of {r.get('total', 0):,} films and episodes"},
                 "ok", changed("result"))
 
@@ -486,6 +705,7 @@ ROUTES = {"/count": count, "/recent": recent, "/titles": titles, ("POST", "/titl
           "/audiovault": audiovault, ("POST", "/audiovault"): audiovault,
           "/youdescribe": youdescribe, ("POST", "/youdescribe"): youdescribe,
           "/apps": apps, ("POST", "/apps"): apps,
+          "/play": play, ("POST", "/play"): play, ("POST", "/events"): on_event,
           ("POST", "/jobs/scan"): lambda: _guarded(scan), ("POST", "/jobs/reelix"): reelix_now,
           ("POST", "/scan"): scan_now, ("POST", "/reelix"): reelix_now}
 

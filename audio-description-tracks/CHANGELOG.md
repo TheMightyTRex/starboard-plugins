@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 (17 November 2026)
+
+### Changed
+- Rules 1.0: the track words, how a file name is read, how close the lengths must be (5 seconds by default), the languages and the new track's name and title come from the same rules file as Jellyfin's own Audio description plug-in, so the two add tracks in the same way.
+- Idle beside the Jellyfin version: when Jellyfin's own Audio description plug-in is installed, this one adds nothing and its card says Idle, so the two never add the same track. Add tracks in Jellyfin instead.
+
 ## 1.1.4 (17 November 2026)
 
 ### Changed

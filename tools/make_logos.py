@@ -34,8 +34,10 @@ S = s()
 
 # id: (colour, the symbol in plain words for the help, the symbol on a 48 by 48 grid)
 LOGOS = {
-    "audio-description": ("#0b6670", "A loudspeaker with sound waves",
-                          f'<path d="M10 20h6l8-7v22l-8-7h-6z" fill="{W}"/><path d="M30 18.5a7.5 7.5 0 0 1 0 11M34.5 14a14 14 0 0 1 0 20" {S}/>'),
+    "audio-description": ("#0b6670", "A film frame with a speech bubble holding a loudspeaker",
+                          f'<rect x="6" y="8" width="28" height="21" rx="3" {s(3)}/><path d="M11 12.5h2M17 12.5h2M23 12.5h2M29 12.5h0.5" {s(2.5)}/>'
+                          f'<path d="M23 21h16a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-9l-5 4.5v-4.5h-2a4 4 0 0 1-4-4v-8a4 4 0 0 1 4-4z" fill="{W}" stroke="#0b6670" stroke-width="2.5" stroke-linejoin="round"/>'
+                          f'<path d="M25.5 27h3l4-3.5v11l-4-3.5h-3z" fill="#0b6670"/><path d="M35 26.5a4 4 0 0 1 0 6" fill="none" stroke="#0b6670" stroke-width="2.2" stroke-linecap="round"/>'),
     "audio-description-tracks": ("#2d5a87", "A loudspeaker with a plus sign",
                                  f'<path d="M8 20h6l8-7v22l-8-7H8z" fill="{W}"/><path d="M33 18v12M27 24h12" {S}/>'),
     "calibre-web": ("#6b3b1d", "A book in a browser window",

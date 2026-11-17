@@ -1,0 +1,137 @@
+{
+  "rules_version": "1.0",
+  "about": "The rules both audio description plug-ins follow: the Jellyfin plug-in (this repository) and the Starboard plug-ins (TheMightyTRex/starboard-plugins, audio-description and audio-description-tracks). Change them here only; SYNC.md says how.",
+  "described_track": {
+    "fields": [
+      "Title",
+      "DisplayTitle",
+      "Comment"
+    ],
+    "words": [
+      "Audio Description",
+      "Audio described",
+      "Descriptive audio",
+      "Descriptive video",
+      "Described",
+      "DVS",
+      "AD, as a word of its own"
+    ],
+    "pattern": "(?i)(?:\\baudio[ ._-]?descri(?:ption|bed)\\b|\\bdescriptive[ ._-]?(?:audio|video)\\b|\\bdescribed\\b|\\bDVS\\b|(?:^|[\\s\\[(._-])AD(?:$|[\\s\\])._-]))",
+    "ruled_out_words": [
+      "commentary",
+      "comment"
+    ],
+    "ruled_out_pattern": "(?i)comment(?:ary)?",
+    "examples": {
+      "described": [
+        "English (Audio Description)",
+        "AD",
+        "English AD",
+        "[AD] English",
+        "Descriptive Audio",
+        "Described Video",
+        "Audio described",
+        "DVS",
+        "eng.AD",
+        "English (Audio Description) - AAC - Stereo"
+      ],
+      "not_described": [
+        "English - AAC - Stereo - Default",
+        "Director's commentary",
+        "AD commentary",
+        "Adventure mix",
+        "Dolby Digital 5.1",
+        "Madrid",
+        "Head",
+        ""
+      ]
+    }
+  },
+  "tag": "Audio description",
+  "collection": {
+    "name": "Audio description",
+    "default": true,
+    "holds": [
+      "Movie",
+      "Series"
+    ]
+  },
+  "tagged": [
+    "Movie",
+    "Episode",
+    "Series"
+  ],
+  "after_library_scan": true,
+  "play_described_track": {
+    "default": false,
+    "command": "SetAudioStreamIndex",
+    "argument": "Index",
+    "wait_seconds": 2
+  },
+  "tracks": {
+    "tolerance_seconds": {
+      "default": 5,
+      "min": 1,
+      "max": 30
+    },
+    "default_language": "eng",
+    "languages": {
+      "eng": "English",
+      "fra": "French",
+      "deu": "German",
+      "spa": "Spanish",
+      "ita": "Italian",
+      "nld": "Dutch",
+      "por": "Portuguese",
+      "pol": "Polish",
+      "swe": "Swedish",
+      "dan": "Danish",
+      "nor": "Norwegian",
+      "fin": "Finnish"
+    },
+    "file_name": "{video_without_extension}.Audio Description.{language}.mka",
+    "title": "{language_name} (Audio Description)",
+    "flags": {
+      "visual_impaired": true,
+      "default_track": false
+    },
+    "copy_without_converting": true,
+    "extensions": [
+      ".mp3",
+      ".m4a",
+      ".m4b",
+      ".aac",
+      ".mka",
+      ".opus",
+      ".ogg",
+      ".oga",
+      ".flac",
+      ".wav"
+    ],
+    "zip": {
+      "max_bytes": 4294967296,
+      "max_files": 500
+    },
+    "folders": {
+      "confirmed": "Confirmed",
+      "taken_off": "Taken off",
+      "unzipped": "Unzipped"
+    },
+    "never_replace": true,
+    "never_delete": true,
+    "names": {
+      "episode_pattern": "(?i)\\bS(\\d{1,2})\\s?E(\\d{1,3})\\b|\\b(\\d{1,2})x(\\d{2,3})\\b",
+      "year_pattern": "(?:^|[\\s(\\[])((?:19|20)\\d\\d)(?:$|[\\s)\\]])",
+      "noise_pattern": "(?i)\\b(?:audio\\s?descri(?:ption|bed)|described|descriptive(?:\\s(?:audio|video))?|dvs|ad|audiovault|eng(?:lish)?|track|mp3|m4a|aac)\\b",
+      "examples": [
+        {"file": "Dune (2021).mp3", "kind": "film", "name": "Dune", "year": 2021},
+        {"file": "Dune.2021.Audio.Description.mp3", "kind": "film", "name": "Dune", "year": 2021},
+        {"file": "[AD] The Bourne Identity.m4a", "kind": "film", "name": "The Bourne Identity", "year": 0},
+        {"file": "2012 (2009).mp3", "kind": "film", "name": "2012", "year": 2009},
+        {"file": "Slow Horses S01E03.mp3", "kind": "episode", "name": "Slow Horses", "season": 1, "episode": 3},
+        {"file": "Slow Horses S01E03 - Bad Tradecraft.mp3", "kind": "episode", "name": "Slow Horses", "season": 1, "episode": 3},
+        {"file": "Taskmaster 12x04.mp3", "kind": "episode", "name": "Taskmaster", "season": 12, "episode": 4}
+      ]
+    }
+  }
+}
