@@ -38,8 +38,12 @@
       "why": "only library and People are looked at"
     },
     "library/0a/0a1b/backdrop.jpg": {
-      "outcome": "ignored",
-      "why": "backdrops are left alone"
+      "outcome": "shrunk",
+      "why": "a backdrop wider than 1920 pixels",
+      "kind": "backdrop",
+      "width": 1920,
+      "height": 1080,
+      "format": "JPEG"
     },
     "library/0a/0a1b/poster.jpg": {
       "outcome": "shrunk",
@@ -48,6 +52,14 @@
       "width": 600,
       "height": 900,
       "format": "JPEG"
+    },
+    "library/1c/1c2d/logo.png": {
+      "outcome": "shrunk",
+      "why": "a PNG logo wider than 800 pixels keeps its transparency",
+      "kind": "logo",
+      "width": 800,
+      "height": 267,
+      "format": "PNG"
     },
     "library/1c/1c2d/poster.png": {
       "outcome": "shrunk",
@@ -64,6 +76,14 @@
       "width": 600,
       "height": 900,
       "format": "WEBP"
+    },
+    "library/3a/3a4b/landscape.jpg": {
+      "outcome": "shrunk",
+      "why": "a thumbnail (Jellyfin saves it as landscape) wider than 1280 pixels",
+      "kind": "thumb",
+      "width": 1280,
+      "height": 640,
+      "format": "JPEG"
     },
     "library/3a/3a4b/poster.jpg": {
       "outcome": "left",

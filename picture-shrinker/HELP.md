@@ -8,15 +8,27 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
 
 ## What it does
 
-- **Posters** are shrunk to 900 pixels tall. That is still sharp on a television.
-- **Photos of cast and crew** are shrunk to 400 pixels wide.
-- Pictures that are already that small are left alone. So are backdrops, logos and every other picture.
+It shrinks every type of picture Jellyfin saves, each to its own size:
+
+| Picture | Shrunk to |
+|---|---|
+| Posters | 900 pixels tall. Still sharp on a television |
+| Photos of cast and crew | 400 pixels wide |
+| Backdrops, the wide picture behind each film and series | 1920 pixels wide |
+| Thumbnails, the landscape picture some apps show | 1280 pixels wide |
+| Logos | 800 pixels wide |
+| Banners | 1000 pixels wide |
+| Disc art | 500 pixels wide |
+| Clear art | 800 pixels wide |
+
+Pictures that are already that small are left alone. Every type is shrunk when you add it; you can leave types out in
+**What to shrink**.
 
 Each picture is shrunk into a hidden copy beside it. The copy is opened again and checked, and it replaces the
 original only when it is the right size and smaller. If anything is wrong, the original stays as it was.
 
-Before the first shrink of each picture, its original is copied to a backup in the plug-in's own folder. If the copy
-cannot be made, the picture is not shrunk.
+You choose whether to keep a backup copy of each original, or just shrink. With a backup, each original is copied to
+the plug-in's own folder before its first shrink, and if the copy cannot be made the picture is not shrunk.
 
 It works at the lowest priority, so your server stays quick for everything else, and people can watch while it runs.
 
@@ -35,12 +47,25 @@ A run stops itself after about two hours. The next run carries on where it stopp
 
 ## Settings
 
+- **Shrink all picture types:** activated when you add it, so every type is shrunk in one setting. Deactivate it to
+  choose types one by one with the ticks under it: **Posters**, **Photos of cast and crew**, **Backdrops**,
+  **Thumbnails**, **Logos**, **Banners**, **Disc art** and **Clear art**, all activated when you add it.
+
+In **Sizes and quality**:
+
 - **Posters no taller than:** 900 pixels when you add it, from 300 to 3,000.
 - **Photos of people no wider than:** 400 pixels when you add it, from 100 to 2,000.
 - **Quality:** 85 when you add it, from 50 to 100, for JPEG and WebP pictures. PNG pictures stay lossless.
-- **Shrink posters** and **Shrink photos of cast and crew:** both activated when you add it.
-- **Back up each original before it is replaced:** activated when you add it. When deactivated, pictures shrunk from
-  then on cannot be put back.
+- **Backdrops no wider than:** 1920 pixels, from 640 to 3,840. Sharp on a 1080p screen and a little softer
+  full-screen on a 4K television.
+- **Thumbnails no wider than** 1280, **Logos** 800, **Banners** 1000, **Disc art** 500 and **Clear art** 800 pixels
+  when you add it, each with its own range.
+Its settings are in three sections. **What to shrink** comes first, so you see it when you set it up:
+
+- **Original pictures:** **Keep a backup copy of each original**, or **Just shrink, with no backup**. Nothing is
+  chosen when you add it, and after the update to 1.2.0 you choose again. Nothing is shrunk until you choose, and the
+  card says **Choose a backup**. With no backup, pictures shrunk from then on cannot be put back from a backup, but
+  **Start again** has Jellyfin download them again.
 
 A smaller number saves more space. A picture already shrunk is not made larger again if you choose a larger number.
 
@@ -54,6 +79,23 @@ A smaller number saves more space. A picture already shrunk is not made larger a
 
 The first run may need almost as much free space as the pictures take now. **Space saved** shows the size of the
 backup.
+
+## Start again
+
+**Start again** clears everything and has Jellyfin download the pictures again at full size. There are two, in
+**Actions**, and each asks you first:
+
+- **Start again: the pictures it shrinks** downloads again every picture of every type it shrinks, whatever you
+  ticked in **What to shrink**. Each one is moved aside while Jellyfin downloads a new one. A picture Jellyfin cannot download again within a day, such as a poster
+  you added yourself, is put back as it was.
+- **Start again: every picture** has Jellyfin replace every picture of every film, series and person, backdrops and
+  logos included. Pictures you added yourself in Jellyfin are replaced. It downloads much more and can take many
+  hours.
+
+Both delete the backup and the plug-in's records of what it has shrunk. Your choice in **Original pictures** is kept,
+and the next run shrinks the new pictures, backing them up first if you keep a backup. Jellyfin downloads at its own
+pace; **Space saved** shows how many new pictures have come so far. Start again is refused while a run is going, and
+nothing is changed if Jellyfin does not answer.
 
 ## Space saved
 
@@ -81,8 +123,9 @@ Before you add it, Starboard shows what it may do and asks for your password.
 
 - It reads and changes Jellyfin's metadata folder: the posters, photos and details Jellyfin saved. It changes only
   posters and photos of people. Jellyfin can download any picture again.
-- It uses Jellyfin's key for one thing: reading Jellyfin's list of plug-ins, to stay idle when Jellyfin's own version
-  is installed. It touches none of your films, series or music.
+- It uses Jellyfin's key for two things: reading Jellyfin's list of plug-ins, to stay idle when Jellyfin's own version
+  is installed, and, when you choose **Start again**, asking Jellyfin to download pictures again. It touches none of
+  your films, series or music.
 - It uses 128 MB of memory and half a processor at most.
 
 ## Updating it
@@ -95,5 +138,5 @@ goes back to the version you had, with your settings as they were.
 
 - **Stop it for a while:** choose **Deactivate**. Its settings and what it has saved are kept.
 - **Remove it:** choose **Remove**. The pictures it shrank stay shrunk. To put them back first, choose **Restore
-  original pictures**; to free the backup's space, choose **Delete backup**. Jellyfin downloads a larger copy again if you
-  choose **Refresh metadata** and **Replace existing images** for a film or series in Jellyfin.
+  original pictures**, or **Start again** to have Jellyfin download them again; to free the backup's space, choose
+  **Delete backup**.

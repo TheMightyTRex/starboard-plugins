@@ -1,15 +1,34 @@
 # Picture shrinker: Updates
 
-Picture shrinker 1.0.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Picture shrinker 1.2.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.2.0 | 1.14 or later | 2026-11-17 |
 | 1.1.1 | 1.14 or later | 2026-11-16 |
 | 1.0.0 | 1.14 or later | 2026-11-15 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.2.0
+
+Added:
+
+- **Choose the backup:** Original pictures asks whether to keep a backup copy of each original or just shrink, once it is added and again after this update. Nothing is shrunk until you choose; a backup you already have is kept.
+- **Start again** in its actions, for the pictures it shrinks or for every picture: deletes the backup and the records, and has Jellyfin download the pictures again at full size. A picture Jellyfin cannot download again is put back after a day.
+- **Every picture type:** posters, photos of people, backdrops, thumbnails, logos, banners, disc art and clear art, each with its own size and all activated when you add it, with Shrink all picture types to shrink them all in one setting. Backdrops were asked for by Lentzeris in the Jellyfin version's issue #2.
+
+Changed:
+
+- **Rules 1.2:** the same rules file as the Jellyfin version.
+
+Removed:
+
+- **Back up each original before it is replaced:** replaced by Original pictures.
+
+After this update, open Picture shrinker's tab and choose in **Original pictures**: until you do, it shrinks nothing and its card says **Choose a backup**.
 
 ## What is new in 1.1.1
 

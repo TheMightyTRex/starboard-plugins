@@ -10,6 +10,7 @@ import tempfile
 import threading
 import time
 import unittest
+import urllib.parse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from helpers import load, manifest, starboard_cleaners  # noqa: E402
@@ -30,12 +31,12 @@ def picture(path, size, fmt="JPEG", colour=(200, 120, 40)):
 @unittest.skipIf(Image is None, "Pillow is not installed")
 class PictureShrinker(unittest.TestCase):
     def setUp(self):
-        self.app = load("picture-shrinker", {})
+        self.app = load("picture-shrinker", {"originals": "keep"})
         self.meta = tempfile.TemporaryDirectory()
         self.app.ROOT = self.meta.name
         self.app.BACKUP = os.path.join(self.app._data, "originals")
         self.jellyfin_plugins = []
-        self.app.sbplugin.jellyfin = lambda path: self.jellyfin_plugins  # Jellyfin's /Plugins, as the test sets it
+        self.app._jellyfin = lambda path, method="GET": self.jellyfin_plugins  # Jellyfin's /Plugins, as the test sets it
         self.app._jf.update(at=0.0, installed=False)
         self.app._stop.clear()
         self.app.sbplugin._work["hold"] = 0.0
@@ -64,8 +65,9 @@ class PictureShrinker(unittest.TestCase):
         k = self.app.kind_of
         self.assertEqual(k(self.p("library", "ab", "123", "poster.jpg")), "poster")
         self.assertEqual(k(self.p("library", "ab", "123", "Poster.PNG")), "poster")
-        self.assertIsNone(k(self.p("library", "ab", "123", "backdrop.jpg")))
-        self.assertIsNone(k(self.p("library", "ab", "123", "logo.png")))
+        self.assertEqual(k(self.p("library", "ab", "123", "backdrop.jpg")), "backdrop")  # rules 1.2: every picture type
+        self.assertEqual(k(self.p("library", "ab", "123", "logo.png")), "logo")
+        self.assertIsNone(k(self.p("library", "ab", "123", "box.jpg")))
         self.assertEqual(k(self.p("People", "S", "Sam Neill", "folder.jpg")), "person")
         self.assertIsNone(k(self.p("People", "S", "Sam Neill", "folder.nfo")))
         self.assertIsNone(k(self.p("library", "ab", "123", ".poster.jpg.picture-shrinker-tmp")))
@@ -137,6 +139,7 @@ class PictureShrinker(unittest.TestCase):
 
     def test_a_run_counts_and_keeps_the_totals(self):
         self.library()
+        self.app._set(shrink_all=False, backdrops=False)  # a type left out is only opened, never written
         backdrop = open(self.p("library", "aa", "1", "backdrop.jpg"), "rb").read()
         rec = self.app.run("now")
         self.assertEqual((rec["seen"], rec["shrunk"], rec["left"], rec["failed"]), (4, 2, 1, 1))
@@ -265,18 +268,22 @@ class InStepWithTheJellyfinVersion(unittest.TestCase):
     def test_the_code_follows_the_rules_file(self):
         rules = json.load(open(os.path.join(os.path.dirname(SHARED), "..", "picture-shrinker", "rules.json")))
         self.assertEqual(self.app.RULES, rules)
-        self.assertEqual(rules["rules_version"], "1.1")
+        self.assertEqual(rules["rules_version"], "1.2")
         self.assertEqual(self.app.QUALITY, rules["quality"]["default"])
         self.assertEqual(self.app.EXTS, set(rules["extensions"]))
         self.assertEqual(self.app.TMP, rules["temp_suffix"])
         self.assertEqual(self.app.RUN_LIMIT, rules["run_limit_minutes"] * 60)
         self.assertEqual(self.app.NEW_AGE, rules["new_pictures"]["min_age_seconds"])
         self.assertEqual(self.app.sizes(), (rules["kinds"]["poster"]["default"], rules["kinds"]["person"]["default"]))
-        self.assertEqual(self.app.backup_on(), rules["backup"]["default"])
+        self.assertIsNone(rules["backup"]["default"])  # rules 1.2: no default, people choose
         settings = {x["key"]: x for x in manifest("picture-shrinker")["settings"]}
         for key, rule in (("poster_height", rules["kinds"]["poster"]), ("person_width", rules["kinds"]["person"]), ("quality", rules["quality"])):
             self.assertEqual((settings[key]["default"], settings[key]["min"], settings[key]["max"]), (rule["default"], rule["min"], rule["max"]))
-        self.assertEqual(settings["backup"]["default"], rules["backup"]["default"])
+        self.assertNotIn("default", settings["originals"])
+        self.assertTrue(settings["originals"]["required"])
+        self.assertEqual([c["value"] for c in settings["originals"]["choices"]], rules["backup"]["choices"])
+        self.assertEqual(self.app.ASIDE, rules["start_again"]["aside_suffix"])
+        self.assertEqual(self.app.PUT_BACK_AFTER, rules["start_again"]["put_back_after_hours"] * 3600)
         self.assertEqual(settings["new_pictures"]["default"], rules["new_pictures"]["default"])
         self.assertEqual(manifest("picture-shrinker")["version"].split(".")[:2], rules["rules_version"].split("."))
 
@@ -308,7 +315,7 @@ class InStepWithTheJellyfinVersion(unittest.TestCase):
         self.app.BACKUP = os.path.join(blocker, "originals")
         before = hashes(self.meta.name)
         rec = self.app.run("now")
-        self.assertEqual((rec["shrunk"], rec["not_backed_up"]), (0, 7))
+        self.assertEqual((rec["shrunk"], rec["not_backed_up"]), (0, 10))
         self.assertIn("could not be backed up", rec["stopped"])
         self.assertEqual(hashes(self.meta.name), before)
 
@@ -337,24 +344,24 @@ class InStepWithTheJellyfinVersion(unittest.TestCase):
         self.app.run("now")
         self.assertNotEqual(hashes(self.meta.name), original)
         rec = self.app.restore()
-        self.assertEqual(rec["restored"], 7)
+        self.assertEqual(rec["restored"], 10)
         self.assertEqual(hashes(self.meta.name), original)
         self.assertEqual((self.app.measure()["saved"], self.app.measure()["shrunk"]), (0, 0))  # nothing saved once all are back
-        self.assertEqual(self.app.restore()["already"], 7)  # the backup is kept
+        self.assertEqual(self.app.restore()["already"], 10)  # the backup is kept
 
     def test_backup_deactivated_shrinks_without_backup(self):
-        self.app._set(backup=False)
-        self.assertEqual(self.app.run("now")["shrunk"], 7)
+        self.app._set(originals="none")
+        self.assertEqual(self.app.run("now")["shrunk"], 10)
         self.assertFalse(os.path.exists(self.app.BACKUP))
         self.assertIn("nobackup", {n["id"] for n in self.app.screen()["notices"]})
 
     # Space and deleting the backup ------------------------------------------------------------------------------
     def test_space_is_measured(self):
         start = self.app.measure()
-        self.assertEqual((start["live_count"], start["backup_count"]), (11, 0))
+        self.assertEqual((start["live_count"], start["backup_count"]), (14, 0))
         rec = self.app.run("now")
         end = self.app.measure()
-        self.assertEqual((end["backup_count"], end["backup_bytes"]), (7, rec["before"]))
+        self.assertEqual((end["backup_count"], end["backup_bytes"]), (10, rec["before"]))
         self.assertEqual(end["saved"], rec["before"] - rec["after"])
         self.assertEqual(end["live_bytes"], start["live_bytes"] - end["saved"])
         self.assertEqual(self.app.remember("space")["backup_bytes"], rec["before"])  # kept for the card after the run
@@ -370,7 +377,7 @@ class InStepWithTheJellyfinVersion(unittest.TestCase):
         os.symlink(self.meta.name, os.path.join(self.app.BACKUP, "People", "linked-folder"))
         live = hashes(self.meta.name)
         said = self.app.delete_backup()["said"]
-        self.assertIn("8 original pictures", said)  # seven originals and the link itself
+        self.assertIn("11 original pictures", said)  # ten originals and the link itself
         self.assertIn(self.app.size_words(size), said)
         self.assertEqual(open(outside).read(), "outside")
         self.assertTrue(os.path.exists(not_ours))
@@ -384,7 +391,7 @@ class InStepWithTheJellyfinVersion(unittest.TestCase):
         self.app._job["thread"].start()
         self.assertIn("running", self.app.delete_backup()["said"])
         self.app._job["thread"].join()
-        self.assertEqual(self.app.measure()["backup_count"], 7)
+        self.assertEqual(self.app.measure()["backup_count"], 10)
 
     # The Jellyfin version ---------------------------------------------------------------------------------------
     def test_idle_while_the_jellyfin_version_is_installed(self):
@@ -405,7 +412,7 @@ class InStepWithTheJellyfinVersion(unittest.TestCase):
     def test_no_key_means_it_carries_on(self):
         def no_key(path):
             raise LookupError("Starboard has no Jellyfin key to give yet")
-        self.app.sbplugin.jellyfin = no_key
+        self.app._jellyfin = lambda path, method="GET": no_key(path)
         self.assertFalse(self.app.jellyfin_version_installed(force=True))
 
     # Quiet runs -------------------------------------------------------------------------------------------------
@@ -423,3 +430,231 @@ class InStepWithTheJellyfinVersion(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ChooseTheBackupAndStartAgain(unittest.TestCase):
+    """Rules 1.2: nothing is shrunk until Keep a backup copy or Just shrink is chosen, after install and after the
+    update from 1.1; Start again deletes the backup and the records, and has Jellyfin download the pictures again,
+    keeping each poster and photo aside until a new one comes, and putting it back after a day without one."""
+
+    tearDown = PictureShrinker.tearDown
+    p = PictureShrinker.p
+
+    def setUp(self):
+        PictureShrinker.setUp(self)
+        shutil.copytree(os.path.join(SHARED, "metadata"), self.meta.name, dirs_exist_ok=True)
+        self.app.REFRESH_PAUSE = 0
+        self.calls, self.fail_refresh, self.libraries = [], set(), [{"Name": "Films", "ItemId": "lib1"}, {"Name": "TV", "ItemId": "lib2"}]
+        self.jellyfin_up = True
+
+        def fake(path, method="GET"):
+            if not self.jellyfin_up:
+                raise OSError("no answer")
+            self.calls.append((method, path))
+            if path.startswith("/Plugins"):
+                return self.jellyfin_plugins
+            if path.startswith("/Persons/"):
+                name = urllib.parse.unquote(path.split("/")[2])
+                return None if name == "Dan Example" else {"Id": "person-" + name.split()[0].lower()}
+            if path == "/Library/VirtualFolders":
+                return self.libraries
+            if "/Refresh?" in path and path.split("/")[2] in self.fail_refresh:
+                raise OSError("refused")
+            return {}
+        self.app._jellyfin = fake
+        self.t = time.time()
+        self.app.now = lambda: self.t
+
+    def refreshes(self):
+        return [(p.split("/")[2], urllib.parse.parse_qs(p.split("?")[1])) for m, p in self.calls if m == "POST"]
+
+    # The choice -----------------------------------------------------------------------------------------------
+    def test_nothing_is_shrunk_until_it_is_chosen(self):
+        self.app._set(originals=None, new_pictures=True)
+        self.assertIsNone(self.app.backup_choice())
+        for said in (self.app.shrink_now(), self.app.job_shrink(), self.app.job_new()):
+            self.assertEqual(said["said"], self.app.CHOOSE)
+        self.assertFalse(self.app.running())
+        self.assertEqual(self.app.card()["status"], "needs_setup")
+        self.assertIn("choose", {n["id"] for n in self.app.screen()["notices"]})
+
+    def test_the_update_from_1_1_asks_again_and_keeps_the_backup(self):
+        self.app.run("now")
+        kept = len(list(self.app._backups()))
+        m = manifest("picture-shrinker")
+        self.assertIn({"version": "1.2.0", "remove": ["backup"]}, m["update"]["migrations"])
+        self.app._set(originals=None, backup=True)  # what Starboard leaves after the step: the old key gone, no choice
+        self.assertIsNone(self.app.backup_choice())
+        self.assertEqual(len(list(self.app._backups())), kept)
+
+    def test_keep_and_none(self):
+        self.app._set(originals="keep")
+        self.assertTrue(self.app.backup_on())
+        self.app._set(originals="none")
+        self.assertFalse(self.app.backup_on())
+
+    # Start again: posters and photos --------------------------------------------------------------------------
+    def test_posters_and_photos_are_moved_aside_and_downloaded_again(self):
+        self.app.run("now")
+        self.assertTrue(list(self.app._backups()))
+        rec = self.app.start_again("again_pictures")
+        self.assertEqual(list(self.app._backups()), [])
+        s = self.app._state()
+        self.assertEqual((s["runs"], s["shrunk"]), ([], 0))
+        self.assertEqual(s["last_start_again"]["kind"], "again_pictures")
+        self.assertEqual(self.app.backup_choice(), "keep")  # the choice is kept
+        asked = dict(self.refreshes())
+        self.assertIn("0a1b", asked)
+        self.assertIn("person-alice", asked)
+        self.assertNotIn("x", asked)  # collections are not touched
+        for q in asked.values():
+            self.assertEqual((q["ReplaceAllImages"], q["ImageRefreshMode"], q["Recursive"]), (["false"], ["FullRefresh"], ["false"]))
+        self.assertEqual(rec["not_found"], 1)  # Dan Example: Jellyfin does not know him, so his photo stays
+        self.assertTrue(os.path.exists(self.p("People", "D", "Dan Example", "folder.jpg")))
+        self.assertFalse(os.path.exists(self.p("library", "0a", "0a1b", "poster.jpg")))
+        self.assertTrue(os.path.exists(self.p("library", "0a", "0a1b", ".poster.jpg" + self.app.ASIDE)))
+        self.assertTrue(os.path.exists(self.p("library", "0a", "0a1b", ".backdrop.jpg" + self.app.ASIDE)))  # every type it shrinks
+        self.assertEqual(len(self.app._aside()["files"]), rec["moved"])
+
+    def test_a_refused_refresh_puts_the_pictures_straight_back(self):
+        self.fail_refresh = {"0a1b"}
+        rec = self.app.start_again("again_pictures")
+        self.assertTrue(os.path.exists(self.p("library", "0a", "0a1b", "poster.jpg")))
+        self.assertFalse(os.path.exists(self.p("library", "0a", "0a1b", ".poster.jpg" + self.app.ASIDE)))
+        self.assertEqual(rec["failed"], 1)
+
+    def test_settling_deletes_or_puts_back(self):
+        self.app.start_again("again_pictures")
+        new = picture(self.p("library", "0a", "0a1b", "poster.jpg"), (600, 900))  # Jellyfin downloaded a new one
+        self.assertTrue(self.app.settle())
+        self.assertFalse(os.path.exists(self.p("library", "0a", "0a1b", ".poster.jpg" + self.app.ASIDE)))
+        self.assertTrue(os.path.exists(new))
+        waiting = self.app._aside()["files"]
+        link_old = self.p("library", "3a", "3a4b", ".poster.jpg" + self.app.ASIDE)
+        if os.path.exists(link_old):
+            os.remove(link_old)
+            os.symlink(self.p("library", "0a", "0a1b", "poster.jpg"), link_old)
+        self.t += self.app.PUT_BACK_AFTER
+        self.assertEqual(self.app.settle(), 0)
+        a = self.app._aside()
+        self.assertEqual(a["files"], [])
+        self.assertEqual(a["replaced"], 1)
+        self.assertEqual(a["put_back"], len(waiting) - 1)
+        self.assertTrue(os.path.exists(self.p("People", "A", "Alice Example", "folder.jpg")))
+        self.assertTrue(os.path.islink(link_old))  # a link is never followed or moved
+        self.assertTrue(os.path.exists(new))
+
+    # Start again: every picture -------------------------------------------------------------------------------
+    def test_every_picture_refreshes_each_library_and_person(self):
+        rec = self.app.start_again("again_all")
+        asked = self.refreshes()
+        libs = {i: q for i, q in asked if i.startswith("lib")}
+        self.assertEqual(set(libs), {"lib1", "lib2"})
+        for q in libs.values():
+            self.assertEqual((q["Recursive"], q["ReplaceAllImages"]), (["true"], ["true"]))
+        people = {i: q for i, q in asked if i.startswith("person-")}
+        self.assertEqual(set(people), {"person-alice", "person-bob", "person-cara"})
+        for q in people.values():
+            self.assertEqual((q["Recursive"], q["ReplaceAllImages"]), (["false"], ["true"]))
+        self.assertEqual(rec["not_found"], 1)
+        self.assertEqual(self.app._aside()["files"], [])  # nothing is moved aside
+
+    # When it may start ----------------------------------------------------------------------------------------
+    def test_start_again_is_refused_during_a_run(self):
+        hold = threading.Event()
+        self.app._job["thread"] = threading.Thread(target=hold.wait, daemon=True)
+        self.app._job["thread"].start()
+        try:
+            self.assertIn("shrinker is running", self.app.start_again_now("again_pictures")["said"])
+        finally:
+            hold.set()
+            self.app._job["thread"].join(5)
+        self.assertEqual(self.refreshes(), [])
+
+    def test_no_jellyfin_means_nothing_is_changed(self):
+        self.app.run("now")
+        before = hashes(self.meta.name)
+        self.jellyfin_up = False
+        self.assertIn("Jellyfin did not answer", self.app.start_again_now("again_pictures")["said"])
+        self.assertEqual(hashes(self.meta.name), before)
+        self.assertTrue(list(self.app._backups()))
+
+    def test_idle_beside_the_jellyfin_version(self):
+        self.jellyfin_plugins = [{"Name": "Picture shrinker", "Id": "80bf9325d2994e24ac74c087aeec3011", "Status": "Active"}]
+        self.app._jellyfin = lambda path, method="GET": self.jellyfin_plugins
+        self.assertIn("Jellyfin's own Picture shrinker", self.app.start_again_now("again_all")["said"])
+
+    def test_the_actions_ask_first(self):
+        acts = {a["id"]: a for a in manifest("picture-shrinker")["actions"]}
+        for aid in ("start-again-pictures", "start-again-all"):
+            self.assertLessEqual(len(acts[aid]["confirm"]), 300)
+            self.assertIn(("POST", acts[aid]["path"]), self.app.ROUTES)
+
+
+@unittest.skipIf(Image is None, "Pillow is not installed")
+class EveryPictureType(unittest.TestCase):
+    """Rules 1.2: every picture type Jellyfin saves under library (backdrops asked for in the Jellyfin version's issue
+    #2), each with its own size and all activated when it is added, and Shrink all picture types."""
+
+    tearDown = PictureShrinker.tearDown
+    p = PictureShrinker.p
+
+    def setUp(self):
+        PictureShrinker.setUp(self)
+
+    def test_each_type_is_found_by_its_name(self):
+        k = self.app.kind_of
+        for name, kind in (("backdrop.jpg", "backdrop"), ("backdrop3.jpg", "backdrop"), ("landscape.jpg", "thumb"),
+                           ("logo.png", "logo"), ("banner.jpg", "banner"), ("disc.png", "disc"), ("clearart.png", "clearart"),
+                           ("poster.jpg", "poster")):
+            self.assertEqual(k(self.p("library", "ab", "123", name)), kind, name)
+        self.assertIsNone(k(self.p("library", "ab", "123", "box.jpg")))
+
+    def test_every_type_is_shrunk_when_added(self):
+        self.assertEqual(self.app.included(), set(self.app.KINDS))
+        self.assertEqual(len(self.app.KINDS), 8)
+
+    def test_shrink_all_overrides_the_ticks_and_the_ticks_apply_without_it(self):
+        self.app._set(backdrops=False, logos=False)
+        self.assertEqual(self.app.included(), set(self.app.KINDS))
+        self.app._set(shrink_all=False)
+        self.assertEqual(self.app.included(), set(self.app.KINDS) - {"backdrop", "logo"})
+
+    def test_a_backdrop_and_a_logo_are_shrunk_to_their_widths(self):
+        b = picture(self.p("library", "ab", "123", "backdrop.jpg"), (3840, 2160))
+        logo = picture(self.p("library", "ab", "123", "logo.png"), (2000, 776), "PNG")
+        rec = self.app.run("now")
+        self.assertEqual(rec["shrunk"], 2)
+        with Image.open(b) as im:
+            self.assertEqual(im.size, (1920, 1080))
+        with Image.open(logo) as im:
+            self.assertEqual((im.size, im.format), ((800, 310), "PNG"))
+
+    def test_a_type_left_out_is_left_alone(self):
+        b = picture(self.p("library", "ab", "123", "backdrop.jpg"), (3840, 2160))
+        before = open(b, "rb").read()
+        self.app._set(shrink_all=False, backdrops=False)
+        self.assertEqual(self.app.run("now")["shrunk"], 0)
+        with open(b, "rb") as f:
+            self.assertEqual(f.read(), before)
+
+    def test_sizes_follow_the_rules_and_the_settings(self):
+        settings = {x["key"]: x for x in manifest("picture-shrinker")["settings"]}
+        for kind, r in self.app.KINDS.items():
+            s = settings[self.app.SIZE[kind]]
+            self.assertEqual((s["default"], s["min"], s["max"]), (r["default"], r["min"], r["max"]), kind)
+            self.assertEqual(settings[self.app.SWITCH[kind]]["default"], r["shrink_by_default"], kind)
+        self.assertEqual(settings["shrink_all"]["default"], self.app.RULES["shrink_all"]["default"])
+        self.assertEqual({settings[k]["group"] for k in ("originals", "shrink_all", "logos")}, {"What to shrink"})
+
+    def test_start_again_covers_every_type_whatever_the_ticks(self):
+        self.tearDown()
+        ChooseTheBackupAndStartAgain.setUp(self)  # its Jellyfin stand-in and the shared pictures
+        picture(self.p("library", "ab", "abcd", "logo.png"), (900, 300), "PNG")
+        self.app._set(shrink_all=False, logos=False)
+        self.app.start_again("again_pictures")
+        self.assertTrue(os.path.exists(self.p("library", "ab", "abcd", ".logo.png" + self.app.ASIDE)))
+        new = picture(self.p("library", "ab", "abcd", "logo.png"), (900, 300), "PNG")
+        self.app.settle()
+        self.assertFalse(os.path.exists(self.p("library", "ab", "abcd", ".logo.png" + self.app.ASIDE)))
+        self.assertTrue(os.path.exists(new))

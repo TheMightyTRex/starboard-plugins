@@ -1,5 +1,5 @@
 {
-  "rules_version": "1.1",
+  "rules_version": "1.2",
   "about": "The rules both picture shrinkers follow: the Jellyfin plug-in (this repository) and the Starboard plug-in (TheMightyTRex/starboard-plugins, picture-shrinker). Change them here only; SYNC.md says how.",
   "kinds": {
     "poster": {
@@ -8,7 +8,8 @@
       "limit": "height",
       "default": 900,
       "min": 300,
-      "max": 3000
+      "max": 3000,
+      "shrink_by_default": true
     },
     "person": {
       "folder": "People",
@@ -16,24 +17,125 @@
       "limit": "width",
       "default": 400,
       "min": 100,
-      "max": 2000
+      "max": 2000,
+      "shrink_by_default": true
+    },
+    "backdrop": {
+      "folder": "library",
+      "name_starts_with": "backdrop",
+      "limit": "width",
+      "default": 1920,
+      "min": 640,
+      "max": 3840,
+      "shrink_by_default": true
+    },
+    "thumb": {
+      "folder": "library",
+      "name_starts_with": "landscape",
+      "limit": "width",
+      "default": 1280,
+      "min": 480,
+      "max": 3840,
+      "shrink_by_default": true
+    },
+    "logo": {
+      "folder": "library",
+      "name_starts_with": "logo",
+      "limit": "width",
+      "default": 800,
+      "min": 300,
+      "max": 2000,
+      "shrink_by_default": true
+    },
+    "banner": {
+      "folder": "library",
+      "name_starts_with": "banner",
+      "limit": "width",
+      "default": 1000,
+      "min": 300,
+      "max": 3000,
+      "shrink_by_default": true
+    },
+    "disc": {
+      "folder": "library",
+      "name_starts_with": "disc",
+      "limit": "width",
+      "default": 500,
+      "min": 200,
+      "max": 2000,
+      "shrink_by_default": true
+    },
+    "clearart": {
+      "folder": "library",
+      "name_starts_with": "clearart",
+      "limit": "width",
+      "default": 800,
+      "min": 300,
+      "max": 2000,
+      "shrink_by_default": true
     }
   },
-  "extensions": [".jpg", ".jpeg", ".png", ".webp"],
-  "formats": ["JPEG", "PNG", "WEBP"],
-  "quality": { "default": 85, "min": 50, "max": 100 },
+  "shrink_all": {
+    "default": true
+  },
+  "extensions": [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp"
+  ],
+  "formats": [
+    "JPEG",
+    "PNG",
+    "WEBP"
+  ],
+  "quality": {
+    "default": 85,
+    "min": 50,
+    "max": 100
+  },
   "rounding": "half_to_even",
   "temp_suffix": ".picture-shrinker-tmp",
   "skip_hidden": true,
-  "checks": ["decodes_in_full", "size_matches", "format_matches", "smaller_than_original"],
-  "keep_from_original": ["mode", "owner"],
+  "checks": [
+    "decodes_in_full",
+    "size_matches",
+    "format_matches",
+    "smaller_than_original"
+  ],
+  "keep_from_original": [
+    "mode",
+    "owner"
+  ],
   "backup": {
-    "default": true,
+    "default": null,
+    "choices": [
+      "keep",
+      "none"
+    ],
+    "ask_after_install": true,
+    "ask_after_update_to": "1.2",
     "folder": "picture-shrinker/originals",
     "never_overwrite": true,
     "keep_free_bytes": 104857600
   },
-  "new_pictures": { "default": false, "min_age_seconds": 600 },
+  "start_again": {
+    "kinds": [
+      "posters_and_photos",
+      "every_picture"
+    ],
+    "deletes_backup": true,
+    "clears_records": true,
+    "keeps_backup_choice": true,
+    "aside_suffix": ".picture-shrinker-old",
+    "settle_every_minutes": 10,
+    "put_back_after_hours": 24,
+    "pause_between_refreshes_ms": 50
+  },
+  "new_pictures": {
+    "default": false,
+    "min_age_seconds": 600
+  },
   "run_limit_minutes": 115,
   "keep_runs": 20,
   "keep_failures_per_run": 20
