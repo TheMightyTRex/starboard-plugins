@@ -209,6 +209,73 @@ class PictureShrinker(unittest.TestCase):
         self.assertEqual(c["status"], "scheduled")  # only the figures change while it runs
         self.assertIn("12 pictures shrunk of 30", c["note"])
 
+    # Space saved by type (1.2.2) ----------------------------------------------------------------------------------
+    def test_space_saved_by_type_comes_from_the_runs(self):
+        cleaners = starboard_cleaners()
+        empty = self.app.card_by_type()
+        self.assertEqual(empty["items"][0]["title"], "Nothing shrunk yet")
+        self.assertIn("Shrink now", empty["items"][0]["detail"])
+        self.assertIn("Nothing shrunk yet", self.app.card()["note"])
+        self.library()
+        rec = self.app.run("now")
+        kinds = self.app._state()["by_kind"]
+        self.assertEqual(set(kinds), {"poster", "person"})  # the backdrop is already 1920 wide
+        self.assertEqual(sum(v[0] for v in kinds.values()), rec["shrunk"])
+        self.assertEqual(sum(v[1] - v[2] for v in kinds.values()), rec["before"] - rec["after"])
+        c = self.app.card_by_type()
+        titles = [i["title"] for i in c["items"]]
+        self.assertTrue(any(t.startswith("Posters: ") for t in titles))
+        self.assertTrue(any(t.startswith("Photos of cast and crew: ") for t in titles))
+        self.assertTrue(titles[-1].startswith("Last run: "))
+        self.assertIn("Shrink now: 2 pictures shrunk", c["items"][-1]["detail"])
+        self.assertEqual(c["status"], "scheduled")
+        page = self.app.screen_by_type()
+        self.assertEqual({i["group"] for i in page["items"]}, {"By type", "In all"})
+        self.assertEqual(page["items"][-1]["cells"]["shrunk"], "2")
+        self.assertEqual(page["notices"], [])
+        if cleaners:
+            plugin_cards, plugin_custom = cleaners
+            for card in (empty, c):
+                plugin_cards.clean("list", card, strict=True)
+            plugin_cards.clean("stat", self.app.card(), strict=True)
+            plugin_custom.clean(page)
+        for item in c["items"]:  # nothing is cut by Starboard
+            self.assertLessEqual(len(item["title"]), 80)
+            self.assertLessEqual(len(item["detail"]), 120)
+
+    def test_a_restore_takes_its_pictures_off_each_type(self):
+        self.library()
+        self.app.run("now")
+        self.app.restore()
+        self.assertEqual(self.app._state()["by_kind"], {})
+        self.assertEqual(self.app.card_by_type()["items"][0]["title"], "Nothing shrunk yet")
+
+    def test_pictures_shrunk_before_1_2_2_share_one_row(self):
+        self.app.keep("state", {"shrunk": 10, "before": 9_000_000, "after": 3_000_000, "runs": []})  # kept by 1.2
+        rows = self.app.by_type()
+        self.assertEqual(rows, [("Before version 1.2.2, all types", 10, 9_000_000, 3_000_000)])
+        self.assertEqual(self.app.card_by_type()["items"][0]["title"], "Before version 1.2.2, all types: 5.7 MB")  # as Starboard shows sizes
+
+    def test_cards_say_what_to_do_before_the_backup_is_chosen(self):
+        self.app._set(originals=None)
+        c, b = self.app.card(), self.app.card_by_type()
+        self.assertEqual(c["status"], "needs_setup")
+        self.assertLessEqual(len(c["note"]), 80)  # Starboard cuts a stat card's note at 80
+        self.assertIn("Original pictures", c["note"])
+        self.assertEqual((b["status"], b["status_label"]), ("needs_setup", "Choose a backup"))
+        self.assertIn("Original pictures", b["items"][0]["detail"])
+        self.assertLessEqual(len(b["items"][0]["detail"]), 120)  # Starboard cuts a list item's detail at 120
+        self.assertIn("Original pictures", self.app.screen_by_type()["notices"][0]["text"])
+
+    def test_cards_read_kept_figures_only(self):
+        self.library()
+        self.app.run("now")
+        self.app.measure = lambda: self.fail("a card measured the pictures")
+        self.app.pictures = lambda *a, **k: self.fail("a card walked the pictures")
+        self.app.card()
+        self.app.card_by_type()
+        self.app.screen_by_type()
+
     # Updates and health -----------------------------------------------------------------------------------------
     def test_before_update_stops_a_run_after_the_picture_it_is_on(self):
         for i in range(80):

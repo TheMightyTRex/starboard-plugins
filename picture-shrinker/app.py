@@ -49,6 +49,9 @@ SWITCH = {"poster": "posters", "person": "people", "backdrop": "backdrops", "thu
           "banner": "banners", "disc": "discs", "clearart": "clearart"}
 SIZE = {"poster": "poster_height", "person": "person_width", "backdrop": "backdrop_width", "thumb": "thumb_width",
         "logo": "logo_width", "banner": "banner_width", "disc": "disc_width", "clearart": "clearart_width"}
+# Each kind's name on the card and the Saved by type page: the words of its switch in the settings.
+NAMES = {"poster": "Posters", "person": "Photos of cast and crew", "backdrop": "Backdrops", "thumb": "Thumbnails",
+         "logo": "Logos", "banner": "Banners", "disc": "Disc art", "clearart": "Clear art"}
 EXTS = set(RULES["extensions"])
 FORMATS = tuple(RULES["formats"])
 TMP = RULES["temp_suffix"]  # its own unfinished copies, beside each picture: never shrunk, tidied at each run
@@ -333,6 +336,30 @@ def _state():
     return {"shrunk": 0, "before": 0, "after": 0, "runs": [], **s}
 
 
+def _add_kinds(total, more, sign=1):
+    """The kept figures for each kind of picture, {kind: [pictures, bytes before, bytes after]}, with a run's added
+    (or a restore's taken off), never less than nothing."""
+    out = {k: list(v) for k, v in (total or {}).items() if k in KINDS and isinstance(v, list) and len(v) == 3}
+    for k, v in (more or {}).items():
+        if k in KINDS:
+            t = out.setdefault(k, [0, 0, 0])
+            out[k] = [max(0, a + sign * b) for a, b in zip(t, v)]
+    return {k: v for k, v in out.items() if v[0]}
+
+
+def by_type(s=None):
+    """The space saved for each kind of picture, from the figures kept after each run (nothing is measured): a list of
+    (name, pictures, bytes before, bytes after), the most saved first. Pictures shrunk before version 1.2.2 were not
+    counted by kind; what they saved is one row of its own."""
+    s = s or _state()
+    kinds = s.get("by_kind") or {}
+    rows = sorted(((NAMES[k], *v) for k, v in kinds.items() if k in NAMES), key=lambda r: (-(r[2] - r[3]), r[0]))
+    rest = [s["shrunk"] - sum(r[1] for r in rows), s["before"] - sum(r[2] for r in rows), s["after"] - sum(r[3] for r in rows)]
+    if rest[0] > 0 and rest[1] > rest[2]:
+        rows.append(("Before version 1.2.2, all types", *rest))
+    return rows
+
+
 def run(kind, since=None, limit=RUN_LIMIT):
     """One run over the pictures (or those changed since `since`): returns its record, kept in the state file."""
     _lowest_priority()
@@ -342,7 +369,7 @@ def run(kind, since=None, limit=RUN_LIMIT):
     started = now()
     rec = {"kind": kind, "start": started, "end": None, "seen": 0, "shrunk": 0, "left": 0, "failed": 0, "not_backed_up": 0,
            "before": 0, "after": 0, "backed_up": 0, "backed_up_bytes": 0, "stopped": "", "poster_height": poster_height,
-           "person_width": person_width, "limits": others}
+           "person_width": person_width, "limits": others, "by_kind": {}}
     tidy()
     with _lock:
         settle()
@@ -369,6 +396,10 @@ def run(kind, since=None, limit=RUN_LIMIT):
             rec["shrunk"] += 1
             rec["before"] += got[0]
             rec["after"] += got[1]
+            k = rec["by_kind"].setdefault(pkind, [0, 0, 0])  # pictures, bytes before, bytes after: counted as it goes
+            k[0] += 1
+            k[1] += got[0]
+            k[2] += got[1]
             if got[2]:
                 rec["backed_up"] += 1
                 rec["backed_up_bytes"] += got[2]
@@ -382,7 +413,7 @@ def run(kind, since=None, limit=RUN_LIMIT):
         rec["stopped"] = f"{rec['not_backed_up']:,} not shrunk because their originals could not be backed up"
     s = _state()
     s.update(shrunk=s["shrunk"] + rec["shrunk"], before=s["before"] + rec["before"], after=s["after"] + rec["after"],
-             runs=(s["runs"] + [rec])[-KEEP_RUNS:])
+             runs=(s["runs"] + [rec])[-KEEP_RUNS:], by_kind=_add_kinds(s.get("by_kind"), rec["by_kind"]))
     if kind == "new" or (kind != "new" and not rec["stopped"]):
         s["new_since"] = (started - NEW_AGE) if kind == "new" else started  # the next pass of new pictures starts here
     keep("state", s)
@@ -398,6 +429,13 @@ def summary(rec):
     words = (f"Shrank {plural(rec['shrunk'], 'picture')}, {size_words(rec['before'])} to {size_words(rec['after'])}; "
              f"left {rec['left']:,} that were small enough" + (f"; could not read {rec['failed']:,}" if rec["failed"] else ""))
     return words + (f". {rec['stopped']}" if rec["stopped"] else "")
+
+
+def run_words(rec):
+    """One run in a line for the card, within its 120 characters: what started it, what it shrank and saved."""
+    words = (f"{WHAT.get(rec['kind'], 'A run')}: {plural(rec['shrunk'], 'picture')} shrunk, {size_words(rec['before'] - rec['after'])} saved"
+             + (f", {rec['left']:,} left as they were" if rec["left"] else ""))
+    return words + (". Stopped before the end; the next run carries on" if rec["stopped"] else "")
 
 
 def start(kind, since=None, limit=RUN_LIMIT):
@@ -471,7 +509,7 @@ def restore():
     whose film, series or person is no longer in Jellyfin stays in the backup."""
     _lowest_priority()
     rec = {"kind": "restore", "start": now(), "end": None, "restored": 0, "bytes": 0, "shrunk_bytes": 0, "already": 0, "gone": 0,
-           "failed": 0, "stopped": ""}
+           "failed": 0, "stopped": "", "by_kind": {}}
     for copy in _backups():
         if _stop.is_set():
             rec["stopped"] = "Stopped by you" if not sbplugin.holding() else "Stopped for an update"
@@ -498,6 +536,10 @@ def restore():
             rec["restored"] += 1
             rec["bytes"] += os.path.getsize(live)
             rec["shrunk_bytes"] += shrunk_size
+            k = rec["by_kind"].setdefault(kind_of(live), [0, 0, 0])
+            k[0] += 1
+            k[1] += os.path.getsize(live)
+            k[2] += shrunk_size
         except OSError:
             rec["failed"] += 1
         finally:
@@ -508,7 +550,7 @@ def restore():
     s["last_restore"] = rec
     # The space saved is what is saved now: a restored picture no longer counts.
     s.update(shrunk=max(0, s["shrunk"] - rec["restored"]), before=max(0, s["before"] - rec["bytes"]),
-             after=max(0, s["after"] - rec["shrunk_bytes"]))
+             after=max(0, s["after"] - rec["shrunk_bytes"]), by_kind=_add_kinds(s.get("by_kind"), rec["by_kind"], -1))
     keep("state", s)
     keep("space", measure())
     return rec
@@ -833,10 +875,12 @@ IDLE = ("Idle: Jellyfin's own Picture shrinker plug-in is installed, so this one
 # What Starboard calls ------------------------------------------------------------------------------------------
 
 def size_words(n):
+    """A size as Starboard shows one (1 KB is 1,024 bytes), so these words agree with the number on the Space saved
+    card, which Starboard draws from its bytes (1.2.2; the Jellyfin version counts 1 KB as 1,000 bytes)."""
     n = float(n or 0)
-    for unit, by in (("GB", 1e9), ("MB", 1e6), ("KB", 1e3)):
+    for unit, by in (("TB", 1024 ** 4), ("GB", 1024 ** 3), ("MB", 1024 ** 2), ("KB", 1024)):
         if abs(n) >= by:
-            return f"{n / by:.1f} {unit}"
+            return f"{n / by:,.1f} {unit}"
     return f"{int(n):,} bytes"
 
 
@@ -925,10 +969,29 @@ def after_update(body=None):
     return {"ok": True, "said": f"Ready. The next run is {when_words(next_run())}"}
 
 
+NOT_YET = "Nothing shrunk yet"
+FIRST_CHOOSE = "Choose an option in Original pictures, in its settings: keep a backup, or shrink without one"  # 120 at most
+
+
+def _note(*parts):
+    """A stat card's note, in Starboard's 80 characters: the parts that fit, in order, never a word cut in half."""
+    out = ""
+    for p in parts:
+        if p and len(out + p) <= 80:
+            out += p
+    return out
+
+
+def _last_run(s):
+    """The last run that shrank or checked pictures (not a restore or a Start again), or None."""
+    return next((r for r in reversed(s["runs"]) if r.get("kind") in ("scheduled", "now", "new")), None)
+
+
 def card():
-    """Space saved and the backup, from the figures kept after the last run or action. The band always says when it
-    runs next (or that it is idle): a finished run, or a failed one, changes only the figures, never the status, so
-    nothing on the dashboard asks for attention."""
+    """Space saved: the space saved so far, how many pictures are shrunk and when it runs next, from the figures kept
+    after the last run or action (nothing is measured when the card asks). The band always says when it runs next (or
+    that it is idle): a finished run, or a failed one, changes only the figures, never the status, so nothing on the
+    dashboard asks for attention."""
     s, p = _state(), _job["progress"]
     sp = remember("space", None) or {}
     saved = int(s["before"] - s["after"])
@@ -940,31 +1003,68 @@ def card():
         return band({"value": 0, "label": "saved", "note": f"Starting again: Jellyfin asked about {p['asked']:,} so far"},
                     "working", None, "Starting again", refresh=60)
     if not backup_choice():
-        return band({"value": saved, "label": "saved", "note": CHOOSE}, "needs_setup", None, "Choose a backup", refresh=600)
+        note = _note(f"{plural(s['shrunk'], 'picture')} shrunk. " if s["shrunk"] else f"{NOT_YET}. ",
+                     "Choose a backup in Original pictures, in its settings")
+        return band({"value": saved, "label": "saved", "note": note}, "needs_setup", None, "Choose a backup", refresh=600)
     nxt = next_run()
     label = None  # the band says Scheduled; the next run's time is in the note (a chip holds no number or time)
     if p:
         return band({"value": saved + int(p["before"] - p["after"]), "label": "saved",
                      "note": f"{plural(p['shrunk'], 'picture')} shrunk of {p['seen']:,} checked so far"},
                     "scheduled", None, label, refresh=60)
-    if not s["runs"]:
-        return band({"value": 0, "label": "saved", "note": f"First run {when_words(nxt)}"}, "scheduled", None,
-                    None, refresh=600)
+    if not s["shrunk"]:
+        return band({"value": 0, "label": "saved", "note": _note(f"{NOT_YET}. ", f"First run {when_words(nxt)}" if not s["runs"]
+                                                                 else f"Next run {when_words(nxt)}")},
+                    "scheduled" if nxt else "done", (s["runs"][-1]["end"] if s["runs"] else None), None, refresh=600)
     last = s["runs"][-1]
-    return band({"value": saved, "label": "saved", "note": f"{plural(s['shrunk'], 'picture')} shrunk{backup}. Next run {when_words(nxt)}"[:120]},
-                "scheduled" if nxt else "done", last["end"], label, refresh=600)
+    shrunk = f"{plural(s['shrunk'], 'picture')} shrunk"
+    note = next((n for n in (f"{shrunk}{backup}. Next run {when_words(nxt)}", f"{shrunk}{backup}. Next run {when_words(nxt, short=True)}",
+                             f"{shrunk}. Next run {when_words(nxt, short=True)}") if len(n) <= 80), shrunk)
+    return band({"value": saved, "label": "saved", "note": note}, "scheduled" if nxt else "done", last["end"], label, refresh=600)
+
+
+def card_by_type():
+    """Space saved by type: what each kind of picture saved and the last run, from the figures kept after each run.
+    Nothing is measured when the card asks."""
+    s, p = _state(), _job["progress"]
+    if jellyfin_version_installed():
+        return band({"items": [{"title": "Idle: Jellyfin's own Picture shrinker is installed",
+                                "detail": "This plug-in does nothing while it is installed. Its figures are in Jellyfin"}]},
+                    "idle", None, "Idle", refresh=600)
+    if p and _job["kind"] in ("again_pictures", "again_all"):
+        return band({"items": [{"title": "Starting again", "detail": f"Jellyfin asked about {p['asked']:,} so far. The figures start again from nothing"}]},
+                    "working", None, "Starting again", refresh=60)
+    nxt = next_run()
+    rows = by_type(s)
+    if not backup_choice():
+        status = ("needs_setup", "Choose a backup")
+        items = [{"title": "Choose a backup to carry on" if rows else NOT_YET, "detail": FIRST_CHOOSE}]
+    else:
+        status, items = ("scheduled" if nxt else "done", None), []
+        if not rows:
+            items = [{"title": NOT_YET, "detail": (f"The first run is {when_words(nxt)}. " if nxt else "")
+                      + "To start now, choose Shrink now in its actions"}]
+    for name, n, before, after in rows[:8]:
+        items.append({"title": f"{name}: {size_words(before - after)}",
+                      "detail": f"{plural(n, 'picture')} shrunk, from {size_words(before)} to {size_words(after)}"})
+    last = _last_run(s)
+    if p:
+        items.append({"title": "Running now", "detail": f"{plural(p['shrunk'], 'picture')} shrunk of {p['seen']:,} checked so far"})
+    elif last and len(items) < 10:
+        when = dt.datetime.fromtimestamp(last["end"] or last["start"])
+        items.append({"title": f"Last run: {when:%a %-d %b %Y, %H:%M}", "detail": run_words(last)})
+    return band({"items": items[:10]}, status[0], last["end"] if last else None, status[1], refresh=60 if p else 600)
 
 
 def screen():
     """Space saved: the pictures now, the backup and the space saved (measured as the page opens), and each run."""
     s, p = _state(), _job["progress"]
-    ph, pw = sizes()
     sp = measure()
     keep("space", sp)
-    intro = (f"Pictures now: {size_words(sp['live_bytes'])} in {plural(sp['live_count'], 'poster or photo', 'posters and photos')}. "
+    intro = (f"Space saved: {size_words(sp['saved'])} by shrinking {plural(sp['shrunk'], 'picture')}; each type of picture is in Saved by type. "
+             f"Pictures now: {size_words(sp['live_bytes'])} in {plural(sp['live_count'], 'picture')}. "
              f"Backup of the originals: {size_words(sp['backup_bytes'])} in {plural(sp['backup_count'], 'picture')}. "
-             f"Space saved: {size_words(sp['saved'])} by shrinking {plural(sp['shrunk'], 'picture')}. "
-             f"Posters to {ph} pixels tall, photos of people to {pw} wide. The next run is {when_words(next_run())}.")
+             f"The next run is {when_words(next_run())}.")
     notices = []
     if jellyfin_version_installed(force=True):
         notices.append({"id": "jellyfin", "tone": "info", "title": "Idle: Jellyfin's own Picture shrinker is installed",
@@ -1019,6 +1119,32 @@ def screen():
             "notices": notices, "items": items}
 
 
+def screen_by_type():
+    """Saved by type: the space each kind of picture saved, from the figures kept after each run. Nothing is measured,
+    so the page opens at once."""
+    s = _state()
+    rows = by_type(s)
+    notices = []
+    if not rows:
+        notices.append({"id": "none", "tone": "info", "title": NOT_YET,
+                        "text": (FIRST_CHOOSE + ". Nothing is shrunk until you choose. Then choose Shrink now in Actions, or wait for When to shrink.")
+                        if not backup_choice()
+                        else f"The first run is {when_words(next_run())}. To start now, choose Shrink now in Actions."})
+    items = [{"id": f"k{i}", "title": name, "group": "By type", "actions": [],
+              "cells": {"type": name, "shrunk": f"{n:,}", "before": size_words(before), "after": size_words(after),
+                        "saved": size_words(before - after)}} for i, (name, n, before, after) in enumerate(rows)]
+    if rows:
+        items.append({"id": "all", "title": "All types", "group": "In all", "actions": [],
+                      "cells": {"type": "All types", "shrunk": f"{s['shrunk']:,}", "before": size_words(s["before"]),
+                                "after": size_words(s["after"]), "saved": size_words(s["before"] - s["after"])}})
+    intro = (f"Space saved: {size_words(s['before'] - s['after'])} by shrinking {plural(s['shrunk'], 'picture')}, by type of picture, "
+             "from the figures kept after each run. A restore takes its pictures off; Start again starts the figures again from nothing.")
+    return {"type": "list", "title": "Saved by type", "layout": "folds", "readonly": True, "intro": intro[:400],
+            "columns": [{"key": "type", "label": "Type of picture"}, {"key": "shrunk", "label": "Pictures shrunk", "type": "number"},
+                        {"key": "before", "label": "Size before"}, {"key": "after", "label": "Size now"}, {"key": "saved", "label": "Saved"}],
+            "notices": notices, "items": items}
+
+
 def screen_post(body=None):
     if (body or {}).get("action") == "dismiss":
         if (body or {}).get("id") in ("restore", "again"):
@@ -1039,7 +1165,8 @@ def health():
     return {"ok": True}
 
 
-ROUTES = {("GET", "/health"): health, "/card": card, "/saved": screen, ("POST", "/saved"): screen_post,
+ROUTES = {("GET", "/health"): health, "/card": card, "/card/by-type": card_by_type, "/saved": screen, ("POST", "/saved"): screen_post,
+          "/saved-by-type": screen_by_type, ("POST", "/saved-by-type"): lambda body=None: screen_by_type(),
           ("POST", "/shrink-now"): shrink_now, ("POST", "/stop"): stop, ("POST", "/restore"): restore_now,
           ("POST", "/delete-backup"): delete_backup_now, ("POST", "/jobs/shrink"): job_shrink,
           ("POST", "/start-again-pictures"): lambda body=None: start_again_now("again_pictures"),
