@@ -42,6 +42,8 @@ can do only what is listed here, and only after you agree.
 | [Uptime Kuma](../plugins/uptime-kuma/install.md) | Home network and internet, Its own web page | Only its own folder |
 | [Seerr](../plugins/seerr/install.md) | Home network and internet, Its own web page | Only its own folder |
 | [Tdarr](../plugins/tdarr/install.md) | Home network and internet, Its own web page | `media/tdarr-cache`, `media/movies`, `media/tv` |
+| [Themearr](../plugins/themearr/install.md) | Reelix's key, Home network and internet, Its own web page | `media/movies`: adds `theme.mp3` to each film's folder |
+| [Checkrr](../plugins/checkrr/install.md) | Home network and internet, Its own web page | Only its own folder; reads `media/movies` and `media/tv` |
 
 Every plug-in may also change its own folder in Starboard's data, `data/plugins/<its id>`.
 

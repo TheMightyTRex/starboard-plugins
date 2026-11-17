@@ -1,0 +1,46 @@
+# checkrr's settings in Starboard. Starboard writes this file once, when the plug-in first starts, into
+# data/plugins/checkrr/data/app/checkrr.yaml, and never over a change you make to it.
+# It only reports: no Radarr, Sonarr or Lidarr is given, so it never asks one to delete or replace a file, and the
+# films and series folders are mounted read only, so it cannot change them itself.
+lang: "en-us"
+checkrr:
+  checkpath:
+    - "/media/movies"
+    - "/media/tv"
+  database: /etc/checkrr/checkrr.db
+  csvfile: /etc/checkrr/badfiles.csv
+  debug: false
+  # Every Sunday at 03:30, in the server's time zone. Checking a large library the first time takes hours.
+  cron: "30 3 * * 0"
+  ignorehidden: true
+  requireaudio: true
+  ffprobe: true
+  ffmpeg-quick: false
+  ffmpeg-full: false
+  ignoreexts:
+    - .txt
+    - .nfo
+    - .nzb
+    - .url
+    - .srt
+    - .ass
+    - .ssa
+    - .sub
+    - .idx
+    - .vtt
+    - .jpg
+    - .jpeg
+    - .png
+    - .webp
+    - .xml
+    - .json
+logs:
+  stdout:
+    out: stdout
+    formatter: default
+webserver:
+  port: 8585
+  tls: false
+  baseurl: "/"
+  trustedproxies:
+    - 127.0.0.1

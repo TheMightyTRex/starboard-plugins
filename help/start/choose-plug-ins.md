@@ -65,6 +65,8 @@ plug-ins, so check the figures before you add one to a small server.
 | [Uptime Kuma](../../uptime-kuma/README.md) | Status checks beyond your apps | 384 MB |
 | [Seerr](../../seerr/README.md) | A requests page | 512 MB |
 | [Tdarr](../../tdarr/README.md) | Converts films and series to save space | 2048 MB |
+| [Themearr](../../themearr/README.md) | A theme tune on each film's page in Jellyfin | 576 MB, in two containers |
+| [Checkrr](../../checkrr/README.md) | Finds damaged films and episodes, and only reports them | 576 MB, in two containers |
 
 ## Things to note
 

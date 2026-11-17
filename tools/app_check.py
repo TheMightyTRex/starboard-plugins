@@ -6,7 +6,8 @@ page answers and measures it at rest. Nothing real is touched: every container, 
     STARBOARD_SRC=~/src/starboard-night-app-plugins python3 tools/app_check.py jellystat [navidrome ...]
 
 Settings: SETTLE (seconds before measuring, default 120), SAMPLES (default 36, one each 5 seconds), WORK (where the
-test folders go, default /mnt/pool/build-cache/app-check), OUT (where the figures go). Each app's folders are left in
+test folders go, default /mnt/pool/build-cache/app-check), OUT (where the figures go), SUBNETS (address ranges for
+its networks, when Docker has none left to choose). Each app's folders are left in
 WORK for a look afterwards; nothing is deleted.
 """
 import json
@@ -52,10 +53,26 @@ def render(pid, manifest, base):
     text = plugins.compose(manifest, plugin_dir, media, None, media_user=os.environ.get("MEDIA_USER", "1000:1000"), extra=extra)
     text = text.replace(f"plugin-{pid}", f"bench-app-{pid}").replace("starboard.plugin:", "bench.plugin:")
     text = text.replace("  lan:\n    driver: bridge", "  lan:\n    internal: true")
+    text = subnets(text)
     path = os.path.join(base, "compose.yaml")
     open(path, "w").write(text)
     json.dump(extra["secrets"], open(os.path.join(base, "secrets.json"), "w"))
     return path, plugin_dir
+
+
+def subnets(text):
+    """SUBNETS=10.231.80.0/24,10.231.81.0/24 gives each network its own address range, in order, for a server whose
+    Docker has used every range it chooses by itself ("all predefined address pools have been fully subnetted")."""
+    given = [x for x in os.environ.get("SUBNETS", "").split(",") if x]
+    if not given:
+        return text
+    head, _, nets = text.partition("\nnetworks:\n")
+    out = []
+    for line in nets.splitlines():
+        out.append(line)
+        if re.match(r"^  [a-z0-9-]+:$", line) and given:
+            out += ["    ipam:", "      config:", f"        - subnet: {given.pop(0)}"]
+    return head + "\nnetworks:\n" + "\n".join(out) + "\n"
 
 
 def prepare(manifest, plugin_dir):
