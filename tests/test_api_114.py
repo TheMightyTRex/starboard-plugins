@@ -146,8 +146,8 @@ class SharedHelper(unittest.TestCase):
         shared = open(os.path.join(ROOT, "_shared", "sbplugin.py"), "rb").read()
         for pid in IDS:
             path = os.path.join(ROOT, pid, "sbplugin.py")
-            # Picture shrinker keeps the copy from before DASH-458 until its 1.2 branch, which sends the key its own
-            # way, takes this one when it merges.
+            # Picture shrinker 1.2.0 sends Jellyfin's key its own way and keeps the copy from before DASH-458 until
+            # its next version takes this one.
             if os.path.isfile(path) and pid not in ("remote-access", "picture-shrinker"):
                 self.assertEqual(open(path, "rb").read(), shared, pid)
 
