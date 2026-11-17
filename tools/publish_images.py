@@ -109,15 +109,23 @@ def pinned(t):
     return m.group(1) if m else ""
 
 
-def pin(t, digest):
+def _repin(path, repo, digest):
+    text = open(path, encoding="utf-8").read()
+    new = re.sub(rf'(ghcr\.io/themightytrex/{re.escape(repo)})(@sha256:[0-9a-f]{{64}}|:[A-Za-z0-9._-]+)?(?=")', rf"\1@{digest}", text)
+    if new != text:
+        open(path, "w", encoding="utf-8").write(new)
+
+
+def pin(t, digest, root=None):
+    """Pins the image where its digest is kept, and in every manifest that names it, the hand-made ones included
+    (Audio description runs the examples' shared image but is not made by tools/make_examples.py)."""
     kind, path = t["pin"]
     if kind == "file":
         open(path, "w", encoding="utf-8").write(digest + "\n")
-        return
-    text = open(path, encoding="utf-8").read()
-    new = re.sub(rf'(ghcr\.io/themightytrex/{re.escape(t["repo"])})(@sha256:[0-9a-f]{{64}}|:[A-Za-z0-9._-]+)?(?=")',
-                 rf"\1@{digest}", text)
-    open(path, "w", encoding="utf-8").write(new)
+    else:
+        _repin(path, t["repo"], digest)
+    for manifest in glob.glob(os.path.join(root or ROOT, "*", "starboard-plugin.json")):
+        _repin(manifest, t["repo"], digest)
 
 
 def main(argv):

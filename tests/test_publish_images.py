@@ -60,6 +60,24 @@ class Pinning(unittest.TestCase):
         self.assertEqual(pi.pinned(self.t), D2)
         self.assertNotIn(D1, open(self.manifest).read())
 
+    def test_every_manifest_naming_the_image_is_pinned_too(self):
+        other = os.path.join(self.dir, "other")
+        os.mkdir(other)
+        hand = os.path.join(other, "starboard-plugin.json")
+        open(hand, "w").write(f'{{"image": "ghcr.io/themightytrex/starboard-plugin-demo@{D1}"}}')
+        unrelated = os.path.join(self.dir, "unrelated")
+        os.mkdir(unrelated)
+        open(os.path.join(unrelated, "starboard-plugin.json"), "w").write(f'{{"image": "ghcr.io/themightytrex/starboard-plugin-else@{D1}"}}')
+        pi.pin(self.t, D2, root=self.dir)
+        self.assertIn(D2, open(hand).read())
+        self.assertIn(D1, open(os.path.join(unrelated, "starboard-plugin.json")).read())
+
+    def test_on_main_every_manifest_of_the_shared_image_names_the_same_digest(self):
+        digest = open(os.path.join(ROOT, "tools", "examples-digest.txt")).read().strip()
+        for m in glob.glob(os.path.join(ROOT, "*", "starboard-plugin.json")):
+            for d in re.findall(r"starboard-plugin-examples@(sha256:[0-9a-f]{64})", open(m).read()):
+                self.assertEqual(d, digest, m)
+
     def run_main(self, digest, revision, same):
         with mock.patch.object(pi, "targets", return_value=[self.t]), \
              mock.patch.object(pi, "registry", return_value=(digest, revision)), \
