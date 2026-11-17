@@ -146,6 +146,7 @@ POSTS = {"picture-shrinker": "/jobs/shrink", "vpn-check": "/check", "line-speed"
 SETTINGS["audio-description"] = {"audiovault_links": True}
 POSTS["library-cleanup"] = "/jobs/move"  # DASH-406: activated here, on a stand-in media folder of made-up files
 SETTINGS["library-cleanup"] = {"active": True}
+SETTINGS["picture-shrinker"] = {"originals": "keep"}  # 1.2.0: nothing is shrunk until the backup is chosen
 # Remote access refuses callers on 127.0.0.1 (visitors through its tunnel arrive there); the host network needs this.
 ENV = {"remote-access": {"ALLOW_LOOPBACK": "1"}}
 SETTINGS["remote-access"] = {"method": "tailscale"}

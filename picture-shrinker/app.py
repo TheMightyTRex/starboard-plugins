@@ -32,6 +32,7 @@ import shutil
 import subprocess
 import threading
 import time
+import urllib.parse
 
 import sbplugin
 from sbplugin import band, keep, plural, remember, serve, setting
@@ -41,7 +42,13 @@ with open(os.path.join(HERE, "rules.json"), encoding="utf-8") as _f:
     RULES = json.load(_f)  # the rules both picture shrinkers follow (SYNC.md in the Jellyfin plug-in's repository)
 ROOT = os.environ.get("PICTURE_SHRINKER_ROOT", "/metadata")
 BACKUP = os.environ.get("PICTURE_SHRINKER_BACKUP", os.path.join(os.environ.get("PLUGIN_DATA", "/data"), "originals"))
-POSTER, PERSON = RULES["kinds"]["poster"], RULES["kinds"]["person"]
+POSTER, PERSON, BACKDROP = RULES["kinds"]["poster"], RULES["kinds"]["person"], RULES["kinds"]["backdrop"]
+KINDS = RULES["kinds"]  # every picture type it knows, in the rules' order: poster first, then person, then the rest
+# Each kind's switch and size in its settings (the Jellyfin version names its own the same way in its page).
+SWITCH = {"poster": "posters", "person": "people", "backdrop": "backdrops", "thumb": "thumbs", "logo": "logos",
+          "banner": "banners", "disc": "discs", "clearart": "clearart"}
+SIZE = {"poster": "poster_height", "person": "person_width", "backdrop": "backdrop_width", "thumb": "thumb_width",
+        "logo": "logo_width", "banner": "banner_width", "disc": "disc_width", "clearart": "clearart_width"}
 EXTS = set(RULES["extensions"])
 FORMATS = tuple(RULES["formats"])
 TMP = RULES["temp_suffix"]  # its own unfinished copies, beside each picture: never shrunk, tidied at each run
@@ -57,7 +64,14 @@ JELLYFIN_PLUGIN = "80bf9325d2994e24ac74c087aeec3011"  # the Jellyfin version's i
 JELLYFIN_CHECK_EVERY = 600  # seconds between asks of Jellyfin's plug-in list
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 DEFAULT_WHEN = {"every": "week", "day": "sunday", "time": "03:30"}
-WHAT = {"scheduled": "On its schedule", "now": "Shrink now", "new": "New pictures", "restore": "Restore original pictures"}
+WHAT = {"scheduled": "On its schedule", "now": "Shrink now", "new": "New pictures", "restore": "Restore original pictures",
+        "again_pictures": "Start again: the pictures it shrinks", "again_all": "Start again: every picture"}
+AGAIN = RULES["start_again"]
+ASIDE = AGAIN["aside_suffix"]  # a picture moved aside by Start again, beside it and hidden, until Jellyfin has a new one
+SETTLE_EVERY = AGAIN["settle_every_minutes"] * 60
+PUT_BACK_AFTER = AGAIN["put_back_after_hours"] * 3600
+REFRESH_PAUSE = AGAIN["pause_between_refreshes_ms"] / 1000
+CHOOSE = "Not shrunk: choose Keep a backup copy or Just shrink, in its settings, first"
 now = time.time  # replaced in tests
 
 _lock = threading.Lock()
@@ -81,18 +95,36 @@ def sizes():
             _num("person_width", PERSON["default"], PERSON["min"], PERSON["max"]))
 
 
+def limits():
+    """{kind: the most pixels it may be}, height for posters and width for the rest, held to each kind's range."""
+    return {k: _num(SIZE[k], r["default"], r["min"], r["max"]) for k, r in KINDS.items()}
+
+
+def backdrop_width():
+    return limits()["backdrop"]
+
+
 def quality():
     q = RULES["quality"]
     return _num("quality", q["default"], q["min"], q["max"])
 
 
+def backup_choice():
+    """keep or none, as chosen in Original pictures; None until it is chosen (rules 1.2: no default, asked after
+    install and after the update from 1.1). Nothing is shrunk until then."""
+    c = setting("originals", RULES["backup"]["default"])
+    return c if c in RULES["backup"]["choices"] else None
+
+
 def backup_on():
-    return setting("backup", RULES["backup"]["default"]) is not False
+    return backup_choice() == "keep"
 
 
 def included():
     """The kinds of picture to shrink: posters, photos of people, or both (the default)."""
-    return {k for k, key in (("poster", "posters"), ("person", "people")) if setting(key, True) is not False}
+    if setting("shrink_all", RULES["shrink_all"]["default"]) is not False:
+        return set(KINDS)  # Shrink all picture types: every kind, whatever the ticks below it
+    return {k for k in KINDS if setting(SWITCH[k], KINDS[k]["shrink_by_default"]) is not False}
 
 
 def schedule():
@@ -142,18 +174,25 @@ def kind_of(path):
         return None
     if rel[0] == PERSON["folder"] and name.startswith(PERSON["name_starts_with"]):
         return "person"
-    if rel[0] == POSTER["folder"] and name.startswith(POSTER["name_starts_with"]):
-        return "poster"
+    for k, r in KINDS.items():
+        if k != "person" and rel[0] == r["folder"] and name.startswith(r["name_starts_with"]):
+            return k
     return None
 
 
-def target(kind, size, poster_height, person_width):
+def target(kind, size, poster_height, person_width, others=None):
     """The new size of a picture, or None when it is already small enough."""
     w, h = size
     if kind == "person" and w > person_width:
         return person_width, max(1, round(h * person_width / w))
     if kind == "poster" and h > poster_height:
         return max(1, round(w * poster_height / h)), poster_height
+    if kind in KINDS and kind not in ("poster", "person"):
+        most = (others or {}).get(kind, KINDS[kind]["default"])
+        if KINDS[kind]["limit"] == "height" and h > most:
+            return max(1, round(w * most / h)), most
+        if KINDS[kind]["limit"] == "width" and w > most:
+            return most, max(1, round(h * most / w))
     return None
 
 
@@ -226,7 +265,7 @@ def back_up(path, size):
             os.remove(tmp)
 
 
-def shrink_one(path, kind, poster_height, person_width, q=None, backup=None):
+def shrink_one(path, kind, poster_height, person_width, q=None, backup=None, others=None):
     """Shrinks one picture in place. Returns None when it is left alone, else (bytes before, bytes after, bytes backed
     up). Raises ValueError or OSError when it cannot be read or the new file fails its check, and BackupError when its
     original cannot be backed up; the original is then kept."""
@@ -235,7 +274,7 @@ def shrink_one(path, kind, poster_height, person_width, q=None, backup=None):
     from PIL import Image  # loaded at the first run only
     before = os.path.getsize(path)
     with Image.open(path) as im:
-        new = target(kind, im.size, poster_height, person_width)
+        new = target(kind, im.size, poster_height, person_width, others)
         if not new:
             return None
         fmt = im.format
@@ -298,12 +337,15 @@ def run(kind, since=None, limit=RUN_LIMIT):
     """One run over the pictures (or those changed since `since`): returns its record, kept in the state file."""
     _lowest_priority()
     poster_height, person_width = sizes()
+    others = limits()
     q, backup, kinds = quality(), backup_on(), included()
     started = now()
     rec = {"kind": kind, "start": started, "end": None, "seen": 0, "shrunk": 0, "left": 0, "failed": 0, "not_backed_up": 0,
            "before": 0, "after": 0, "backed_up": 0, "backed_up_bytes": 0, "stopped": "", "poster_height": poster_height,
-           "person_width": person_width}
+           "person_width": person_width, "limits": others}
     tidy()
+    with _lock:
+        settle()
     _job["progress"] = {**rec, "at": started}
     failures = []
     for i, (path, pkind, _) in enumerate(p for p in pictures(since=since, until=started - NEW_AGE if since is not None else None) if p[1] in kinds):
@@ -315,7 +357,7 @@ def run(kind, since=None, limit=RUN_LIMIT):
             break
         rec["seen"] += 1
         try:
-            got = shrink_one(path, pkind, poster_height, person_width, q, backup)
+            got = shrink_one(path, pkind, poster_height, person_width, q, backup, others)
         except Exception as e:  # noqa: BLE001 - a picture that cannot be read, or backed up, is left as it is
             rec["not_backed_up" if isinstance(e, BackupError) else "failed"] += 1
             if len(failures) < KEEP_FAILURES:
@@ -369,8 +411,14 @@ def start(kind, since=None, limit=RUN_LIMIT):
 
         def go():
             try:
-                with sbplugin.working("restoring pictures" if kind == "restore" else "shrinking pictures"):
-                    out["rec"] = restore() if kind == "restore" else run(kind, since, limit)
+                doing = {"restore": "restoring pictures", "again_pictures": "starting again", "again_all": "starting again"}
+                with sbplugin.working(doing.get(kind, "shrinking pictures")):
+                    if kind == "restore":
+                        out["rec"] = restore()
+                    elif kind in ("again_pictures", "again_all"):
+                        out["rec"] = start_again(kind)
+                    else:
+                        out["rec"] = run(kind, since, limit)
                 keep("_error", None)
             except Exception as e:  # noqa: BLE001 - kept for the page as the last run's result, never fatal
                 keep("_error", {"at": now(), "text": f"{type(e).__name__}: {e}"[:200]})
@@ -470,7 +518,10 @@ def measure():
     """The live pictures, the backup and the space saved, measured now: when the page opens and after each run or
     action, never on a timer."""
     live = [0, 0]
-    for _, _, size in pictures():
+    kinds = included()  # the types being shrunk, as the Jellyfin version counts them (SYNC.md)
+    for _, kind, size in pictures():
+        if kind not in kinds:
+            continue
         live[0] += 1
         live[1] += size
     backup = [0, 0]
@@ -494,7 +545,19 @@ def delete_backup():
     if running():
         return {"said": "Not deleted: the shrinker is running. Try again when it has finished"}
     with _lock:
-        files = size = 0
+        files, size = _remove_backup()
+    if not files:
+        return {"said": "There is no backup to delete"}
+    keep("space", measure())
+    return {"said": f"Deleted the backup: {plural(files, 'original picture')}, {size_words(size)} freed. The shrunk pictures stay"}
+
+
+def _remove_backup():
+    """Removes the pictures the shrinker put in the backup folder (no link is followed out of it), then its empty
+    folders. Returns (files, bytes). The caller makes sure nothing else is running."""
+    root = os.path.realpath(BACKUP)
+    files = size = 0
+    if os.path.isdir(root):
         for path in list(_backups()):
             real = os.path.realpath(path) if not os.path.islink(path) else os.path.join(os.path.realpath(os.path.dirname(path)), os.path.basename(path))
             if not real.startswith(root + os.sep) or os.path.splitext(path)[1].lower() not in EXTS:
@@ -517,10 +580,231 @@ def delete_backup():
         s = _state()
         s["last_delete"] = {"at": now(), "files": files, "bytes": size}
         keep("state", s)
-    if not files:
-        return {"said": "There is no backup to delete"}
+    return files, size
+
+
+# Start again (rules 1.2) --------------------------------------------------------------------------------------
+
+def _jellyfin(path, method="GET"):
+    """Asks Jellyfin with the key Starboard keeps; a POST sends no body. Raises when there is no key or no answer.
+    The key goes in Authorization, which Jellyfin 10.11 and later need when their legacy headers are off (the default
+    on Jellyfin 12, where X-Emby-Token alone is refused with 401); X-Emby-Token is sent too, for older servers."""
+    jf = sbplugin._json_file(os.path.join(sbplugin.RUN, "jellyfin.json"), {}) or {}
+    if not jf.get("url") or not jf.get("api_key"):
+        raise LookupError("Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps")
+    h = {"Authorization": f'MediaBrowser Token="{jf["api_key"]}"', "X-Emby-Token": jf["api_key"]}
+    return sbplugin.fetch(jf["url"].rstrip("/") + path, h, data=b"" if method == "POST" else None, method=method)
+
+
+def _refresh(item_id, recursive, replace_all):
+    """Queues Jellyfin's refresh of one item: every picture looked at again (a missing one is downloaded), details
+    only where missing, and with replace_all every picture replaced. Jellyfin works through its queue at its own pace."""
+    q = urllib.parse.urlencode({"Recursive": str(recursive).lower(), "MetadataRefreshMode": "Default",
+                                "ImageRefreshMode": "FullRefresh", "ReplaceAllMetadata": "false",
+                                "ReplaceAllImages": str(replace_all).lower()})
+    _jellyfin(f"/Items/{urllib.parse.quote(str(item_id), safe='')}/Refresh?{q}", "POST")
+
+
+def _person_id(name):
+    got = _jellyfin(f"/Persons/{urllib.parse.quote(name, safe='')}")
+    return (got or {}).get("Id") if isinstance(got, dict) else None
+
+
+def _owner(path):
+    """('item', id) for a poster under library/<2>/<id>/, ('person', name) for a photo under People/<letter>/<name>/,
+    else None."""
+    rel = os.path.relpath(path, ROOT).split(os.sep)
+    if len(rel) == 4 and rel[0] == POSTER["folder"] and all(c in "0123456789abcdefABCDEF-" for c in rel[2]):
+        return ("item", rel[2])
+    if len(rel) == 4 and rel[0] == PERSON["folder"]:
+        return ("person", rel[2])
+    return None
+
+
+def aside_path(path):
+    return os.path.join(os.path.dirname(path), f".{os.path.basename(path)}{ASIDE}")
+
+
+def _aside():
+    return remember("aside", None) or {"files": [], "replaced": 0, "put_back": 0}
+
+
+def _has_new(path):
+    """True when Jellyfin has saved a new picture in place of the one moved aside: one whose name starts the same way
+    (poster.*, backdrop*.*, logo.* and so on), or any picture for a person."""
+    folder, name = os.path.split(path)
+    k = kind_of(path)
+    starts = KINDS[k]["name_starts_with"] if k and k != "person" else ""
+    try:
+        names = os.listdir(folder)
+    except OSError:
+        return False
+    return any(not n.startswith(".") and n.lower().startswith(starts) and os.path.splitext(n)[1].lower() in EXTS
+               and not os.path.islink(os.path.join(folder, n)) for n in names)
+
+
+def settle():
+    """Each picture Start again moved aside: deleted once Jellyfin has a new one, put back under its own name after
+    24 hours without one, so a poster you added yourself, or one no source has, is never lost. Never follows a link.
+    Returns how many are still waiting."""
+    a = _aside()
+    if not a["files"]:
+        return 0
+    waiting = []
+    for f in a["files"]:
+        path = os.path.join(ROOT, f["path"])
+        old = aside_path(path)
+        if os.path.islink(old) or not os.path.isfile(old):
+            continue  # gone, or not ours to touch
+        try:
+            if _has_new(path):
+                os.remove(old)
+                a["replaced"] += 1
+            elif now() - f["at"] >= PUT_BACK_AFTER:
+                if not os.path.lexists(path):
+                    os.replace(old, path)
+                    a["put_back"] += 1
+                else:
+                    os.remove(old)
+                    a["replaced"] += 1
+            else:
+                waiting.append(f)
+        except OSError:
+            waiting.append(f)
+    a["files"] = waiting
+    keep("aside", a)
+    return len(waiting)
+
+
+_settling = {"thread": None}
+_settle_wake = threading.Event()  # set only by tests, to check at once
+
+
+def settle_soon():
+    """A check every 10 minutes while pictures are waiting; nothing runs once none are."""
+    if (_settling["thread"] and _settling["thread"].is_alive()) or not _aside()["files"]:
+        return
+
+    def loop():
+        while True:
+            _settle_wake.wait(SETTLE_EVERY)
+            _settle_wake.clear()
+            with _lock:
+                if not settle():
+                    return
+    t = threading.Thread(target=loop, daemon=True)
+    _settling["thread"] = t
+    t.start()
+
+
+def start_again(kind):
+    """Deletes the backup and the records (the backup choice is kept), then asks Jellyfin to download the pictures
+    again: posters and photos (each moved aside first, so it can come back), or every picture. Returns its record."""
+    _lowest_priority()
+    rec = {"kind": kind, "start": now(), "end": None, "asked": 0, "moved": 0, "not_found": 0, "failed": 0,
+           "backup_files": 0, "stopped": ""}
+    _jellyfin("/System/Info")  # Jellyfin answers before anything is changed
+    rec["backup_files"], _ = _remove_backup()
+    keep("state", {"shrunk": 0, "before": 0, "after": 0, "runs": []})
+    a = _aside()
+    _job["progress"] = {**rec, "at": now()}
+    people = {}
+    if kind == "again_pictures":
+        by_owner = {}
+        for path, _, _ in pictures():
+            o = _owner(path)
+            if o:
+                by_owner.setdefault(o, []).append(path)
+        for (what, key), paths in sorted(by_owner.items()):
+            if _stop.is_set():
+                rec["stopped"] = "Stopped by you; the pictures not reached yet are as they were"
+                break
+            try:
+                item = key if what == "item" else _person_id(key)
+            except Exception:  # noqa: BLE001 - Jellyfin does not know this person by that name
+                item = None
+            if not item:
+                rec["not_found"] += 1
+                continue
+            moved = []
+            for path in paths:
+                old = aside_path(path)
+                if os.path.islink(path) or os.path.lexists(old):
+                    continue
+                try:
+                    os.replace(path, old)
+                    moved.append(path)
+                except OSError:
+                    rec["failed"] += 1
+            try:
+                _refresh(item, False, False)
+                rec["asked"] += 1
+                rec["moved"] += len(moved)
+                a["files"] += [{"path": os.path.relpath(p, ROOT), "at": now()} for p in moved]
+            except Exception:  # noqa: BLE001 - Jellyfin was not asked, so its pictures go straight back
+                rec["failed"] += 1
+                for p in moved:
+                    try:
+                        os.replace(aside_path(p), p)
+                    except OSError:
+                        pass
+            if rec["asked"] % PROGRESS_EVERY == 0:
+                _job["progress"] = {**rec, "at": now()}
+                keep("aside", a)
+            time.sleep(REFRESH_PAUSE)
+    else:
+        for lib in _jellyfin("/Library/VirtualFolders") or []:
+            if isinstance(lib, dict) and lib.get("ItemId"):
+                try:
+                    _refresh(lib["ItemId"], True, True)
+                    rec["asked"] += 1
+                except Exception:  # noqa: BLE001 - counted and said
+                    rec["failed"] += 1
+        top = os.path.join(ROOT, PERSON["folder"])
+        for folder, dirs, _ in os.walk(top):
+            dirs.sort()
+            if os.path.relpath(folder, top).count(os.sep) == 1:
+                people[os.path.basename(folder)] = True
+        for name in sorted(people):
+            if _stop.is_set():
+                rec["stopped"] = "Stopped by you; the people not reached yet keep their photos"
+                break
+            try:
+                pid = _person_id(name)
+                if not pid:
+                    rec["not_found"] += 1
+                    continue
+                _refresh(pid, False, True)
+                rec["asked"] += 1
+            except Exception:  # noqa: BLE001 - counted and said
+                rec["failed"] += 1
+            if rec["asked"] % PROGRESS_EVERY == 0:
+                _job["progress"] = {**rec, "at": now()}
+            time.sleep(REFRESH_PAUSE)
+    keep("aside", a)
+    rec["end"] = now()
+    s = _state()
+    s["last_start_again"] = rec
+    keep("state", s)
     keep("space", measure())
-    return {"said": f"Deleted the backup: {plural(files, 'original picture')}, {size_words(size)} freed. The shrunk pictures stay"}
+    settle_soon()
+    return rec
+
+
+def start_again_now(kind):
+    if jellyfin_version_installed(force=True):
+        return {"said": "Use Start again in Jellyfin's own Picture shrinker: this one is idle while that is installed"}
+    if running():
+        return {"said": "Not started: the shrinker is running. Choose Stop shrinking first, or try again when it has finished"}
+    try:
+        _jellyfin("/System/Info")
+    except Exception:  # noqa: BLE001 - said in words
+        return {"said": "Not started: Jellyfin did not answer, so nothing was changed. Check that Jellyfin is running"}
+    if not start(kind):
+        return {"said": "Not started: the plug-in is about to be updated"}
+    what = "every picture it shrinks" if kind == "again_pictures" else "every picture"
+    return {"said": f"Starting again: the backup is deleted and Jellyfin is asked to download {what} again. "
+                    "That can take some hours. The Space saved page says how far it has gone"}
 
 
 # The Jellyfin version ------------------------------------------------------------------------------------------
@@ -532,7 +816,7 @@ def jellyfin_version_installed(force=False):
     if not force and now() - _jf["at"] < JELLYFIN_CHECK_EVERY:
         return _jf["installed"]
     try:
-        plugins = sbplugin.jellyfin("/Plugins") or []
+        plugins = _jellyfin("/Plugins") or []
         _jf["installed"] = any(str(p.get("Id") or "").replace("-", "").lower() == JELLYFIN_PLUGIN
                                and str(p.get("Status") or "") not in ("Disabled", "Deleted", "Superseded", "NotSupported")
                                for p in plugins if isinstance(p, dict))
@@ -563,6 +847,8 @@ def job_shrink():
         raise RuntimeError("Jellyfin's metadata folder is not there")
     if jellyfin_version_installed():
         return {"said": IDLE}
+    if not backup_choice():
+        return {"said": CHOOSE}
     if not start("scheduled"):
         return {"said": "Already shrinking" if running() else "Not started: the plug-in is about to be updated"}
     return {"said": summary(_wait(RUN_LIMIT + 60))}
@@ -574,6 +860,8 @@ def job_new():
         return {"said": "Shrinking new pictures is deactivated"}
     if jellyfin_version_installed():
         return {"said": IDLE}
+    if not backup_choice():
+        return {"said": CHOOSE}
     if running():
         return {"said": "A run is already going"}
     since = float(_state().get("new_since") or (now() - 86400))
@@ -586,6 +874,8 @@ def job_new():
 def shrink_now():
     if jellyfin_version_installed(force=True):
         return {"said": IDLE}
+    if not backup_choice():
+        return {"said": CHOOSE}
     if running():
         return {"said": "Already shrinking. The Space saved page says how far it has gone"}
     if not start("now"):
@@ -646,6 +936,11 @@ def card():
     if jellyfin_version_installed():
         return band({"value": saved, "label": "saved", "note": "Idle: Jellyfin's own Picture shrinker is installed"}, "idle", None,
                     "Idle", refresh=600)
+    if p and _job["kind"] in ("again_pictures", "again_all"):
+        return band({"value": 0, "label": "saved", "note": f"Starting again: Jellyfin asked about {p['asked']:,} so far"},
+                    "working", None, "Starting again", refresh=60)
+    if not backup_choice():
+        return band({"value": saved, "label": "saved", "note": CHOOSE}, "needs_setup", None, "Choose a backup", refresh=600)
     nxt = next_run()
     label = f"Next {when_words(nxt, True)}" if nxt else None
     if p:
@@ -677,9 +972,25 @@ def screen():
     if not os.path.isdir(ROOT):
         notices.append({"id": "folder", "tone": "danger", "title": "Jellyfin's metadata folder is not there",
                         "text": "Check that Jellyfin is installed in Settings, Apps, then deactivate and activate this plug-in."})
-    if not backup_on():
-        notices.append({"id": "nobackup", "tone": "warning", "title": "Backup is deactivated",
-                        "text": "Pictures shrunk from now on cannot be put back. Jellyfin can download them again with Refresh metadata, but pictures you chose yourself are lost."})
+    if not backup_choice():
+        notices.append({"id": "choose", "tone": "warning", "title": "Choose whether to keep a backup",
+                        "text": "Nothing is shrunk until you choose, in Original pictures in its settings: Keep a backup copy of each original, or Just shrink, with no backup."})
+    elif not backup_on():
+        notices.append({"id": "nobackup", "tone": "info", "title": "Just shrinking, with no backup",
+                        "text": "Pictures shrunk from now on cannot be put back from a backup. Start again in Actions has Jellyfin download them again, but pictures you added yourself in Jellyfin are lost."})
+    if p and _job["kind"] in ("again_pictures", "again_all"):
+        notices.append({"id": "now", "tone": "info", "title": f"Running now: {WHAT[_job['kind']]}",
+                        "text": f"Jellyfin asked about {plural(p['asked'], 'film, series or person', 'films, series and people')} so far. It downloads the pictures at its own pace."})
+        p = None
+    a = _aside()
+    if a["files"] or s.get("last_start_again"):
+        r = s.get("last_start_again") or {}
+        notices.append({"id": "again", "tone": "info", "title": "Last Start again",
+                        "text": (f"{WHAT.get(r.get('kind'), 'Start again')}: Jellyfin asked about {r.get('asked', 0):,}"
+                                 + (f", {r['not_found']:,} not found in Jellyfin" if r.get("not_found") else "")
+                                 + (f", {r['failed']:,} could not be asked" if r.get("failed") else "")
+                                 + f". New pictures so far: {a['replaced']:,}; waiting for Jellyfin: {len(a['files']):,}; "
+                                 f"put back after a day without a new one: {a['put_back']:,}.")[:300], "dismiss": True})
     if p:
         notices.append({"id": "now", "tone": "info", "title": f"Running now: {WHAT.get(_job['kind'], '')}",
                         "text": f"{plural(p['shrunk'], 'picture')} shrunk, {p['left']:,} left as they were, {p['seen']:,} looked at. Choose Stop shrinking in Actions to stop after the picture it is on."})
@@ -710,9 +1021,9 @@ def screen():
 
 def screen_post(body=None):
     if (body or {}).get("action") == "dismiss":
-        if (body or {}).get("id") == "restore":
+        if (body or {}).get("id") in ("restore", "again"):
             s = _state()
-            s.pop("last_restore", None)
+            s.pop("last_restore" if body["id"] == "restore" else "last_start_again", None)
             keep("state", s)
         else:
             keep("_error", None)
@@ -731,7 +1042,10 @@ def health():
 ROUTES = {("GET", "/health"): health, "/card": card, "/saved": screen, ("POST", "/saved"): screen_post,
           ("POST", "/shrink-now"): shrink_now, ("POST", "/stop"): stop, ("POST", "/restore"): restore_now,
           ("POST", "/delete-backup"): delete_backup_now, ("POST", "/jobs/shrink"): job_shrink,
+          ("POST", "/start-again-pictures"): lambda body=None: start_again_now("again_pictures"),
+          ("POST", "/start-again-all"): lambda body=None: start_again_now("again_all"),
           ("POST", "/jobs/new"): job_new, ("POST", "/update/before"): before_update, ("POST", "/update/after"): after_update}
 
 if __name__ == "__main__":
+    settle_soon()  # pictures still waiting from a Start again before a restart
     serve(ROUTES)

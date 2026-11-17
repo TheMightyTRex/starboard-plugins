@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0 (17 November 2026)
+
+### Added
+- Choose the backup: Original pictures asks whether to keep a backup copy of each original or just shrink, once it is added and again after this update. Nothing is shrunk until you choose; a backup you already have is kept.
+- Start again in its actions, for the pictures it shrinks or for every picture: deletes the backup and the records, and has Jellyfin download the pictures again at full size. A picture Jellyfin cannot download again is put back after a day.
+- Every picture type: posters, photos of people, backdrops, thumbnails, logos, banners, disc art and clear art, each with its own size and all activated when you add it, with Shrink all picture types to shrink them all in one setting. Backdrops were asked for by Lentzeris in the Jellyfin version's issue #2.
+
+### Changed
+- Rules 1.2: the same rules file as the Jellyfin version (SYNC.md in its repository).
+
+### Removed
+- Back up each original before it is replaced: replaced by Original pictures.
+
 ## 1.1.1 (16 November 2026)
 
 ### Changed
