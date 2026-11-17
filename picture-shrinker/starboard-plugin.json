@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "picture-shrinker",
  "name": "Picture shrinker",
- "version": "1.1.1",
- "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. Each original is backed up and each picture checked before it replaces the original.",
+ "version": "1.2.0",
+ "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or just shrink.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/picture-shrinker",
@@ -46,15 +46,94 @@
    "choices": "/saved"
   },
   {
-   "key": "when",
-   "label": "When to shrink",
-   "type": "schedule",
-   "default": {
-    "every": "week",
-    "day": "sunday",
-    "time": "03:30"
-   },
-   "hint": "Every day, week or month, at a time. It works at the lowest priority, so a time when the server is quiet is best."
+   "key": "originals",
+   "label": "Original pictures",
+   "type": "choice",
+   "required": true,
+   "choices": [
+    {
+     "value": "keep",
+     "label": "Keep a backup copy of each original"
+    },
+    {
+     "value": "none",
+     "label": "Just shrink, with no backup"
+    }
+   ],
+   "hint": "Nothing is shrunk until you choose. A backup copy is made once, in this plug-in's own folder, before a picture's first shrink, so Restore original pictures can put it back. With no backup, a shrunk picture cannot be put back, but Start again has Jellyfin download it again.",
+   "group": "What to shrink"
+  },
+  {
+   "key": "shrink_all",
+   "label": "Shrink all picture types",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "Activated when you add it: every type below is shrunk. Deactivate it to choose types one by one."
+  },
+  {
+   "key": "posters",
+   "label": "Posters",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "The poster of each film, series, season and collection. Used when Shrink all picture types is deactivated."
+  },
+  {
+   "key": "people",
+   "label": "Photos of cast and crew",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "The photo of each actor, director and writer."
+  },
+  {
+   "key": "backdrops",
+   "label": "Backdrops",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "The wide picture behind each film and series."
+  },
+  {
+   "key": "thumbs",
+   "label": "Thumbnails",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "The landscape picture some apps show for a film or series."
+  },
+  {
+   "key": "logos",
+   "label": "Logos",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "The title logo of a film or series. PNG logos stay lossless."
+  },
+  {
+   "key": "banners",
+   "label": "Banners",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "The long, thin banner of a series."
+  },
+  {
+   "key": "discs",
+   "label": "Disc art",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "The picture of a disc."
+  },
+  {
+   "key": "clearart",
+   "label": "Clear art",
+   "type": "switch",
+   "default": true,
+   "group": "What to shrink",
+   "hint": "Characters and title on a see-through background."
   },
   {
    "key": "poster_height",
@@ -64,7 +143,8 @@
    "default": 900,
    "min": 300,
    "max": 3000,
-   "hint": "A poster taller than this is shrunk to this height. 900 pixels looks sharp on a television."
+   "hint": "A poster taller than this is shrunk to this height. 900 pixels looks sharp on a television.",
+   "group": "Sizes and quality"
   },
   {
    "key": "person_width",
@@ -74,7 +154,74 @@
    "default": 400,
    "min": 100,
    "max": 2000,
-   "hint": "A photo of a cast or crew member wider than this is shrunk to this width."
+   "hint": "A photo of a cast or crew member wider than this is shrunk to this width.",
+   "group": "Sizes and quality"
+  },
+  {
+   "key": "backdrop_width",
+   "label": "Backdrops no wider than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 1920,
+   "min": 640,
+   "max": 3840,
+   "group": "Sizes and quality",
+   "hint": "1920 pixels is sharp on a 1080p screen and a little softer full-screen on a 4K television."
+  },
+  {
+   "key": "thumb_width",
+   "label": "Thumbnails no wider than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 1280,
+   "min": 480,
+   "max": 3840,
+   "group": "Sizes and quality",
+   "hint": "A thumbnail wider than this is shrunk to this width."
+  },
+  {
+   "key": "logo_width",
+   "label": "Logos no wider than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 800,
+   "min": 300,
+   "max": 2000,
+   "group": "Sizes and quality",
+   "hint": "A logo wider than this is shrunk to this width."
+  },
+  {
+   "key": "banner_width",
+   "label": "Banners no wider than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 1000,
+   "min": 300,
+   "max": 3000,
+   "group": "Sizes and quality",
+   "hint": "A banner wider than this is shrunk to this width."
+  },
+  {
+   "key": "disc_width",
+   "label": "Disc art no wider than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 500,
+   "min": 200,
+   "max": 2000,
+   "group": "Sizes and quality",
+   "hint": "Disc art wider than this is shrunk to this width."
+  },
+  {
+   "key": "clearart_width",
+   "label": "Clear art no wider than",
+   "type": "number",
+   "unit": "pixels",
+   "default": 800,
+   "min": 300,
+   "max": 2000,
+   "group": "Sizes and quality",
+   "hint": "Clear art wider than this is shrunk to this width."
   },
   {
    "key": "quality",
@@ -83,35 +230,28 @@
    "default": 85,
    "min": 50,
    "max": 100,
-   "hint": "For JPEG and WebP pictures, from 50 to 100. 85 keeps them sharp; lower saves more space. PNG pictures stay lossless."
+   "hint": "For JPEG and WebP pictures, from 50 to 100. 85 keeps them sharp; lower saves more space. PNG pictures stay lossless.",
+   "group": "Sizes and quality"
   },
   {
-   "key": "posters",
-   "label": "Shrink posters",
-   "type": "switch",
-   "default": true,
-   "hint": "The poster of each film, series, season and collection. Backdrops, logos and other pictures are left alone."
-  },
-  {
-   "key": "people",
-   "label": "Shrink photos of cast and crew",
-   "type": "switch",
-   "default": true,
-   "hint": "The photo of each actor, director and writer."
-  },
-  {
-   "key": "backup",
-   "label": "Back up each original before it is replaced",
-   "type": "switch",
-   "default": true,
-   "hint": "Activated by default. Each original is copied once, in this plug-in's own folder, before its first shrink. If the copy fails or the disk is short of space, the picture is not shrunk. When deactivated, pictures shrunk from then on cannot be put back."
+   "key": "when",
+   "label": "When to shrink",
+   "type": "schedule",
+   "default": {
+    "every": "week",
+    "day": "sunday",
+    "time": "03:30"
+   },
+   "hint": "Every day, week or month, at a time. It works at the lowest priority, so a time when the server is quiet is best.",
+   "group": "When it runs"
   },
   {
    "key": "new_pictures",
    "label": "Shrink new pictures in quiet hours",
    "type": "switch",
    "default": false,
-   "hint": "Each hour of quiet hours, shrinks the posters and photos Jellyfin saved since the last pass, so they never build up."
+   "hint": "Each hour of quiet hours, shrinks the posters and photos Jellyfin saved since the last pass, so they never build up.",
+   "group": "When it runs"
   }
  ],
  "actions": [
@@ -136,6 +276,18 @@
    "label": "Delete backup",
    "path": "/delete-backup",
    "confirm": "Delete the backup for good? The original pictures in it are removed and Restore original pictures can no longer put those pictures back. The shrunk pictures stay in Jellyfin. The Space saved page says how much this frees."
+  },
+  {
+   "id": "start-again-pictures",
+   "label": "Start again: the pictures it shrinks",
+   "path": "/start-again-pictures",
+   "confirm": "Delete the backup and the plug-in's records, and have Jellyfin download again, at full size, every picture it shrinks: posters, backdrops, thumbnails, logos, banners, disc art, clear art and photos of people? Your backup choice is kept. A picture not downloaded again is put back after a day."
+  },
+  {
+   "id": "start-again-all",
+   "label": "Start again: every picture",
+   "path": "/start-again-all",
+   "confirm": "Delete the backup and the plug-in's records, and have Jellyfin download every picture again, backdrops and logos included? Pictures you added yourself in Jellyfin are replaced. This downloads much more and can take many hours."
   }
  ],
  "cards": [
@@ -182,13 +334,37 @@
   "after": {
    "path": "/update/after",
    "time_limit_seconds": 10
-  }
+  },
+  "migrations": [
+   {
+    "version": "1.2.0",
+    "remove": [
+     "backup"
+    ]
+   }
+  ]
  },
  "logo": {
   "file": "logo.svg",
   "alt": "A picture with an arrow pointing into its corner"
  },
  "changes": [
+  {
+   "version": "1.2.0",
+   "date": "2026-11-17",
+   "added": [
+    "**Choose the backup:** Original pictures asks whether to keep a backup copy of each original or just shrink, once it is added and again after this update. Nothing is shrunk until you choose; a backup you already have is kept.",
+    "**Start again** in its actions, for the pictures it shrinks or for every picture: deletes the backup and the records, and has Jellyfin download the pictures again at full size. A picture Jellyfin cannot download again is put back after a day.",
+    "**Every picture type:** posters, photos of people, backdrops, thumbnails, logos, banners, disc art and clear art, each with its own size and all activated, with **Shrink all picture types** for all in one setting. Backdrops asked for by Lentzeris (issue #2)."
+   ],
+   "changed": [
+    "**Rules 1.2:** the same rules file as the Jellyfin version (SYNC.md).",
+    "**Settings in sections:** What to shrink (with Original pictures), Sizes and quality, and When it runs. After this update, check What to shrink: every type is shrunk until you choose otherwise."
+   ],
+   "removed": [
+    "**Back up each original before it is replaced:** replaced by Original pictures."
+   ]
+  },
   {
    "version": "1.1.1",
    "date": "2026-11-16",

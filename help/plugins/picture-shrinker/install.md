@@ -36,10 +36,11 @@ Measured:
 2. Under **Jellyfin**, find **Picture shrinker** and select **Install…**.
 3. A slide-out opens with what it can see, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Picture shrinker**. To stop, select **Cancel**: nothing is installed.
-5. Picture shrinker's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
-6. Check **When to shrink**. It runs every Sunday at 03:30 unless you change it. Read [Settings](settings.md).
-7. If you want new pictures shrunk each night, activate **Shrink new pictures in quiet hours**.
-8. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
+5. Picture shrinker's own tab opens under **Settings**, then **Plug-ins**. In **Original pictures**, choose **Keep a backup copy of each original** or **Just shrink, with no backup**. Until you choose, it says it needs setting up.
+6. Select **Activate**. Its state changes to **Active**.
+7. Check **When to shrink**. It runs every Sunday at 03:30 unless you change it. Read [Settings](settings.md).
+8. If you want new pictures shrunk each night, activate **Shrink new pictures in quiet hours**.
+9. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
 
 To shrink straight away, select **Shrink now** on its tab.
 
