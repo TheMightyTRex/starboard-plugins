@@ -1,0 +1,25 @@
+# Fails when the audio description plug-ins' rules.json differs from the Jellyfin version's (TheMightyTRex/jellyfin-plugins,
+# audio-description/SYNC.md), so the two never drift apart. Runs on each push and pull request that touches them, and every
+# Monday in case the Jellyfin version changed.
+name: Audio description in step with the Jellyfin version
+on:
+  push:
+    paths: ["audio-description/**", "audio-description-tracks/**", "tests/test_audio_description*.py", "tools/sync_audio_description_rules.py", ".github/workflows/audio-description-sync.yml"]
+  pull_request:
+    paths: ["audio-description/**", "audio-description-tracks/**", "tests/test_audio_description*.py", "tools/sync_audio_description_rules.py"]
+  schedule:
+    - cron: "27 6 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  in-step:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the Jellyfin version's rules
+        run: git clone --depth 1 https://github.com/TheMightyTRex/jellyfin-plugins.git /tmp/jellyfin-plugins
+      - name: Same rules.json
+        run: python3 tools/sync_audio_description_rules.py --check /tmp/jellyfin-plugins/audio-description
+      - name: The shared examples give the same results here
+        run: python3 -m unittest tests.test_audio_description tests.test_audio_description_tracks

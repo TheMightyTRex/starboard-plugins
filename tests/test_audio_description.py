@@ -12,6 +12,7 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from helpers import as_published  # noqa: E402
 import urllib.error
+import urllib.parse
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 PID = "audio-description"
@@ -109,12 +110,15 @@ class Library(unittest.TestCase):
         asked = []
 
         def jf(path, data=None, method=None):
+            if "IncludeItemTypes=Movie" not in path:  # the plug-in list, series and collections: none here
+                return [] if path == "/Plugins" else {"Items": [], "TotalRecordCount": 0}
             asked.append(path)
             start = int(re.search(r"StartIndex=(\d+)", path).group(1))
             self.assertIn("Fields=MediaStreams", path)
             self.assertIn("Limit=2", path)
             return {"Items": pages[start // 2], "TotalRecordCount": 5}
         app.jellyfin = jf
+        app.set_tag = lambda iid, want: None
         said = app.scan()["said"]
         self.assertEqual(len(asked), 3)
         self.assertIn("1 film and 1 series", said)
@@ -226,66 +230,70 @@ class Apps(unittest.TestCase):
 
 
 class FakeReelix:
-    def __init__(self, formats=None, profiles=None):
-        self.formats = formats if formats is not None else []
+    """Reelix with a manager key: it may read formats and quality levels, and refuses every write with 403 (issue #144)."""
+
+    def __init__(self, builtin=True, formats=None, profiles=None, profiles_403=False):
+        self.builtin, self.formats, self.profiles_403 = builtin, formats if formats is not None else [], profiles_403
         self.profiles = profiles if profiles is not None else [
             {"id": 1, "name": "HD-1080p", "family": "video", "format_items": [{"format_id": 7, "score": -10000}]},
             {"id": 2, "name": "Ultra-HD", "family": "video", "format_items": []},
-            {"id": 3, "name": "Audiobooks", "family": "audio", "format_items": []}]
+            {"id": 3, "name": "Audiobooks", "family": "audio", "format_items": [{"format_id": 9, "score": 100}]}]
         self.calls = []
 
     def __call__(self, path, data=None, method=None):
         self.calls.append((method or "GET", path))
-        if path == "/customformats" and method == "POST":
-            made = {**data, "id": 9}
-            self.formats.append(made)
-            return made
+        if method in ("POST", "PUT", "DELETE"):
+            raise urllib.error.HTTPError(path, 403, "Forbidden", {}, None)
+        if path == "/customformats/builtin/audio_description":
+            if self.builtin:
+                return {"id": 9, "name": "Audio description"}
+            raise urllib.error.HTTPError(path, 404, "No API route", {}, None)
         if path == "/customformats":
             return self.formats
         if path == "/qualityprofiles":
+            if self.profiles_403:
+                raise urllib.error.HTTPError(path, 403, "Forbidden", {}, None)
             return self.profiles
-        if path.startswith("/qualityprofiles/") and method == "PUT":
-            pid = int(path.rsplit("/", 1)[1])
-            self.profiles = [data if p["id"] == pid else p for p in self.profiles]
-            return data
         raise AssertionError(path)
 
 
 class Reelix(unittest.TestCase):
-    def test_adds_the_format_and_prefers_it_in_video_levels_only(self):
-        app = load({"prefer_in_reelix": True})
-        rx = FakeReelix()
+    """Issue #144: Reelix lets only an admin key write formats and quality levels, so the plug-in only reads and says
+    where the choice is made, and the job never fails for this."""
+
+    def run_with(self, rx, values=None):
+        app = load(values)
         app.reelix = rx
         said = app.apply_reelix()["said"]
-        self.assertIn("2 quality levels", said)
-        self.assertEqual(rx.formats[0]["name"], "Audio description")
-        self.assertEqual(rx.formats[0]["specifications"][0]["type"], "release_title")
-        self.assertEqual({p["id"]: p["format_items"] for p in rx.profiles}[1], [{"format_id": 7, "score": -10000}, {"format_id": 9, "score": 100}])
-        self.assertNotIn(("PUT", "/qualityprofiles/3"), rx.calls)
-        rx.calls.clear()
-        app.apply_reelix()  # again: nothing to change, nothing written
-        self.assertFalse([c for c in rx.calls if c[0] != "GET"])
+        self.assertFalse([c for c in rx.calls if c[0] != "GET"])  # never a POST or a PUT
+        return said
 
-    def test_a_score_someone_set_is_kept(self):
+    def test_no_level_prefers_it_yet_so_it_says_where_to_choose_prefer(self):
+        said = self.run_with(FakeReelix())
+        self.assertEqual(said, "To prefer releases with audio description, set Audio description to Prefer in Settings, Reelix, Picture quality")
+
+    def test_it_counts_the_video_levels_that_prefer_it(self):
+        rx = FakeReelix()
+        rx.profiles[0]["format_items"].append({"format_id": 9, "score": 100})
+        self.assertEqual(self.run_with(rx), "Reelix prefers releases with audio description in 1 quality level")
+
+    def test_an_older_reelix_without_the_built_in_format(self):
+        self.assertEqual(self.run_with(FakeReelix(builtin=False)), "Reelix has no Audio description format yet. It comes with the next Reelix update")
+        said = self.run_with(FakeReelix(builtin=False, formats=[{"id": 9, "name": "Audio Description"}]))
+        self.assertIn("set Audio description to Prefer in Settings, Reelix, Picture quality", said)
+
+    def test_a_refusal_never_fails_the_job(self):
+        said = self.run_with(FakeReelix(profiles_403=True))
+        self.assertIn("Settings, Reelix, Picture quality", said)
+
+    def test_deactivated_it_only_says_how_reelix_treats_them(self):
+        said = self.run_with(FakeReelix(), {"prefer_in_reelix": False})
+        self.assertTrue(said.startswith("Reelix does not prefer releases with audio description"))
+
+    def test_no_reelix_key_is_said_not_failed(self):
         app = load()
-        rx = FakeReelix(formats=[{"id": 9, "name": "Audio Description"}],
-                        profiles=[{"id": 1, "family": "video", "format_items": [{"format_id": 9, "score": 500}]}])
-        app.reelix = rx
-        app.apply_reelix()
-        self.assertEqual(rx.profiles[0]["format_items"], [{"format_id": 9, "score": 500}])
-        self.assertFalse([c for c in rx.calls if c[0] != "GET"])
-
-    def test_deactivated_puts_scores_back_to_neutral_and_adds_nothing(self):
-        app = load({"prefer_in_reelix": False})
-        rx = FakeReelix(formats=[{"id": 9, "name": "Audio description"}],
-                        profiles=[{"id": 1, "family": "video", "format_items": [{"format_id": 9, "score": 100}, {"format_id": 7, "score": 5}]}])
-        app.reelix = rx
-        self.assertIn("no longer prefers", app.apply_reelix()["said"])
-        self.assertEqual(rx.profiles[0]["format_items"], [{"format_id": 7, "score": 5}])
-        empty = FakeReelix()
-        app.reelix = empty
-        app.apply_reelix()
-        self.assertEqual(empty.formats, [])
+        os.remove(os.path.join(os.environ["PLUGIN_RUN"], "reelix.json"))
+        self.assertIn("no Reelix key", app.reelix_now()["said"])
 
 
 class People(unittest.TestCase):
@@ -340,11 +348,207 @@ class People(unittest.TestCase):
             self.app.people({"action": "toggle", "id": "u9"})
 
 
+class FakeJellyfin:
+    """Jellyfin's API as the plug-in uses it for Find and tag, the collection and Play the described track."""
+
+    def __init__(self, items, plugins=(), sessions=(), users=(("u1", "Sam"), ("u2", "Alex"))):
+        self.items = {i["Id"]: dict(i) for i in items}
+        self.plugins, self.sessions, self.users = list(plugins), list(sessions), list(users)
+        self.box, self.calls, self.commands = None, [], []
+
+    def __call__(self, path, data=None, method=None):
+        self.calls.append((method or "GET", path))
+        url = urllib.parse.urlparse(path)
+        q = {k: v[0] for k, v in urllib.parse.parse_qs(url.query).items()}
+        if path == "/Plugins":
+            return self.plugins
+        if path == "/Users":
+            return [{"Id": i, "Name": n, "Policy": {"IsAdministrator": i == "u1"}} for i, n in self.users]
+        if url.path == "/Items" and q.get("Ids"):
+            return {"Items": [self.items[i] for i in q["Ids"].split(",") if i in self.items]}
+        if url.path == "/Items" and q.get("ParentId"):
+            got = [{"Id": i} for i in (self.box or {}).get("members", [])]
+            return {"Items": got, "TotalRecordCount": len(got)}
+        if url.path == "/Items" and q.get("IncludeItemTypes") == "BoxSet":
+            return {"Items": [{"Id": "b1", "Name": self.box["name"]}] if self.box else []}
+        if url.path == "/Items":
+            kinds = q["IncludeItemTypes"].split(",")
+            got = [i for i in self.items.values() if i["Type"] in kinds]
+            start = int(q.get("StartIndex", 0))
+            return {"Items": got[start:start + int(q.get("Limit", 200))], "TotalRecordCount": len(got)}
+        m = re.match(r"^/Items/(\w+)$", url.path)
+        if m and method == "POST":
+            self.items[m.group(1)] = data
+            return None
+        if m:
+            return dict(self.items[m.group(1)])
+        if url.path == "/Collections" and method == "POST":
+            self.box = {"name": q["Name"], "members": q["Ids"].split(",")}
+            return {"Id": "b1"}
+        if url.path == "/Collections/b1/Items":
+            ids = q["Ids"].split(",")
+            self.box["members"] = (self.box["members"] + ids) if method == "POST" else [i for i in self.box["members"] if i not in ids]
+            return None
+        if url.path.startswith("/Sessions") and method == "POST":
+            self.commands.append((url.path, data))
+            return None
+        if url.path == "/Sessions":
+            return self.sessions
+        raise AssertionError(path)
+
+
+def item(iid, kind, streams, tags=(), series=None, name=None):
+    out = {"Id": iid, "Type": kind, "Name": name or iid, "MediaStreams": streams, "Tags": list(tags), "Genres": ["Drama"]}
+    if series:
+        out.update(SeriesId=series, SeriesName=series)
+    return out
+
+
+class FindAndTag(unittest.TestCase):
+    def library(self, plugins=()):
+        return FakeJellyfin([
+            item("m1", "Movie", [audio("English"), audio("English (Audio Description)")], tags=["Favourite"]),
+            item("m2", "Movie", [audio("English")], tags=["Audio description"]),  # the track has gone
+            item("e1", "Episode", [audio("AD")], series="s1"),
+            item("e2", "Episode", [audio("English")], series="s1"),
+            item("s1", "Series", []), item("s2", "Series", [], tags=["Audio description"])], plugins=plugins)
+
+    def test_tags_films_episodes_and_series_and_takes_the_tag_off_when_the_track_goes(self):
+        app = load()
+        jf = self.library()
+        app.jellyfin = jf
+        said = app.scan()["said"]
+        self.assertIn("Tagged 3, took the tag off 2", said)
+        self.assertEqual(jf.items["m1"]["Tags"], ["Favourite", "Audio description"])  # other tags kept
+        self.assertEqual(jf.items["m1"]["Genres"], ["Drama"])  # the whole item is saved back, as the metadata editor does
+        self.assertEqual(jf.items["m2"]["Tags"], [])
+        self.assertIn("Audio description", jf.items["e1"]["Tags"])
+        self.assertIn("Audio description", jf.items["s1"]["Tags"])
+        self.assertEqual(jf.items["s2"]["Tags"], [])
+        self.assertNotIn(("POST", "/Items/e2"), jf.calls)  # only what changes is written
+        self.assertEqual(sorted(jf.box["members"]), ["m1", "s1"])  # films and series, not episodes
+        self.assertEqual(jf.box["name"], "Audio description")
+        jf.calls.clear()
+        app.scan()
+        self.assertFalse([c for c in jf.calls if c[0] != "GET"])  # in step: nothing written
+
+    def test_the_collection_follows_the_tags(self):
+        app = load()
+        jf = self.library()
+        jf.box = {"name": "Audio description", "members": ["m2", "m1"]}
+        app.jellyfin = jf
+        app.scan()
+        self.assertEqual(sorted(jf.box["members"]), ["m1", "s1"])
+        self.assertIn(("DELETE", "/Collections/b1/Items?Ids=m2"), jf.calls)
+
+    def test_the_collection_can_be_deactivated(self):
+        app = load({"collection": False})
+        jf = self.library()
+        app.jellyfin = jf
+        app.scan()
+        self.assertIsNone(jf.box)
+        self.assertFalse([c for c in jf.calls if "/Collections" in c[1]])
+
+    def test_idle_beside_the_jellyfin_version(self):
+        app = load()
+        jf = self.library(plugins=[{"Id": "7a591954-9c27-4ba7-80c3-dc5f0a140692", "Name": "Audio description", "Status": "Active"}])
+        app.jellyfin = jf
+        said = app.scan()["said"]
+        self.assertIn("Idle: Jellyfin's own Audio description plug-in is installed", said)
+        self.assertFalse([c for c in jf.calls if c[0] != "GET"])  # it reads for its lists, and writes nothing
+        card = app.count()
+        self.assertEqual((card["status"], card["status_label"]), ("idle", "Idle"))
+        self.assertIn("Idle", card["note"])
+
+    def test_a_deactivated_jellyfin_version_does_not_count(self):
+        app = load()
+        app.jellyfin = self.library(plugins=[{"Id": "7a5919549c274ba780c3dc5f0a140692", "Status": "Disabled"}])
+        self.assertFalse(app.jellyfin_version_installed(force=True))
+
+
+class PlayTheDescribedTrack(unittest.TestCase):
+    def session(self, user, playing, accepts=True, sid="s-1"):
+        return {"Id": sid, "UserId": user, "Client": "Jellyfin Web" if accepts else "Some TV app", "DeviceName": "Living room",
+                "NowPlayingItem": {"Id": "m1", "Name": "Dune"}, "PlayState": {"AudioStreamIndex": playing},
+                "Capabilities": {"SupportedCommands": ["SetAudioStreamIndex"] if accepts else ["DisplayMessage"]}}
+
+    def make(self, *sessions):
+        app = load()
+        jf = FakeJellyfin([item("m1", "Movie", [dict(audio("English"), Index=1), dict(audio("English (Audio Description)"), Index=2)])], sessions=sessions)
+        app.jellyfin = jf
+        return app, jf
+
+    def test_inactive_until_chosen(self):
+        app, jf = self.make(self.session("u1", 1))
+        self.assertEqual(app.on_event({"event": "playback.started"})["said"], "Nobody chose Play the described track")
+        self.assertEqual(jf.commands, [])
+        self.assertFalse(app.RULES["play_described_track"]["default"])
+        self.assertTrue(all(not i["on"] for i in app.play()["items"]))
+
+    def test_the_described_track_is_asked_for_once(self):
+        app, jf = self.make(self.session("u1", 1))
+        self.assertEqual(app.play({"action": "toggle", "id": "u1"})["said"], "Play the described track activated for Sam")
+        app.on_event({"event": "playback.started", "data": {"user": "Sam"}})
+        self.assertEqual(jf.commands, [("/Sessions/s-1/Command", {"Name": "SetAudioStreamIndex", "Arguments": {"Index": "2"}})])
+        app.on_event({"event": "playback.started"})  # the same start again: the person may have chosen another track
+        self.assertEqual(len(jf.commands), 1)
+
+    def test_nothing_for_others_or_when_it_already_plays(self):
+        app, jf = self.make(self.session("u2", 1, sid="s-2"), self.session("u1", 2))
+        app.play({"action": "toggle", "id": "u1"})
+        app.on_event({"event": "playback.started"})
+        self.assertEqual(jf.commands, [])
+
+    def test_an_app_that_does_not_accept_it_is_left_alone_and_noted(self):
+        app, jf = self.make(self.session("u1", 1, accepts=False))
+        app.play({"action": "toggle", "id": "u1"})
+        said = app.on_event({"event": "playback.started"})["said"]
+        self.assertEqual(jf.commands, [])
+        self.assertIn("Some TV app on Living room does not accept the command to change the sound track", said)
+        self.assertIn("does not accept", app.play()["intro"])
+
+    def test_idle_beside_the_jellyfin_version(self):
+        app, jf = self.make(self.session("u1", 1))
+        app.play({"action": "toggle", "id": "u1"})
+        jf.plugins = [{"Id": "7a591954-9c27-4ba7-80c3-dc5f0a140692", "Status": "Active"}]
+        app._jf["at"] = 0.0
+        self.assertIn("Idle", app.on_event({"event": "playback.started"})["said"])
+        self.assertEqual(jf.commands, [])
+        self.assertEqual(app.play()["notices"][0]["id"], "jellyfin")
+
+    def test_the_rule_on_its_own(self):
+        app = load()
+        streams = [dict(audio("English"), Index=0), dict(audio("Descriptive audio"), Index=3)]
+        self.assertEqual(app.index_to_play(streams, 0), 3)
+        self.assertEqual(app.index_to_play(streams, None), 3)
+        self.assertIsNone(app.index_to_play(streams, 3))
+        self.assertIsNone(app.index_to_play(streams[:1], 0))
+
+
+class SharedRules(unittest.TestCase):
+    def test_the_shared_examples_give_the_same_results_here(self):
+        app = load()
+        ex = app.RULES["described_track"]["examples"]
+        for t in ex["described"]:
+            self.assertIsNotNone(app.described_track([audio(t)]), t)
+        for t in ex["not_described"]:
+            self.assertIsNone(app.described_track([audio(t)]), t)
+
+    def test_both_plug_ins_have_the_same_rules_file(self):
+        with open(os.path.join(ROOT, PID, "rules.json"), "rb") as a, open(os.path.join(ROOT, "audio-description-tracks", "rules.json"), "rb") as b:
+            self.assertEqual(a.read(), b.read())
+
+    def test_the_image_has_the_rules_file(self):
+        with open(os.path.join(ROOT, "Dockerfile"), encoding="utf-8") as f:
+            self.assertIn("audio-description/rules.json", f.read())
+
+
 class Words(unittest.TestCase):
     def test_no_em_dashes_or_contractions_in_what_people_read(self):
         app = load()
         m = manifest()
-        text = json.dumps([m, app.ELSEWHERE, app.elsewhere(), app.titles(), app.count(), app.recent(), app.audiovault()], ensure_ascii=False)
+        app.jellyfin = FakeJellyfin([])
+        text = json.dumps([m, app.ELSEWHERE, app.elsewhere(), app.titles(), app.count(), app.recent(), app.audiovault(), app.play(), app.IDLE], ensure_ascii=False)
         app._set_on = load({"audiovault_links": True})
         text += json.dumps([app._set_on.audiovault(), app.youdescribe(), app.apps()], ensure_ascii=False)
         with open(os.path.join(ROOT, PID, "README.md"), encoding="utf-8") as f:
@@ -374,8 +578,10 @@ class StarboardAccepts(unittest.TestCase):
         app = load()
         app.keep("result", {"at": 1794600000, "total": 3, "films": [{"id": "m1", "name": "Dune (2021)", "track": "English (AD)"}],
                             "series": [{"name": "Slow Horses", "described": 2, "episodes": 2, "track": "AD"}]})
+        app.jellyfin = FakeJellyfin([])
         self.cards.clean("stat", app.count())
         self.cards.clean("list", app.recent())
+        self.assertTrue(self.custom.clean(app.play())["items"])
         for screen in (app.titles(), app.elsewhere()):
             self.assertTrue(self.custom.clean(screen)["items"])
         self.assertTrue(all(i["link"]["url"].startswith("https://") for i in self.custom.clean(app.elsewhere())["items"]))

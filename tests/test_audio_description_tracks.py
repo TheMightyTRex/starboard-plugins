@@ -343,6 +343,59 @@ class ZipsAndUploads(unittest.TestCase):
         os.environ.pop("PORT")
 
 
+class SharedRules(unittest.TestCase):
+    def test_the_shared_file_name_examples_are_read_the_same_way(self):
+        app = load()
+        examples = app.RULES["tracks"]["names"]["examples"]
+        self.assertTrue(examples)
+        for e in examples:
+            want = {k: e[k] for k in ("kind", "name", "season", "episode")} if e["kind"] == "episode" else {k: e[k] for k in ("kind", "name", "year")}
+            self.assertEqual(app.parse_name(e["file"]), want, e["file"])
+
+    def test_names_titles_and_the_tolerance_come_from_the_rules(self):
+        app = load()
+        self.assertEqual(app.target_for("/media/movies/Dune (2021)/Dune (2021).mkv", "eng"), "/media/movies/Dune (2021)/Dune (2021).Audio Description.eng.mka")
+        self.assertEqual(app.track_title("fra"), "French (Audio Description)")
+        self.assertEqual(app.tolerance(), app.RULES["tracks"]["tolerance_seconds"]["default"])
+        self.assertEqual(load({"tolerance": 900}).tolerance(), 30)
+        self.assertEqual(sorted(app.LANGUAGES), sorted(c["value"] for c in next(x for x in manifest()["settings"] if x["key"] == "language")["choices"]))
+
+
+class NamesJellyfinKept(unittest.TestCase):
+    def test_a_film_jellyfin_found_no_details_for_still_matches(self):
+        app = load()
+        f = film(app, "Quiet Harbour", 2019)
+        f["Name"] = "Quiet Harbour (2019)"  # Jellyfin keeps the folder's name when it finds no details
+        Stand(app, [f], {"Quiet Harbour (2019).mp3": 61.0, "Quiet Harbour (2019).mkv": 60.0})
+        drop(app, "Quiet Harbour (2019).mp3")
+        self.assertIn("added 1 track", app.look()["said"])
+        self.assertEqual(app._records()["Quiet Harbour (2019).mp3"]["item"]["title"], "Quiet Harbour (2019)")
+        self.assertTrue(app.same_name("Dune (2021)", "Dune"))
+        self.assertFalse(app.same_name("Dune Part Two", "Dune"))
+
+
+class IdleBesideTheJellyfinVersion(unittest.TestCase):
+    def test_adds_nothing_and_says_so(self):
+        app = load()
+        f = film(app, "Dune", 2021)
+        s = Stand(app, [f], {"Dune (2021).mp3": 9300.0, "Dune (2021).mkv": 9300.0})
+        plain = s.jellyfin
+
+        def jf(path, data=None, method=None):
+            if path == "/Plugins":
+                return [{"Id": "7a591954-9c27-4ba7-80c3-dc5f0a140692", "Status": "Active"}]
+            return plain(path, data, method)
+        app.jellyfin = jf
+        drop(app, "Dune (2021).mp3")
+        self.assertIn("Idle", app.look()["said"])
+        self.assertFalse(s.cmds)
+        self.assertEqual(app.inbox()["notices"][0]["id"], "jellyfin")
+        card = app.count()
+        self.assertEqual((card["status"], card["status_label"]), ("idle", "Idle"))
+        with self.assertRaises(ValueError):
+            app.upload("Dune (2021).mp3", "", 3, io.BytesIO(b"ID3"))
+
+
 class Words(unittest.TestCase):
     def test_no_em_dashes_or_contractions_in_what_people_read(self):
         app = load()

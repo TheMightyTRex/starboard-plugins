@@ -19,6 +19,11 @@ What it never does: download from or read any website (AudioVault included), cha
 Lightweight: the container rests when idle. It looks in the folder when its page opens, when Look in the folder now
 is chosen, and once a night in quiet hours. mkvmerge runs only while a track is checked or added, a few seconds
 each, copying the sound as it is. mkvtoolnix was chosen over ffmpeg: the image is 146 MB rather than 261 MB.
+
+Rules 1.0 (17 November 2026): the track words, how a file name is read, the tolerance, the languages, the new track's
+name and title and the folders come from rules.json, shared with the Jellyfin version (TheMightyTRex/jellyfin-plugins,
+audio-description; its SYNC.md says what must match). When the Jellyfin version is installed, this plug-in stays idle
+and says so on its card, so the two never add the same track.
 """
 import json
 import os
@@ -34,24 +39,31 @@ import zipfile
 import sbplugin
 from sbplugin import band, fetch, keep, plural, remember, serve, setting
 
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "rules.json"), encoding="utf-8") as _f:
+    RULES = json.load(_f)
+TR = RULES["tracks"]
 INBOX = os.environ.get("TRACKS_INBOX", "/media/audio-description")
 MOUNTS = {"movies": os.environ.get("TRACKS_MOVIES", "/media/movies"), "tv": os.environ.get("TRACKS_TV", "/media/tv")}
-CONFIRMED, TAKEN_OFF, UNZIPPED = "Confirmed", "Taken off", "Unzipped"
-AUDIO = (".mp3", ".m4a", ".m4b", ".aac", ".mka", ".opus", ".ogg", ".oga", ".flac", ".wav")
-LANGUAGES = {"eng": "English", "fra": "French", "deu": "German", "spa": "Spanish", "ita": "Italian", "nld": "Dutch",
-             "por": "Portuguese", "pol": "Polish", "swe": "Swedish", "dan": "Danish", "nor": "Norwegian", "fin": "Finnish"}
+CONFIRMED, TAKEN_OFF, UNZIPPED = TR["folders"]["confirmed"], TR["folders"]["taken_off"], TR["folders"]["unzipped"]
+AUDIO = tuple(TR["extensions"])
+LANGUAGES = TR["languages"]
+TOLERANCE = TR["tolerance_seconds"]
 UPLOAD_MAX = 60 * 1024 * 1024  # Starboard streams files up to 60 MB
-ZIP_MAX = 4 * 1024 * 1024 * 1024  # what one zip may unpack to, at most
+ZIP_MAX, ZIP_FILES = TR["zip"]["max_bytes"], TR["zip"]["max_files"]  # what one zip may unpack to, at most
 # Track names that are audio description, as the Audio description plug-in reads them (a commentary never counts).
-TRACK_AD = re.compile(r"(?i)(?:\baudio[ ._-]?descri(?:ption|bed)\b|\bdescriptive[ ._-]?(?:audio|video)\b|\bdescribed\b"
-                      r"|\bDVS\b|(?:^|[\s\[(._-])AD(?:$|[\s\])._-]))")
-COMMENTARY = re.compile(r"(?i)comment(?:ary)?")
+TRACK_AD = re.compile(RULES["described_track"]["pattern"])
+COMMENTARY = re.compile(RULES["described_track"]["ruled_out_pattern"])
 # Words in a track's file name that are not the title.
-NOISE = re.compile(r"(?i)\b(?:audio\s?descri(?:ption|bed)|described|descriptive(?:\s(?:audio|video))?|dvs|ad|audiovault|"
-                   r"eng(?:lish)?|track|mp3|m4a|aac)\b")
-EPISODE = re.compile(r"(?i)\bS(\d{1,2})\s?E(\d{1,3})\b|\b(\d{1,2})x(\d{2,3})\b")
-YEAR = re.compile(r"(?:^|[\s(\[])((?:19|20)\d\d)(?:$|[\s)\]])")
+NOISE = re.compile(TR["names"]["noise_pattern"])
+EPISODE = re.compile(TR["names"]["episode_pattern"])
+YEAR = re.compile(TR["names"]["year_pattern"])
 AUDIOVAULT = {"film": "https://audiovault.net/movies?search=", "episode": "https://audiovault.net/shows?search="}
+JELLYFIN_PLUGIN = "7a591954-9c27-4ba7-80c3-dc5f0a140692"  # the Jellyfin version's id (SYNC.md)
+JELLYFIN_CHECK_EVERY = 600
+IDLE = ("Idle: Jellyfin's own Audio description plug-in is installed and adds the tracks, so this one does nothing and "
+        "the two never add the same track")
+now = time.time  # replaced in tests
+_jf = {"at": 0.0, "installed": False}
 run = subprocess.run  # replaced in tests
 _lock = threading.Lock()
 _pass = {"running": False, "done": 0, "total": 0}
@@ -60,19 +72,19 @@ _pass = {"running": False, "done": 0, "total": 0}
 # Words -----------------------------------------------------------------------------------------------------------
 
 def lang():
-    code = str(setting("language", "eng"))
-    return code if code in LANGUAGES else "eng"
+    code = str(setting("language", TR["default_language"]))
+    return code if code in LANGUAGES else TR["default_language"]
 
 
 def track_title(code=None):
-    return f"{LANGUAGES[code or lang()]} (Audio Description)"
+    return TR["title"].replace("{language_name}", LANGUAGES[code or lang()])
 
 
 def tolerance():
     try:
-        return max(1, min(int(setting("tolerance", 5)), 30))
+        return max(TOLERANCE["min"], min(int(setting("tolerance", TOLERANCE["default"])), TOLERANCE["max"]))
     except (TypeError, ValueError):
-        return 5
+        return TOLERANCE["default"]
 
 
 def length_words(seconds):
@@ -132,11 +144,17 @@ def _q(**kw):
     return urllib.parse.urlencode({"EnableImages": "false", "EnableUserData": "false", **kw})
 
 
+def same_name(in_jellyfin, from_file):
+    """Whether a name in Jellyfin is the name read from a file. A film Jellyfin found no details for keeps its folder's
+    name, such as "Dune (2021)", so a year in brackets at its end is left out."""
+    return norm(re.sub(r"\s*\((?:19|20)\d\d\)\s*$", "", str(in_jellyfin or ""))) == norm(from_file)
+
+
 def _title(it):
     if it.get("Type") == "Episode":
         return f"{it.get('SeriesName') or 'A series'}, series {it.get('ParentIndexNumber') or 0} episode {it.get('IndexNumber') or 0}"
-    year = it.get("ProductionYear")
-    return f"{it.get('Name') or 'A film'}" + (f" ({year})" if year else "")
+    year, name = it.get("ProductionYear"), str(it.get("Name") or "A film")
+    return name if not year or name.endswith(f"({year})") else f"{name} ({year})"
 
 
 def _entry(it):
@@ -158,7 +176,7 @@ def find(parsed):
     """(the title it surely is or None, up to 11 titles it may be, words when nothing matched)."""
     if parsed["kind"] == "episode":
         shows = (jellyfin("/Items?" + _q(Recursive="true", IncludeItemTypes="Series", searchTerm=parsed["name"], Limit=5)) or {}).get("Items") or []
-        same = [s for s in shows if norm(s.get("Name")) == norm(parsed["name"])] or shows[:1]
+        same = [s for s in shows if same_name(s.get("Name"), parsed["name"])] or shows[:1]
         if not same:
             return None, [], f"No series called {parsed['name']} is in Jellyfin"
         show = same[0]
@@ -169,7 +187,7 @@ def find(parsed):
         return _entry({**hit[0], "SeriesName": hit[0].get("SeriesName") or show.get("Name")}), [], ""
     films = (jellyfin("/Items?" + _q(Recursive="true", IncludeItemTypes="Movie", searchTerm=parsed["name"], Fields="Path,MediaStreams", Limit=11)) or {}).get("Items") or []
     maybe = [_entry(f) for f in films if f.get("Id")]
-    same = [f for f in films if norm(f.get("Name")) == norm(parsed["name"]) and (not parsed["year"] or int(f.get("ProductionYear") or 0) == parsed["year"])]
+    same = [f for f in films if same_name(f.get("Name"), parsed["name"]) and (not parsed["year"] or int(f.get("ProductionYear") or 0) == parsed["year"])]
     if len(same) == 1:
         return _entry(same[0]), maybe, ""
     if not maybe:
@@ -220,7 +238,8 @@ def identify(path):
 
 def target_for(video, code):
     """The new sound track's file: next to the film, with its name, so Jellyfin loads it as an extra track."""
-    return os.path.splitext(video)[0] + f".Audio Description.{code}.mka"
+    folder, name = os.path.split(video)
+    return os.path.join(folder, TR["file_name"].replace("{video_without_extension}", os.path.splitext(name)[0]).replace("{language}", code))
 
 
 def mux(src, track, code, out):
@@ -258,7 +277,7 @@ def unzip(path):
     out = 0
     with zipfile.ZipFile(path) as z:
         members = [m for m in z.infolist() if not m.is_dir() and m.filename.lower().endswith(AUDIO)]
-        if sum(m.file_size for m in members) > ZIP_MAX or len(members) > 500:
+        if sum(m.file_size for m in members) > ZIP_MAX or len(members) > ZIP_FILES:
             raise ValueError("This zip is too large to unpack here. Unzip it yourself into the folder")
         for m in members:
             name = _free_name(INBOX, os.path.basename(m.filename.replace("\\", "/")))
@@ -343,8 +362,26 @@ def look_once(name, rec):
     return check(name, rec, sure)
 
 
+def jellyfin_version_installed(force=False):
+    """True when Jellyfin's own Audio description plug-in is installed and not deactivated (asked of Jellyfin's
+    /Plugins at most every 10 minutes). Then this one stays idle. When Jellyfin cannot be asked, it carries on."""
+    if not force and now() - _jf["at"] < JELLYFIN_CHECK_EVERY:
+        return _jf["installed"]
+    try:
+        plugins = jellyfin("/Plugins") or []
+        _jf["installed"] = any(str(p.get("Id") or "").replace("-", "").lower() == JELLYFIN_PLUGIN.replace("-", "")
+                               and str(p.get("Status") or "") not in ("Disabled", "Deleted", "Superseded", "NotSupported")
+                               for p in plugins if isinstance(p, dict))
+    except Exception:  # noqa: BLE001 - no key yet, or Jellyfin is restarting: keep the last answer
+        pass
+    _jf["at"] = now()
+    return _jf["installed"]
+
+
 def look():
     """One pass over the folder: unzips, then matches and checks each new file. One pass at a time."""
+    if jellyfin_version_installed(force=True):
+        return {"said": IDLE}
     with _lock:
         if _pass["running"]:
             return {"said": "Already checking the folder"}
@@ -442,7 +479,7 @@ def _row(name, rec):
                    detail=(f"{t}: the track is {length_words(diff)} {'longer' if diff > 0 else 'shorter'} than the film, so it is "
                            "probably for another cut, such as an extended one. Find one for this cut.")[:200])
     elif st == "choose":
-        row.update(state="warning", state_label="Choose the title", detail="More than one title could match. Choose the right one.")
+        row.update(state="warning", state_label="Choose the title", detail="It is not sure which title this is. Choose the right one.")
     elif st == "no_match":
         row.update(state="warning", state_label="No match", link=link,
                    detail=(f"{rec.get('why') or 'Nothing in Jellyfin matches this name'}. Rename the file as the film and year, such as "
@@ -489,6 +526,12 @@ def _notices():
 
 
 def inbox_screen(said=""):
+    if jellyfin_version_installed():
+        out = {"type": "list", "title": "Description tracks to add", "items": [],
+               "intro": "Jellyfin's own Audio description plug-in is installed, so add tracks there: Dashboard, Plugins, Audio description.",
+               "notices": [{"id": "jellyfin", "tone": "info", "title": "Idle: Jellyfin's own Audio description is installed",
+                            "text": "This plug-in does nothing while Jellyfin's own version is installed, so the two never add the same track. Remove one of them."}]}
+        return {**out, "said": said} if said else out
     recs = _records()
     rows = [_row(n, r) for n, r in sorted(recs.items(), key=lambda kv: kv[0].lower())]
     order = list(GROUPS.values())
@@ -508,7 +551,7 @@ def inbox_screen(said=""):
 
 def inbox(body=None):
     if not body:
-        if _changed():
+        if not jellyfin_version_installed() and _changed():
             look_soon()
         return inbox_screen()
     action, name, value = body.get("action"), str(body.get("id") or ""), str(body.get("value") or "")
@@ -560,6 +603,8 @@ def _outcome(name, rec, value, recs):
 
 def upload(name, item, length, stream):
     """A file chosen on the page, streamed into the folder a piece at a time, then checked with the rest."""
+    if jellyfin_version_installed(force=True):
+        raise ValueError("Jellyfin's own Audio description plug-in is installed: upload the track there")
     base = os.path.basename(str(name).replace("\\", "/")).strip()
     if not base or base.startswith(".") or not base.lower().endswith(AUDIO + (".zip",)):
         raise ValueError("Choose a sound file, such as an MP3 or M4A, or a zip of them")
@@ -604,6 +649,8 @@ def count():
               "note": f"{plural(check_, 'file')} {'needs' if check_ == 1 else 'need'} checking" if check_ else "Nothing else waiting"}
     # When it last looked, or when a track last changed (DASH-441: its records have no "at" of their own).
     at = max(float((remember("last", {}) or {}).get("at") or 0), float(sbplugin.changed("files") or 0)) or None
+    if jellyfin_version_installed():
+        return band({**answer, "note": "Idle: Jellyfin's own Audio description adds them"}, "idle", at, "Idle")
     if _pass["running"]:
         return band(answer, "working", at, "Adding tracks")
     if waiting or check_:

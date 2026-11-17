@@ -15,6 +15,8 @@ q2: What is wrong?
   Not checked yet -> 5
   A described film is missing -> 6
   The described track is not kept -> 7
+  The described track is not played -> 8
+  The card says Idle -> 9
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
 3: Add Jellyfin to Starboard #add-jellyfin-to-starboard
@@ -22,6 +24,8 @@ q2: What is wrong?
 5: Check for described titles now #check-for-described-titles-now
 6: Check the track name #check-the-track-name
 7: Activate the person #activate-the-person
+8: Check the app accepts it #check-the-app-accepts-it
+9: Idle beside the Jellyfin version #idle-beside-the-jellyfin-version
 ```
 
 ## Start it again
@@ -50,10 +54,11 @@ Your Starboard's plug-in API is outside what this version of Audio description w
 
 ## Add Reelix or stop preferring
 
-"Starboard has no Reelix key to give yet: add Reelix in Settings, Apps" means it cannot add the **Audio description** format to Reelix.
+"Starboard has no Reelix key to give yet: add Reelix in Settings, Apps" means it cannot read Reelix. The plug-in never changes Reelix itself; the choice is made in Starboard.
 
-- If you use Reelix, add it in **Settings**, then **Apps**, then select **Apply the Reelix choice now** on Audio description's tab.
-- If you do not use Reelix, deactivate **Prefer releases with audio description**. The rest of the plug-in works without Reelix.
+- If you use Reelix, add it in **Settings**, then **Apps**. Then set **Audio description** to **Prefer** in **Settings**, **Reelix**, **Picture quality**, and select **Check the Reelix choice now** on Audio description's tab to check.
+- "Reelix has no Audio description format yet" means your Reelix is older than the one with its own Audio description format. It comes with the next Reelix update.
+- If you do not use Reelix, deactivate **Prefer releases with audio description**.
 
 ## Check for described titles now
 
@@ -83,6 +88,18 @@ Jellyfin cannot pick a described track by itself. For each person activated, Jel
 3. In Jellyfin, they choose the described track once for each film and series.
 
 If Starboard says "That person is not in Jellyfin any more. Reload the page", reload the page and try again.
+
+## Check the app accepts it
+
+**Play the described track** asks the person's app to change the sound track, with Jellyfin's own command. Not every Jellyfin app accepts it.
+
+1. Open **Play the described track** on Audio description's tab, and check the person is activated.
+2. Read the last line of the page's introduction. "does not accept the command to change the sound track" names an app that does not: in that app, choose the described track in the player.
+3. The change comes within about half a minute of the start, when Starboard notices the film playing. A title with no described track, or one already playing it, is left as it is.
+
+## Idle beside the Jellyfin version
+
+**Idle** means Jellyfin's own Audio description plug-in is installed. It does the tag, the collection and **Play the described track**, so this one does not, and the two never do the same thing twice. Choose the people in Jellyfin's plug-in instead: in Jellyfin, **Dashboard**, **Plugins**, **Audio description**. To use this one for those again, uninstall the Jellyfin plug-in; this one notices within 10 minutes.
 
 ## Report a problem
 

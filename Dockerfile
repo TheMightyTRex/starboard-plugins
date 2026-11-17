@@ -6,7 +6,7 @@ FROM python:3.12-alpine
 RUN apk upgrade --no-cache
 WORKDIR /app
 COPY _shared/sbplugin.py _shared/run.py /app/
-COPY audio-description/app.py /app/audio-description/
+COPY audio-description/app.py audio-description/rules.json /app/audio-description/
 COPY disk-forecast/app.py /app/disk-forecast/
 COPY dns-blocking/app.py /app/dns-blocking/
 COPY download-summary/app.py /app/download-summary/
