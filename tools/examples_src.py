@@ -570,6 +570,8 @@ serve({"/card": card})
 # manifest.
 IMAGE_VERSION = "1.2.3"
 # 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
+# Built again under the same tag for Audio description 1.3.0 (pull request 9) and pinned on 17 November 2026
+# (sha256:26c490dec620...).
 NEW_IN_IMAGE = set()
 
 
