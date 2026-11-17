@@ -16,7 +16,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.2",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:ccd38ab9d0a815fd624cc2bdb4921ef94311596536566a4a28d75fac4c2da36c",
    "port": 8080,
    "network": "lan",
    "env": {

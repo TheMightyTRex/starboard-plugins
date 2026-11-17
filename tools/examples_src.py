@@ -541,8 +541,8 @@ serve({"/card": card})
 # 1.2.2 (17 November 2026, DASH-458): sbplugin's Jellyfin key fix, so every example names this tag until it is built
 # and pinned again.
 IMAGE_VERSION = "1.2.2"
-NEW_IN_IMAGE = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking",
-                "home-assistant", "outside-services", "download-summary", "disk-forecast", "notifications", "watch-stats"}
+# Built and pinned on 17 November 2026 (sha256:ccd38ab9d0a8...): every example runs from the pinned image again.
+NEW_IN_IMAGE = set()
 
 
 def _switch(key, label, hint, group, default=True):
