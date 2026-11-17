@@ -29,8 +29,8 @@ IDS = sorted(d for d in os.listdir(ROOT) if os.path.isfile(os.path.join(ROOT, d,
 
 class Idle(unittest.TestCase):
     def test_no_server_looks_for_a_shutdown_twice_a_second(self):
-        for pid in IDS + ["_shared"]:
-            for name in ("app.py", "sbplugin.py"):
+        for pid in sorted(os.listdir(ROOT)):  # the examples, the shared code and the app plug-ins' helpers
+            for name in ("app.py", "sbplugin.py", "helper.py"):
                 path = os.path.join(ROOT, pid, name)
                 if not os.path.isfile(path):
                     continue

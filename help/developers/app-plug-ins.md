@@ -23,7 +23,7 @@ its own web page on your home network. Eleven plug-ins here are app plug-ins.
 - A small helper first in `containers`, when Starboard should show a card or set the app up, as Themearr and Checkrr
   have. It can run in the official Python image with no image of ours: its code goes in the manifest's `files`, which
   Starboard writes once into its folder, and `command` runs it. Put the version in the file's name, such as
-  `app-1.0.0.py`, so an update writes the new one. `tools/make_app_helpers.py` copies `app.py` into the manifest.
+  `app-1.0.0.py`, so an update writes the new one. `tools/make_app_helpers.py` copies its `helper.py` into the manifest.
 
 ## Rules
 

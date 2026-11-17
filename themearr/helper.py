@@ -8,7 +8,7 @@
 - Tells Starboard how Themearr is: a card with how many films have a theme, and a page with Themearr's access token.
 
 Python's standard library only. Starboard writes this file into the helper's own folder (files in the manifest) and
-runs it in the official Python image, so no image of ours is built. tools/make_app_helpers.py copies it into the
+runs it in the official Python image, so no image of ours is built. tools/make_app_helpers.py copies this file, helper.py, into the
 manifest; the file name carries the version, so an update writes the new one beside the old.
 """
 import hashlib

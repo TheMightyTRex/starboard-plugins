@@ -5,11 +5,11 @@ How Themearr is built, for anyone who wants to change it or make one like it. It
 ## Its files
 
 - [`starboard-plugin.json`](../../../themearr/starboard-plugin.json)
-- [`app.py`](../../../themearr/app.py), the helper
+- [`helper.py`](../../../themearr/helper.py), the helper
 - [`install.py`](../../../themearr/install.py)
 - [`logo.svg`](../../../themearr/logo.svg)
 - [`tests/test_app_helpers.py`](../../../tests/test_app_helpers.py) and [`tests/test_app_plugins.py`](../../../tests/test_app_plugins.py)
-- [`tools/make_app_helpers.py`](../../../tools/make_app_helpers.py), which copies `app.py` into the manifest
+- [`tools/make_app_helpers.py`](../../../tools/make_app_helpers.py), which copies `helper.py` into the manifest
 
 ## Containers
 
@@ -33,7 +33,7 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- **No image of ours.** The helper, `app.py`, is Python's standard library only. It is in the manifest's `files` as `app-1.0.0.py`: Starboard writes it once into the helper's own folder before its first start, and `command` runs it in the official Python image. The version in the file name means an update writes the new helper beside the old one. `tools/make_app_helpers.py` copies it in, and its check fails when they differ.
+- **No image of ours.** The helper, `helper.py`, is Python's standard library only. It is in the manifest's `files` as `app-1.0.0.py`: Starboard writes it once into the helper's own folder before its first start, and `command` runs it in the official Python image. The version in the file name means an update writes the new helper beside the old one. `tools/make_app_helpers.py` copies it in, and its check fails when they differ.
 - **Reelix as Radarr.** Reelix answers Radarr's API at `<Reelix>/radarr/api/v3`. Every 2 minutes the helper reads `/run/starboard/reelix.json` (permission `reelix:key`) and, when Themearr has no Radarr or a different one, saves Reelix's address and key with Themearr's `POST /api/settings/radarr`. Themearr then reads `GET /api/v3/movie` (each film's `id`, `title`, `year`, `path` and `hasFile`) and checks `GET /api/v3/system/status`. Reelix answers both. It does not answer `GET /api/v3/mediacover`, so Themearr shows no posters.
 - **The films folder.** The helper adds `/media/movies` to Themearr's library folders and maps Reelix's `/data/media/movies` to it, with `POST /api/settings`, then completes Themearr's set-up (`POST /api/setup/complete`) and starts the first read.
 - **RapidAPI.** The key and user name in the plug-in's settings are sent with `POST /api/settings/rapidapi`, once each time they change.

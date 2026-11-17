@@ -57,7 +57,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def load(pid, env):
-    """The plug-in's app.py as a module, with its own /run/starboard and folder in a temporary place."""
+    """The plug-in's helper.py as a module, with its own /run/starboard and folder in a temporary place."""
     tmp = tempfile.TemporaryDirectory()
     run = os.path.join(tmp.name, "run")
     os.makedirs(run)
@@ -67,7 +67,7 @@ def load(pid, env):
         json.dump({}, f)
     os.environ.update({"STARBOARD_RUN": run, "HELPER_DATA": tmp.name, **env})
     name = f"helper_{pid}"
-    spec = importlib.util.spec_from_file_location(name, os.path.join(ROOT, pid, "app.py"))
+    spec = importlib.util.spec_from_file_location(name, os.path.join(ROOT, pid, "helper.py"))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     mod._tmp, mod._run = tmp, run
@@ -95,7 +95,7 @@ class InTheManifest(unittest.TestCase):
             self.assertEqual(main.get("network", "default"), "default", f"{pid}: the helper reaches only Starboard and its app")
             for name, text in main["files"].items():
                 self.assertLessEqual(len(text), 16384, name)
-            with open(os.path.join(ROOT, pid, "app.py"), encoding="utf-8") as f:
+            with open(os.path.join(ROOT, pid, "helper.py"), encoding="utf-8") as f:
                 src = f.read()
             imported = set(re.findall(r"^(?:import|from) ([a-z_.]+)", src, re.M))
             self.assertTrue(all(sys.modules.get(n.split(".")[0]) or n.split(".")[0] in sys.stdlib_module_names for n in imported), imported)
