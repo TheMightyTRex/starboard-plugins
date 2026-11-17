@@ -143,7 +143,9 @@ def _items():
     """Every film and episode, a page at a time, with its streams only."""
     start = 0
     while True:
-        q = urllib.parse.urlencode({"Recursive": "true", "IncludeItemTypes": "Movie,Episode", "Fields": "MediaStreams,Tags",
+        # CollapseBoxSetItems=false: without it, Jellyfin 12 answers a key with no person with the Audio description
+        # collection in place of the films in it, so they would drop out of the check and lose their tag.
+        q = urllib.parse.urlencode({"Recursive": "true", "IncludeItemTypes": "Movie,Episode", "Fields": "MediaStreams,Tags", "CollapseBoxSetItems": "false",
                                     "EnableImages": "false", "EnableUserData": "false", "StartIndex": start, "Limit": PAGE})
         got = jellyfin(f"/Items?{q}") or {}
         items = got.get("Items") or []
@@ -153,8 +155,16 @@ def _items():
             return
 
 
+def _episode_row(it, track):
+    """One described episode for Titles with audio description: its id, series and episode numbers, name and track."""
+    num = lambda k: int(it[k]) if isinstance(it.get(k), int) else None  # noqa: E731
+    return {"id": str(it.get("Id") or ""), "season": num("ParentIndexNumber"), "episode": num("IndexNumber"),
+            "name": str(it.get("Name") or "")[:120], "track": track["name"]}
+
+
 def scan():
-    """Reads every film and episode's audio tracks and keeps which have audio description."""
+    """Reads every film and episode's audio tracks and keeps which have audio description: for Titles with audio
+    description, each film's id, name, year and track, and each series' id, year and described episodes."""
     films, series, total, without = [], {}, 0, []
     tags = {"want": set(), "have": set(), "series": set(), "films": []}  # for Find and tag, ids only
     for it in _items():
@@ -171,17 +181,25 @@ def scan():
                 tags["films"].append(iid)
         if it.get("Type") == "Episode":
             name = str(it.get("SeriesName") or "Unknown series")
-            row = series.setdefault(name, {"name": name, "described": 0, "episodes": 0, "track": ""})
+            row = series.setdefault(name, {"name": name, "described": 0, "episodes": 0, "track": "", "id": str(it.get("SeriesId") or ""), "items": []})
             row["episodes"] += 1
             if track:
                 row["described"] += 1
                 row["track"] = row["track"] or track["name"]
+                row["items"].append(_episode_row(it, track))
         elif track:
             year = it.get("ProductionYear")
-            films.append({"id": str(it.get("Id") or ""), "name": f"{it.get('Name')}" + (f" ({year})" if year else ""), "track": track["name"]})
+            films.append({"id": iid, "name": f"{it.get('Name')}" + (f" ({year})" if year else ""), "title": str(it.get("Name") or "")[:120],
+                          "year": int(year or 0), "track": track["name"]})
         elif it.get("Type") == "Movie" and it.get("Name"):  # kept small: a name and a year, for the Sources' links
             without.append([str(it["Name"])[:120], int(it.get("ProductionYear") or 0)])
+    # Every series once, a page at a time: their tags for Find and tag, and their years for Titles with audio description.
+    all_series = _ids({"IncludeItemTypes": "Series", "Fields": "Tags"})
+    years = {str(x.get("Id")): int(x.get("ProductionYear") or 0) for x in all_series if isinstance(x, dict)}
     series_rows = sorted((s for s in series.values() if s["described"]), key=lambda s: s["name"].lower())
+    for s in series_rows:
+        s["year"] = years.get(s["id"], 0)
+        s["items"].sort(key=lambda e: (e["season"] is None, e["season"] or 0, e["episode"] is None, e["episode"] or 0, e["name"].lower()))
     films.sort(key=lambda f: f["name"].lower())
     seen = remember("seen", {}) or {}
     now = time.time()
@@ -197,7 +215,7 @@ def scan():
     if jellyfin_version_installed(force=True):
         keep("tagged", {"at": time.time(), "idle": True})
         return {"said": said + ". " + IDLE}
-    done = find_and_tag(tags)
+    done = find_and_tag(tags, all_series)
     return {"said": said + f". Tagged {done['tagged']:,}, took the tag off {done['untagged']:,}"}
 
 
@@ -224,7 +242,7 @@ def _ids(query):
     """Every item a query finds, a page at a time: [{Id, Tags}]."""
     start, out = 0, []
     while True:
-        got = jellyfin("/Items?" + urllib.parse.urlencode({**query, "Recursive": "true", "EnableImages": "false", "EnableUserData": "false",
+        got = jellyfin("/Items?" + urllib.parse.urlencode({**query, "Recursive": "true", "CollapseBoxSetItems": "false", "EnableImages": "false", "EnableUserData": "false",
                                                            "StartIndex": start, "Limit": PAGE})) or {}
         items = got.get("Items") or []
         out += items
@@ -258,10 +276,11 @@ def plan_tags(want, have):
     return sorted(want - have), sorted(have - want)
 
 
-def find_and_tag(tags):
+def find_and_tag(tags, series=None):
     """Tags each film and episode with a described track, and each series with one, and takes the tag off the rest.
-    While the collection is activated, keeps the collection's films and series the same as the tagged ones."""
-    series = _ids({"IncludeItemTypes": "Series", "Fields": "Tags"})
+    While the collection is activated, keeps the collection's films and series the same as the tagged ones. `series`:
+    every series with its tags, when the scan has read them already."""
+    series = _ids({"IncludeItemTypes": "Series", "Fields": "Tags"}) if series is None else series
     have_series = {str(x.get("Id")) for x in series if TAG.lower() in [str(t).lower() for t in x.get("Tags") or []]}
     add, take = plan_tags(tags["want"] | tags["series"], tags["have"] | have_series)
     for iid in add:
@@ -508,18 +527,99 @@ def _checked_words(r):
     return time.strftime("Checked %d %B at %H:%M", time.localtime(r["at"])).replace(" 0", " ")
 
 
+# Titles with audio description (owner, 17 November 2026: "a page ... to list the items with audio description", the
+# same page as the Jellyfin version's): every film and every described episode, by series, from the result the nightly
+# check keeps. Nothing more is read from Jellyfin to draw it. Films and Series are the two menus, each with its count;
+# each series opens to its described episodes. Each title links to its page in Jellyfin.
+TITLES = "Titles with audio description"
+ITEMS_MAX = 4000  # Starboard draws up to 4000 items on a page
+SERIES_MENUS_MAX = 150  # menus are up to 200: more series than this are listed by first letter, each series a heading
+NOT_LINKABLE = ("host.docker.internal", "localhost", "jellyfin", "127.0.0.1", "::1")  # addresses a browser cannot open
+
+
+def jellyfin_page_base():
+    """Jellyfin's address in a browser: the setting, else Starboard's own address for Jellyfin when a browser can
+    open it, else "" (no links). Starboard gives plug-ins Jellyfin's address as their container reaches it, which is
+    often host.docker.internal."""
+    own = str(setting("jellyfin_address", "") or "").strip().rstrip("/")
+    if re.match(r"^https?://[^\s<>\"]+$", own):
+        return own
+    url = str(_run_file("jellyfin.json").get("url") or "").strip().rstrip("/")
+    host = (urllib.parse.urlsplit(url).hostname or "").lower()
+    return "" if not url or host in NOT_LINKABLE or host.startswith("127.") else url
+
+
+def _jellyfin_link(base, iid, what):
+    if not base or not iid:
+        return None
+    return {"url": f"{base}/web/#/details?id={urllib.parse.quote(iid)}", "label": f"Open {what} in Jellyfin"[:80]}
+
+
+def episode_words(e):
+    """S1 E3: Name, or the name alone when Jellyfin has no numbers for it."""
+    if e.get("season") is not None and e.get("episode") is not None:
+        return f"S{e['season']} E{e['episode']}: {e['name']}" if e.get("name") else f"S{e['season']} E{e['episode']}"
+    return e.get("name") or "An episode"
+
+
+def series_words(s):
+    """The series' status in words: All 6 episodes described, or 3 of 6 episodes described."""
+    if s["described"] == s["episodes"]:
+        if s["episodes"] > 1:
+            return f"All {s['episodes']:,} episodes described"
+    return f"{s['described']:,} of {plural(s['episodes'], 'episode')} described"
+
+
 def titles(body=None):
     r = remember("result") or {}
-    items = [{"id": f"film:{f['name']}", "title": f["name"], "detail": f["track"], "group": "Films", "state": "ok", "actions": []}
-             for f in r.get("films", [])]
-    items += [{"id": f"series:{s['name']}", "title": s["name"], "group": "Series", "state": "ok" if s["described"] == s["episodes"] else "warning",
-               "detail": f"{s['described']:,} of {plural(s['episodes'], 'episode')} described", "actions": []} for s in r.get("series", [])]
-    count = len(r.get("films", [])) + len(r.get("series", []))
-    intro = (f"{plural(len(r.get('films', [])), 'film')} and {plural(len(r.get('series', [])), 'series', 'series')} in Jellyfin have a "
-             f"described sound track. {_checked_words(r)}." if r else _checked_words(r))
-    if r and not count:
+    films, series = r.get("films", []), r.get("series", [])
+    base = jellyfin_page_base()
+    episodes = sum(len(s.get("items") or []) for s in series)
+    # Starboard adds how many titles each menu holds, so Films needs no count of its own, and Series says how many series.
+    menus = [{"id": "films", "title": "Films", "group": "Show"},
+             {"id": "series", "title": "Series", "group": "Show", "detail": plural(len(series), "series", "series")}]
+    items = [{"id": f"film:{f.get('id') or f['name']}", "title": f["name"], "detail": f"Described track: {f['track']}", "group": "Films",
+              "menu": "films", "state": "ok", "state_label": "Described", "actions": [],
+              **({"link": link} if (link := _jellyfin_link(base, f.get("id"), f["name"])) else {})} for f in films]
+    by_letter = len(series) > SERIES_MENUS_MAX
+    letters = set()
+    for s in series:
+        shown = f"{s['name']} ({s['year']})" if s.get("year") else s["name"]
+        sid = f"series:{s.get('id') or s['name']}"
+        menu = sid
+        if by_letter:  # a long list: Series opens by first letter, and each series is a heading there
+            letter = _letter(s["name"])
+            menu = f"series-{letter[:1].lower()}"
+            if letter not in letters:
+                letters.add(letter)
+                menus.append({"id": menu, "title": letter, "parent": "series", "group": "By first letter"})
+        else:
+            menus.append({"id": sid, "title": shown[:80], "parent": "series", "group": "Series",
+                          "detail": f"{series_words(s)}. Described track: {s['track']}"[:200]})
+        for e in s.get("items") or []:
+            what = episode_words(e)
+            items.append({"id": f"episode:{e.get('id') or s['name'] + what}", "title": what, "detail": f"Described track: {e['track']}",
+                          "group": shown[:40] if by_letter else "Episodes", "menu": menu, "state": "ok", "state_label": "Described", "actions": [],
+                          **({"link": link} if (link := _jellyfin_link(base, e.get("id"), f"{s['name']} {what}")) else {})})
+    cut = len(items) > ITEMS_MAX
+    items = items[:ITEMS_MAX]
+    if not r:
+        intro = _checked_words(r)
+    elif not films and not series:
         intro = f"No film or series in Jellyfin has a described sound track yet. {_checked_words(r)}."
-    return {"type": "list", "title": "Titles with audio description", "intro": intro, "items": items}
+    else:
+        intro = (f"{plural(len(films), 'film')} and {plural(episodes, 'episode')} in {plural(len(series), 'series', 'series')} have a described "
+                 f"sound track. {_checked_words(r)}.")
+        if series and any("items" not in s for s in series):
+            intro += " Select 'Check for described titles now' to list each series' episodes."
+        if cut:
+            intro += f" Only the first {ITEMS_MAX:,} are listed."
+        intro += (" Each title opens its page in Jellyfin, in a new tab." if base else
+                  " To open each title in Jellyfin from here, enter the address you open Jellyfin at in 'Jellyfin address for links'.")
+    out = {"type": "list", "title": TITLES, "intro": intro[:400], "items": items}
+    if r and (films or series):
+        out["menus"] = menus[:200]
+    return out
 
 
 def elsewhere(body=None):

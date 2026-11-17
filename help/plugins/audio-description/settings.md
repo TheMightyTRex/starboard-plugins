@@ -20,7 +20,28 @@ Audio description's settings are on its own tab: go to **Settings**, then **Plug
 | Setting | What it does | Default |
 |---|---|---|
 | **Add them to the Audio description collection** | The films and series with a described track go into one Jellyfin collection called Audio description, and the ones without are taken out. Every Jellyfin app shows it. Deactivated, the collection stays as it is. Activated or deactivated. | Activated |
-| **Titles with audio description** | A page of its own that lists the films with a described sound track, with the track's name, and the series, with how many episodes are described, from the last check. It says when it last checked. | Not a setting |
+| **Titles with audio description** | A page of its own that lists every film and every episode with a described sound track, from the last check. Read [Titles with audio description](#titles-with-audio-description). | Not a setting |
+| **Jellyfin address for links** | The address you open Jellyfin at in a browser, such as http://192.168.1.10:8096. Each title on **Titles with audio description** opens its page there. Left empty, Starboard's own address for Jellyfin is used when a browser can open it; when Starboard reaches Jellyfin at an address only it can use, such as host.docker.internal, the titles have no link until you enter this. | Empty |
+
+## Titles with audio description
+
+The same page, with the same columns and words, as **Titles with audio description** in Jellyfin's own Audio description plug-in. It lists what the last check found, so it opens straight away and asks Jellyfin nothing.
+
+1. Go to **Settings**, then **Plug-ins**, then **Audio description**, then **Titles with audio description**.
+2. The first line says how many films, and how many episodes in how many series, have a described sound track, and when it last checked.
+3. Choose **Films** or **Series**. Each says its count, such as "3 titles with audio description", and **Series** how many series. **Back to Titles with audio description** returns to the choice.
+4. Under **Films**, each film is a row with its name and year, **Described track:** and the track's name, and its status, **Described**.
+5. Under **Series**, each series is a row with its name and year, how many of its episodes are described, such as "3 of 6 episodes described" or "All 6 episodes described", and its described track. Choose a series to list its described episodes, in order, such as "S1 E3: Part three", each with its described track and **Described**.
+6. Each film and episode has a link, such as "Open Harbour Lights (2019) in Jellyfin", that opens its page in Jellyfin in a new tab.
+
+| Part | What it shows |
+|---|---|
+| **Title** | The film's name and year, or the episode's series and episode number, such as S1 E3, and its name |
+| **Described track** | The name of the first sound track that is audio description, as Jellyfin shows it, such as "English (Audio Description)" |
+| **Status** | **Described** for a film or episode; for a series, how many of its episodes are described |
+| **Link** | Opens the title's page in Jellyfin, in a new tab, when Starboard knows an address a browser can open |
+
+More than 150 series open by first letter, with each series as a heading. Up to 4,000 titles are listed. A list kept by version 1.3.0 or earlier has no years, episodes or links: select **Check for described titles now** once to fill it.
 
 ## Elsewhere
 
