@@ -11,7 +11,7 @@ import time
 import urllib.parse
 from collections import Counter, defaultdict
 
-from sbplugin import RUN, band, fetch, jellyfin, keep, plural, remember, serve, setting
+from sbplugin import RUN, band, fetch, jellyfin, jellyfin_headers, keep, plural, remember, serve, setting
 
 FRESH = 15 * 60
 LIMIT = 5000  # rows read at most, about 750 KB from Jellyfin
@@ -72,7 +72,7 @@ def jellyfin_post(path, body):
         jf = json.load(f)
     if not jf.get("url") or not jf.get("api_key"):
         raise LookupError("Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps")
-    return fetch(jf["url"].rstrip("/") + path, {"X-Emby-Token": jf["api_key"]}, data=body, method="POST")
+    return fetch(jf["url"].rstrip("/") + path, jellyfin_headers(jf["api_key"]), data=body, method="POST")
 
 
 def from_jellyfin(n):

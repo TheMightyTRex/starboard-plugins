@@ -112,7 +112,7 @@ def jf(path, data=None, method=None):
     j = _run_json("jellyfin.json")
     if not j.get("url") or not j.get("api_key"):
         raise LookupError("Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps")
-    return sbplugin.fetch(j["url"].rstrip("/") + path, {"X-Emby-Token": j["api_key"]}, data=data, method=method, timeout=60)
+    return sbplugin.fetch(j["url"].rstrip("/") + path, sbplugin.jellyfin_headers(j["api_key"]), data=data, method=method, timeout=60)
 
 
 def rx(path, data=None, method=None):

@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "watch-stats",
  "name": "Watch statistics",
- "version": "1.1.1",
+ "version": "1.1.2",
  "description": "What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -19,7 +19,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:54691dcbaf886465224e39c64b7e6e75722f65afbe9c929501270dbb9df6e2c0",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.2",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -160,6 +160,13 @@
   "alt": "A bar chart"
  },
  "changes": [
+  {
+   "version": "1.1.2",
+   "date": "2026-11-17",
+   "fixed": [
+    "**Jellyfin 12:** it sends Jellyfin's key the way Jellyfin 12 asks for it, so Jellyfin no longer refuses its requests where legacy authorisation is off. Older Jellyfin still works."
+   ]
+  },
   {
    "version": "1.1.1",
    "date": "2026-11-16",

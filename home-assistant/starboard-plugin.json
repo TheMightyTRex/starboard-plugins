@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "home-assistant",
  "name": "Home Assistant",
- "version": "1.1.1",
+ "version": "1.1.2",
  "description": "Your house in one sentence on the dashboard: the things you choose from Home Assistant.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -15,7 +15,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:54691dcbaf886465224e39c64b7e6e75722f65afbe9c929501270dbb9df6e2c0",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.2",
    "port": 8080,
    "network": "lan",
    "env": {
@@ -76,6 +76,13 @@
   "alt": "A house with lines of writing"
  },
  "changes": [
+  {
+   "version": "1.1.2",
+   "date": "2026-11-17",
+   "changed": [
+    "**Shared helper:** the helper every example shares sends Jellyfin's key the way Jellyfin 12 asks for it. This plug-in does not ask Jellyfin anything, so it works as before."
+   ]
+  },
   {
    "version": "1.1.1",
    "date": "2026-11-16",

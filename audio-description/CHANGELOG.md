@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 (17 November 2026)
+
+### Fixed
+- Jellyfin 12: it sends Jellyfin's key the way Jellyfin 12 asks for it, so Jellyfin no longer refuses its requests where legacy authorisation is off. Older Jellyfin still works.
+
+
 ## 1.2.1 (16 November 2026)
 
 ### Changed

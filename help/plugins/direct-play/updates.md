@@ -1,15 +1,22 @@
 # Direct play: Updates
 
-Direct play 1.0.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Direct play 1.0.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.2 | 1.14 or later | 2026-11-17 |
 | 1.0.1 | 1.14 or later | 2026-11-16 |
 | 1.0.0 | 1.14 or later | 2026-11-14 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.0.2
+
+Fixed:
+
+- **Jellyfin 12:** it sends Jellyfin's key the way Jellyfin 12 asks for it, so Jellyfin no longer refuses its library refreshes and other requests where legacy authorisation is off. Older Jellyfin still works.
 
 ## What is new in 1.0.1
 

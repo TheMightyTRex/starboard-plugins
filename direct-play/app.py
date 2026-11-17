@@ -506,7 +506,7 @@ def jellyfin(path, data=None, method=None):
     jf = _run_file("jellyfin.json")
     if not jf.get("url") or not jf.get("api_key"):
         raise LookupError("no Jellyfin")
-    return fetch(jf["url"].rstrip("/") + path, {"X-Emby-Token": jf["api_key"]}, data=data, method=method, timeout=30)
+    return fetch(jf["url"].rstrip("/") + path, sbplugin.jellyfin_headers(jf["api_key"]), data=data, method=method, timeout=30)
 
 
 _library = {"at": 0, "movies": [], "series": []}

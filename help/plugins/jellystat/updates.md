@@ -1,17 +1,24 @@
 # Jellystat: Updates
 
-Jellystat 1.1.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Jellystat 1.1.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.3 | 1.14 or later | 2026-11-17 |
 | 1.1.2 | 1.14 or later | 2026-11-16 |
 | 1.1.1 | 1.14 or later | 2026-11-15 |
 | 1.1.0 | 1.14 or later | 2026-11-15 |
 | 1.0.0 | 1.13 or later | 2026-11-13 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.3
+
+Changed:
+
+- **Shared helper:** its helper's shared code sends Jellyfin's key the way Jellyfin 12 asks for it. It hands the key to Jellystat as before.
 
 ## What is new in 1.1.2
 

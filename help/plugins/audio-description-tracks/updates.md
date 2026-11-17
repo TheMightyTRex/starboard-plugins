@@ -1,17 +1,24 @@
 # Audio description tracks: Updates
 
-Audio description tracks 1.1.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description tracks 1.1.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.3 | 1.14 or later | 2026-11-17 |
 | 1.1.2 | 1.14 or later | 2026-11-16 |
 | 1.1.1 | 1.14 or later | 2026-11-15 |
 | 1.1.0 | 1.14 or later | 2026-11-15 |
 | 1.0.0 | 1.12 or later | 2026-11-13 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.3
+
+Fixed:
+
+- **Jellyfin 12:** it sends Jellyfin's key the way Jellyfin 12 asks for it, so Jellyfin no longer refuses its requests where legacy authorisation is off. Older Jellyfin still works.
 
 ## What is new in 1.1.2
 
