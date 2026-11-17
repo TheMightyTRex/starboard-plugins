@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Keeps the Picture shrinker in step with the Jellyfin version (DASH-433; SYNC.md in
-TheMightyTRex/jellyfin-plugin-picture-shrinker). Copies that repository's rules.json to picture-shrinker/rules.json and
+the picture-shrinker folder of TheMightyTRex/jellyfin-plugins). Copies that folder's rules.json to picture-shrinker/rules.json and
 its shared test pictures (tests/pictures) to tests/picture-shrinker-shared, or with --check says what differs and
 exits 1.
 
-  python3 tools/sync_picture_rules.py [--check] [JELLYFIN_REPO_FOLDER]
-The folder defaults to ~/src/jellyfin-plugin-picture-shrinker.
+  python3 tools/sync_picture_rules.py [--check] [JELLYFIN_PICTURE_SHRINKER_FOLDER]
+The folder defaults to ~/src/jellyfin-plugins/picture-shrinker.
 """
 import filecmp
 import os
@@ -40,7 +40,7 @@ def differences(src):
 def main(argv):
     check = "--check" in argv
     args = [a for a in argv if a != "--check"]
-    src = os.path.abspath(os.path.expanduser(args[0] if args else "~/src/jellyfin-plugin-picture-shrinker"))
+    src = os.path.abspath(os.path.expanduser(args[0] if args else "~/src/jellyfin-plugins/picture-shrinker"))
     if not os.path.isfile(os.path.join(src, "rules.json")):
         sys.exit(f"No rules.json in {src}")
     diffs = differences(src)
