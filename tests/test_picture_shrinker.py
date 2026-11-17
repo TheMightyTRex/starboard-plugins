@@ -499,6 +499,7 @@ if __name__ == "__main__":
     unittest.main()
 
 
+@unittest.skipIf(Image is None, "Pillow is not installed")
 class ChooseTheBackupAndStartAgain(unittest.TestCase):
     """Rules 1.2: nothing is shrunk until Keep a backup copy or Shrink without a backup is chosen, after install and after the
     update from 1.1; Start again deletes the backup and the records, and has Jellyfin download the pictures again,
