@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1 (17 November 2026)
+
+### Changed
+- Clearer words: its description says "21 accessible styles", and the descriptions of Editorial, Large and clear, Studio, Mica, Retro and Bento are plainer.
+- Logo description: where its logo stands on its own, a screen reader says "Styles logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.4.0 (15 November 2026)
 
 ### Added

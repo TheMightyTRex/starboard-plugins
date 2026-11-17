@@ -188,7 +188,7 @@ class PictureShrinker(unittest.TestCase):
         cleaners = starboard_cleaners()
         first = self.app.card()
         self.assertEqual(first["status"], "scheduled")
-        self.assertLessEqual(len(first["status_label"]), 24)
+        self.assertNotIn("status_label", first)  # the band says Scheduled; the next run is in the note (no time on a chip)
         self.library()
         self.app.run("now")
         card, page = self.app.card(), self.app.screen()
@@ -433,7 +433,7 @@ if __name__ == "__main__":
 
 
 class ChooseTheBackupAndStartAgain(unittest.TestCase):
-    """Rules 1.2: nothing is shrunk until Keep a backup copy or Just shrink is chosen, after install and after the
+    """Rules 1.2: nothing is shrunk until Keep a backup copy or Shrink without a backup is chosen, after install and after the
     update from 1.1; Start again deletes the backup and the records, and has Jellyfin download the pictures again,
     keeping each poster and photo aside until a new one comes, and putting it back after a day without one."""
 

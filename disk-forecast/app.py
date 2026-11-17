@@ -32,7 +32,7 @@ def card():
         worst = left if worst is None else min(worst, left)
         parts.append(f"{name}: full in about {round(left):,} days")
     state = "problem" if worst is not None and worst < 14 else "warning" if worst is not None and worst < 60 else "ok"
-    label = f"Full in {round(worst):,} days" if worst is not None and worst < 60 else None
+    label = "Filling fast" if worst is not None and worst < 60 else None  # the days are in the text
     return band({"state": state, "text": ". ".join(parts)}, state, changed("history"), label)
 
 

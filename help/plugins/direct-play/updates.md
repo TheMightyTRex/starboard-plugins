@@ -1,16 +1,24 @@
 # Direct play: Updates
 
-Direct play 1.0.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Direct play 1.0.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 1.0.2 | 1.14 or later | 2026-11-17 |
-| 1.0.1 | 1.14 or later | 2026-11-16 |
-| 1.0.0 | 1.14 or later | 2026-11-14 |
+| 1.0.3 | 1.14 or later | 17 November 2026 |
+| 1.0.2 | 1.14 or later | 17 November 2026 |
+| 1.0.1 | 1.14 or later | 16 November 2026 |
+| 1.0.0 | 1.14 or later | 14 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.0.3
+
+Changed:
+
+- **Clearer words:** **Look at the library now** is now **Check the library now**, and the size settings are **Shrink 1080p files over**, **Shrink 720p files over** and **Shrink smaller files over**. Its messages put the settings they name in quotation marks.
+- **Logo description:** where its logo stands on its own, a screen reader says "Direct play logo", the plug-in's name, instead of a description of the symbol.
 
 ## What is new in 1.0.2
 

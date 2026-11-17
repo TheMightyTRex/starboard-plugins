@@ -9,7 +9,7 @@ Starboard sets the limits, so a plug-in can never take more than its share of a 
 ## When would you use it
 
 - You want to know how much a plug-in adds before you add it to a small server.
-- You need to see which plug-ins rest when nobody is using them.
+- You need to know which plug-ins rest when nobody is using them.
 
 ## The limits and the measurements
 
@@ -51,7 +51,7 @@ nobody has measured that plug-in: the limit is the most it may use.
 - The apps were measured with `tools/app_check.py`: the median of 36 readings over 3 minutes, after 2 minutes to
   settle, with an empty library. A real library uses more.
 - A plug-in that rests when idle uses no memory until Starboard wakes it for a card, a button, an event or a job.
-- The twelve smaller plug-ins share one image, so Starboard downloads it once.
+- The 12 smaller plug-ins share one image, so Starboard downloads it once.
 
 ## Find out more
 

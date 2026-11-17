@@ -4,7 +4,7 @@
 # Plug-ins that help with accessibility
 
 Three plug-ins are made for accessibility: two for blind and partially sighted people who watch with audio
-description, and one with a style for easy reading.
+description, and one with a style for reading with low vision.
 
 ## When would you use it
 

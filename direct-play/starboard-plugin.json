@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "direct-play",
  "name": "Direct play",
- "version": "1.0.2",
+ "version": "1.0.3",
  "description": "Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -20,7 +20,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-direct-play@sha256:ac9f2eeb9d9de086ab0826976921eaff315f88dd90a1b7e1d692e2d5318cc5be",
+   "image": "ghcr.io/themightytrex/starboard-plugin-direct-play:1.0.3",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -140,11 +140,11 @@
    "type": "switch",
    "default": true,
    "group": "Shrink",
-   "hint": "Converts H.264 files with a higher bitrate than below again, at the same picture quality. A file is kept as it was when it would not get at least a tenth smaller."
+   "hint": "Converts again any H.264 file with a higher bitrate than its size's limit, at the same picture quality. A file is kept as it was when it would not get at least a tenth smaller."
   },
   {
    "key": "shrink_1080",
-   "label": "Shrink 1080p files above",
+   "label": "Shrink 1080p files over",
    "type": "number",
    "default": 15,
    "min": 4,
@@ -154,7 +154,7 @@
   },
   {
    "key": "shrink_720",
-   "label": "Shrink 720p files above",
+   "label": "Shrink 720p files over",
    "type": "number",
    "default": 8,
    "min": 2,
@@ -164,7 +164,7 @@
   },
   {
    "key": "shrink_sd",
-   "label": "Shrink smaller files above",
+   "label": "Shrink smaller files over",
    "type": "number",
    "default": 5,
    "min": 1,
@@ -228,7 +228,7 @@
   },
   {
    "id": "survey",
-   "label": "Look at the library now",
+   "label": "Check the library now",
    "path": "/survey"
   }
  ],
@@ -296,9 +296,17 @@
  },
  "logo": {
   "file": "logo.svg",
-  "alt": "A play symbol on a screen"
+  "alt": "Direct play logo"
  },
  "changes": [
+  {
+   "version": "1.0.3",
+   "date": "2026-11-17",
+   "changed": [
+    "**Clearer words:** **Look at the library now** is now **Check the library now**, and the size settings are **Shrink 1080p files over**, **Shrink 720p files over** and **Shrink smaller files over**. Its messages put the settings they name in quotation marks.",
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Direct play logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.0.2",
    "date": "2026-11-17",

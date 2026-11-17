@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3 (17 November 2026)
+
+### Changed
+- Clearer words: Libraries says Checked for each library the rules check, the card says "Next check in quiet hours", and its hints name the setting they mean.
+- Logo description: where its logo stands on its own, a screen reader says "Library clean-up logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.0.2 (17 November 2026)
 
 ### Fixed

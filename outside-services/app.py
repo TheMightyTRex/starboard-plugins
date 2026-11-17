@@ -1,4 +1,4 @@
-"""Outside services: Up or down for things that are not on this server: your router, a NAS, a website."""
+"""Outside services: Up or down for things that are not on this server: your router, a NAS (network storage device), a website."""
 import time
 import urllib.error
 from sbplugin import band, changed, every, fetch, keep, remember, serve, setting
@@ -35,7 +35,7 @@ def status():
                     "needs_setup" if not targets() else "waiting")
     down = [r["name"] for r in rows if not r["up"]]
     return band({"state": "problem" if down else "ok", "text": f"Not answering: {', '.join(down)}" if down else f"All {len(rows)} answer"},
-                "problem" if down else "ok", changed("rows"), f"{len(down)} not answering" if down else None)
+                "problem" if down else "ok", changed("rows"), "Not answering" if down else None)
 
 
 def card():
@@ -44,7 +44,7 @@ def card():
     out = {"items": [{"title": r["name"], "detail": f"Up, {r['ms']} ms" if r["up"] else "Not answering", "link": r["url"]} for r in rows][:10]}
     if not rows:
         return band(out, "needs_setup" if not targets() else "waiting")
-    return band(out, "problem" if down else "ok", changed("rows"), f"{down} not answering" if down else None)
+    return band(out, "problem" if down else "ok", changed("rows"), "Not answering" if down else None)
 
 
 every(60 * float(setting("minutes", 5)), check, first=2)

@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "download-summary",
  "name": "Download summary",
- "version": "1.1.2",
- "description": "How much has downloaded today and this week, from what Starboard sees in the queue.",
+ "version": "1.1.3",
+ "description": "How much has downloaded today and this week, from the download queue in Starboard.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/download-summary",
@@ -50,9 +50,17 @@
  ],
  "logo": {
   "file": "logo.svg",
-  "alt": "An arrow down into a tray"
+  "alt": "Download summary logo"
  },
  "changes": [
+  {
+   "version": "1.1.3",
+   "date": "2026-11-17",
+   "changed": [
+    "**Clearer words:** its description says it counts the download queue in Starboard.",
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Download summary logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.1.2",
    "date": "2026-11-17",
@@ -83,7 +91,7 @@
    "version": "1.0.0",
    "date": "2026-11-12",
    "added": [
-    "How much has downloaded today and this week, from what Starboard sees in the queue."
+    "How much has downloaded today and this week, from the download queue in Starboard."
    ]
   }
  ]

@@ -42,11 +42,11 @@ PAGE = 200
 # Legal places with audio description, opened in their own apps (research, part (a) 2 to 4). Nothing is fetched.
 ELSEWHERE = [
     ("bbc", "BBC iPlayer", "Audio described programmes, in the iPlayer app or website", "https://www.bbc.co.uk/iplayer/categories/audio-described/featured"),
-    ("itvx", "ITVX", "Choose AD in the player on programmes that have it", "https://www.itv.com/"),
+    ("itvx", "ITVX", "Choose AD (audio description) in the player on programmes that have it", "https://www.itv.com/"),
     ("channel4", "Channel 4", "Audio description in the Channel 4 app on many programmes", "https://www.channel4.com/"),
     ("my5", "My5", "Audio description on some Channel 5 programmes", "https://www.channel5.com/"),
     ("netflix", "Netflix", "Search for audio description in the app", "https://www.netflix.com/browse/audio-description"),
-    ("rnib", "RNIB", "Advice on audio description, and RNIB's own reading services", "https://www.rnib.org.uk/living-with-sight-loss/assistive-aids-and-technology/tv-audio-and-gaming/audio-description/"),
+    ("rnib", "RNIB", "Advice on audio description, and the Royal National Institute of Blind People's own reading services", "https://www.rnib.org.uk/living-with-sight-loss/assistive-aids-and-technology/tv-audio-and-gaming/audio-description/"),
     ("adp", "The Audio Description Project", "A list of described films and series, by the American Council of the Blind", "https://adp.acb.org/"),
     ("audiovault", "AudioVault", "A community library of description tracks for blind people. Starboard does not download from it: sign in there and keep to its rules", "https://audiovault.net/"),
 ]
@@ -265,7 +265,7 @@ def people_screen(said=""):
               else "Not chosen"} for u in users if isinstance(u, dict) and u.get("Id")]
     out = {"type": "list", "title": "People who want audio description",
            "intro": "Activate each person who wants audio description. Jellyfin then remembers the sound track they choose, so "
-                    "choosing the described track once is enough for each film and series. Jellyfin cannot yet pick it by itself.",
+                    "choosing the described track once is enough for each film and series. Jellyfin does not pick it by itself.",
            "items": items}
     return {**out, "said": said} if said else out
 
@@ -288,7 +288,7 @@ def people(body=None):
 
 def _checked_words(r):
     if not r:
-        return "Not checked yet. Run Look for described titles now, or wait for tonight's check."
+        return "Not checked yet. Select 'Check for described titles now', or wait for tonight's check."
     return time.strftime("Checked %d %B at %H:%M", time.localtime(r["at"])).replace(" 0", " ")
 
 
@@ -346,7 +346,7 @@ def _menus_for(items):
 
 def _off_screen(title, switch, what):
     return {"type": "list", "title": title, "items": [],
-            "intro": f"{switch} is deactivated, so nothing is shown here. Activate it under Sources to see {what}."}
+            "intro": f"{switch} is deactivated, so nothing is shown here. Activate it under 'Sources' to show {what}."}
 
 
 def audiovault(body=None):
@@ -368,7 +368,7 @@ def audiovault(body=None):
              "own search for a title without audio description. Starboard never downloads from AudioVault or reads its pages. It states no "
              "licence, so using it is your choice: sign in there and keep to its 25 downloads a day. Add a track with Audio description tracks.")
     if not w:
-        intro = "Not checked yet. Run Look for described titles now, or wait for tonight's check."
+        intro = "Not checked yet. Select 'Check for described titles now', or wait for tonight's check."
     elif not items:
         intro = "Every film and series in Jellyfin has a described sound track, so there is nothing to search for."
     out = {"type": "list", "title": title, "intro": intro[:400], "items": items}
@@ -415,7 +415,7 @@ def _background(job, label):
 
 def scan_now():
     _background(scan, "scan")
-    return {"said": "Looking for described titles. The list updates in a minute or two"}
+    return {"said": "Checking for described titles. The list updates in a minute or two"}
 
 
 def reelix_now():
@@ -455,7 +455,7 @@ def youdescribe(body=None):
              "sighted people. Each link opens YouDescribe's own search for a title in Jellyfin, and plays there in your browser. YouDescribe "
              "offers no way for other apps to search it, so Starboard only links to it.")
     if not r:
-        intro = "Not checked yet. Run Look for described titles now, or wait for tonight's check."
+        intro = "Not checked yet. Select 'Check for described titles now', or wait for tonight's check."
     out = {"type": "list", "title": title, "intro": intro[:400], "items": items}
     if items:
         out["menus"] = _menus_for(items)
@@ -478,7 +478,7 @@ def apps(body=None):
     return {"type": "list", "title": title, "items": items,
             "intro": ("MovieReading and Earcatch are free phone apps that play a description through headphones, in step with a film, by "
                       "listening to its sound. Neither publishes a list of titles that other apps may read, so Starboard cannot say which of "
-                      "your films they have. RNIB says they are not offered in the UK yet.")}
+                      "your films they have. The Royal National Institute of Blind People (RNIB) says they are not offered in the UK.")}
 
 
 ROUTES = {"/count": count, "/recent": recent, "/titles": titles, ("POST", "/titles"): titles,

@@ -39,12 +39,15 @@ class Collection(unittest.TestCase):
             self.assertEqual(data, make_logos.svg(pid).encode(), pid)
             self.assertLess(len(data), 16 * 1024, pid)
             self.assertGreaterEqual(make_logos.contrast(make_logos.LOGOS[pid][0]), 4.5, pid)
-            self.assertNotIn(m["name"].lower(), m["logo"]["alt"].lower(), f"{pid}: the alt repeats the name beside it")
+            # ALT-TEXT.md section 6: a logo is described by its name. Starboard uses the alt only where the logo stands
+            # on its own, and hides the logo beside the name (design system audit, 17 November 2026).
+            self.assertEqual(m["logo"]["alt"], f"{m['name']} logo", pid)
             if sb:
                 sb[0].clean_svg(data)
                 self.assertEqual(sb[0].check_entry(m["logo"]), [], pid)
 
-    def test_no_brand_marks_in_the_words(self):
+    def test_no_brand_marks_in_the_symbols(self):
+        """The symbol's own words (for the help) name no other project's logo: each symbol is a neutral one."""
         for pid in IDS:
             alt = make_logos.LOGOS[pid][1].lower()
             for brand in ("jellyfin", "home assistant", "seerr", "calibre", "kavita", "navidrome", "tdarr", "kuma", "wizarr", "jellystat"):
@@ -86,7 +89,7 @@ class Collection(unittest.TestCase):
         rows = {e["id"]: e for e in json.load(open(os.path.join(ROOT, "catalogue.json")))["plugins"]}
         self.assertEqual(set(rows), set(IDS))
         for pid, e in rows.items():
-            self.assertEqual(e["logo_alt"], make_logos.LOGOS[pid][1])
+            self.assertEqual(e["logo_alt"], make_logos.alt(pid))
             self.assertLessEqual(len(e["logo"]), 24 * 1024)
             self.assertEqual(base64.b64decode(e["logo"].split(",", 1)[1]), open(os.path.join(ROOT, pid, "logo.svg"), "rb").read())
             old = PREVIOUS["plugins"].get(pid)

@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description",
  "name": "Audio description",
- "version": "1.2.2",
+ "version": "1.2.3",
  "description": "Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -20,7 +20,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:ccd38ab9d0a815fd624cc2bdb4921ef94311596536566a4a28d75fac4c2da36c",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.3",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -119,7 +119,7 @@
  "actions": [
   {
    "id": "scan",
-   "label": "Look for described titles now",
+   "label": "Check for described titles now",
    "path": "/scan"
   },
   {
@@ -165,7 +165,7 @@
  "jobs": [
   {
    "id": "scan",
-   "label": "Look for titles with audio description",
+   "label": "Check for titles with audio description",
    "path": "/jobs/scan",
    "daily": "04:20",
    "time_limit_minutes": 20,
@@ -191,9 +191,17 @@
  },
  "logo": {
   "file": "logo.svg",
-  "alt": "A loudspeaker with sound waves"
+  "alt": "Audio description logo"
  },
  "changes": [
+  {
+   "version": "1.2.3",
+   "date": "2026-11-17",
+   "changed": [
+    "**Clearer words:** **Look for described titles now** is now **Check for described titles now**, and its job is **Check for titles with audio description**. Its messages put the settings they name in quotation marks and spell out RNIB.",
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Audio description logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.2.2",
    "date": "2026-11-17",

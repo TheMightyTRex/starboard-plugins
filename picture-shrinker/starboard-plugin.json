@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "picture-shrinker",
  "name": "Picture shrinker",
- "version": "1.2.0",
- "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or just shrink.",
+ "version": "1.2.1",
+ "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or shrink without a backup.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/picture-shrinker",
@@ -57,10 +57,10 @@
     },
     {
      "value": "none",
-     "label": "Just shrink, with no backup"
+     "label": "Shrink without a backup"
     }
    ],
-   "hint": "Nothing is shrunk until you choose. A backup copy is made once, in this plug-in's own folder, before a picture's first shrink, so Restore original pictures can put it back. With no backup, a shrunk picture cannot be put back, but Start again has Jellyfin download it again.",
+   "hint": "Nothing is shrunk until you choose. A backup copy is made once, in this plug-in's own folder, before a picture's first shrink, so 'Restore original pictures' can put it back. With no backup, a shrunk picture cannot be put back, but Start again has Jellyfin download it again.",
    "group": "What to shrink"
   },
   {
@@ -69,7 +69,7 @@
    "type": "switch",
    "default": true,
    "group": "What to shrink",
-   "hint": "Activated when you add it: every type below is shrunk. Deactivate it to choose types one by one."
+   "hint": "Activated when you add it: every picture type is shrunk. Deactivate it to choose types one by one."
   },
   {
    "key": "posters",
@@ -133,7 +133,7 @@
    "type": "switch",
    "default": true,
    "group": "What to shrink",
-   "hint": "Characters and title on a see-through background."
+   "hint": "Characters and title on a transparent background."
   },
   {
    "key": "poster_height",
@@ -143,7 +143,7 @@
    "default": 900,
    "min": 300,
    "max": 3000,
-   "hint": "A poster taller than this is shrunk to this height. 900 pixels looks sharp on a television.",
+   "hint": "A poster taller than this is shrunk to this height. 900 pixels is sharp on a television.",
    "group": "Sizes and quality"
   },
   {
@@ -275,7 +275,7 @@
    "id": "delete-backup",
    "label": "Delete backup",
    "path": "/delete-backup",
-   "confirm": "Delete the backup for good? The original pictures in it are removed and Restore original pictures can no longer put those pictures back. The shrunk pictures stay in Jellyfin. The Space saved page says how much this frees."
+   "confirm": "Delete the backup permanently? The original pictures in it are removed and 'Restore original pictures' can no longer put those pictures back. The shrunk pictures stay in Jellyfin. The Space saved page says how much this frees."
   },
   {
    "id": "start-again-pictures",
@@ -303,7 +303,7 @@
     "label": "saved",
     "note": "18,402 pictures shrunk; backup 1.1 GB. Next run Sunday 16 November at 03:30",
     "status": "scheduled",
-    "status_label": "Next Sun 03:30",
+    "status_label": "Scheduled",
     "updated": 1794694110,
     "refresh_seconds": 600
    }
@@ -346,9 +346,17 @@
  },
  "logo": {
   "file": "logo.svg",
-  "alt": "A picture with an arrow pointing into its corner"
+  "alt": "Picture shrinker logo"
  },
  "changes": [
+  {
+   "version": "1.2.1",
+   "date": "2026-11-17",
+   "changed": [
+    "**Clearer words:** **Just shrink, with no backup** is now **Shrink without a backup**. The card's band says **Scheduled**, and the card says when it runs next.",
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Picture shrinker logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.2.0",
    "date": "2026-11-17",

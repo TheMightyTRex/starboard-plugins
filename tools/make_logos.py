@@ -3,6 +3,11 @@
 plugin"): <plug-in>/logo.svg, and "logo": {"file": "logo.svg", "alt": ...} in each hand-made manifest
 (tools/make_examples.py adds it to the examples it writes, from the same table).
 
+The alt text is the plug-in's name and "logo", such as "Direct play logo" (design system ALT-TEXT.md section 6, audit
+of 17 November 2026): Starboard uses it only where the logo stands for the plug-in on its own, and hides the logo
+from screen readers beside the plug-in's name. The words for the symbol, such as "a play symbol on a screen", are
+for the help's Accessibility pages and this table.
+
 Each logo is original and simple, so it reads from 22 to 48 pixels: a rounded tile in one colour with a white symbol
 of thick strokes or solid shapes. No brand marks: the plug-ins for other apps (Jellyfin, Home Assistant, Seerr,
 Calibre-Web and the rest) have neutral symbols of what they do, not those projects' logos. Every colour has at least
@@ -27,7 +32,7 @@ def s(width=3.5):
 
 S = s()
 
-# id: (colour, what it shows in words, the symbol on a 48 by 48 grid)
+# id: (colour, the symbol in plain words for the help, the symbol on a 48 by 48 grid)
 LOGOS = {
     "audio-description": ("#0b6670", "A loudspeaker with sound waves",
                           f'<path d="M10 20h6l8-7v22l-8-7h-6z" fill="{W}"/><path d="M30 18.5a7.5 7.5 0 0 1 0 11M34.5 14a14 14 0 0 1 0 20" {S}/>'),
@@ -38,7 +43,7 @@ LOGOS = {
                     f'<path d="M24 23.5c-2.2-1.5-5.2-1.8-8-1.2v9.6c2.8-.6 5.8-.3 8 1.2 2.2-1.5 5.2-1.8 8-1.2v-9.6c-2.8-.6-5.8-.3-8 1.2z" fill="{W}"/>'),
     "direct-play": ("#1f5f99", "A play symbol on a screen",
                     f'<rect x="8" y="11" width="32" height="22" rx="3" {S}/><path d="M21 16.5v11l9-5.5z" fill="{W}"/><path d="M17 38h14" {S}/>'),
-    "disk-forecast": ("#3d4f63", "A disk drive, partly full",
+    "disk-forecast": ("#3d4f63", "A partly full disk",
                       f'<rect x="9" y="13" width="30" height="22" rx="3" {S}/><path d="M9 28h30" {S}/>'
                       f'<rect x="14" y="18" width="13" height="5" rx="1" fill="{W}"/><circle cx="33" cy="31.5" r="1.8" fill="{W}"/>'),
     "dns-blocking": ("#a3302b", "A circle with a line through it",
@@ -103,14 +108,29 @@ LOGOS = {
 }
 
 
-def svg(pid):
-    colour, alt, body = LOGOS[pid]
+def name_of(pid):
+    """The plug-in's name, from its manifest, or from tools/examples_src.py before an example's manifest is written."""
+    mf = os.path.join(ROOT, pid, "starboard-plugin.json")
+    if os.path.isfile(mf):
+        return json.load(open(mf, encoding="utf-8"))["name"]
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    from examples_src import EXAMPLES  # noqa: E402
+    return EXAMPLES[pid][0]["name"]
+
+
+def alt(pid, name=None):
+    """The logo's alt text: the plug-in's name and "logo", for where the name is not beside it."""
+    return f"{name or name_of(pid)} logo"
+
+
+def svg(pid, name=None):
+    colour, _, body = LOGOS[pid]
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img">'
-            f'<title>{alt}</title><rect width="48" height="48" rx="11" fill="{colour}"/>{body}</svg>\n')
+            f'<title>{alt(pid, name)}</title><rect width="48" height="48" rx="11" fill="{colour}"/>{body}</svg>\n')
 
 
-def entry(pid):
-    return {"file": "logo.svg", "alt": LOGOS[pid][1]}
+def entry(pid, name=None):
+    return {"file": "logo.svg", "alt": alt(pid, name)}
 
 
 def contrast(hex_a, hex_b=W):
@@ -150,7 +170,7 @@ def main():
         if pid not in LOGOS:
             problems.append(f"{pid}: no logo in tools/make_logos.py")
             continue
-        colour, alt, _ = LOGOS[pid]
+        colour = LOGOS[pid][0]
         if contrast(colour) < 4.5:
             problems.append(f"{pid}: {colour} has {contrast(colour):.2f} to 1 contrast with white; 4.5 at least")
         data = svg(pid).encode()

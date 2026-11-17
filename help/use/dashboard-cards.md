@@ -50,7 +50,7 @@ Styles and the apps you can add, apart from Jellystat, have no card.
 - A card is asked only while a dashboard with it is open. Nothing is asked while the browser tab is hidden.
 - No card is asked more often than every 10 seconds. A plug-in may set its own time in its answer: Direct play's card
   follows its **Card updates every** setting, and Picture shrinker's card updates more often while it is shrinking.
-- Many people looking at once still ask the plug-in once, because Starboard keeps the answer for that long.
+- Many people with the dashboard open at once still ask the plug-in once, because Starboard keeps the answer for that long.
 
 ## What the status says
 
@@ -60,7 +60,7 @@ Styles and the apps you can add, apart from Jellystat, have no card.
 | **Working**, **Converting**, **Scanning**, **Running** | It is doing something now |
 | **Waiting**, **Idle**, **Scheduled** | Nothing to do now, or it waits for a set time |
 | **Paused**, **Inactive** | Stopped by you |
-| **Warning**, **Needs setting up** | Look at it soon |
+| **Warning**, **Needs setting up** | Check it soon |
 | **Problem**, **Failed**, **Stopped** | Something is wrong: the words under it say what |
 
 Each status is words with an icon, never colour alone. Each plug-in's Dashboard card page says when it shows each one.

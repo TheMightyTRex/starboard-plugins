@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 (17 November 2026)
+
+### Changed
+- Clearer words: the band says Filling fast, and the card says when each disk fills.
+- Logo description: where its logo stands on its own, a screen reader says "Disk forecast logo", the plug-in's name, instead of a description of the symbol.
+
 ## 1.1.2 (17 November 2026)
 
 ### Changed

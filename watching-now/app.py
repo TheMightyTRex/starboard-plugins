@@ -18,7 +18,7 @@ def card():
         rows.append({"title": title, "detail": ", ".join(b for b in bits if b)})
     if not rows:
         return band({"items": [{"title": "Nobody is watching", "detail": "Jellyfin is quiet"}]}, "idle", time.time(), "Nobody watching")
-    return band({"items": rows}, "running", time.time(), f"{len(rows)} watching")
+    return band({"items": rows}, "running", time.time(), "Watching")
 
 
 serve({"/card": card})

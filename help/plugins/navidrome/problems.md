@@ -1,6 +1,6 @@
 # Navidrome: Problems
 
-Find what is wrong with Navidrome from what its tab says or what you see, then follow the numbered answer.
+Find what is wrong with Navidrome from what its tab says or what happens, then follow the numbered answer.
 
 ```flow
 title: Find your answer
@@ -25,13 +25,13 @@ q2: What is wrong?
 1. On Navidrome's tab, read the message under its state: it says why it stopped.
 2. Select **Try again**.
 3. If it stopped soon after an update, select **Roll back to** and the version you had. Read [Updates](updates.md).
-4. Still failing: go to **System**, then **Logs**, and look for its name.
+4. Still failing: go to **System**, then **Logs**, and find its name.
 
 ## Update it or update Starboard
 
 Your Starboard's plug-in API is outside what this version of Navidrome works with, so Starboard stopped it.
 
-1. Select **Look for an update** on its tab.
+1. Select **Check for an update** on its tab.
 2. If there is none, update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 
 ## Open its web page
@@ -46,7 +46,7 @@ Your Starboard's plug-in API is outside what this version of Navidrome works wit
 Navidrome reads only `music` in your media folder, as `/media/music`. Music anywhere else is not shown.
 
 1. Put your music in `music` in your media folder.
-2. Open Navidrome to check the music is there. When it looks for new music is set in Navidrome itself: read [Navidrome's own help](https://www.navidrome.org).
+2. Open Navidrome to check the music is there. When it checks for new music is set in Navidrome itself: read [Navidrome's own help](https://www.navidrome.org).
 
 It reads the folder only, so it cannot fix a file's name or tags for you.
 

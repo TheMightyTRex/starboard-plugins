@@ -107,7 +107,7 @@ def check_cloudflare_token(token):
             return ""
     except (ValueError, TypeError):
         pass
-    return ("That is not a Cloudflare tunnel token. In Cloudflare's dashboard, open Networks, Tunnels, your tunnel, "
+    return ("That is not a Cloudflare Tunnel token. In Cloudflare's dashboard, open Networks, Tunnels, your tunnel, "
             "and copy the long token after --token, without the words before it.")
 
 
@@ -219,7 +219,7 @@ def explain_tailscale(text):
         return ("Tailscale did not accept the auth key: it may be expired, used already or deleted. Make a new one in "
                 "Tailscale's admin page, Settings, Keys, and paste it again.", True)
     if "no such host" in t or "dial tcp" in t or "timeout" in t or "deadline" in t:
-        return ("Tailscale's servers could not be reached. Check this computer's internet connection; the plug-in tries again by itself.", False)
+        return ("Tailscale's servers could not be reached. Check the server's internet connection; the plug-in tries again by itself.", False)
     return ((text.strip().splitlines() or ["Tailscale stopped"])[-1][:200], False)
 
 
@@ -304,7 +304,7 @@ def explain_cloudflare(text):
         return ("Cloudflare did not accept the tunnel token: the tunnel may have been deleted or its token changed. "
                 "Copy the token again from Cloudflare's dashboard, Networks, Tunnels.", True)
     if "no such host" in t or "dial tcp" in t or "failed to dial" in t or "timeout" in t:
-        return ("Cloudflare could not be reached. Check this computer's internet connection; the plug-in tries again by itself.", False)
+        return ("Cloudflare could not be reached. Check the server's internet connection; the plug-in tries again by itself.", False)
     return ((text.strip().splitlines() or ["Cloudflare Tunnel stopped"])[-1][:200], False)
 
 
@@ -312,7 +312,7 @@ def start_cloudflare(want):
     token = clean_token(str(setting("cloudflare_token", "") or ""))
     problem = check_cloudflare_token(token)
     if problem == "missing":
-        return set_phase("needs-key", "Paste your Cloudflare tunnel token in Remote access, Settings.", fatal=True)
+        return set_phase("needs-key", "Paste your Cloudflare Tunnel token in Remote access, Settings.", fatal=True)
     if problem:
         return set_phase("wrong-key", problem, fatal=True)
     start_forwarders()
@@ -561,7 +561,7 @@ def screen():
     items = [{"id": "connection", "title": f"Connection: {how}", "detail": text[:200], "state": tone, "group": "Connection"}]
     if auth_url and phase == "sign-in":
         items.append({"id": "sign-in", "title": "Sign-in link for Tailscale", "address": auth_url, "state": "warning", "group": "Connection",
-                      "detail": "Open this link on any device, sign in to your own Tailscale account and approve this computer."})
+                      "detail": "Open this link on any device, sign in to your own Tailscale account and approve the server."})
     for app in [a for a, _, _ in APPS]:
         is_shared = app in shared()
         where = address(app)
@@ -598,7 +598,7 @@ def handle_screen(body):
     elif action == "test_all":
         said = test()["said"]
     else:
-        return {**screen(), "said": "Nothing to change here: use the settings above."}
+        return {**screen(), "said": "Nothing to change here: use the settings on this page."}
     return {**screen(), "said": said}
 
 

@@ -44,7 +44,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 
 | Plug-in | What it does |
 |---|---|
-| [Download summary](https://themightytrex.github.io/starboard-plugins/help/plugins/download-summary/index.html) | How much has downloaded today and this week, from what Starboard sees in the queue. |
+| [Download summary](https://themightytrex.github.io/starboard-plugins/help/plugins/download-summary/index.html) | How much has downloaded today and this week, from the download queue in Starboard. |
 | [VPN check](https://themightytrex.github.io/starboard-plugins/help/plugins/vpn-check/index.html) | Shows the address and country your downloads use through the VPN, and warns if it is your home address. |
 
 ### System
@@ -76,11 +76,11 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 | [Audio description](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description/index.html) | Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix. |
 | [Audio description tracks](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description-tracks/index.html) | Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match. |
 
-### Look
+### Appearance
 
 | Plug-in | What it does |
 |---|---|
-| [Styles](https://themightytrex.github.io/starboard-plugins/help/plugins/styles/index.html) | Twenty-one accessible styles for Display: six reskin the whole look (cards, buttons, tabs, menus), checked for contrast. |
+| [Styles](https://themightytrex.github.io/starboard-plugins/help/plugins/styles/index.html) | 21 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast. |
 
 ## Apps you can add
 
@@ -106,7 +106,7 @@ their own folders. Removing one keeps its data.
 
 - **By address:** in **Settings**, **Plug-ins**, under **Add one from elsewhere**, paste the address into **The
   plug-in's manifest address**, such as `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json`.
-- **From a file:** download its zip from [`zips/`](zips/), unzip it and run `python3 install.py` inside, or choose
+- **From a file:** download [the plug-in's ZIP file from the zips folder](zips/), unzip it and run `python3 install.py` inside, or choose
   its `starboard-plugin.json` under **Or its manifest file**.
 
 ### Starboard versions
@@ -117,7 +117,7 @@ before from the catalogue, and says so when a plug-in needs a newer one.
 ### How plug-ins are published
 
 - A plug-in is published when every image it runs is pinned by digest (`@sha256:`), so Starboard downloads exactly
-  what was built and tested. Until then the catalogue lists it as coming soon.
+  what was built and tested. Until then the catalogue marks it 'Coming soon'.
 - The small example plug-ins share one image, `ghcr.io/themightytrex/starboard-plugin-examples` (Python's standard
   library only, about 14 MB of memory each while running), so Starboard downloads it once.
 - Images are built for amd64, arm64 and arm/v7, except Remote access (amd64 and arm64: cloudflared has no 32-bit Arm

@@ -1,6 +1,6 @@
 # Ad blocking: Dashboard card
 
-Ad blocking adds 1 card you can put on your dashboard. It starts with a grey band: Ad blocking's logo and name, a status in words, and when it last changed.
+Ad blocking adds 1 card you can put on your dashboard. It starts with a band: Ad blocking's logo and name, a status in words, and when it last changed.
 
 ## Blocked today
 

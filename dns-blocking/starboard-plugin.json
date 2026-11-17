@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "dns-blocking",
  "name": "Ad blocking",
- "version": "1.1.2",
+ "version": "1.1.3",
  "description": "How many adverts and trackers Pi-hole or AdGuard Home blocked today.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -78,9 +78,16 @@
  ],
  "logo": {
   "file": "logo.svg",
-  "alt": "A circle with a line through it"
+  "alt": "Ad blocking logo"
  },
  "changes": [
+  {
+   "version": "1.1.3",
+   "date": "2026-11-17",
+   "changed": [
+    "**Logo description:** where its logo stands on its own, a screen reader says \"Ad blocking logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.1.2",
    "date": "2026-11-17",

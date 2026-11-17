@@ -1,18 +1,26 @@
 # Audio description tracks: Updates
 
-Audio description tracks 1.1.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description tracks 1.1.4 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 1.1.3 | 1.14 or later | 2026-11-17 |
-| 1.1.2 | 1.14 or later | 2026-11-16 |
-| 1.1.1 | 1.14 or later | 2026-11-15 |
-| 1.1.0 | 1.14 or later | 2026-11-15 |
-| 1.0.0 | 1.12 or later | 2026-11-13 |
+| 1.1.4 | 1.14 or later | 17 November 2026 |
+| 1.1.3 | 1.14 or later | 17 November 2026 |
+| 1.1.2 | 1.14 or later | 16 November 2026 |
+| 1.1.1 | 1.14 or later | 15 November 2026 |
+| 1.1.0 | 1.14 or later | 15 November 2026 |
+| 1.0.0 | 1.12 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.4
+
+Changed:
+
+- **Clearer words:** **Look in the folder now** is now **Check the folder now**, and its job is **Check for new description tracks**. Its card's band says **To check**, with the numbers on the card, and a track that was not added says what to do next.
+- **Logo description:** where its logo stands on its own, a screen reader says "Audio description tracks logo", the plug-in's name, instead of a description of the symbol.
 
 ## What is new in 1.1.3
 

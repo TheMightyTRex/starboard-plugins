@@ -36,7 +36,7 @@ def state():
     if not r:
         return ("problem", None) if last_error() else ("waiting", "Checking soon")
     n = len(r.get("bad", []))
-    return ("warning", plural(n, "title") + " to fix") if n else ("ok", "Nothing to fix")
+    return ("warning", "To fix") if n else ("ok", "Nothing to fix")
 
 
 def count():

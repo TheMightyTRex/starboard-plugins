@@ -1,17 +1,25 @@
 # Audio description: Updates
 
-Audio description 1.2.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description 1.2.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 1.2.2 | 1.14 or later | 2026-11-17 |
-| 1.2.1 | 1.14 or later | 2026-11-16 |
-| 1.2.0 | 1.14 or later | 2026-11-15 |
-| 1.1.0 | 1.12 or later | 2026-11-13 |
+| 1.2.3 | 1.14 or later | 17 November 2026 |
+| 1.2.2 | 1.14 or later | 17 November 2026 |
+| 1.2.1 | 1.14 or later | 16 November 2026 |
+| 1.2.0 | 1.14 or later | 15 November 2026 |
+| 1.1.0 | 1.12 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.2.3
+
+Changed:
+
+- **Clearer words:** **Look for described titles now** is now **Check for described titles now**, and its job is **Check for titles with audio description**. Its messages put the settings they name in quotation marks and spell out RNIB.
+- **Logo description:** where its logo stands on its own, a screen reader says "Audio description logo", the plug-in's name, instead of a description of the symbol.
 
 ## What is new in 1.2.2
 

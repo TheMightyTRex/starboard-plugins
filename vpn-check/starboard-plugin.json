@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "vpn-check",
  "name": "VPN check",
- "version": "1.1.2",
+ "version": "1.1.3",
  "description": "Shows the address and country your downloads use through the VPN, and warns if it is your home address.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -39,7 +39,7 @@
    "key": "home_address",
    "label": "Your home's public address",
    "type": "text",
-   "hint": "Optional, such as 81.2.69.160. If the VPN ever shows this address, the card turns red."
+   "hint": "Optional, such as 203.0.113.7. If the VPN ever shows this address, the card says Problem."
   },
   {
    "key": "minutes",
@@ -66,7 +66,7 @@
    "path": "/card",
    "example": {
     "state": "ok",
-    "text": "185.65.134.12 in the Netherlands",
+    "text": "198.51.100.23 in the Netherlands",
     "status": "protected",
     "updated": 1794694110
    }
@@ -74,9 +74,17 @@
  ],
  "logo": {
   "file": "logo.svg",
-  "alt": "A shield with a tick"
+  "alt": "VPN check logo"
  },
  "changes": [
+  {
+   "version": "1.1.3",
+   "date": "2026-11-17",
+   "changed": [
+    "**Clearer words:** the hint and the card's example use addresses kept for examples, and the hint says the card says Problem, not what colour it turns.",
+    "**Logo description:** where its logo stands on its own, a screen reader says \"VPN check logo\", the plug-in's name, instead of a description of the symbol."
+   ]
+  },
   {
    "version": "1.1.2",
    "date": "2026-11-17",

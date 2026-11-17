@@ -560,7 +560,7 @@ def put_back(hid):
     rows = _held()
     rec = next((r for r in rows if r["id"] == hid), None)
     if not rec:
-        raise LookupError("That is not in the holding folder any more. Look again")
+        raise LookupError("That is not in the holding folder any more. Reload the page")
     for e in rec["entries"]:
         if not os.path.lexists(os.path.join(MEDIA, e["to"])):
             raise FileNotFoundError(f"{e['to']} is not in the holding folder any more, so nothing was put back")
@@ -723,7 +723,7 @@ def preview_again():
         return {"said": "Already working. Preview says how far it has gone"}
     if not start("preview", work_out_preview):
         return {"said": "Not started: the plug-in is about to be updated"}
-    return {"said": "Working out Preview again. Open Preview to see it"}
+    return {"said": "Working out Preview again. Open 'Preview' when it is ready"}
 
 
 def _preview_fresh(p):
@@ -750,7 +750,7 @@ def preview_screen():
         start("preview", work_out_preview)
     notices = _notices("preview")
     if not p:
-        intro = "Preview is being worked out from Jellyfin. Nothing moves until you activate Move items each day."
+        intro = "Preview is being worked out from Jellyfin. Nothing moves until you activate 'Move items each day'."
         return {"type": "list", "title": "Preview", "layout": "folds", "readonly": True, "intro": intro, "columns": COLUMNS,
                 "notices": notices or [{"id": "working", "tone": "info", "progress": 0, "title": "Working out Preview", "text": "Reading your libraries from Jellyfin."}],
                 "items": []}
@@ -759,7 +759,7 @@ def preview_screen():
     intro = (f"{plural(n, 'item')} would move to the holding folder, freeing {size_words(p['size'])}. "
              f"{plural(p['kept'], 'item')} the rules found {'is' if p['kept'] == 1 else 'are'} always kept. "
              f"Worked out {when:%a %-d %b at %H:%M} for {plural(p['people'], 'person', 'people')} in {plural(p['libraries'], 'library', 'libraries')}. ")
-    intro += "It moves these once a day in quiet hours." if active() else "Nothing moves until you activate Move items each day."
+    intro += "It moves these once a day in quiet hours." if active() else "Nothing moves until you activate 'Move items each day'."
     if not _preview_fresh(p) and running():
         notices = notices or [{"id": "working", "tone": "info", "progress": 0, "title": "Working out Preview again", "text": "A setting changed."}]
     for i, prob in enumerate(p.get("problems") or []):
@@ -799,7 +799,7 @@ def held_screen(said=None):
                       "state": "off" if there else "problem", "state_label": "In holding" if there else "Not found",
                       "actions": ["restore"] if there else []})
     intro = (f"{plural(len(rows), 'item')} in media/.holding/{PID}, {size_words(total)}. Put back returns each to where it was"
-             + (", and Reelix follows it again." if reelix_known() else ".") + " Nothing here is deleted; to free the space for good, delete them yourself.")
+             + (", and Reelix follows it again." if reelix_known() else ".") + " Nothing here is deleted; to free the space permanently, delete them yourself.")
     out = {"type": "list", "title": "Holding folder", "intro": intro[:400], "items": items, "notices": _notices("move")}
     if said:
         out["said"] = said
@@ -832,9 +832,9 @@ def libraries_screen(said=None):
         return {"type": "list", "title": "Libraries", "intro": f"Jellyfin did not answer: {e}"[:400], "items": []}
     items = [{"id": lib["id"], "title": lib["name"], "detail": ("Films" if lib["kind"] == "films" else "Series") + ": " + ", ".join(lib["locations"])[:150],
               "group": "Films" if lib["kind"] == "films" else "Series", "on": lib["id"] not in off,
-              "state": "ok" if lib["id"] not in off else "off", "state_label": "Looked at" if lib["id"] not in off else "Left alone",
+              "state": "ok" if lib["id"] not in off else "off", "state_label": "Checked" if lib["id"] not in off else "Left alone",
               "actions": ["toggle"]} for lib in libs]
-    out = {"type": "list", "title": "Libraries", "intro": "The rules look only at the libraries activated here. A library you add to Jellyfin is looked at until you deactivate it.",
+    out = {"type": "list", "title": "Libraries", "intro": "The rules check only the libraries activated here. A library you add to Jellyfin is checked until you deactivate it.",
            "items": items}
     if said:
         out["said"] = said
@@ -849,7 +849,7 @@ def libraries_post(body=None):
     lid = str(body.get("id") or "")
     if lid in off:
         off.discard(lid)
-        said = "The rules look at this library again"
+        said = "The rules check this library again"
     else:
         off.add(lid)
         said = "The rules leave this library alone"
@@ -869,12 +869,12 @@ def card():
         return band({"value": total, "label": "in the holding folder", "note": f"The last run did not finish: {err['text']}"[:80]}, "problem",
                     err.get("at"), "Last run failed", refresh=600)
     p = remember("preview", None) or {}
-    would = f"Preview: {plural(len(p.get('items') or []), 'item')}, {size_words(p.get('size'))}" if p else "Open Preview to see what would move"
+    would = f"Preview: {plural(len(p.get('items') or []), 'item')}, {size_words(p.get('size'))}" if p else "Open 'Preview' to find what would move"
     if not active():
         return band({"value": total, "label": "in the holding folder", "note": f"Deactivated. {would}"[:80]}, "inactive", sbplugin.changed("preview"),
                     "Deactivated", refresh=600)
     s = _state()
-    note = f"{plural(len(rows), 'item')} held. Next look in quiet hours"
+    note = f"{plural(len(rows), 'item')} held. Next check in quiet hours"
     return band({"value": total, "label": "in the holding folder", "note": note}, "scheduled",
                 (s["runs"][-1]["end"] if s["runs"] else None), "Next in quiet hours", refresh=600)
 
@@ -894,7 +894,7 @@ def before_update(body=None):
 
 def after_update(body=None):
     sbplugin._work["hold"] = 0.0
-    return {"ok": True, "said": "Ready. " + ("It looks again in quiet hours" if active() else "Move items each day is deactivated")}
+    return {"ok": True, "said": "Ready. " + ("It checks again in quiet hours" if active() else "Move items each day is deactivated")}
 
 
 def health():

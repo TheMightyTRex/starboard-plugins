@@ -1,16 +1,24 @@
 # Picture shrinker: Updates
 
-Picture shrinker 1.2.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Picture shrinker 1.2.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 1.2.0 | 1.14 or later | 2026-11-17 |
-| 1.1.1 | 1.14 or later | 2026-11-16 |
-| 1.0.0 | 1.14 or later | 2026-11-15 |
+| 1.2.1 | 1.14 or later | 17 November 2026 |
+| 1.2.0 | 1.14 or later | 17 November 2026 |
+| 1.1.1 | 1.14 or later | 16 November 2026 |
+| 1.0.0 | 1.14 or later | 15 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.2.1
+
+Changed:
+
+- **Clearer words:** **Just shrink, with no backup** is now **Shrink without a backup**. The card's band says **Scheduled**, and the card says when it runs next.
+- **Logo description:** where its logo stands on its own, a screen reader says "Picture shrinker logo", the plug-in's name, instead of a description of the symbol.
 
 ## What is new in 1.2.0
 
