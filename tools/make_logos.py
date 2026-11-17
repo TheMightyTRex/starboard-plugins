@@ -48,6 +48,9 @@ LOGOS = {
     "disk-forecast": ("#3d4f63", "A partly full disk",
                       f'<rect x="9" y="13" width="30" height="22" rx="3" {S}/><path d="M9 28h30" {S}/>'
                       f'<rect x="14" y="18" width="13" height="5" rx="1" fill="{W}"/><circle cx="33" cy="31.5" r="1.8" fill="{W}"/>'),
+    "checkrr": ("#8c3a3a", "A film frame under a magnifying glass",
+                f'<rect x="7" y="9" width="25" height="20" rx="3" {S}/><path d="M12 13v12M27 13v12" {s(2.5)}/>'
+                f'<circle cx="30.5" cy="28.5" r="7.5" fill="#8c3a3a" stroke="{W}" stroke-width="3.5"/><path d="M36 34l5.5 5.5" {s(4)}/>'),
     "dns-blocking": ("#a3302b", "A circle with a line through it",
                      f'<circle cx="24" cy="24" r="13" {s(4)}/><path d="M15 33l18-18" {s(4)}/>'),
     "download-summary": ("#2e6b30", "An arrow down into a tray",
@@ -94,6 +97,9 @@ LOGOS = {
     "tdarr": ("#2a6585", "Two arrows in a circle",
               f'<path d="M13.5 21a11 11 0 0 1 19.5-4.5M34.5 27A11 11 0 0 1 15 31.5" {S}/>'
               f'<path d="M34.5 10.5v7h-7M13.5 37.5v-7h7" {S}/>'),
+    "themearr": ("#6c3f8e", "A music note on a screen",
+                 f'<rect x="7" y="10" width="34" height="25" rx="3" {S}/><path d="M17 40h14" {S}/>'
+                 f'<path d="M26.5 29V16l7 2v4l-7-2" {s(3)}/><ellipse cx="22" cy="29" rx="4.5" ry="3.5" fill="{W}"/>'),
     "uptime-kuma": ("#1d6b45", "A heartbeat line",
                     f'<path d="M7 26h8l3.5-9 5.5 16 4-12 2.5 5H41" {S}/>'),
     "vpn-check": ("#2c4f7c", "A shield with a tick",

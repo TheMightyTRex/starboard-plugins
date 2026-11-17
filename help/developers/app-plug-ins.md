@@ -4,7 +4,7 @@
 # App plug-ins
 
 An app plug-in runs a whole app made by others, such as Seerr or Kavita, in Starboard's locked-down containers, with
-its own web page on your home network. Nine plug-ins here are app plug-ins.
+its own web page on your home network. Eleven plug-ins here are app plug-ins.
 
 ## When would you use it
 
@@ -20,6 +20,10 @@ its own web page on your home network. Nine plug-ins here are app plug-ins.
 - `tmpfs` for folders the app writes to in memory, and `pids` for apps with many threads.
 - `adopt`, to copy an app the main install already runs into the plug-in, as Tdarr does.
 - Higher limits than a card plug-in: up to 2048 MB and 4 cores a container with `network:port`.
+- A small helper first in `containers`, when Starboard should show a card or set the app up, as Themearr and Checkrr
+  have. It can run in the official Python image with no image of ours: its code goes in the manifest's `files`, which
+  Starboard writes once into its folder, and `command` runs it. Put the version in the file's name, such as
+  `app-1.0.0.py`, so an update writes the new one. `tools/make_app_helpers.py` copies `app.py` into the manifest.
 
 ## Rules
 
@@ -32,7 +36,7 @@ its own web page on your home network. Nine plug-ins here are app plug-ins.
 
 ## The app plug-ins here
 
-Jellystat, Navidrome, Kavita, Calibre-Web, Wizarr, Maintainerr, Uptime Kuma, Seerr and Tdarr. Each one's For
+Jellystat, Navidrome, Kavita, Calibre-Web, Wizarr, Maintainerr, Uptime Kuma, Seerr, Tdarr, Themearr and Checkrr. Each one's For
 developers page lists its containers and folders, such as [Tdarr's](../plugins/tdarr/for-developers.md).
 
 ## Find out more

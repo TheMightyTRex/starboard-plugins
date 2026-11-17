@@ -11,7 +11,10 @@ the old image again on the same data with the settings kept from before, which m
 its settings as they were.
 
 A local build of a plug-in's own image, before it is published: SMOKE_IMAGE_<ID> (such as SMOKE_IMAGE_PICTURE_SHRINKER),
-or SMOKE_IMAGE for the shared image. SMOKE_UPDATE=0 leaves the update pass out; SMOKE_ONLY=<id>,<id> runs only those."""
+or SMOKE_IMAGE for the shared image. SMOKE_UPDATE=0 leaves the update pass out; SMOKE_ONLY=<id>,<id> runs only those.
+
+App plug-ins whose helper runs in the official Python image from the manifest's files (Themearr and Checkrr): the
+helper runs as Starboard runs it, against stand-ins for the app's own API, and its cards, pages and buttons are checked."""
 import json
 import os
 import subprocess
@@ -119,8 +122,9 @@ class Stub(BaseHTTPRequestHandler):
             self.end_headers()
             return
         body = ANSWERS.get(self.path.split("?")[0])
-        data = json.dumps(body if body is not None else {}).encode()
-        self.send_response(200 if body is not None else 404)
+        known = self.path.split("?")[0] in ANSWERS
+        data = json.dumps(body if known else {}).encode()
+        self.send_response(200 if known else 404)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(data)
@@ -144,6 +148,23 @@ POSTS = {"picture-shrinker": "/jobs/shrink", "vpn-check": "/check", "line-speed"
          "watch-stats": "/refresh", "remote-access": "/test", "audio-description": "/jobs/scan",
          "audio-description-tracks": "/jobs/look"}
 SETTINGS["audio-description"] = {"audiovault_links": True}
+# App plug-ins with a helper in the official Python image (17 November 2026): the helper runs against stand-ins for
+# Themearr's and Checkrr's own APIs here, as it would against the app beside it. Run by app_helpers() below.
+ANSWERS.update({
+    "/api/settings/radarr": {"source": "radarr", "url": f"http://127.0.0.1:{STUB}/radarr", "configured": True},
+    "/api/settings": {"selectedServers": [], "selectedLibraries": {}, "pathMappings": [], "libraryPaths": [],
+                      "advanced": {"maxSearchDirs": 20000, "searchDepth": 4}, "autoDownload": True, "autoSync": True},
+    "/api/setup/status": {"setupComplete": False}, "/api/setup/complete": {"setupComplete": True}, "/api/sync": {"started": True},
+    "/api/settings/rapidapi": {"configured": True},
+    "/api/stats": {"total": 450, "downloaded": 412, "pending": 38, "ignored": 0},
+    "/api/stats/current": {"filesChecked": 8214, "running": False, "unknownFileCount": 2},
+    "/api/files/bad": [{"Path": "/media/movies/Broken (2002)/Broken (2002).mkv",
+                        "Data": {"fileExt": ".mkv", "reacquire": False, "service": "unknown", "date": 1794926812, "reason": "not recognized"}},
+                       {"Path": "/media/tv/Show/Season 01/Show S01E02.mkv",
+                        "Data": {"fileExt": ".mkv", "reacquire": False, "service": "unknown", "date": 1794926812, "reason": "File ended prematurely"}}],
+    "/api/schedule": "2026-11-22 03:30:00 +0000 UTC", "/api/run": None,
+})
+HELPER_URL = {"themearr": "THEMEARR_URL", "checkrr": "CHECKRR_URL"}  # where each helper finds its app
 POSTS["library-cleanup"] = "/jobs/move"  # DASH-406: activated here, on a stand-in media folder of made-up files
 SETTINGS["library-cleanup"] = {"active": True}
 SETTINGS["picture-shrinker"] = {"originals": "keep"}  # 1.2.0: nothing is shrunk until the backup is chosen
@@ -345,13 +366,14 @@ def post(base, path, body=None, timeout=60):
     return json.loads(r.read() or b"{}")
 
 
-def update_pass(port):
-    """Each plug-in from its last published version to this one, on the same data. Returns how many failed."""
+def update_pass(port, only=()):
+    """Each plug-in from its last published version to this one, on the same data (only those in SMOKE_ONLY, when it is
+    given). Returns how many failed."""
     prev = json.load(open(os.path.join(ROOT, "tools", "previous-versions.json")))
     failed = 0
     for pid, old_row in sorted(prev["plugins"].items()):
         mf = os.path.join(ROOT, pid, "starboard-plugin.json")
-        if not os.path.isfile(os.path.join(ROOT, pid, "Dockerfile")):
+        if not os.path.isfile(os.path.join(ROOT, pid, "Dockerfile")) or (only and pid not in only):
             continue
         new = json.load(open(mf))
         if "network:port" in (new.get("permissions") or []):
@@ -431,6 +453,71 @@ def update_pass(port):
             failed += 1
         finally:
             subprocess.run(["docker", "rm", "-f", f"smoke-{pid}"], capture_output=True)
+    return failed
+
+
+def app_helpers(port, only):
+    """Each app plug-in's helper (a first container with files and a command, 17 November 2026), run in its image as
+    Starboard runs it, with its files written into its folder, against the stand-ins: its health, cards, custom pages
+    and buttons must answer, and pass Starboard's own checks. Returns how many failed."""
+    failed = 0
+    for pid in sorted(os.listdir(ROOT)):
+        mf = os.path.join(ROOT, pid, "starboard-plugin.json")
+        if not os.path.isfile(mf) or (only and pid not in only):
+            continue
+        m = json.load(open(mf))
+        c = (m.get("containers") or [{}])[0]
+        if "network:port" not in (m.get("permissions") or []) or not (c.get("files") and c.get("command")):
+            continue
+        port += 1
+        run = tempfile.mkdtemp(prefix=f"sb-app-{pid}-")
+        folder = next(v.split(":", 1)[1] for v in c["volumes"] if v.startswith("data:"))
+        os.makedirs(f"{run}/data")
+        for fname, text in c["files"].items():
+            with open(f"{run}/data/{fname}", "w") as f:
+                f.write(text)
+        os.chmod(f"{run}/data", 0o777)
+        json.dump({}, open(f"{run}/settings.json", "w"))
+        json.dump({"url": f"http://127.0.0.1:{STUB}", "api_key": "k"}, open(f"{run}/jellyfin.json", "w"))
+        json.dump({"url": f"http://127.0.0.1:{STUB}", "api_key": "k"}, open(f"{run}/reelix.json", "w"))
+        open(f"{run}/key", "w").write("sbk_test")
+        env = {k: ("s" * 32 if "{secret:" in str(v) else v) for k, v in (c.get("env") or {}).items()}
+        env.update({HELPER_URL.get(pid, "APP_URL"): f"http://127.0.0.1:{STUB}", "PORT": str(port), "FIRST_SECONDS": "1"})
+        name = f"smoke-{pid}"
+        subprocess.run(["docker", "rm", "-f", name], capture_output=True)
+        base, words = f"http://127.0.0.1:{port}", []
+        try:
+            subprocess.run(["docker", "run", "-d", "--name", name, "--network", "host", "--read-only", "--tmpfs", "/tmp",
+                            "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true", "--pids-limit", "64",
+                            "--memory", f"{(m.get('resources') or {}).get(c['name'], {}).get('memory', 64)}m", "--user", c.get("user") or "10001:10001",
+                            *[x for k, v in env.items() for x in ("-e", f"{k}={v}")],
+                            "-v", f"{run}/data:{folder}", "-v", f"{run}/settings.json:/run/starboard/settings.json:ro",
+                            "-v", f"{run}/key:/run/starboard/key:ro", "-v", f"{run}/reelix.json:/run/starboard/reelix.json:ro",
+                            c["image"], *c["command"]], check=True, capture_output=True)
+            took = healthy(base, 30)
+            if took is None:
+                raise ValueError("its helper did not answer /health within 30 seconds")
+            words.append(f"healthy in {took}s")
+            time.sleep(4)  # its first round with the app
+            for card in m.get("cards") or []:
+                ans = plugin_cards.clean(card["type"], json.loads(urllib.request.urlopen(base + card["path"], timeout=3).read()), strict=True)
+                if not ans.get("status"):
+                    raise ValueError(f"card {card['id']} has no status")
+                words.append(f"{card['id']} {ans.get('status')}: {ans.get('value')} {ans.get('label')}, {ans.get('note')}")
+            for st in [x for x in m.get("settings") or [] if x["type"] == "custom"]:
+                req = urllib.request.Request(base + st["choices"], headers={"X-Api-Key": "sbk_test"})
+                ans = plugin_custom.clean(json.loads(urllib.request.urlopen(req, timeout=20).read()))
+                words.append(f"{st['key']}: {len(ans['items'])} rows")
+            for a in m.get("actions") or []:
+                said = post(base, a["path"])
+                words.append(f"{a['id']}: {said.get('said') or said}")
+            print(f"{pid} (app plug-in helper): " + "; ".join(words))
+        except Exception as e:  # noqa: BLE001
+            logs = subprocess.run(["docker", "logs", "--tail", "20", name], capture_output=True, text=True)
+            print(f"{pid} (app plug-in helper): FAILED {e}\n{logs.stdout}{logs.stderr}")
+            failed += 1
+        finally:
+            subprocess.run(["docker", "rm", "-f", name], capture_output=True)
     return failed
 
 
@@ -534,8 +621,9 @@ def main():
         stats = subprocess.run(["docker", "stats", "--no-stream", "--format", "{{.MemUsage}}", name], capture_output=True, text=True).stdout.strip()
         print(f"{pid}: memory {stats}")
         subprocess.run(["docker", "rm", "-f", name], capture_output=True)
+    failed += app_helpers(port + 30, only)
     if os.environ.get("SMOKE_UPDATE", "1") != "0":
-        failed += update_pass(port + 50)
+        failed += update_pass(port + 50, only)
     print("FAILED" if failed else "All passed", failed)
     return 1 if failed else 0
 

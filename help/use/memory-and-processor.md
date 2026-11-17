@@ -45,6 +45,8 @@ nobody has measured that plug-in: the limit is the most it may use.
 | [Uptime Kuma](../plugins/uptime-kuma/install.md) | 384 MB, 0.5 core | Always | 115.6 MiB (13 November 2026) |
 | [Seerr](../plugins/seerr/install.md) | 512 MB, 0.5 core | Always | 182.5 MiB (13 November 2026) |
 | [Tdarr](../plugins/tdarr/install.md) | 2048 MB, 2 cores | Always | 59.1 MiB at rest, 748 MiB while converting (13 November 2026) |
+| [Themearr](../plugins/themearr/install.md) | 576 MB, 1.25 cores, in two containers | Always | 47.6 MiB (17 November 2026) |
+| [Checkrr](../plugins/checkrr/install.md) | 576 MB, 1.25 cores, in two containers | Always | 19.0 MiB at rest, up to a processor core while it checks (17 November 2026) |
 
 ## Things to note
 

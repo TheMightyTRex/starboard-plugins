@@ -87,7 +87,10 @@ def allowed(rel, line):
 # Manifest keys whose values are code, addresses or settings, not words people read.
 NOT_WORDS = {"id", "key", "path", "image", "file", "homepage", "support_url", "starboard_api", "permissions", "needs", "env",
              "volumes", "network", "type", "health", "choices_path", "manifest", "version", "date", "status", "state", "icon",
-             "unit_key", "group_key", "events", "daily", "time", "default", "colours", "fonts", "css", "font", "vars"}
+             "unit_key", "group_key", "events", "daily", "time", "default", "colours", "fonts", "css", "font", "vars",
+             # An app plug-in's helper code and the app's settings file (17 November 2026): the helper's own app.py is
+             # checked as each app.py is, and its run command is not words.
+             "files", "command", "entrypoint"}
 
 
 def strings(node, where=""):

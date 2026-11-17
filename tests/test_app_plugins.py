@@ -1,5 +1,5 @@
-"""App plug-ins (DASH-411): Jellystat, Navidrome, Kavita, Calibre-Web, Wizarr, Maintainerr, Uptime Kuma, Seerr and
-Tdarr, each a whole app kept out of the main install. These check each one asks for the least it needs and passes
+"""App plug-ins (DASH-411): Jellystat, Navidrome, Kavita, Calibre-Web, Wizarr, Maintainerr, Uptime Kuma, Seerr,
+Tdarr, Themearr and Checkrr, each a whole app kept out of the main install. These check each one asks for the least it needs and passes
 Starboard's own manifest check (plug-in API 1.13), and that its catalogue entry says what it costs at rest."""
 import json
 import os
@@ -9,10 +9,13 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from helpers import as_published, pinned_or_next, ROOT, STARBOARD_SRC, manifest  # noqa: E402
 
-APPS = ("jellystat", "navidrome", "kavita", "calibre-web", "wizarr", "maintainerr", "uptime-kuma", "seerr", "tdarr")
+APPS = ("jellystat", "navidrome", "kavita", "calibre-web", "wizarr", "maintainerr", "uptime-kuma", "seerr", "tdarr",
+        "themearr", "checkrr")
 # Each app's own folders: read only, except Tdarr, which converts films and series in place.
-WRITES_MEDIA = {"tdarr": {"media/movies", "media/tv", "media/tdarr-cache"}}  # tdarr-cache: its working copies (1.0.2)
+WRITES_MEDIA = {"tdarr": {"media/movies", "media/tv", "media/tdarr-cache"},  # tdarr-cache: its working copies (1.0.2)
+                "themearr": {"media/movies"}}  # Themearr adds theme.mp3 to each film's folder (17 November 2026)
 JELLYFIN_KEY = {"jellystat"}  # the only one Starboard hands Jellyfin's key to; the others are given it in their own page
+REELIX_KEY = {"themearr"}  # Themearr reads the films from Reelix's Radarr API; Checkrr is given no Reelix (it only reports)
 
 
 def checker():
@@ -45,8 +48,9 @@ class AppPlugins(unittest.TestCase):
         for pid in APPS:
             m = manifest(pid)
             perms = set(m["permissions"])
-            self.assertEqual(perms - {"network:lan", "network:port", "jellyfin:key"}, set(), pid)
+            self.assertEqual(perms - {"network:lan", "network:port", "jellyfin:key", "reelix:key"}, set(), pid)
             self.assertEqual("jellyfin:key" in perms, pid in JELLYFIN_KEY, pid)
+            self.assertEqual("reelix:key" in perms, pid in REELIX_KEY, pid)
             vols = {v for c in m["containers"] for v in c.get("volumes") or []}
             self.assertNotIn("media:ro", vols, f"{pid} sees only its own media folders")
             writes = {v for v in vols if v.startswith("media/") and not v.endswith(":ro")}
