@@ -1,0 +1,62 @@
+# Publishes what the image workflows built (owner, 17 November 2026: "Yes, automate it"). After an image build on
+# main, tools/publish_images.py pins each image built from the files there now to its digest; then the catalogue and
+# zips are remade, the checks run, and a pull request is opened for the owner to merge. Nothing reaches the catalogue
+# until that pull request is merged. A new plug-in's image workflow goes in the list under workflow_run (a test checks).
+name: Publish built images
+on:
+  workflow_run:
+    workflows: ["Image", "Audio description tracks image", "Direct play image", "Jellystat helper image",
+                "Library clean-up image", "Picture shrinker image", "Remote access image"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-images
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Pin the images built from these files
+        run: python3 tools/publish_images.py | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Anything to publish?
+        id: diff
+        run: |
+          if git diff --quiet; then echo "changed=no" >> "$GITHUB_OUTPUT"; else echo "changed=yes" >> "$GITHUB_OUTPUT"; fi
+      - name: Catalogue and zips
+        if: steps.diff.outputs.changed == 'yes'
+        run: |
+          python3 tools/make_examples.py
+          python3 tools/make_zips.py
+      - name: Checks
+        if: steps.diff.outputs.changed == 'yes'
+        run: |
+          python3 -m unittest discover -s tests
+          python3 tools/check_help.py
+          python3 tools/make_zips.py --check
+      - name: Open a pull request
+        if: steps.diff.outputs.changed == 'yes'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          branch="publish/images-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add -A
+          git commit -m "Publish built images: pinned by digest, catalogue, zips"
+          git push origin "$branch"
+          body="$(printf 'Made by the Publish built images workflow after an image build on main.\n\n%s\n\nThe catalogue, zips, unit tests and help check were run. Merge to publish; nothing reaches the catalogue before.\n\nTheMightyTRexUK' "$(python3 tools/publish_images.py --check 2>/dev/null | tail -n 1)")"
+          gh pr create --base main --head "$branch" --title "Publish built images" --body "$body"

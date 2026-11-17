@@ -41,6 +41,7 @@ jobs:
             org.opencontainers.image.description=Small example plug-ins for Starboard
             org.opencontainers.image.licenses=MIT
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
       - name: Digest
         run: |
           echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"
