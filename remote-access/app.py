@@ -119,10 +119,11 @@ def read_targets():
     found = {"starboard": (api.hostname or "starboard", api.port or 8095)}
     try:
         items = (starboard("apps") or {}).get("items") or []
+        read_ok = True
     except Exception as e:  # noqa: BLE001 - Starboard may be starting; try again next time
         with lock:
             child["log"].append(f"Could not read Starboard's apps: {e}")
-        items = []
+        items, read_ok = [], False
     for it in items:
         kind = str(it.get("type") or "").lower()
         name = re.sub(r"[^a-z]", "", str(it.get("name") or "").lower())
@@ -137,6 +138,7 @@ def read_targets():
     with lock:
         targets.clear()
         targets.update(found)
+        state["apps_read"] = read_ok
 
 
 async def _pipe(reader, writer):
@@ -501,20 +503,26 @@ def _reach(app):
     with lock:
         target = targets.get(app)
     if not target:
-        return False, f"{NAMES[app]} is not in Starboard's apps, so it is not shared."
+        if not state.get("apps_read", True):
+            return False, f"Not checked: Remote access could not read Starboard's apps, so it cannot find {NAMES[app]} yet."
+        return False, f"{NAMES[app]} is not in Starboard's apps, so it is not shared. Add it in Settings, Apps."
     try:
         with socket.create_connection(target, timeout=3):
             pass
         return True, f"{NAMES[app]} answers."
     except OSError:
-        return False, f"{NAMES[app]} did not answer at {target[0]}:{target[1]}."
+        if app == "starboard":
+            return False, (f"Remote access cannot reach Starboard on the server (it tried {target[0]}:{target[1]}). "
+                           "Update Starboard in Settings, Updates, then select Start again here.")
+        return False, f"{NAMES[app]} is not answering. Check it is running in System, Apps."
 
 
 def _starboard_name_ok(host):
-    """Starboard answers only to names it knows: ask it as the visitor's browser would."""
+    """Starboard answers only to names it knows: ask it as the visitor's browser would. True or False, or None when
+    Starboard could not be asked."""
     t = targets.get("starboard")
     if not t or not host:
-        return True
+        return None
     try:
         c = http.client.HTTPConnection(*t, timeout=3)
         c.request("GET", "/healthz", headers={"Host": host})
@@ -522,7 +530,7 @@ def _starboard_name_ok(host):
         c.close()
         return ok
     except OSError:
-        return True
+        return None
 
 
 def test(only=None):
@@ -536,9 +544,9 @@ def test(only=None):
         ok, words = _reach(app)
         if ok and app == "starboard" and state["method"] == "cloudflare":
             host = next((r["hostname"] for r in state["routes"] if r["app"] == "starboard"), "")
-            if host and not _starboard_name_ok(host):
-                ok, words = False, (f"Starboard does not answer to the name {host} yet. Add it to STARBOARD_ALLOWED_HOSTS "
-                                    "in Starboard's settings file (read Put Starboard behind a reverse proxy).")
+            if host and _starboard_name_ok(host) is False:
+                ok, words = False, (f"Starboard does not open at {host} yet. In Starboard's folder on the server, add {host} "
+                                    "to STARBOARD_ALLOWED_HOSTS in the .env file, then run ./update.sh.")
         with lock:
             state["checked"][app] = {"ok": ok, "text": words, "at": time.time()}
         said.append(words)
@@ -573,7 +581,12 @@ def screen():
         elif where:
             detail = "Use this address away from home." + (f" {c['text']}" if c else "")
             if app == "starboard" and m == "tailscale" and dns:
-                detail += f" The name {dns} works only once it is in STARBOARD_ALLOWED_HOSTS."
+                named = _starboard_name_ok(dns)
+                if named:
+                    detail += f" The name {dns} works too."
+                else:
+                    detail += (f" {'To use' if named is False else 'If it does not open at'} the name {dns}: in Starboard's folder "
+                               "on the server, add it to STARBOARD_ALLOWED_HOSTS in the .env file, then run ./update.sh.")
             st = "problem" if c and not c["ok"] else "ok"
         else:
             detail, st = ("No address yet: connect first." if m != "cloudflare" or phase != "connected"

@@ -89,7 +89,33 @@ class Screen(unittest.TestCase):
         self.assertEqual(items["jellyfin"]["address"], "http://100.101.102.103:8096")
         self.assertEqual(items["audiobookshelf"]["state"], "off")
         self.assertEqual(items["download-apps"]["group"], "Never shared")
+        self.assertIn("If it does not open at the name starboard.tail1.ts.net", items["starboard"]["detail"])  # Starboard not asked
         self.assertIn("STARBOARD_ALLOWED_HOSTS", items["starboard"]["detail"])
+        real = app._starboard_name_ok
+        try:
+            app._starboard_name_ok = lambda host: True
+            self.assertIn("The name starboard.tail1.ts.net works too.", {i["id"]: i for i in app.screen()["items"]}["starboard"]["detail"])
+            app._starboard_name_ok = lambda host: False
+            refused = {i["id"]: i for i in app.screen()["items"]}["starboard"]["detail"]
+            self.assertIn("To use the name starboard.tail1.ts.net: in Starboard's folder on the server", refused)
+            self.assertIn("then run ./update.sh.", refused)
+        finally:
+            app._starboard_name_ok = real
+
+    def test_unreachable_starboard_and_unread_apps_say_what_to_do(self):
+        use(method="tailscale")
+        app.targets.clear()
+        app.targets.update({"starboard": ("127.0.0.1", 9)})
+        app.state["apps_read"] = False
+        ok, words = app._reach("starboard")
+        self.assertFalse(ok)
+        self.assertIn("Remote access cannot reach Starboard on the server", words)
+        self.assertIn("Update Starboard in Settings, Updates", words)
+        ok, words = app._reach("jellyfin")
+        self.assertIn("Not checked: Remote access could not read Starboard's apps", words)
+        app.state["apps_read"] = True
+        ok, words = app._reach("jellyfin")
+        self.assertIn("is not in Starboard's apps, so it is not shared. Add it in Settings, Apps.", words)
 
     def test_missing_key_is_a_problem(self):
         app.state.update({"method": "tailscale", "phase": "needs-key", "text": "Paste a Tailscale auth key", "fatal": True})
