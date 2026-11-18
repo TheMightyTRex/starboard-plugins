@@ -115,7 +115,8 @@ class Library(unittest.TestCase):
             asked.append(path)
             start = int(re.search(r"StartIndex=(\d+)", path).group(1))
             self.assertIn("Fields=MediaStreams", path)
-            self.assertIn("CollapseBoxSetItems=false", path)  # films in the collection are still read one by one
+            self.assertIn("CollapseBoxSetItems=false", path)
+            self.assertIn("DateCreated", path)  # when each was added, for Films to list and Series to list  # films in the collection are still read one by one
             self.assertIn("Limit=2", path)
             return {"Items": pages[start // 2], "TotalRecordCount": 5}
         app.jellyfin = jf
@@ -125,9 +126,9 @@ class Library(unittest.TestCase):
         self.assertIn("1 film and 1 series", said)
         r = app.remember("result")
         self.assertEqual([f["name"] for f in r["films"]], ["Dune (2021)"])
-        self.assertEqual(r["films"][0], {"id": "m1", "name": "Dune (2021)", "title": "Dune", "year": 2021, "track": "English (AD)"})
+        self.assertEqual(r["films"][0], {"id": "m1", "name": "Dune (2021)", "title": "Dune", "year": 2021, "added": "", "track": "English (AD)"})
         self.assertEqual(r["series"], [{"name": "Slow Horses", "described": 1, "episodes": 2, "track": "Audio Description", "id": "", "year": 0,
-                                        "items": [{"id": "", "season": None, "episode": None, "name": "", "track": "Audio Description"}]}])
+                                        "items": [{"id": "", "season": None, "episode": None, "name": "", "track": "Audio Description", "added": ""}], "added": ""}])
         self.assertEqual(app.count()["value"], 2)
         self.assertEqual(app.recent()["items"][0]["title"] in ("Dune (2021)", "Slow Horses"), True)
         screen = app.titles()
@@ -179,7 +180,8 @@ class TitlesPage(unittest.TestCase):
         self.assertEqual(film["link"], {"url": "http://192.168.1.10:8096/web/#/details?id=f1", "label": "Open Harbour Lights (2019) in Jellyfin"})
         self.assertEqual([e["title"] for e in eps], ["S1 E1: Part 1", "S1 E3: Part 3"])  # in order, only the described ones
         self.assertEqual(eps[0]["link"]["label"], "Open Quiet Valley S1 E1: Part 1 in Jellyfin")
-        self.assertIn("1 film and 2 episodes in 1 series have a described sound track", screen["intro"])
+        self.assertIn("1 film and 1 series have a described sound track", screen["intro"])
+        self.assertIn("Showing the 1 film and the 1 series, newest first, with 2 described episodes.", screen["intro"])
         self.assertIn("opens its page in Jellyfin", screen["intro"])
 
     def test_no_link_where_a_browser_cannot_open_jellyfin(self):
@@ -205,6 +207,46 @@ class TitlesPage(unittest.TestCase):
         self.assertNotIn("link", screen["items"][0])
         self.assertIn("Check for described titles now", screen["intro"])
 
+    def test_last_20_newest_first_by_default_and_all_when_chosen(self):
+        def result(app):
+            app.keep("result", {"at": 1794600000, "total": 60, "films": [
+                {"id": f"f{n}", "name": f"Film {n:02d} (2020)", "title": f"Film {n:02d}", "year": 2020, "track": "AD", "added": f"2026-10-{n:02d}T10:00:00"}
+                for n in range(1, 26)] + [{"id": "old", "name": "Kept by 1.4.0", "track": "AD"}], "series": [
+                {"name": f"Show {n}", "id": f"s{n}", "year": 0, "described": 2, "episodes": 2, "track": "AD", "added": f"2026-11-{n:02d}T10:00:00",
+                 "items": [{"id": f"s{n}e{k}", "season": 1, "episode": k, "name": "", "track": "AD", "added": ""} for k in (1, 2)]}
+                for n in range(1, 4)]})
+        app = load()
+        result(app)
+        screen = app.titles()
+        films = [i["title"] for i in screen["items"] if i["menu"] == "films"]
+        self.assertEqual(len(films), 20)
+        self.assertEqual(films[:2], ["Film 25 (2020)", "Film 24 (2020)"])  # newest first
+        self.assertNotIn("Kept by 1.4.0", films)  # no date: last
+        self.assertIn("Showing the last 20 of 26 films and all 3 series, newest first, with 6 described episodes", screen["intro"])
+        self.assertIn("'Films to list' and 'Series to list' under 'Your library'", screen["intro"])
+        self.assertEqual([m["title"] for m in screen["menus"][2:]], ["Show 3", "Show 2", "Show 1"])
+        app = load({"films_shown": "all", "series_shown": "10"})
+        result(app)
+        screen = app.titles()
+        self.assertEqual(len([i for i in screen["items"] if i["menu"] == "films"]), 26)
+        self.assertIn("Showing all 26 films and all 3 series", screen["intro"])
+        self.assertEqual(app.shown_words(10, 11, "series", "series"), "the last 10 of 11 series")
+        self.assertEqual(app.shown_words(None, 1, "film", "films"), "the 1 film")
+        self.assertEqual(app.shown_words(20, 0, "series", "series"), "no series")
+        self.assertEqual(load({"films_shown": "7"}).shown_limit("films_shown"), 20)  # an unknown value is the default
+
+    def test_an_update_from_1_4_0_saves_the_default_so_the_page_shows_it(self):
+        m = manifest()
+        self.assertEqual(m["update"]["migrations"], [{"version": "1.5.0", "defaults": {"films_shown": "20", "series_shown": "20"}}])
+        self.assertEqual({s["key"]: s["default"] for s in m["settings"] if s["key"].endswith("_shown")}, {"films_shown": "20", "series_shown": "20"})
+
+    def test_one_series_still_lists_every_described_episode(self):
+        app = load({"series_shown": "10"})
+        app.keep("result", {"at": 1794600000, "total": 40, "films": [], "series": [
+            {"name": "Long", "id": "s1", "year": 0, "described": 30, "episodes": 30, "track": "AD", "added": "2026-11-01T10:00:00",
+             "items": [{"id": f"e{k}", "season": 1, "episode": k, "name": "", "track": "AD", "added": "2026-11-01T10:00:00"} for k in range(1, 31)]}]})
+        self.assertEqual(len([i for i in app.titles()["items"] if i["menu"] == "series:s1"]), 30)
+
     def test_a_long_list_of_series_opens_by_first_letter(self):
         app = load()
         app.SERIES_MENUS_MAX = 2
@@ -213,7 +255,7 @@ class TitlesPage(unittest.TestCase):
              "items": [{"id": n + "1", "season": 1, "episode": 1, "name": "One", "track": "AD"}]} for n in ("Alpha", "Bravo", "Beta")]})
         screen = app.titles()
         self.assertEqual([m["title"] for m in screen["menus"][2:]], ["A", "B"])
-        self.assertEqual([i["group"] for i in screen["items"]], ["Alpha", "Bravo", "Beta"])
+        self.assertEqual([i["group"] for i in screen["items"]], ["Alpha", "Beta", "Bravo"])  # no dates: by name
 
 
 class AudioVault(unittest.TestCase):

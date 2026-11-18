@@ -91,6 +91,8 @@ track once per film or series. Both are listed in Starboard's accessibility rese
 - **People who want audio description**: activate each person.
 - **Titles with audio description**: every film and described episode, by films and series, each linking to its page
   in Jellyfin.
+- **Films to list** and **Series to list**: how many of each the page lists, All or the last 10, 20, 50, 100 or 500
+  added to Jellyfin, newest first; Last 20 by default.
 - **Jellyfin address for links**: the address you open Jellyfin at, for those links, when Starboard reaches Jellyfin at
   an address a browser cannot open.
 - **Audio description elsewhere**: places with audio description in their own apps.

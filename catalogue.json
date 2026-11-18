@@ -14,7 +14,7 @@
     "media:read",
     "network:lan"
    ],
-   "version": "1.4.0",
+   "version": "1.5.0",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
    "published": true,
@@ -23,11 +23,11 @@
    "logo_alt": "Audio description logo",
    "versions": [
     {
-     "version": "1.4.0",
+     "version": "1.5.0",
      "starboard_api": ">=1.14 <2.0",
      "released": "2026-11-17",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description/starboard-plugin.json",
-     "changelog": "Titles with audio description: every film, and every described episode by series, with its year, its described track and its status in words. Films and Series show their counts, and each title opens its page in Jellyfin. The same page as in Jellyfin's own Audio description plug-in. Jellyfin address for links: the address you open Jellyfin at, for the links on Titles with audio description, when Starboard reaches Jellyfin at an address a browser cannot open. The nightly check keeps a little more: each title's Jellyfin id and year, and which episodes are described, for the page. Select Check for"
+     "changelog": "Films to list and Series to list: how many Titles with audio description lists of each: All, or the last 10, 20, 50, 100 or 500 added to Jellyfin, newest first. Last 20 by default. A series counts by its newest described episode and still lists all its described episodes. The page says how many it shows, such as \"Showing the last 20 of 143 films\", and where to change it. Newest first: the films and series are listed by when they were added to Jellyfin, newest first. The nightly check keeps that date; select Check for described titles now once after updating."
     },
     {
      "version": "1.1.0",

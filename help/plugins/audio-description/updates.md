@@ -1,11 +1,12 @@
 # Audio description: Updates
 
-Audio description 1.4.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description 1.5.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.5.0 | 1.14 or later | 17 November 2026 |
 | 1.4.0 | 1.14 or later | 17 November 2026 |
 | 1.3.0 | 1.14 or later | 17 November 2026 |
 | 1.2.3 | 1.14 or later | 17 November 2026 |
@@ -15,6 +16,17 @@ Audio description 1.4.0 is the latest version. It needs Starboard with plug-in A
 | 1.1.0 | 1.12 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.5.0
+
+Added:
+
+- **Films to list and Series to list:** how many Titles with audio description lists of each: All, or the last 10, 20, 50, 100 or 500 added to Jellyfin, newest first. Last 20 by default. A series counts by its newest described episode and still lists all its described episodes.
+- **The page says how many it shows,** such as "Showing the last 20 of 143 films", and where to change it.
+
+Changed:
+
+- **Newest first:** the films and series are listed by when they were added to Jellyfin, newest first. The nightly check keeps that date; select **Check for described titles now** once after updating.
 
 ## What is new in 1.4.0
 

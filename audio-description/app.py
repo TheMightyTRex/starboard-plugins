@@ -145,7 +145,7 @@ def _items():
     while True:
         # CollapseBoxSetItems=false: without it, Jellyfin 12 answers a key with no person with the Audio description
         # collection in place of the films in it, so they would drop out of the check and lose their tag.
-        q = urllib.parse.urlencode({"Recursive": "true", "IncludeItemTypes": "Movie,Episode", "Fields": "MediaStreams,Tags", "CollapseBoxSetItems": "false",
+        q = urllib.parse.urlencode({"Recursive": "true", "IncludeItemTypes": "Movie,Episode", "Fields": "MediaStreams,Tags,DateCreated", "CollapseBoxSetItems": "false",
                                     "EnableImages": "false", "EnableUserData": "false", "StartIndex": start, "Limit": PAGE})
         got = jellyfin(f"/Items?{q}") or {}
         items = got.get("Items") or []
@@ -159,7 +159,7 @@ def _episode_row(it, track):
     """One described episode for Titles with audio description: its id, series and episode numbers, name and track."""
     num = lambda k: int(it[k]) if isinstance(it.get(k), int) else None  # noqa: E731
     return {"id": str(it.get("Id") or ""), "season": num("ParentIndexNumber"), "episode": num("IndexNumber"),
-            "name": str(it.get("Name") or "")[:120], "track": track["name"]}
+            "name": str(it.get("Name") or "")[:120], "track": track["name"], "added": str(it.get("DateCreated") or "")[:40]}
 
 
 def scan():
@@ -190,6 +190,7 @@ def scan():
         elif track:
             year = it.get("ProductionYear")
             films.append({"id": iid, "name": f"{it.get('Name')}" + (f" ({year})" if year else ""), "title": str(it.get("Name") or "")[:120],
+                          "added": str(it.get("DateCreated") or "")[:40],
                           "year": int(year or 0), "track": track["name"]})
         elif it.get("Type") == "Movie" and it.get("Name"):  # kept small: a name and a year, for the Sources' links
             without.append([str(it["Name"])[:120], int(it.get("ProductionYear") or 0)])
@@ -199,6 +200,7 @@ def scan():
     series_rows = sorted((s for s in series.values() if s["described"]), key=lambda s: s["name"].lower())
     for s in series_rows:
         s["year"] = years.get(s["id"], 0)
+        s["added"] = max((e.get("added") or "" for e in s["items"]), default="")  # its newest described episode
         s["items"].sort(key=lambda e: (e["season"] is None, e["season"] or 0, e["episode"] is None, e["episode"] or 0, e["name"].lower()))
     films.sort(key=lambda f: f["name"].lower())
     seen = remember("seen", {}) or {}
@@ -570,11 +572,43 @@ def series_words(s):
     return f"{s['described']:,} of {plural(s['episodes'], 'episode')} described"
 
 
+# How many of each to list (owner, 17 November 2026: "All, Last 10, 20 50, 100, 500 - default to 20 - for each media
+# type"): the most recently added to Jellyfin first, by Jellyfin's DateCreated, which the nightly check keeps. A series
+# counts by its newest described episode and still lists all its described episodes. Cut from the kept result: nothing
+# more is asked of Jellyfin.
+SHOWN_CHOICES = ("all", "10", "20", "50", "100", "500")
+SHOWN_DEFAULT = "20"
+
+
+def shown_limit(key):
+    """The setting's number, or None for All."""
+    value = str(setting(key, SHOWN_DEFAULT) or SHOWN_DEFAULT)
+    value = value if value in SHOWN_CHOICES else SHOWN_DEFAULT
+    return None if value == "all" else int(value)
+
+
+def newest_first(rows):
+    """Newest added first; a row kept before 1.5.0 has no date and goes last, by name."""
+    return sorted(sorted(rows, key=lambda x: x["name"].lower()), key=lambda x: x.get("added") or "", reverse=True)
+
+
+def shown_words(limit, total, one, many):
+    """the last 20 of 143 films, all 3 films, or the 1 film: the same words as the Jellyfin version."""
+    if limit is not None and total > limit:
+        return f"the last {limit:,} of {total:,} {many}"
+    if total == 0:
+        return f"no {many}"
+    return f"the 1 {one}" if total == 1 else f"all {total:,} {many}"
+
+
 def titles(body=None):
     r = remember("result") or {}
-    films, series = r.get("films", []), r.get("series", [])
+    all_films, all_series = r.get("films", []), r.get("series", [])
+    film_limit, series_limit = shown_limit("films_shown"), shown_limit("series_shown")
+    films = newest_first(all_films)[:film_limit]
+    series = newest_first(all_series)[:series_limit]
     base = jellyfin_page_base()
-    episodes = sum(len(s.get("items") or []) for s in series)
+    episodes = sum(len(s.get("items") or []) for s in series)  # in the series listed
     # Starboard adds how many titles each menu holds, so Films needs no count of its own, and Series says how many series.
     menus = [{"id": "films", "title": "Films", "group": "Show"},
              {"id": "series", "title": "Series", "group": "Show", "detail": plural(len(series), "series", "series")}]
@@ -608,13 +642,16 @@ def titles(body=None):
     elif not films and not series:
         intro = f"No film or series in Jellyfin has a described sound track yet. {_checked_words(r)}."
     else:
-        intro = (f"{plural(len(films), 'film')} and {plural(episodes, 'episode')} in {plural(len(series), 'series', 'series')} have a described "
-                 f"sound track. {_checked_words(r)}.")
+        intro = (f"{plural(len(all_films), 'film')} and {plural(len(all_series), 'series', 'series')} have a described sound track. "
+                 f"{_checked_words(r)}. Showing {shown_words(film_limit, len(all_films), 'film', 'films')} and "
+                 f"{shown_words(series_limit, len(all_series), 'series', 'series')}, newest first"
+                 f"{', with ' + plural(episodes, 'described episode') if episodes else ''}. "
+                 "Change how many in 'Films to list' and 'Series to list' under 'Your library'.")
         if series and any("items" not in s for s in series):
             intro += " Select 'Check for described titles now' to list each series' episodes."
         if cut:
             intro += f" Only the first {ITEMS_MAX:,} are listed."
-        intro += (" Each title opens its page in Jellyfin, in a new tab." if base else
+        intro += (" Each title opens its page in Jellyfin." if base else
                   " To open each title in Jellyfin from here, enter the address you open Jellyfin at in 'Jellyfin address for links'.")
     out = {"type": "list", "title": TITLES, "intro": intro[:400], "items": items}
     if r and (films or series):
