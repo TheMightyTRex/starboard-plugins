@@ -1097,8 +1097,8 @@ def pack_page(said=None):
         ex_state, ex_label, ex_detail = "problem", "Not made", f"The example pack was not made: {_example['error']}"
     else:
         ex_state, ex_label = ("ok", "In use") if using_example else ("off", "Not in use")
-        ex_detail = ("Example TV, a made-up channel drawn in code: an on-screen logo, the logo with music, 3 idents, a Coming up next card, "
-                     "a promo with 2 music beds and 3 transitions. Activate to use it for every channel without a pack of its own.")
+        ex_detail = ("Example TV, made in code: a logo, the logo with music, 3 idents, a Coming up next card, a promo with 2 music beds "
+                     "and 3 transitions. Activate to use it for every channel without its own pack.")
     items.append({"id": "example", "title": "Try the example pack", "detail": ex_detail[:200], "group": "The station's pack",
                   "on": using_example, "actions": ["toggle"], "state": ex_state, "state_label": ex_label})
     chk = sbplugin.remember("pack_check", None) or {}
@@ -1120,7 +1120,7 @@ def pack_page(said=None):
     if load_pack("example"):
         downloads.append(("example-zip", "The example pack, as a zip", "example-pack.zip"))
     for key, words, path in downloads:
-        it = {"id": f"dl-{key}", "title": words, "group": "Downloads", "state": "unknown", "state_label": "Download"}
+        it = {"id": f"dl-{key}", "title": words, "group": "Downloads", "state": "ok", "state_label": "Ready"}
         if base:
             it["link"] = {"url": f"{base}/{path}", "label": f"Download {words[0].lower() + words[1:]}"}
             it["detail"] = ("Where the clip area, each text field and the title safe area go" + (", on your pack's own background"
