@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description",
  "name": "Audio description",
- "version": "1.3.0",
+ "version": "1.4.0",
  "description": "Finds and tags films and series in Jellyfin with a described sound track for blind and partially sighted people, plays it for the people who choose it, and prefers releases with one in Reelix.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -21,7 +21,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:26c490dec620dfc4f74035a55917e9e6ef3912b1b46a2d837c2a1e52c0366c3e",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:5d9c35b41e6aa14ccd52c646f22844b47dec84850708e715b6064bae7d65b019",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -78,6 +78,13 @@
    "type": "custom",
    "choices": "/titles",
    "group": "Your library"
+  },
+  {
+   "key": "jellyfin_address",
+   "label": "Jellyfin address for links",
+   "type": "address",
+   "group": "Your library",
+   "hint": "The address you open Jellyfin at in a browser, such as http://192.168.1.10:8096. Each title on Titles with audio description opens its page there. Left empty, Starboard's own address for Jellyfin is used when a browser can open it."
   },
   {
    "key": "elsewhere",
@@ -213,6 +220,20 @@
   "alt": "Audio description logo"
  },
  "changes": [
+  {
+   "version": "1.4.0",
+   "date": "2026-11-17",
+   "added": [
+    "**Titles with audio description:** every film, and every described episode by series, with its year, its described track and its status in words. Films and Series show their counts, and each title opens its page in Jellyfin. The same page as in Jellyfin's own Audio description plug-in.",
+    "**Jellyfin address for links:** the address you open Jellyfin at, for the links on Titles with audio description, when Starboard reaches Jellyfin at an address a browser cannot open."
+   ],
+   "changed": [
+    "**The nightly check keeps a little more:** each title's Jellyfin id and year, and which episodes are described, for the page. Select **Check for described titles now** once after updating to fill it."
+   ],
+   "fixed": [
+    "**Films in the collection:** the nightly check asks Jellyfin for each film, not the Audio description collection in their place, so once the collection was made, films in it no longer dropped out of the check and lost their tag."
+   ]
+  },
   {
    "version": "1.3.0",
    "date": "2026-11-17",

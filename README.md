@@ -126,6 +126,10 @@ before from the catalogue, and says so when a plug-in needs a newer one.
 - Images are built for amd64, arm64 and arm/v7, except Remote access (amd64 and arm64: cloudflared has no 32-bit Arm
   build).
 - Each logo is `logo.svg` in the plug-in's folder, drawn by `tools/make_logos.py`: an original symbol on a rounded tile.
+- **Published by itself:** after an image is built on main, the Publish built images workflow pins each image built
+  from the files there now to its digest (`tools/publish_images.py`, which reads the commit each image was built
+  from), remakes the catalogue and zips, runs the checks and opens a pull request. Merging it publishes the plug-in;
+  nothing reaches the catalogue before. A new plug-in's image workflow goes in that workflow's list (a test checks).
 - `tools/make_examples.py` writes `catalogue.json` and the example plug-ins; `tools/make_zips.py` makes the zips;
   `tools/app_check.py` runs an app plug-in as Starboard would and measures it at rest.
 - Dozzle is not here: it would need every app's details from Docker, passwords included, so it cannot be a safe
