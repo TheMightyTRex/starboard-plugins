@@ -236,12 +236,32 @@ class Schedule(unittest.TestCase):
 
 
 @unittest.skipUnless(FFMPEG, "needs ffmpeg")
+class FreeSpace(unittest.TestCase):
+    """The free space rule on its own: the file's size and a fifth, plus a tenth of the disk (at most 50 GB)."""
+
+    def test_room_is_the_size_and_a_fifth_plus_the_margin(self):
+        app = load({"when": "any"})
+        try:
+            from unittest import mock
+            fake = mock.Mock(f_blocks=1000, f_frsize=1_000_000, f_bavail=0)  # a 1 GB disk: the margin is 100 MB
+            with mock.patch("os.statvfs", return_value=fake):
+                fake.f_bavail = 220
+                self.assertTrue(app.free_enough("/x", 100_000_000))   # 120 MB + 100 MB = 220 MB
+                fake.f_bavail = 219
+                self.assertFalse(app.free_enough("/x", 100_000_000))
+        finally:
+            shutil.rmtree(app._tmp, ignore_errors=True)
+
+
 class WithMedia(unittest.TestCase):
     """Real tiny files, real ffmpeg: the survey cache, each fix, the check, and the card."""
 
     def setUp(self):
         self.app = load({"when": "any"})
         self.mv = self.app._media["movies"]
+        # The free space rule keeps a tenth of the disk free, so on a test computer with less than that the fixes
+        # would be refused. It is tested on its own; here the disk always has room.
+        self.app.free_enough = lambda folder, size: True
 
     def tearDown(self):
         shutil.rmtree(self.app._tmp, ignore_errors=True)
