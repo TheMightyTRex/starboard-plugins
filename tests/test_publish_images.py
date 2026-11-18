@@ -21,7 +21,9 @@ class Targets(unittest.TestCase):
         names = {t["repo"] for t in pi.targets()}
         built = set()
         for wf in glob.glob(os.path.join(ROOT, ".github", "workflows", "*.yml")):
-            m = re.search(r"ghcr\.io/themightytrex/(starboard-plugin-[a-z0-9-]+):\$\{\{", open(wf).read())
+            with open(wf, encoding="utf-8") as f:
+                text = f.read()
+            m = re.search(r"ghcr\.io/themightytrex/(starboard-plugin-[a-z0-9-]+):\$\{\{", text)
             if m:
                 built.add(m.group(1))
         self.assertEqual(names, built)
@@ -31,14 +33,17 @@ class Targets(unittest.TestCase):
 
     def test_every_image_is_labelled_with_the_commit_it_was_built_from(self):
         for wf in glob.glob(os.path.join(ROOT, ".github", "workflows", "*.yml")):
-            text = open(wf).read()
+            with open(wf, encoding="utf-8") as f:
+                text = f.read()
             if "docker/build-push-action" in text:
                 self.assertIn("org.opencontainers.image.revision=${{ github.sha }}", text, wf)
 
     def test_the_publish_workflow_follows_every_image_workflow(self):
-        publish = open(os.path.join(ROOT, ".github", "workflows", "publish.yml")).read()
+        with open(os.path.join(ROOT, ".github", "workflows", "publish.yml"), encoding="utf-8") as f:
+            publish = f.read()
         for wf in glob.glob(os.path.join(ROOT, ".github", "workflows", "*.yml")):
-            text = open(wf).read()
+            with open(wf, encoding="utf-8") as f:
+                text = f.read()
             if "docker/build-push-action" in text:
                 name = re.search(r"^name: (.+)$", text, re.M).group(1).strip()
                 self.assertIn(f'"{name}"', publish, f"add {name!r} to workflow_run in publish.yml")
@@ -48,34 +53,49 @@ class Pinning(unittest.TestCase):
     def setUp(self):
         self.dir = tempfile.mkdtemp()
         self.manifest = os.path.join(self.dir, "starboard-plugin.json")
-        open(self.manifest, "w").write('{"x": {"image": "ghcr.io/themightytrex/starboard-plugin-demo:1.0.0"}}')
+        with open(self.manifest, "w", encoding="utf-8") as f:
+            f.write('{"x": {"image": "ghcr.io/themightytrex/starboard-plugin-demo:1.0.0"}}')
         self.t = {"name": "Demo", "repo": "starboard-plugin-demo", "tag": "1.0.0", "paths": ["demo/app.py"],
                   "pin": ("manifest", self.manifest)}
 
     def test_a_tag_is_replaced_by_the_digest_and_a_digest_by_a_newer_one(self):
         pi.pin(self.t, D1)
-        self.assertIn(f"starboard-plugin-demo@{D1}\"", open(self.manifest).read())
+        with open(self.manifest, encoding="utf-8") as f:
+            text = f.read()
+        self.assertIn(f"starboard-plugin-demo@{D1}\"", text)
         self.assertEqual(pi.pinned(self.t), D1)
         pi.pin(self.t, D2)
         self.assertEqual(pi.pinned(self.t), D2)
-        self.assertNotIn(D1, open(self.manifest).read())
+        with open(self.manifest, encoding="utf-8") as f:
+            text = f.read()
+        self.assertNotIn(D1, text)
 
     def test_every_manifest_naming_the_image_is_pinned_too(self):
         other = os.path.join(self.dir, "other")
         os.mkdir(other)
         hand = os.path.join(other, "starboard-plugin.json")
-        open(hand, "w").write(f'{{"image": "ghcr.io/themightytrex/starboard-plugin-demo@{D1}"}}')
+        with open(hand, "w", encoding="utf-8") as f:
+            f.write(f'{{"image": "ghcr.io/themightytrex/starboard-plugin-demo@{D1}"}}')
         unrelated = os.path.join(self.dir, "unrelated")
         os.mkdir(unrelated)
-        open(os.path.join(unrelated, "starboard-plugin.json"), "w").write(f'{{"image": "ghcr.io/themightytrex/starboard-plugin-else@{D1}"}}')
+        unrelated_manifest = os.path.join(unrelated, "starboard-plugin.json")
+        with open(unrelated_manifest, "w", encoding="utf-8") as f:
+            f.write(f'{{"image": "ghcr.io/themightytrex/starboard-plugin-else@{D1}"}}')
         pi.pin(self.t, D2, root=self.dir)
-        self.assertIn(D2, open(hand).read())
-        self.assertIn(D1, open(os.path.join(unrelated, "starboard-plugin.json")).read())
+        with open(hand, encoding="utf-8") as f:
+            hand_text = f.read()
+        with open(unrelated_manifest, encoding="utf-8") as f:
+            unrelated_text = f.read()
+        self.assertIn(D2, hand_text)
+        self.assertIn(D1, unrelated_text)
 
     def test_on_main_every_manifest_of_the_shared_image_names_the_same_digest(self):
-        digest = open(os.path.join(ROOT, "tools", "examples-digest.txt")).read().strip()
+        with open(os.path.join(ROOT, "tools", "examples-digest.txt"), encoding="utf-8") as f:
+            digest = f.read().strip()
         for m in glob.glob(os.path.join(ROOT, "*", "starboard-plugin.json")):
-            for d in re.findall(r"starboard-plugin-examples@(sha256:[0-9a-f]{64})", open(m).read()):
+            with open(m, encoding="utf-8") as f:
+                text = f.read()
+            for d in re.findall(r"starboard-plugin-examples@(sha256:[0-9a-f]{64})", text):
                 self.assertEqual(d, digest, m)
 
     def run_main(self, digest, revision, same):
