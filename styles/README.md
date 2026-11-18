@@ -1,6 +1,6 @@
 # Styles, a Starboard plug-in
 
-21 styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
+22 styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
 
 | Style | What it is like |
 |---|---|
@@ -25,8 +25,9 @@
 | Neon | Synthwave glows on a faint grid, with a gradient button |
 | Clay | Puffy, matte soft-3D panels in calm pastels |
 | Mica | A calm desktop style with transparent menus |
+| Classic | Starboard's design before Mica: teal on cool blue-grey, square corners and flat cards |
 
-The last six change every part of Starboard: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
+Mica is Starboard's own style since 18 November 2026, so Classic keeps the design from before it. The six from Studio to Mica change every part of Starboard: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
 API 1.2).
 
 ## Install

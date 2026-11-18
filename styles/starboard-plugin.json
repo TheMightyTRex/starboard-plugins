@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "styles",
  "name": "Styles",
- "version": "1.4.1",
- "description": "21 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast.",
+ "version": "1.5.0",
+ "description": "22 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/styles",
@@ -1315,6 +1315,64 @@
     "logo_tile": "#60cdff",
     "logo_star": "#ffffff"
    }
+  },
+  {
+   "id": "classic",
+   "name": "Classic",
+   "description": "Starboard's design before Mica: teal on cool blue-grey, square corners and flat cards.",
+   "radius": 0,
+   "font": "hyperlegible",
+   "heading_weight": 700,
+   "shadow": "none",
+   "card_style": "flat",
+   "light": {
+    "bg": "#f0f5ff",
+    "header": "#fcfdff",
+    "surface": "#f7faff",
+    "surface_raised": "#ffffff",
+    "surface_sunken": "#e4ebf7",
+    "text": "#141416",
+    "text_muted": "#424b5b",
+    "border": "#7d879a",
+    "divider": "#c2cddf",
+    "accent": "#0b5f5a",
+    "accent_text": "#ffffff",
+    "accent_soft": "#dff1ef",
+    "focus": "#0b5f5a",
+    "panel_header": "#ffffff",
+    "slide_header": "#f0f5ff",
+    "control_active": "#dbe7eb",
+    "count": "#af4e24",
+    "logo_tile": "#323a77",
+    "logo_star": "#af4e24",
+    "chart_1": "#4552a8",
+    "chart_2": "#c0602f",
+    "count_text": "#ffffff"
+   },
+   "dark": {
+    "bg": "#101827",
+    "header": "#141e2e",
+    "surface": "#1c2738",
+    "surface_raised": "#232f42",
+    "surface_sunken": "#0c1220",
+    "text": "#f3f4f6",
+    "text_muted": "#a4aec1",
+    "border": "#6f7b91",
+    "divider": "#303c51",
+    "accent": "#5ed3c6",
+    "accent_text": "#101827",
+    "accent_soft": "#163a38",
+    "focus": "#5ed3c6",
+    "panel_header": "#232f42",
+    "slide_header": "#101827",
+    "control_active": "#243c49",
+    "count": "#b7562c",
+    "logo_tile": "#a5b4fc",
+    "logo_star": "#ffb38a",
+    "chart_1": "#6f80e6",
+    "chart_2": "#d2733c",
+    "count_text": "#ffffff"
+   }
   }
  ],
  "logo": {
@@ -1322,6 +1380,16 @@
   "alt": "Styles logo"
  },
  "changes": [
+  {
+   "version": "1.5.0",
+   "date": "2026-11-18",
+   "added": [
+    "**Classic:** Starboard's design before Mica (teal on cool blue-grey, square corners), now that Mica is Starboard's own style."
+   ],
+   "changed": [
+    "Every style keeps its own design on top of the new Mica design system: cards lift only in styles with elevated cards, and the hover on menus has a clear edge."
+   ]
+  },
   {
    "version": "1.4.1",
    "date": "2026-11-17",

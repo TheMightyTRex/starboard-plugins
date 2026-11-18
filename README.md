@@ -80,7 +80,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 
 | Plug-in | What it does |
 |---|---|
-| [Styles](https://themightytrex.github.io/starboard-plugins/help/plugins/styles/index.html) | 21 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast. |
+| [Styles](https://themightytrex.github.io/starboard-plugins/help/plugins/styles/index.html) | 22 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast. |
 
 ## Apps you can add
 

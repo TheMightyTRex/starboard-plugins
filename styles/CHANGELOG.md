@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 (18 November 2026)
+
+### Added
+- Classic: Starboard's design before Mica (teal on cool blue-grey, square corners), now that Mica is Starboard's own style.
+
+### Changed
+- Every style keeps its own design on top of the new Mica design system: cards lift only in styles with elevated cards, and the hover on menus has a clear edge.
+
 ## 1.4.1 (17 November 2026)
 
 ### Changed
