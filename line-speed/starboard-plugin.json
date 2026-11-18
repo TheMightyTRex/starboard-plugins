@@ -15,7 +15,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:e3fdfbf9c13d482a82394c054f7aba12408aec5cdfd208d3f669371c1de34ae3",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:5d9c35b41e6aa14ccd52c646f22844b47dec84850708e715b6064bae7d65b019",
    "port": 8080,
    "network": "lan",
    "volumes": [
