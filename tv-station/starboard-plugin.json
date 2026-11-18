@@ -1,9 +1,9 @@
 {
  "manifest_version": 1,
  "id": "tv-station",
- "name": "TV station",
+ "name": "Create your own TV channel",
  "version": "0.1.0",
- "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with idents, trailers, Coming up next cards and your own on-screen logo.",
+ "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/tv-station",
@@ -60,6 +60,13 @@
    "type": "custom",
    "choices": "/clips",
    "hint": "The station's own idents and clips, for every channel's breaks."
+  },
+  {
+   "key": "pack",
+   "label": "Broadcast pack",
+   "type": "custom",
+   "choices": "/pack",
+   "hint": "Your own branding for the channels: upload a pack made from the template, try the example pack, and download the template and placement guides."
   },
   {
    "key": "station_name",
@@ -142,6 +149,58 @@
    "default": true,
    "hint": "A channel with no on-screen logo and no straps plays its programmes as they are, with no converting.",
    "group": "Streaming"
+  },
+  {
+   "key": "promos",
+   "label": "Make promos in quiet hours",
+   "type": "switch",
+   "default": true,
+   "group": "Promos",
+   "hint": "For channels whose broadcast pack has a promo: short clips of a programme coming up, a music bed and its day and time. One at a time, at the lowest priority, never while anyone is watching."
+  },
+  {
+   "key": "promo_keep",
+   "label": "Promos kept for each channel",
+   "type": "number",
+   "default": 3,
+   "min": 1,
+   "max": 6,
+   "group": "Promos",
+   "hint": "Old ones are replaced, so they never pile up."
+  },
+  {
+   "key": "promo_replace_days",
+   "label": "Replace each promo after",
+   "type": "choice",
+   "default": "2",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "1",
+     "label": "1 day"
+    },
+    {
+     "value": "2",
+     "label": "2 days"
+    },
+    {
+     "value": "3",
+     "label": "3 days"
+    },
+    {
+     "value": "7",
+     "label": "7 days"
+    }
+   ],
+   "hint": "A promo is also replaced once its programme has started."
+  },
+  {
+   "key": "promo_other",
+   "label": "Show promos for your other channels",
+   "type": "switch",
+   "default": true,
+   "group": "Promos",
+   "hint": "Each channel's breaks show promos for programmes on your other channels too."
   },
   {
    "key": "dog_kind",
@@ -373,6 +432,16 @@
  ],
  "actions": [
   {
+   "id": "example",
+   "label": "Try the example pack",
+   "path": "/actions/example"
+  },
+  {
+   "id": "promos",
+   "label": "Make promos now",
+   "path": "/actions/promos"
+  },
+  {
    "id": "refresh",
    "label": "Read the channels from Jellyfin again",
    "path": "/actions/refresh"
@@ -425,6 +494,14 @@
    "path": "/jobs/refresh",
    "daily": "04:40",
    "time_limit_minutes": 20
+  },
+  {
+   "id": "promos",
+   "label": "Make promos",
+   "path": "/jobs/promos",
+   "every_hours": 1,
+   "quiet_hours": true,
+   "time_limit_minutes": 50
   }
  ],
  "update": {
@@ -439,7 +516,7 @@
  },
  "logo": {
   "file": "logo.svg",
-  "alt": "TV station logo"
+  "alt": "Create your own TV channel logo"
  },
  "changes": [
   {
@@ -449,6 +526,9 @@
     "**Your own channels:** name the station and each channel, with its number, logo and colour, and fill it from series, films, collections, playlists, genres or decades, in order or shuffled, with episodes of a series in a row.",
     "**In Jellyfin's Live TV, first:** numbered from 1 in your order, with a 7-day guide of titles, episode names, synopses, pictures and New or Repeat. Tuning in joins part way through, as on television.",
     "**Breaks:** idents, Jellyfin's trailers, your own clips, and Coming up next and Later cards with the programme's picture, title, date and time and a short synopsis.",
+    "**Broadcast pack:** your own branding from a zip made from the template: the on-screen logo, the logo with its music, idents in a random order, transitions, and Coming up next and promo backgrounds. Every file is checked first. Or try the example pack.",
+    "**Promos:** made in quiet hours from short clips of a programme coming up, a music bed from the pack and its day and time from the schedule, kept and replaced as the settings say, and shown on your other channels too.",
+    "**Downloads:** the template, with pack.json, its schema and a README, and placement guides for the Coming up next card, the promo and the on-screen logo.",
     "**On-screen logo:** the channel's logo or name in a corner you choose, with its size, opacity, a clock, a New, Repeat or Live label and a backing plate, for the station or each channel, with a preview.",
     "**Light:** nothing runs until someone chooses a channel, viewers of a channel share one stream, and it stops 30 seconds after the last one leaves."
    ]

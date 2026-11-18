@@ -1,6 +1,6 @@
-# TV station: For developers
+# Create your own TV channel: For developers
 
-How TV station is built, for anyone who wants to change it or make one like it. It is MIT, by TheMightyTRexUK, and works with plug-in API `>=1.15 <2.0`.
+How Create your own TV channel is built, for anyone who wants to change it or make one like it. It is MIT, by TheMightyTRexUK, and works with plug-in API `>=1.15 <2.0`.
 
 ## Its files
 
@@ -11,13 +11,17 @@ How TV station is built, for anyone who wants to change it or make one like it. 
 - [`dog.py`](../../../tv-station/dog.py): the on-screen logo, straps and cards as FFmpeg filters
 - [`stream.py`](../../../tv-station/stream.py): one FFmpeg for each channel being watched, shared by its viewers
 - [`library.py`](../../../tv-station/library.py): line-ups and clips from Jellyfin
+- [`pack.py`](../../../tv-station/pack.py): broadcast packs: the zip rules, the checks with ffprobe, loudness, the placement guides and the template
+- [`pack.schema.json`](../../../tv-station/pack.schema.json): the JSON Schema for a pack's `pack.json`, checked with no library
+- [`promo.py`](../../../tv-station/promo.py): which promos to make and replace, and the FFmpeg command for one
+- [`example_pack.py`](../../../tv-station/example_pack.py): makes the Example TV pack with FFmpeg alone: `python3 example_pack.py <folder> --zip <file>`
 - [`sbplugin.py`](../../../tv-station/sbplugin.py)
 - [`Dockerfile`](../../../tv-station/Dockerfile)
 - [`install.py`](../../../tv-station/install.py)
 - [`logo.svg`](../../../tv-station/logo.svg)
 - [`atkinson-hyperlegible-next.woff2`](../../../tv-station/atkinson-hyperlegible-next.woff2), the font on the television, with its licence, [`LICENSE-OFL.txt`](../../../tv-station/LICENSE-OFL.txt)
 - [`CHANGELOG.md`](../../../tv-station/CHANGELOG.md)
-- [`tests/test_tv_station.py`](../../../tests/test_tv_station.py)
+- [`tests/test_tv_station.py`](../../../tests/test_tv_station.py) and [`tests/test_tv_station_pack.py`](../../../tests/test_tv_station_pack.py)
 
 ## Containers
 
@@ -33,7 +37,14 @@ A channel is a function from time to programme, an idea from [Clickarr](https://
 
 - **Shuffled** uses a SplitMix64 random number generator of its own, so a shuffle is the same on every computer.
 - **A new line-up** starts at the end of the programme on air, carrying on from the programme that would have come next.
-- **Breaks** are planned from the same inputs: an ident, trailers and clips that fit, then Later and Coming up next cards for the rest.
+- **Breaks** are planned from the same inputs: a broadcast pack's logo with music, an ident, trailers, clips and promos that fit, then Later and Coming up next cards for the rest. A pack's idents are chosen at random from the break's seed, so the same break always has the same ident.
+- **Transitions** sit on each cut between programme and break. The last half of a piece that ends on a cut is played as a piece of its own, so each FFmpeg run starts its transition at its own start, paced like the piece, and never holds frames waiting.
+- **The stream** carries on from the end of what it has sent, within 8 seconds of the clock, so FFmpeg's first burst never sends anything twice and a slow start never passes anything over. Every looped input is cut a second after its piece.
+
+## Broadcast packs and promos
+
+- **A pack** is unpacked to a new folder, checked, and only then put in place of the one in use, in `/data/packs/station`, `/data/packs/example` or `/data/packs/ch-<channel>`. What the stream uses is kept as `checked.json` beside it. [Make a broadcast pack](../../use/make-a-broadcast-pack.md) has the specification.
+- **Promos** are made by `POST /jobs/promos`, which Starboard calls each hour of its quiet hours: one FFmpeg at a time, at the lowest priority with one thread, stopped at once when a channel starts. They are kept in `/data/promos`.
 
 ## What Starboard and Jellyfin call
 
@@ -42,22 +53,25 @@ A channel is a function from time to programme, an idea from [Clickarr](https://
 | `GET /health` | Starboard | 200 while it runs |
 | `GET /card` | Starboard | **What is on now**, a guide card |
 | `GET` and `POST /channels`, `/clips`, `/guide` | Starboard | Its custom pages; refused without the plug-in's own key in `X-Api-Key` |
-| `POST /channels/file`, `/clips/file` | Starboard | A logo, ident or clip chosen on a page, streamed to its folder |
-| `POST /actions/refresh`, `/actions/stop` | Starboard | Its two buttons |
+| `GET` and `POST /pack` | Starboard | The **Broadcast pack** page |
+| `POST /channels/file`, `/clips/file`, `/pack/file` | Starboard | A logo, ident, clip or pack zip chosen on a page, streamed to its folder |
+| `POST /actions/example`, `/actions/promos`, `/actions/refresh`, `/actions/stop` | Starboard | Its four buttons |
 | `POST /jobs/refresh` | Starboard | The nightly line-up refresh, at 04:40 |
+| `POST /jobs/promos` | Starboard | Promos, each hour of Starboard's quiet hours |
 | `POST /update/before`, `/update/after` | Starboard | Stops every stream before an update |
-| `GET /` | People | A small page; opening it tells TV station its own address |
+| `GET /` | People | A small page; opening it tells Create your own TV channel its own address |
 | `GET /t/<token>/channels.m3u` | Jellyfin | The channel list |
 | `GET /t/<token>/guide.xml` | Jellyfin | The guide, 7 days |
 | `GET /t/<token>/stream/<channel>.ts` | Jellyfin | A channel's stream, MPEG-TS |
 | `GET /t/<token>/logo/<channel>.png`, `/art/<item>.jpg` | Jellyfin | Channel logos, and programme pictures from Jellyfin |
-| `GET /t/<token>/preview/<channel>.png` | People | A frame with the on-screen logo, or `?kind=card` for a card |
+| `GET /t/<token>/preview/<channel>.png` | People | A frame with the on-screen logo, or `?kind=card`, `ident`, `sting` or `promo` |
+| `GET /t/<token>/download/<file>` | People | `template.zip`, `placement-coming-next.png`, `placement-promo.png`, `placement-logo.png` and `example-pack.zip`, as downloads |
 
 `<token>` is a random word kept in its folder, given only to Jellyfin.
 
 ## Tests
 
-`python3 -m unittest tests.test_tv_station`: the schedule (the same answer for the same time, joining part way, boundaries, breaks filling the gap, new episodes joining at the next boundary), the guide and channel list, the on-screen logo options, the pages, and, where FFmpeg is installed, a real run that tunes in part way through a made-up clip and checks the logo is drawn, then two viewers sharing one stream that stops after they leave.
+`python3 -m unittest tests.test_tv_station tests.test_tv_station_pack`: the schedule (the same answer for the same time, joining part way, boundaries, breaks filling the gap, new episodes joining at the next boundary), the guide and channel list, the on-screen logo options, the pages, and, where FFmpeg is installed, a real run that tunes in part way through a made-up clip and checks the logo is drawn, then two viewers sharing one stream that stops after they leave. For packs: `pack.json` against its schema, the zip rules (paths outside the folder, links, unknown names, zip bombs, size limits), the example pack made small and checked, broken copies of it refused, a card drawn from it, the random ident choice, the logo with music, both halves of a transition at each cut, which promos are made and replaced, a real promo made by FFmpeg and stopped when someone watches, promos on the other channels, the placement guides' marks and the template.
 
 ## Find out more
 

@@ -1,11 +1,11 @@
-# TV station: Install
+# Create your own TV channel: Install
 
-Add TV station from Starboard's **Catalogue**, where it is listed under **Jellyfin**. Starboard shows what it may do and tests it before anything is added. At the end, your first channel is in Jellyfin's Live TV.
+Add Create your own TV channel from Starboard's **Catalogue**, where it is listed under **Jellyfin**. Starboard shows what it may do and tests it before anything is added. At the end, your first channel is in Jellyfin's Live TV.
 
 ## Before you begin
 
 - Starboard with plug-in API 1.15 or later.
-- Jellyfin added in Starboard, in **Settings**, then **Apps**, with its API key. TV station reads your films and series from Jellyfin and plays them from there.
+- Jellyfin added in Starboard, in **Settings**, then **Apps**, with its API key. Create your own TV channel reads your films and series from Jellyfin and plays them from there.
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -33,11 +33,11 @@ Measured on 17 November 2026: 16.4 MiB of memory and no measurable processor (0.
 ## Add it
 
 1. Go to **Settings**, then **Plug-ins**, then **Catalogue**.
-2. Under **Jellyfin**, find **TV station** and select **Install…**.
+2. Under **Jellyfin**, find **Create your own TV channel** and select **Install…**.
 3. A slide-out opens with what it can read, change and reach. Read it all.
-4. Enter your Starboard password and select **Install TV station**. To stop, select **Cancel**: nothing is installed.
-5. TV station's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
-6. Next to its web page's address, select **Open**. A page with the station's name opens in a new tab. TV station keeps that address, which Jellyfin uses to reach it, and adds its channel list and guide to Jellyfin's Live TV.
+4. Enter your Starboard password and select **Install Create your own TV channel**. To stop, select **Cancel**: nothing is installed.
+5. Create your own TV channel's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+6. Next to its web page's address, select **Open**. A page with the station's name opens in a new tab. Create your own TV channel keeps that address, which Jellyfin uses to reach it, and adds its channel list and guide to Jellyfin's Live TV.
 7. In **Station**, enter the **Station name**.
 8. Open **Channels** and add your first channel. Read [Settings](settings.md).
 9. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
@@ -56,8 +56,8 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 ## Remove it
 
-1. Go to **Settings**, then **Plug-ins**, then **TV station**.
-2. Under **Remove**, select **Remove TV station**.
+1. Go to **Settings**, then **Plug-ins**, then **Create your own TV channel**.
+2. Under **Remove**, select **Remove Create your own TV channel**.
 3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
@@ -67,7 +67,7 @@ To stop it for a while instead, select **Deactivate** on its tab: its settings a
 
 ## Find out more
 
-- [What TV station does](../../../tv-station/README.md)
+- [What Create your own TV channel does](../../../tv-station/README.md)
 - [Settings](settings.md)
 - [Problems](problems.md)
 - [Add a plug-in, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/add-a-plugin.html)

@@ -20,6 +20,8 @@ VIEWER_QUEUE = 96  # chunks held for a slow viewer (about 6 MB) before it is let
 FPS = 25
 SIZES = {"720": (1280, 720, 3000), "1080": (1920, 1080, 6000)}  # width, height, video kilobits a second
 FAIL_PAUSE = 20  # a piece that fails is replaced by a slate for at most this long, then the next piece is tried
+AHEAD = 8  # the stream may run this many seconds ahead of the clock (FFmpeg's first burst); never more
+SHORTEST = 0.4  # what is left of a piece shorter than this is passed over, not started
 
 
 def jellyfin_input(base, key, item_id):
@@ -39,11 +41,27 @@ def output_args(W, H, kbps, ts_offset, duration, copy=False):
                     "pipe:1"]
 
 
+def _pack_input(path, still, pace, most):
+    """A pack's background, looped, and never longer than the piece: no input here is ever endless."""
+    if still:
+        return pace + ["-loop", "1", "-framerate", str(FPS), "-t", f"{most:.3f}", "-i", path]
+    return pace + ["-stream_loop", "-1", "-t", f"{most:.3f}", "-i", path]
+
+
+def _transition_input(tr, start, pace):
+    """A transition's input: decoded with libvpx when it is VP9, which is what keeps its transparency."""
+    dec = ["-c:v", "libvpx-vp9"] if tr.get("codec") == "vp9" else []
+    return pace + (["-ss", f"{start:.3f}"] if start > 0 else []) + dec + ["-i", tr["file"]]
+
+
 def piece_command(piece, now, ctx):
     """The FFmpeg command for what is left of one piece at `now`.
 
     ctx: {"W", "H", "kbps", "opts", "names", "logo", "jf_url", "jf_key", "ts_offset", "texts", "clip_path", "art",
-          "colour", "next_words", "start_words"}
+          "colour", "next_words", "start_words", "layout", "trans_in", "trans_out"}
+    layout:    a broadcast pack's Coming up next layout, with "file" its background, for cards
+    trans_in:  a pack's transition, {"file", "dur", "codec"}: its second half plays over the start of this piece
+    trans_out: the same, its first half over the end; the piece then has "tail_from", where its last half starts
     """
     W, H = ctx["W"], ctx["H"]
     opts = ctx["opts"]
@@ -55,8 +73,11 @@ def piece_command(piece, now, ctx):
     # Few threads: Starboard's containers have a limit on processes and threads, and the plug-in has 2 cores.
     args = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-filter_threads", "2", "-filter_complex_threads", "2"]
     audio_from = None
+    audio_gain = 0.0
     programme = None
     rel = 0.0
+    layout = ctx.get("layout") if kind == "card" else None
+    most = max(0.5, left) + 1.0  # every looped or made-up input stops a second after the piece
     if kind == "programme":
         e = piece["airing"]["entry"]
         rel = into
@@ -68,33 +89,58 @@ def piece_command(piece, now, ctx):
             label = "Live"
         elif opts["label"] == "new_repeat":
             label = "New" if is_new(e, piece["start"]) else "Repeat"
-        programme = {"duration": piece["end"] - piece["start"], "label": label,
+        programme = {"duration": piece["airing"]["content_end"] - piece["start"], "label": label,
                      "start_words": ctx.get("start_words") or f"{e.get('title')}" + (f": {episode_words(e)}" if episode_words(e) else ""),
                      "next_words": ctx.get("next_words")}
     elif kind == "clip":
         c = piece["clip"]
         src = c["src"]
+        seek = ["-ss", f"{into:.3f}"] if into > 0.05 or still else []
         if src.startswith("jf:"):
-            args += pace + ["-ss", f"{into:.3f}"] + jellyfin_input(ctx["jf_url"], ctx["jf_key"], src[3:])
+            args += pace + seek + jellyfin_input(ctx["jf_url"], ctx["jf_key"], src[3:])
         else:
-            args += pace + ["-ss", f"{into:.3f}", "-i", ctx["clip_path"](src)]
+            args += pace + seek + ["-i", ctx["clip_path"](src)]
         if c.get("has_audio", True):
             audio_from = f"0:{c['audio']}" if c.get("audio") is not None else "0:a:0"
+            audio_gain = float(c.get("gain") or 0)
+    elif layout:
+        args += _pack_input(layout["file"], layout.get("still"), pace, most)
     elif kind == "card" and ctx.get("art"):
-        args += pace + ["-loop", "1", "-framerate", str(FPS), "-headers", f'Authorization: MediaBrowser Token="{ctx["jf_key"]}"\r\n',
+        args += pace + ["-loop", "1", "-framerate", str(FPS), "-t", f"{most:.3f}", "-headers", f'Authorization: MediaBrowser Token="{ctx["jf_key"]}"\r\n',
                         "-i", ctx["art"]]
     else:
-        args += pace + ["-f", "lavfi", "-i", f"color=c=0x14202e:s={W}x{H}:r={FPS}"]
+        args += pace + ["-f", "lavfi", "-t", f"{most:.3f}", "-i", f"color=c=0x14202e:s={W}x{H}:r={FPS}"]
     n_inputs = 1
     if audio_from is None:
-        args += ([] if still else ["-re"]) + ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"]
+        args += ([] if still else ["-re"]) + ["-f", "lavfi", "-t", f"{most:.3f}", "-i", "anullsrc=r=48000:cl=stereo"]
         audio_from = f"{n_inputs}:a"
         n_inputs += 1
-    copy = kind == "programme" and ctx.get("copy_ok") and dog.needs_encoding(opts) and not still
+    trans_in, trans_out = ctx.get("trans_in"), ctx.get("trans_out")
+    copy = (kind == "programme" and ctx.get("copy_ok") and dog.needs_encoding(opts) and not still and not trans_in and not trans_out)
     if copy:
         args += ["-map", "0:v:0", "-map", audio_from]
         return args + output_args(W, H, ctx["kbps"], ctx["ts_offset"], left, copy=True)
-    if kind == "card":
+    pre = []
+    if layout:
+        base = f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={FPS},format=yuv420p"
+        sx, sy = W / 1920, H / 1080
+        x0, y0, x1, y1 = layout["clip"]
+        cw, ch = int((x1 - x0) * sx) // 2 * 2, int((y1 - y0) * sy) // 2 * 2
+        if ctx.get("art"):
+            args += pace + ["-loop", "1", "-framerate", str(FPS), "-t", f"{most:.3f}", "-headers",
+                            f'Authorization: MediaBrowser Token="{ctx["jf_key"]}"\r\n', "-i", ctx["art"]]
+            pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuv420p[art]")
+            base += f"[bgc];[bgc][art]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat"
+            n_inputs += 1
+        a = piece["airing"]["entry"]
+        said = {"Heading": "Coming up next" if piece.get("card") == "next" else f"Later on {ctx['names']['channel']}",
+                "Title": a.get("title") or "Programme", "Episode": episode_words(a), "Day and time": dog.when_words(piece["airing"]["start"], now),
+                "Synopsis": a.get("plot") or "", "Channel name": ctx["names"]["channel"]}
+        chain = []
+        for name, style in (layout.get("fields") or {}).items():
+            if said.get(name):
+                chain += dog.box_text(ctx["texts"], said[name], style, sx, sy)
+    elif kind == "card":
         base = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={FPS},format=yuv420p"
         a = piece["airing"]["entry"]
         card = {"kicker": "Coming up next" if piece.get("card") == "next" else f"Later on {ctx['names']['channel']}",
@@ -110,17 +156,34 @@ def piece_command(piece, now, ctx):
         chain = []
     extra, logo_f = dog.overlay_chain(opts, W, H, kind, ctx["texts"], ctx["names"], logo=ctx.get("logo"), rel=rel, programme=programme)
     chain = chain + extra
-    graph = f"[0:v]{base}" + ("," + ",".join(chain) if chain else "")
+    graph = ";".join(pre + [f"[0:v]{base}" + ("," + ",".join(chain) if chain else "")])
     if logo_f:
-        args += ["-loop", "1", "-i", ctx["logo"]]
+        args += ["-loop", "1", "-t", f"{most:.3f}", "-i", ctx["logo"]]
         x, y = dog.logo_position(opts, W, H)
-        graph += f"[b];[{n_inputs}:v]{logo_f}[lg];[b][lg]overlay=x={x}:y={y}:shortest=1:format=auto[v]"
+        graph += f"[b];[{n_inputs}:v]{logo_f}[lg];[b][lg]overlay=x={x}:y={y}:shortest=1:format=auto[v0]"
         n_inputs += 1
     else:
-        graph += "[v]"
+        graph += "[v0]"
+    out = "v0"
+    # Transitions: paced like the piece, so their few frames are never held waiting. The cut is at their middle.
+    if trans_in and not still and into < trans_in["dur"] / 2:
+        args += _transition_input(trans_in, trans_in["dur"] / 2 + into, pace)
+        graph += (f";[{n_inputs}:v]scale={W}:{H},setsar=1,fps={FPS},format=yuva420p,setpts=PTS-STARTPTS[ti]"
+                  f";[{out}][ti]overlay=eof_action=pass:format=auto[v1]")
+        out, n_inputs = "v1", n_inputs + 1
+    if trans_out and not still and piece.get("tail_from") is not None:
+        half = trans_out["dur"] / 2
+        late = max(0.0, now - piece["tail_from"])
+        if late < half:
+            args += _transition_input(trans_out, late, pace)
+            graph += (f";[{n_inputs}:v]scale={W}:{H},setsar=1,fps={FPS},format=yuva420p,trim=duration={half - late:.3f},setpts=PTS-STARTPTS[to]"
+                      f";[{out}][to]overlay=eof_action=pass:format=auto[v2]")
+            out, n_inputs = "v2", n_inputs + 1
     if still:
-        return args + ["-filter_complex", graph, "-map", "[v]", "-frames:v", "1", "-c:v", "png", "-f", "image2", "pipe:1"]
-    args += ["-filter_complex", graph, "-map", "[v]", "-map", audio_from]
+        return args + ["-filter_complex", graph, "-map", f"[{out}]", "-frames:v", "1", "-c:v", "png", "-f", "image2", "pipe:1"]
+    args += ["-filter_complex", graph, "-map", f"[{out}]", "-map", audio_from]
+    if audio_gain:
+        args += ["-af", f"volume={audio_gain:+.1f}dB"]
     return args + output_args(W, H, ctx["kbps"], ctx["ts_offset"], left)
 
 
@@ -189,17 +252,30 @@ class Hub:
 
     def _run(self):
         try:
+            cursor = 0.0  # how far through the schedule the stream has been sent, which runs a little ahead of the clock
             while not self.stopping:
                 now = time.time()
+                if abs(cursor - now) < AHEAD:
+                    # Carry on from the end of what was sent: nothing is sent twice (FFmpeg's first burst runs ahead) and
+                    # nothing is passed over (a piece that takes a moment to start runs behind). Further out, the clock wins.
+                    now = cursor
                 piece, ctx, cleanup = self.plan(now, self.started)
                 if piece is None:
                     break
+                if piece["end"] - now < SHORTEST:
+                    cursor = piece["end"]
+                    if cleanup:
+                        cleanup()
+                    if cursor > time.time() + AHEAD:
+                        time.sleep(0.2)
+                    continue
                 argv = piece_command(piece, now, ctx)
                 began = time.monotonic()
                 ok = self._play(argv)
                 if cleanup:
                     cleanup()
                 self.pieces_played += 1
+                cursor = piece["end"] if ok else time.time()
                 if self.stopping:
                     break
                 if not ok and time.monotonic() - began < 2 and piece["end"] - time.time() > 1:

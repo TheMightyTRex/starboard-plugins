@@ -202,7 +202,7 @@ class Dog(unittest.TestCase):
             _, logo = dog.overlay_chain(o, 1280, 720, "programme", dog.Texts(d), {"channel": "C", "station": "S"}, logo="/x.png")
             self.assertIn("pad=", logo)
             self.assertIn("aa=0.70", logo)
-            self.assertEqual(dog.logo_position(o, 1280, 720), ("W-w-36", "36"))
+            self.assertEqual(dog.logo_position(o, 1280, 720), ("W-w-64", "36"))  # 5% of the width from the side, 5% of the height from the top
 
     def test_when_words(self):
         noon = time.mktime((2026, 11, 18, 12, 0, 0, 0, 0, -1))

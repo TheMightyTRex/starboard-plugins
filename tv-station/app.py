@@ -1,5 +1,6 @@
-"""TV station: your own TV channels in Jellyfin's Live TV, made from your films and series, with idents, trailers and
-Coming up next cards in the breaks, and your own on-screen logo. Nothing streams until a channel is chosen.
+"""Create your own TV channel (id tv-station): your own TV channels in Jellyfin's Live TV, made from your films and
+series, with idents, trailers, promos and Coming up next cards in the breaks, your own on-screen logo, and a broadcast
+pack for the channels' own branding. Nothing streams until a channel is chosen.
 
 Answers Starboard (cards, its pages, buttons and jobs) and Jellyfin (the channel list, the guide and the streams) on
 port 8080, which Starboard puts on the home network. What Jellyfin reads is under /t/<token>/, a random word kept in
@@ -12,6 +13,7 @@ import json
 import os
 import re
 import secrets
+import shutil
 import subprocess
 import threading
 import time
@@ -21,8 +23,11 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import dog
+import example_pack
 import guide
 import library
+import pack
+import promo
 import sbplugin
 import schedule
 import stream
@@ -30,6 +35,9 @@ import stream
 VERSION = "0.1.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
+PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
+PROMOS = "promos"
+NAME = "Create your own TV channel"
 MAX_UPLOAD = 60 * 1024 * 1024
 CLIP_TYPES = (".mp4", ".mkv", ".mov", ".ts", ".webm", ".m4v")
 LOGO_TYPES = (".png", ".svg")
@@ -41,6 +49,8 @@ ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer"}
 _lock = threading.RLock()
 _streams = stream.Streams()
 _refreshing = set()
+_promo_lock = threading.Lock()
+_example = {"making": False, "error": "", "use": False}
 
 
 # Kept state ---------------------------------------------------------------------------------------------------------
@@ -51,6 +61,8 @@ def state():
     s.setdefault("channels", [])
     s.setdefault("shared", {"idents": [], "clips": [], "sources": []})
     s.setdefault("removed", [])
+    s.setdefault("station_pack", "")
+    s.setdefault("promos", [])
     if not s.get("token"):
         s["token"] = secrets.token_urlsafe(18)
         sbplugin.keep("station", s)
@@ -224,11 +236,84 @@ def later_jellyfin():
 
 # What plays ---------------------------------------------------------------------------------------------------------
 def clip_path(src):
-    name = os.path.basename(src.split(":", 1)[1])
-    return os.path.join(sbplugin.DATA, CLIPS, name)
+    """The file for a clip: file:<name> in the clips folder, pack:<pack>/<path> in a broadcast pack, promo:<id>."""
+    kind, _, rest = src.partition(":")
+    if kind == "pack":
+        name, _, rel = rest.partition("/")
+        base = os.path.realpath(pack_dir(os.path.basename(name)))
+        path = os.path.realpath(os.path.join(base, rel))
+        if not path.startswith(base + os.sep):
+            raise ValueError("Not a file in the pack")
+        return path
+    if kind == "promo":
+        return os.path.join(sbplugin.DATA, PROMOS, re.sub(r"[^0-9a-f]", "", rest)[:20] + ".mp4")
+    return os.path.join(sbplugin.DATA, CLIPS, os.path.basename(rest))
 
 
-def clips_for(s, ch):
+def pack_dir(name):
+    return os.path.join(sbplugin.DATA, PACKS, name)
+
+
+_packs = {}
+
+
+def load_pack(name):
+    """A checked pack by its folder's name, read again only when its checked.json changes."""
+    if not name:
+        return None
+    path = os.path.join(pack_dir(name), "checked.json")
+    try:
+        mtime = os.path.getmtime(path)
+    except OSError:
+        return None
+    got = _packs.get(name)
+    if not got or got[0] != mtime:
+        got = (mtime, pack.load(pack_dir(name)))
+        _packs[name] = got
+    return got[1]
+
+
+def station_pack(s):
+    return load_pack(s.get("station_pack") or "")
+
+
+def channel_pack(s, ch):
+    """The pack a channel uses: its own, the station's, or none."""
+    mode = ch.get("pack") or ""
+    if mode == "none":
+        return None
+    if mode == "own":
+        own = load_pack(f"ch-{ch['id']}")
+        if own:
+            return own
+    return station_pack(s)
+
+
+def pack_name(p):
+    return os.path.basename(p["folder"])
+
+
+def truthy(v, default=True):
+    if v in (None, ""):
+        return default
+    return v if isinstance(v, bool) else str(v).lower() in ("1", "true", "yes", "on")
+
+
+def promo_clips(s, ch, cfg=None):
+    """The promos a channel shows in its breaks: its own, and the other channels' unless that is deactivated."""
+    cfg = cfg or settings()
+    others = truthy(cfg.get("promo_other"), True)
+    on = {c["id"]: c for c in s["channels"] if c.get("on", True)}
+    out = []
+    for p in s.get("promos") or []:
+        if p.get("cid") not in on or (p["cid"] != ch["id"] and not others):
+            continue
+        out.append({"id": f"promo-{p['id']}", "src": f"promo:{p['id']}", "dur": float(p.get("dur") or 15), "title": f"Promo: {p.get('title')}",
+                    "has_audio": True, "airs": float(p.get("airs") or 0), "role": "promo", "cid": p["cid"]})
+    return out
+
+
+def clips_for(s, ch, p=None, cfg=None):
     shared, own = s["shared"], ch.get("own") or {}
     idents = []
     if ch.get("idents") in ("own", "both"):
@@ -240,12 +325,75 @@ def clips_for(s, ch):
         fillers += own.get("clips") or []
     if ch.get("clips") in ("shared", "both"):
         fillers += shared.get("clips") or []
-    return {"idents": idents, "fillers": fillers}
+    fillers += promo_clips(s, ch, cfg)
+    out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False}
+    if p:
+        name = pack_name(p)
+        if ch.get("idents") != "none" and p.get("idents"):
+            out["idents"] = idents + [{"id": f"pk-{i['path']}", "src": f"pack:{name}/{i['path']}", "dur": i["dur"],
+                                       "title": os.path.basename(i["path"]), "has_audio": i.get("has_audio", True), "gain": i.get("gain", 0)}
+                                      for i in p["idents"]]
+            out["random_idents"] = True  # a pack's idents always play in a random order
+        if p.get("sting"):
+            st = p["sting"]
+            out["sting"] = {"id": "pk-sting", "src": f"pack:{name}/{st['path']}", "dur": st["dur"], "title": "The logo with music",
+                            "has_audio": True, "gain": st.get("gain", 0)}
+    return out
 
 
-def logo_file(cid):
+def logo_file(cid, p=None):
+    """The on-screen logo: the channel's own picture, else its broadcast pack's logo/dog.png."""
+    own = os.path.join(sbplugin.DATA, LOGOS, f"{cid}.png")
+    if os.path.isfile(own):
+        return own
+    if p and p.get("dog"):
+        path = os.path.join(p["folder"], p["dog"])
+        return path if os.path.isfile(path) else None
+    return None
+
+
+def own_logo(cid):
     p = os.path.join(sbplugin.DATA, LOGOS, f"{cid}.png")
     return p if os.path.isfile(p) else None
+
+
+def pick_transition(p, seed, at):
+    """The same transition for both halves of one cut: chosen from the boundary's time and the channel's seed."""
+    tr = (p or {}).get("transitions") or []
+    if not tr:
+        return None
+    t = tr[schedule.Rng(schedule.seed_of(seed, "cut", int(at))).below(len(tr))]
+    return {"file": os.path.join(p["folder"], t["path"]), "dur": float(t["dur"]), "codec": t.get("codec", "")}
+
+
+def with_transitions(pieces, p, seed):
+    """The pieces with a pack's transitions at each cut between programme and break. A transition's second half
+    plays over the start of the programme and of the break, its first half over the end of each, and the cut is at
+    its middle. The last half of a piece that ends on a cut becomes a piece of its own (its tail, with "tail_from"),
+    so every FFmpeg run starts its transition at its own start and never holds frames waiting."""
+    if not (p and p.get("transitions")) or not pieces:
+        return pieces
+    out = [dict(x) for x in pieces]
+    prog = out[0]
+    prog["trans_in_at"] = prog["airing"]["start"]
+    if len(out) > 1:
+        prog["trans_out_at"] = prog["end"]
+        out[1]["trans_in_at"] = prog["end"]
+        out[-1]["trans_out_at"] = out[-1]["end"]  # the start of the next programme
+    else:
+        prog["trans_out_at"] = prog["airing"]["end"]
+    final = []
+    for piece in out:
+        at = piece.pop("trans_out_at", None)
+        tr = pick_transition(p, seed, at) if at is not None else None
+        half = tr["dur"] / 2 if tr else 0.0
+        if tr and piece["end"] - half - piece["start"] > 1.0:
+            final.append({**piece, "end": piece["end"] - half})
+            tail = {k: v for k, v in piece.items() if k != "trans_in_at"}
+            final.append({**tail, "tail_from": piece["end"] - half, "trans_out_at": at})
+        else:
+            final.append(piece)
+    return final
 
 
 def _art_ok(url, key):
@@ -267,12 +415,15 @@ def plan_for(cid, still=False):
             return None, None, None
         sched = schedule.Channel(ch)
         opts = dog.resolve(cfg, ch)
+        pk = channel_pack(s, ch)
         if piece is None:
-            a, pieces = schedule.pieces_at(sched, now, clips_for(s, ch), {"seed": ch["seed"], "cards": opts["cards"],
-                                                                         "ident_order": ch.get("ident_order", "in_order")})
+            a, pieces = schedule.pieces_at(sched, now, clips_for(s, ch, pk, cfg), {"seed": ch["seed"], "cards": opts["cards"],
+                                                                                  "ident_order": ch.get("ident_order", "in_order")})
             if not a:
                 return None, None, None
-            piece = next((p for p in pieces if p["start"] <= now < p["end"]), None) or {"kind": "slate", "start": now, "end": a["end"]}
+            pieces = with_transitions(pieces, pk, ch["seed"])
+            piece = next((p for p in pieces if p["start"] <= now < p["end"] and now >= p.get("tail_from", p["start"])), None)
+            piece = piece or {"kind": "slate", "start": now, "end": a["end"]}
         else:
             a = sched.airing(now)
         W, H, kbps = stream.SIZES.get(str(cfg.get("picture") or "720"), stream.SIZES["720"])
@@ -280,9 +431,16 @@ def plan_for(cid, still=False):
         texts = dog.Texts(folder)
         names = {"channel": ch["name"], "station": station_name(cfg)}
         c = jf_conf()
-        ctx = {"W": W, "H": H, "kbps": kbps, "opts": opts, "names": names, "logo": logo_file(cid), "jf_url": c.get("url", ""),
+        ctx = {"W": W, "H": H, "kbps": kbps, "opts": opts, "names": names, "logo": logo_file(cid, pk), "jf_url": c.get("url", ""),
                "jf_key": c.get("api_key", ""), "ts_offset": max(0.0, now - started) + 1.0, "texts": texts, "clip_path": clip_path,
                "colour": ch.get("colour"), "copy_ok": bool(cfg.get("copy_plain", True)), "still": still}
+        if pk and pk.get("coming_next") and piece["kind"] == "card":
+            lay = pk["coming_next"]
+            ctx["layout"] = {**lay, "file": os.path.join(pk["folder"], lay["background"])}
+        if "trans_in_at" in piece:
+            ctx["trans_in"] = pick_transition(pk, ch["seed"], piece["trans_in_at"])
+        if "trans_out_at" in piece:
+            ctx["trans_out"] = pick_transition(pk, ch["seed"], piece["trans_out_at"])
         if a:
             nxt = sched.airing(a["end"])
             if nxt:
@@ -302,7 +460,8 @@ def plan_for(cid, still=False):
 
 
 def preview(cid, kind="programme", at=None):
-    """One frame of the channel as it would look now, as a PNG: the DOG on the programme, or a Coming up next card."""
+    """One frame of the channel as it would be drawn now, as a PNG: the DOG on the programme, a Coming up next card, or
+    from its broadcast pack an ident (kind ident) or the logo with music (sting), or one of its promos (promo)."""
     s = state()
     ch = find(s, cid)
     if not ch:
@@ -311,7 +470,17 @@ def preview(cid, kind="programme", at=None):
     a = schedule.Channel(ch).airing(now)
     if not a:
         raise LookupError("The channel has nothing to show yet")
-    if kind == "card":
+    if kind in ("ident", "sting", "promo"):
+        got = clips_for(s, ch, channel_pack(s, ch))
+        pool = {"ident": got["idents"], "sting": [got["sting"]] if got["sting"] else [],
+                "promo": [c for c in got["fillers"] if c.get("role") == "promo" and c.get("cid") == cid] or
+                         [c for c in got["fillers"] if c.get("role") == "promo"]}[kind]
+        if not pool:
+            raise LookupError({"ident": "No idents yet", "sting": "No logo with music in the pack", "promo": "No promos yet"}[kind])
+        clip = pool[int(now) % len(pool)]
+        seek = min(clip["dur"] * 0.55, clip["dur"] - 0.5)
+        piece = {"kind": "clip", "clip": clip, "role": kind, "start": now - seek, "end": now - seek + clip["dur"], "airing": a}
+    elif kind == "card":
         nxt = schedule.Channel(ch).airing(a["end"]) or a
         piece = {"kind": "card", "card": "next", "start": now, "end": now + 10, "airing": nxt}
     else:
@@ -405,8 +574,16 @@ def channels_page(said=None, now=None):
                     "value": str(ch.get("number_set") or "")})
         row("colour", "Colour", "Channel", choice=_choice("Colour", ch.get("colour"), COLOURS),
             detail="On its cards and its made logo. Words always say what each thing is, so the colour is never the only sign.")
-        row("logo", "Logo: " + ("your picture" if logo_file(cid) else "made from its number and name"), "Channel",
-            actions=["attach", "detach"] if logo_file(cid) else ["attach"],
+        row("pack", "Broadcast pack", "Channel", choice=_choice("Broadcast pack", ch.get("pack") or "", PACK_MODES),
+            detail=f"Now {pack_words(s, ch)}. A pack gives the on-screen logo, idents, transitions, the Coming up next card and promos.")
+        own_pk = load_pack(f"ch-{cid}")
+        row("pack-own", f"Its own pack: {own_pk['name']}" if own_pk else "Its own pack: none yet", "Channel",
+            actions=["attach", "detach"] if own_pk else ["attach"], detail=pack.summary(own_pk) if own_pk else
+            "For branding of its own: a zip made from the template, in Broadcast pack. Then choose Its own pack.",
+            attach={"label": "Upload its own pack", "field": "Pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"})
+        row("logo", "Logo: " + ("your picture" if own_logo(cid) else "the pack's" if logo_file(cid, channel_pack(s, ch)) else
+                                "made from its number and name"), "Channel",
+            actions=["attach", "detach"] if own_logo(cid) else ["attach"],
             attach={"label": "Add logo", "field": "Logo", "hint": "A PNG with a clear background, at least 256 pixels tall", "accept": ".png"})
         for i, src in enumerate(ch["sources"]):
             row(f"src{i}", source_words(src), "What it shows", detail=src.get("detail", ""), actions=["remove", "up", "down"],
@@ -546,6 +723,12 @@ def channels_post(body, now=None):
             ch["number_set"] = int(v) if v else 0
             said = f"{ch['name']} is number {number(s, ch)}"
             later_jellyfin()
+        elif key == "pack-own" and action == "detach":
+            shutil.rmtree(pack_dir(f"ch-{cid}"), ignore_errors=True)
+            _packs.pop(f"ch-{cid}", None)
+            if ch.get("pack") == "own":
+                ch["pack"] = ""
+            said = "Its own pack is removed: it uses the station's pack"
         elif key == "logo" and action == "detach":
             with contextlib.suppress(OSError):
                 os.remove(os.path.join(sbplugin.DATA, LOGOS, f"{cid}.png"))
@@ -602,6 +785,9 @@ def choose(ch, key, value):
         ch["ident_order"] = v
     elif key == "trailers" and v in ("on", "off"):
         ch["trailers"] = v == "on"
+    elif key == "pack" and v in PACK_MODES:
+        ch["pack"] = v
+        return f"{ch['name']} now uses {PACK_MODES[v].lower()}"
     elif key.startswith("dog-") and key[4:] in dog.DEFAULTS:
         k = key[4:]
         d = dog.DEFAULTS[k]
@@ -641,9 +827,9 @@ def probe_seconds(path):
     return dur, has_audio, has_video
 
 
-def save_upload(name, length, rfile, folder, types):
-    if length <= 0 or length > MAX_UPLOAD:
-        raise ValueError("Choose a file of up to 60 MB")
+def save_upload(name, length, rfile, folder, types, most=MAX_UPLOAD):
+    if length <= 0 or length > most:
+        raise ValueError(f"Choose a file of up to {most // (1024 * 1024)} MB")
     base = re.sub(r"[^A-Za-z0-9._ -]", "", os.path.basename(name or ""))[:80].strip() or "file"
     if not base.lower().endswith(types):
         raise ValueError(f"Choose a file ending {', '.join(types)}")
@@ -678,6 +864,20 @@ def add_clip_file(holder, role, name, length, rfile):
 
 
 def channels_file(name, item, length, rfile):
+    cid, _, key = item.partition(":")
+    if key == "pack-own":
+        # Checked outside the lock: reading every file with ffprobe takes a while, and nothing else need wait for it.
+        if not find(state(), cid):
+            raise ValueError("That channel has gone")
+        got = install_pack(f"ch-{cid}", name, length, rfile)
+        with _lock:
+            s = state()
+            ch = find(s, cid)
+            if ch:
+                ch["pack"] = "own"
+                save(s)
+        whose = f"{ch['name']}'s" if ch else "the channel's"
+        return channels_page(f"{got['pack']['name']} is now {whose} own pack: {pack.summary(got['pack']).lower()}")
     with _lock:
         s = state()
         cid, _, key = item.partition(":")
@@ -794,7 +994,7 @@ def card(now=None):
             item.update({"next": describe(nxt["entry"]), "next_start": int(nxt["start"])})
         items.append(item)
     if not s["channels"]:
-        return sbplugin.band({"items": [], "note": "No channels yet. Add one in Settings, Plug-ins, TV station, Channels"}, "needs_setup")
+        return sbplugin.band({"items": [], "note": "No channels yet. Add one in Settings, Plug-ins, Create your own TV channel, Channels"}, "needs_setup")
     note = ""
     if not address():
         note = "Open the plug-in's web page once from its page in Settings, Plug-ins, so Jellyfin can be given its channels"
@@ -805,12 +1005,326 @@ def card(now=None):
     return sbplugin.band({"items": items[:12], "note": note[:160]}, "warning" if note else status, label=label, refresh=60)
 
 
+# Broadcast packs ------------------------------------------------------------------------------------------------------
+PACK_MODES = {"": "The station's pack", "own": "Its own pack", "none": "No pack"}
+
+
+def pack_words(s, ch):
+    mode = ch.get("pack") or ""
+    if mode == "none":
+        return "no pack"
+    if mode == "own" and load_pack(f"ch-{ch['id']}"):
+        return f"its own pack, {load_pack(f'ch-' + ch['id'])['name']}"
+    sp = station_pack(s)
+    return f"the station's pack, {sp['name']}" if sp else "the station's pack, none yet"
+
+
+def install_pack(name, filename, length, rfile):
+    """A pack zip from Starboard: saved, unpacked, checked, and put in place of the pack called `name`."""
+    work = os.path.join(sbplugin.DATA, PACKS, ".work")
+    os.makedirs(work, exist_ok=True)
+    if length > pack.MAX_ZIP:
+        raise ValueError("Choose a zip of up to 60 MB")
+    zpath, base = save_upload(filename, length, rfile, work, (".zip",), most=pack.MAX_ZIP)
+    try:
+        got = pack.install_zip(zpath, pack_dir(name), work)
+    except pack.PackError as e:
+        sbplugin.keep("pack_check", {"at": int(time.time()), "file": base, "ok": False, "problems": str(e).split("; ")[:12], "notes": []})
+        raise ValueError(f"{base} cannot be used: {e}"[:200]) from None
+    finally:
+        with contextlib.suppress(OSError):
+            os.remove(zpath)
+    _packs.pop(name, None)
+    sbplugin.keep("pack_check", {"at": int(time.time()), "file": base, "ok": True, "problems": [], "notes": got["notes"]})
+    return got
+
+
+def make_example(use=True):
+    """Makes the Example TV pack once, at the lowest priority, then uses it as the station's pack when asked."""
+    with _lock:
+        if _example["making"]:
+            _example["use"] = _example["use"] or use
+            return False
+        _example.update({"making": True, "error": "", "use": use, "since": time.time()})
+
+    def run():
+        try:
+            with sbplugin.working("the example pack being made"):
+                if not load_pack("example"):
+                    tmp = pack_dir(".example-new")
+                    example_pack.make(tmp)
+                    got = pack.install_folder(tmp, tmp)
+                    if not got["ok"]:
+                        raise RuntimeError("; ".join(got["problems"][:3]))
+                    shutil.rmtree(pack_dir("example"), ignore_errors=True)
+                    os.replace(tmp, pack_dir("example"))
+                    _packs.pop("example", None)
+                if _example["use"]:
+                    with _lock:
+                        s = state()
+                        if s.get("station_pack") and s["station_pack"] != "example":
+                            s["pack_before_example"] = s["station_pack"]
+                        s["station_pack"] = "example"
+                        save(s)
+        except Exception as e:  # noqa: BLE001 - shown on the page
+            _example["error"] = f"{e}"[:200]
+        finally:
+            _example["making"] = False
+    threading.Thread(target=run, name="example-pack", daemon=True).start()
+    return True
+
+
+def downloads_base(s):
+    base = address()
+    return f"{base}/t/{s['token']}/download" if base else ""
+
+
+def pack_page(said=None):
+    s = state()
+    sp = station_pack(s)
+    items = []
+    using_example = s.get("station_pack") == "example"
+    title = f"Station's pack: {sp['name']}" + (" (the example pack)" if using_example else "") if sp else "Station's pack: none yet"
+    detail = (pack.summary(sp) + (f". Made {sp['made']}" if sp.get("made") else "") + ". Every channel uses it unless it has its own, or none."
+              if sp else "Upload a zip made from the template: every channel uses it unless it has its own, or none.")
+    items.append({"id": "station", "title": title[:120], "detail": detail[:200], "group": "The station's pack",
+                  "state": "ok" if sp else "unknown", "state_label": "In use" if sp else "None yet",
+                  "actions": ["attach", "detach"] if sp and not using_example else ["attach"],
+                  "attach": {"label": "Upload a pack", "field": "Pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"}})
+    if _example["making"]:
+        ex_state, ex_label, ex_detail = "unknown", "Being made", "Making the example pack at the lowest priority: about 3 minutes. Open this page again then."
+    elif _example["error"]:
+        ex_state, ex_label, ex_detail = "problem", "Not made", f"The example pack was not made: {_example['error']}"
+    else:
+        ex_state, ex_label = ("ok", "In use") if using_example else ("off", "Not in use")
+        ex_detail = ("Example TV, a made-up channel drawn in code: an on-screen logo, the logo with music, 3 idents, a Coming up next card, "
+                     "a promo with 2 music beds and 3 transitions. Activate to use it for every channel without a pack of its own.")
+    items.append({"id": "example", "title": "Try the example pack", "detail": ex_detail[:200], "group": "The station's pack",
+                  "on": using_example, "actions": ["toggle"], "state": ex_state, "state_label": ex_label})
+    chk = sbplugin.remember("pack_check", None) or {}
+    if chk:
+        lines = chk.get("problems") or chk.get("notes") or []
+        head = (f"{chk.get('file')}: " + ("checked and in use" if chk.get("ok") else "not used")) if chk.get("file") else "The last check"
+        items.append({"id": "check", "title": head[:120], "group": "The last pack checked", "state": "ok" if chk.get("ok") else "problem",
+                      "state_label": "Passed" if chk.get("ok") else "Not used",
+                      "detail": (f"{sbplugin.plural(len(lines), 'note')} follow" if lines else "Nothing to change")[:200]})
+        for i, line in enumerate(lines[:12]):
+            items.append({"id": f"check{i}", "title": line[:120], "detail": line[120:320], "group": "The last pack checked",
+                          "state": "problem" if not chk.get("ok") else "warning", "state_label": "To change" if not chk.get("ok") else "Note"})
+    base = downloads_base(s)
+    pk = "?pack=" + (s.get("station_pack") or "") if sp else ""
+    downloads = [("template", "The template: folders, pack.json, its schema and a README", "template.zip"),
+                 ("coming-next", "Placement guide: Coming up next card", f"placement-coming-next.png{pk}"),
+                 ("promo", "Placement guide: promo", f"placement-promo.png{pk}"),
+                 ("logo", "Placement guide: on-screen logo", "placement-logo.png")]
+    if load_pack("example"):
+        downloads.append(("example-zip", "The example pack, as a zip", "example-pack.zip"))
+    for key, words, path in downloads:
+        it = {"id": f"dl-{key}", "title": words, "group": "Downloads", "state": "unknown", "state_label": "Download"}
+        if base:
+            it["link"] = {"url": f"{base}/{path}", "label": f"Download {words[0].lower() + words[1:]}"}
+            it["detail"] = ("Where the clip area, each text field and the title safe area go" + (", on your pack's own background"
+                            if pk and key in ("coming-next", "promo") else "")) if key in ("coming-next", "promo") else (
+                "Where the logo sits in each corner, and its size" if key == "logo" else
+                "Unzip it, add your files with the same names, zip the folder and upload it" if key == "template" else
+                "Unzip it to change it, then upload it as your own pack")
+        else:
+            it["detail"] = "Open this plug-in's web page once from its page in Settings, Plug-ins, so it knows its address."
+        items.append(it)
+    if not load_pack("example") and base:
+        items.append({"id": "dl-example-later", "title": "The example pack, as a zip", "group": "Downloads", "state": "unknown",
+                      "state_label": "Not made yet", "detail": "Activate Try the example pack first, and it is made."})
+    names = {c["id"]: c["name"] for c in s["channels"]}
+    for p in sorted(s.get("promos") or [], key=lambda x: x.get("airs") or 0):
+        items.append({"id": f"promo-{p['id']}", "title": f"{p.get('title')}: {dog.day_time_words(p['airs'])}"[:120], "group": "Promos kept",
+                      "detail": f"On {names.get(p['cid'], 'a channel')}. Made {day_hm(p['made'])}. {round(p.get('dur') or 0)} seconds"[:200],
+                      "state": "ok", "state_label": "Ready"})
+    if not s.get("promos"):
+        items.append({"id": "promo-none", "title": "No promos yet", "group": "Promos kept", "state": "unknown", "state_label": "None",
+                      "detail": ("Promos are made in quiet hours, for channels whose pack has a promo background, while nobody is watching."
+                                 if truthy(settings().get("promos"), True) else "Making promos is deactivated in the settings.")})
+    for ch in numbered(s):
+        items.append({"id": f"ch-{ch['id']}", "title": f"{ch['number']}  {ch['name']}: {pack_words(s, ch)}"[:120], "group": "Each channel's pack",
+                      "detail": "Change it in Channels, on the channel's page, under Channel.", "state": "ok" if channel_pack(s, ch) else "off",
+                      "state_label": "Uses a pack" if channel_pack(s, ch) else "No pack"})
+    out = {"type": "list", "title": "Broadcast pack", "items": items,
+           "intro": ("Your own branding for the channels: the on-screen logo, idents, the logo with music, Coming up next and promo backgrounds, "
+                     "music for the promos, and transitions. Upload a zip made from the template, or try the example pack.")}
+    if said:
+        out["said"] = said[:200]
+    return out
+
+
+def pack_post(body):
+    action, rid = body.get("action"), str(body.get("id") or "")
+    if rid == "example" and action == "toggle":
+        with _lock:
+            s = state()
+            if s.get("station_pack") == "example":
+                s["station_pack"] = s.pop("pack_before_example", "") if load_pack(s.get("pack_before_example", "")) else ""
+                s.pop("pack_before_example", None)
+                save(s)
+                return pack_page("The example pack is no longer in use" + (". The station's own pack is back" if s["station_pack"] else ""))
+        if load_pack("example"):
+            make_example(use=True)
+            time.sleep(0.2)
+            return pack_page("Every channel without a pack of its own now uses the example pack")
+        make_example(use=True)
+        return pack_page("Making the example pack at the lowest priority: about 3 minutes. It is used as soon as it is ready")
+    if rid == "station" and action == "detach":
+        with _lock:
+            s = state()
+            if s.get("station_pack") == "station":
+                prev = pack_dir(".previous-station")
+                shutil.rmtree(prev, ignore_errors=True)
+                with contextlib.suppress(OSError):
+                    os.replace(pack_dir("station"), prev)
+                _packs.pop("station", None)
+                s["station_pack"] = ""
+                save(s)
+        return pack_page("The station's pack is no longer in use. A copy is kept in the plug-in's folder until the next is removed")
+    if action == "dismiss":
+        sbplugin.keep("pack_check", None)
+        return pack_page()
+    raise ValueError("That cannot be changed here")
+
+
+def pack_file(name, item, length, rfile):
+    if item != "station":
+        raise ValueError("That row takes no file")
+    got = install_pack("station", name, length, rfile)
+    with _lock:
+        s = state()
+        s["station_pack"] = "station"
+        s.pop("pack_before_example", None)
+        save(s)
+    note = f". {sbplugin.plural(len(got['notes']), 'note')} on this page" if got["notes"] else ""
+    return pack_page(f"{got['pack']['name']} is the station's pack: {pack.summary(got['pack']).lower()}{note}")
+
+
+def download(name, query):
+    """The downloads on the pack's page: (bytes, type, file name)."""
+    which = (query.get("pack") or [""])[0]
+    pk = load_pack(which) if re.fullmatch(r"(station|example|ch-[0-9a-f]{8})", which or "") else None
+    if name == "template.zip":
+        return pack.template_zip(dog.FONT), "application/zip", "broadcast-pack-template.zip"
+    if name in ("placement-coming-next.png", "placement-promo.png"):
+        part = "coming_next" if "coming" in name else "promo"
+        lay, bg = pack.DEFAULT_LAYOUT[part], None
+        if pk and pk.get(part):
+            lay = pk[part]
+            bg = os.path.join(pk["folder"], lay["background"])
+        return pack.placement_png(part, lay, dog.FONT, background=bg), "image/png", name
+    if name == "placement-logo.png":
+        return pack.placement_png("logo", {}, dog.FONT), "image/png", name
+    if name == "example-pack.zip":
+        ex = load_pack("example")
+        if not ex:
+            raise LookupError("The example pack is not made yet: activate Try the example pack first")
+        cached = os.path.join(sbplugin.DATA, PACKS, "example-pack.zip")
+        if not os.path.isfile(cached) or os.path.getmtime(cached) < os.path.getmtime(os.path.join(ex["folder"], "checked.json")):
+            with open(cached + ".part", "wb") as f:
+                f.write(pack.zip_folder(ex["folder"], "Example-TV"))
+            os.replace(cached + ".part", cached)
+        with open(cached, "rb") as f:
+            return f.read(), "application/zip", "example-tv-broadcast-pack.zip"
+    raise LookupError("No such download")
+
+
+# Promos ---------------------------------------------------------------------------------------------------------------
+def someone_watching():
+    """True while a channel plays, or anyone plays anything in Jellyfin: promos are never made then."""
+    if _streams.playing():
+        return True
+    try:
+        return any(x.get("NowPlayingItem") for x in jf("/Sessions?activeWithinSeconds=300") or [])
+    except (urllib.error.URLError, OSError, ValueError, LookupError):
+        return False
+
+
+def promo_settings(cfg=None):
+    cfg = cfg or settings()
+    keep = max(1, min(6, int(cfg.get("promo_keep") or 3)))
+    days = str(cfg.get("promo_replace_days") or "2")
+    return keep, int(days) if days in ("1", "2", "3", "7") else 2
+
+
+def promos_job(now=None, limit_seconds=40 * 60):
+    """In quiet hours, from Starboard's quiet-hours job: old promos replaced, new ones made, one at a time."""
+    cfg = settings()
+    if not truthy(cfg.get("promos"), True):
+        return {"said": "Making promos is deactivated"}
+    if not _promo_lock.acquire(blocking=False):
+        return {"said": "Promos are being made already"}
+    try:
+        if someone_watching():
+            return {"said": "Someone is watching, so promos wait for the next quiet hour"}
+        keep, days = promo_settings(cfg)
+        now = time.time() if now is None else now
+        s = state()
+        chans = [{"id": ch["id"], "sched": schedule.Channel(ch), "can": bool((channel_pack(s, ch) or {}).get("promo")) and ch.get("on", True)}
+                 for ch in s["channels"]]
+        remove, make = promo.plan(chans, s.get("promos") or [], keep, days, now)
+        gone = {p["id"] for p in remove}
+        for p in remove:
+            with contextlib.suppress(OSError):
+                os.remove(clip_path(f"promo:{p['id']}"))
+        with _lock:
+            s = state()
+            s["promos"] = [p for p in s.get("promos") or [] if p["id"] not in gone]
+            save(s)
+        made, failed, began = 0, "", time.monotonic()
+        W, H, _ = stream.SIZES.get(str(cfg.get("picture") or "720"), stream.SIZES["720"])
+        c = jf_conf()
+        os.makedirs(os.path.join(sbplugin.DATA, PROMOS), exist_ok=True)
+        for job in make:
+            if time.monotonic() - began > limit_seconds or sbplugin.holding() or someone_watching():
+                break
+            s = state()
+            ch = find(s, job["cid"])
+            pk = channel_pack(s, ch) if ch else None
+            if not pk or not pk.get("promo"):
+                continue
+            pid = promo.new_id()
+            a = job["airing"]
+            out = clip_path(f"promo:{pid}")
+            texts = dog.Texts(os.path.join("/tmp", "tv-station", f"promo-{pid}"))
+            argv, seconds = promo.command(pk, a, ch["name"], promo.pick_music(pk, schedule.seed_of(ch["seed"], "music", a["start"])), W, H,
+                                          c.get("url", ""), c.get("api_key", ""), texts, out + ".part")
+            ok, why = promo.run(argv)
+            shutil.rmtree(texts.folder, ignore_errors=True)
+            if not ok:
+                with contextlib.suppress(OSError):
+                    os.remove(out + ".part")
+                failed = why or "FFmpeg did not finish"
+                if "watching" in failed:
+                    break
+                continue
+            os.replace(out + ".part", out)
+            e = a["entry"]
+            with _lock:
+                s = state()
+                s["promos"] = (s.get("promos") or []) + [{"id": pid, "cid": job["cid"], "group": promo.group_of(e), "entry": e["id"],
+                                                          "title": e.get("title") or "Programme", "airs": int(a["start"]), "made": int(time.time()),
+                                                          "dur": seconds}]
+                save(s)
+            made += 1
+        said = f"Made {sbplugin.plural(made, 'promo')}" + (f", removed {len(remove)}" if remove else "")
+        if failed:
+            said += f". One did not finish: {failed}"
+        if made < len(make) and not failed:
+            said += f". {len(make) - made} more in the next quiet hour"
+        return {"said": said[:200]}
+    finally:
+        _promo_lock.release()
+
+
 # The web server -------------------------------------------------------------------------------------------------------
 HOME = """<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{name}</title><style>body{{font:1.125rem/1.5 system-ui,sans-serif;margin:0;padding:24px 16px;background:#fff;color:#1a1a1a}}
 @media (prefers-color-scheme:dark){{body{{background:#121417;color:#f2f2f2}}}}main{{max-width:40rem;margin:auto}}</style></head>
 <body><main><h1>{name}</h1><p>{count}. They are in Jellyfin's Live TV, at the top of the channel list.</p>
-<p>Change the channels in Starboard: Settings, Plug-ins, TV station.</p></main></body></html>"""
+<p>Change the channels in Starboard: Settings, Plug-ins, Create your own TV channel.</p></main></body></html>"""
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -861,10 +1375,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"ok": True, "ffmpeg": stream.has_ffmpeg()})
             if p == "/card":
                 return self._json(200, card())
-            if p in ("/channels", "/clips", "/guide"):
+            if p in ("/channels", "/clips", "/guide", "/pack"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may open this"})
-                return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page}[p]())
+                return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page, "/pack": pack_page}[p]())
             if p == "/":
                 self._learn()
                 s = state()
@@ -901,7 +1415,7 @@ class Handler(BaseHTTPRequestHandler):
         m = re.match(r"^logo/([0-9a-f]{8})\.png$", rest)
         if m:
             ch = find(s, m.group(1))
-            path = ch and (logo_file(ch["id"]) or made_logo(ch))
+            path = ch and (logo_file(ch["id"], channel_pack(s, ch)) or made_logo(ch))
             if not path:
                 return self._json(404, {"error": "No logo"})
             with open(path, "rb") as f:
@@ -914,11 +1428,23 @@ class Handler(BaseHTTPRequestHandler):
             return self._bytes(200, data, "image/jpeg", "max-age=86400")
         m = re.match(r"^preview/([0-9a-f]{8})\.png$", rest)
         if m:
-            kind = "card" if (query.get("kind") or [""])[0] == "card" else "programme"
+            kind = (query.get("kind") or [""])[0]
+            kind = kind if kind in ("card", "ident", "sting", "promo") else "programme"
             return self._bytes(200, preview(m.group(1), kind), "image/png", "no-store")
         m = re.match(r"^stream/([0-9a-f]{8})\.ts$", rest)
         if m:
             return self._stream(m.group(1))
+        m = re.match(r"^download/([a-z-]+\.(png|zip))$", rest)
+        if m:
+            data, kind, filename = download(m.group(1), query)
+            self.send_response(200)
+            self.send_header("Content-Type", kind)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(data)
+            return None
         return self._json(404, {"error": "Not found"})
 
     def _stream(self, cid):
@@ -929,6 +1455,7 @@ class Handler(BaseHTTPRequestHandler):
         cfg = settings()
         most = max(1, min(6, int(cfg.get("most_at_once") or 2)))
         grace = max(5, min(300, int(cfg.get("stop_after") or 30)))
+        promo.stop()  # a promo being made gives way at once: nothing is made while anyone watches
         try:
             hub = _streams.get(cid, plan_for(cid), most, grace)
         except stream.Busy as e:
@@ -961,23 +1488,36 @@ class Handler(BaseHTTPRequestHandler):
                     _streams.stop_all()
                     return self._json(200, sbplugin.before_update(body))
                 return self._json(200, sbplugin.after_update(body))
-            if p in ("/channels", "/clips", "/guide", "/channels/file", "/clips/file"):
+            if p in ("/channels", "/clips", "/guide", "/pack", "/channels/file", "/clips/file", "/pack/file"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may change this"})
                 if p.endswith("/file"):
                     q = urllib.parse.parse_qs(url.query)
-                    fn = channels_file if p.startswith("/channels") else clips_file
+                    fn = {"/channels/file": channels_file, "/clips/file": clips_file, "/pack/file": pack_file}[p]
                     with sbplugin.working("a file being added"):
                         return self._json(200, fn((q.get("name") or [""])[0], (q.get("id") or [""])[0],
                                                   int(self.headers.get("Content-Length") or 0), self.rfile))
                 body = self._body()
                 return self._json(200, {"/channels": lambda: channels_post(body), "/clips": lambda: clips_post(body),
-                                        "/guide": guide_page}[p]())
+                                        "/pack": lambda: pack_post(body), "/guide": guide_page}[p]())
             if p == "/jobs/refresh":
                 if sbplugin.holding():
                     return self._json(200, {"said": "Not started: the plug-in is about to be updated"})
                 with sbplugin.working("refresh"):
                     return self._json(200, refresh_all())
+            if p == "/jobs/promos":
+                if sbplugin.holding():
+                    return self._json(200, {"said": "Not started: the plug-in is about to be updated"})
+                with sbplugin.working("promos"):
+                    return self._json(200, promos_job())
+            if p == "/actions/promos":
+                threading.Thread(target=lambda: _safe(promos_job), daemon=True).start()
+                return self._json(200, {"said": "Making promos one at a time, at the lowest priority, unless someone is watching"})
+            if p == "/actions/example":
+                if load_pack("example") and state().get("station_pack") == "example":
+                    return self._json(200, {"said": "The example pack is in use already"})
+                make_example(use=True)
+                return self._json(200, {"said": "The example pack is being made, and is used for every channel without a pack of its own"})
             if p == "/actions/refresh":
                 threading.Thread(target=lambda: _safe(refresh_all), daemon=True).start()
                 return self._json(200, {"said": "Reading every channel's programmes from Jellyfin again"})
@@ -1004,7 +1544,7 @@ def main():
     # Once after a start, the channels are added to Jellyfin if they are not there yet. Nothing else runs at rest.
     threading.Timer(20, lambda: _safe(connect_jellyfin)).start()
     port = int(os.environ.get("PORT", 8080))
-    print(f"TV station {VERSION} listening on {port}", flush=True)
+    print(f"Create your own TV channel {VERSION} listening on {port}", flush=True)
 
     class Server(ThreadingHTTPServer):
         daemon_threads = True

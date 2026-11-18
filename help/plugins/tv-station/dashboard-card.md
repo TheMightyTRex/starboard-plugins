@@ -1,6 +1,6 @@
-# TV station: Dashboard card
+# Create your own TV channel: Dashboard card
 
-TV station adds 1 card you can put on your dashboard. It starts with a band: TV station's logo and name and a status in words. A footer says when it last changed.
+Create your own TV channel adds 1 card you can put on your dashboard. It starts with a band: Create your own TV channel's logo and name and a status in words. A footer says when it last changed.
 
 ## What is on now
 
@@ -9,7 +9,7 @@ Shows each channel on air: its number and name, the programme on now with how fa
 - **How often it updates:** every minute while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
 - **Its status:** **Running** with how many channels are playing, or **OK** and "Nothing streaming".
 - **Example:** 1 Comedy (1 viewer). Test Pattern Show, Series 1, episode 2: The Middle, 20:30 to 21:00. Next: Colour Bars, 21:00
-- **With no channels yet:** it says to add one in **Settings**, then **Plug-ins**, then **TV station**, then **Channels**, with **Needs setting up**.
+- **With no channels yet:** it says to add one in **Settings**, then **Plug-ins**, then **Create your own TV channel**, then **Channels**, with **Needs setting up**.
 - **With a problem:** **Warning**, and a sentence saying what to do, such as opening the plug-in's web page once.
 
 The card works out what is on from the schedule, as the guide does. It starts no stream and asks Jellyfin nothing.

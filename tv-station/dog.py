@@ -117,8 +117,10 @@ def _clock(size, x, y, plate, alpha):
     return "drawtext=" + ":".join(parts)
 
 
-def _xy(corner, margin, w="w", h="h", tw="tw", th="th"):
-    x = f"{w}-{tw}-{margin}" if corner.endswith("right") else f"{margin}"
+def _xy(corner, margin, w="w", h="h", tw="tw", th="th", mx=None):
+    """Where a thing sits in a corner: `margin` from the top or bottom, and `mx` (the same unless given) from the side."""
+    mx = margin if mx is None else mx
+    x = f"{w}-{tw}-{mx}" if corner.endswith("right") else f"{mx}"
     y = f"{margin}" if corner.startswith("top") else f"{h}-{th}-{margin}"
     return x, y
 
@@ -135,6 +137,7 @@ def overlay_chain(opts, W, H, kind, texts, names, logo=None, rel=0.0, programme=
     """
     chain, logo_filter = [], None
     margin = int(H * MARGINS[opts["margin"]])
+    mx = int(W * MARGINS[opts["margin"]])  # the same share of the width from the side, so medium is inside the safe area
     size_h = int(H * SIZES[opts["size"]])
     alpha = opts["opacity"] / 100.0
     plate = opts["plate"]
@@ -157,7 +160,7 @@ def overlay_chain(opts, W, H, kind, texts, names, logo=None, rel=0.0, programme=
         logo_filter = f
     elif show and dog_kind in ("channel_name", "station_name"):
         words = names["channel"] if dog_kind == "channel_name" else names["station"]
-        x, y = _xy(opts["corner"], margin)
+        x, y = _xy(opts["corner"], margin, mx=mx)
         chain.append(_text(texts.file(words), size_h * 0.62, x, y, plate=plate, enable=enable_dog, alpha=alpha))
     # The clock and the label sit beside the DOG, away from the edge it is on.
     below = opts["corner"].startswith("top")
@@ -165,21 +168,21 @@ def overlay_chain(opts, W, H, kind, texts, names, logo=None, rel=0.0, programme=
     small = H * 0.034
     row = 1
     if opts["clock"] and (show or opts["kind"] == "none"):
-        x, _ = _xy(opts["corner"], margin)
+        x, _ = _xy(opts["corner"], margin, mx=mx)
         y = f"{margin + step}" if below else f"h-th-{margin + step}"
         chain.append(_clock(small, x, y, plate, alpha))
         row += 1
     if kind == "programme" and opts["label"] != "none" and programme and programme.get("label"):
         until = 120 - rel
         if until > 0:
-            x, _ = _xy(opts["corner"], margin)
+            x, _ = _xy(opts["corner"], margin, mx=mx)
             off = margin + step + (int(small * 1.8) if row > 1 else 0)
             y = f"{off}" if below else f"h-th-{off}"
             chain.append(_text(texts.file(programme["label"]), small, x, y, plate=True, enable=f"lt(t,{until:.2f})"))
     # Straps: the programme's name for its first seconds, and Up next during the end credits.
     if kind == "programme" and programme:
         strap_corner = "bottom_right" if opts["corner"] == "bottom_left" else "bottom_left"
-        x, y = _xy(strap_corner, margin)
+        x, y = _xy(strap_corner, margin, mx=mx)
         if opts["strap_start"] and programme.get("start_words") and rel < 8:
             chain.append(_text(texts.file(programme["start_words"]), H * 0.042, x, y, plate=True, enable=f"lt(t,{8 - rel:.2f})"))
         if opts["strap_end"] and programme.get("next_words"):
@@ -193,7 +196,8 @@ def overlay_chain(opts, W, H, kind, texts, names, logo=None, rel=0.0, programme=
 
 def logo_position(opts, W, H):
     margin = int(H * MARGINS[opts["margin"]])
-    x = f"W-w-{margin}" if opts["corner"].endswith("right") else f"{margin}"
+    mx = int(W * MARGINS[opts["margin"]])
+    x = f"W-w-{mx}" if opts["corner"].endswith("right") else f"{mx}"
     y = f"{margin}" if opts["corner"].startswith("top") else f"H-h-{margin}"
     return x, y
 
@@ -228,3 +232,58 @@ def card_chain(W, H, texts, card, colour="0x1f5f99"):
 
 def slate_chain(W, H, texts, words):
     return [_text(texts.file(words), H * 0.06, "(w-tw)/2", "(h-th)/2")]
+
+
+# Broadcast packs: words drawn into the boxes pack.json gives ---------------------------------------------------------
+CHAR_WIDTH = 0.56  # Atkinson Hyperlegible Next's average letter, as a share of its size (measured on mixed-case titles)
+LINE_GAP = 1.22
+
+
+def fit_lines(words, box_w, box_h, lines):
+    """The largest size the words fit a box at, on up to `lines` lines: (size, [line, ...]). A short title fills the
+    box on one line; a long one takes more lines, smaller. Words that cannot fit at the smallest size are cut, with
+    an ellipsis."""
+    words = " ".join(str(words or "").split())
+
+    def size_for(n):
+        return max(12.0, 0.85 * box_h / (n * LINE_GAP - (LINE_GAP - 1)))  # a little room for the tails of g, p and y
+
+    for n in range(1, max(1, lines) + 1):
+        size = size_for(n)
+        got = textwrap.wrap(words, max(4, int(box_w / (size * CHAR_WIDTH)))) or [""]
+        if len(got) <= n:
+            return size, got
+    size = size_for(lines)
+    floor = max(12.0, size * 0.45)
+    while True:
+        per = max(4, int(box_w / (size * CHAR_WIDTH)))
+        got = textwrap.wrap(words, per) or [""]
+        if len(got) <= lines or size <= floor:
+            break
+        size *= 0.92
+    if len(got) > lines:
+        got = got[:lines]
+        got[-1] = got[-1][: max(1, per - 1)].rstrip() + "\u2026"
+    return size, got
+
+
+def box_text(texts, words, style, sx=1.0, sy=1.0):
+    """Drawtext filters for one field: style {"box": [x0, y0, x1, y1] in 1920 by 1080, "colour", "align", "lines"};
+    sx and sy scale the box to the picture's size."""
+    x0, y0, x1, y1 = style["box"]
+    x0, x1, y0, y1 = x0 * sx, x1 * sx, y0 * sy, y1 * sy
+    size, got = fit_lines(words, x1 - x0, y1 - y0, int(style.get("lines") or 1))
+    colour = "0x" + str(style.get("colour") or "#FFFFFF").lstrip("#")
+    out = []
+    for i, line in enumerate(got):
+        if not line:
+            continue
+        x = {"centre": f"{int(x0)}+({int(x1 - x0)}-tw)/2", "right": f"{int(x1)}-tw"}.get(style.get("align"), f"{int(x0)}")
+        out.append(_text(texts.file(line), size, x, int(y0 + i * size * LINE_GAP), colour=colour))
+    return out
+
+
+def day_time_words(t):
+    """The day and time in words that stay true all week: "Sunday at 21:00". For promos, made days before they play."""
+    lt = time.localtime(t)
+    return f"{time.strftime('%A', lt)} at {time.strftime('%H:%M', lt)}"

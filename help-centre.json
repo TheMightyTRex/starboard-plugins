@@ -27,7 +27,7 @@
     },
     {
       "key": "use",
-      "intro": "Dashboard cards, what each plug-in may do, memory, and keeping plug-ins up to date.",
+      "intro": "Dashboard cards, what each plug-in may do, memory, keeping plug-ins up to date, and broadcast packs for your own TV channel.",
       "groups": [
         {
           "key": "cards",
@@ -36,6 +36,10 @@
         {
           "key": "everyday",
           "label": "Day to day"
+        },
+        {
+          "key": "tv",
+          "label": "Your own TV channel"
         }
       ]
     },

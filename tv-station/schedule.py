@@ -245,8 +245,12 @@ def plan_break(airing, after, clips, options):
     Later and Coming up next cards. The same airing always gets the same break.
 
     after:   the next few airings (the first is the programme after this one), for the cards
-    clips:   {"idents": [...], "fillers": [...]}, each {"id", "dur", "title", "src"}
+    clips:   {"idents": [...], "fillers": [...], "sting": {...} or None, "random_idents": False}, each clip
+             {"id", "dur", "title", "src"}; a promo filler also has "airs", when its programme starts
     options: {"ident_order": "in_order" | "random", "cards": True, "seed": ...}
+
+    A broadcast pack's logo with music (the sting) opens the break when it fits; a pack's idents are always played
+    in a random order (random_idents); a promo is only shown before its programme has started.
     """
     t, end = airing["content_end"], airing["end"]
     gap = end - t
@@ -258,15 +262,19 @@ def plan_break(airing, after, clips, options):
     cards = bool(options.get("cards", True)) and bool(after)
     reserve = min(CARD_SECONDS, gap) if cards else 0.0
     idents = [c for c in clips.get("idents") or [] if c.get("dur", 0) > 0]
-    fillers = [c for c in clips.get("fillers") or [] if c.get("dur", 0) > 0]
+    fillers = [c for c in clips.get("fillers") or [] if c.get("dur", 0) > 0 and float(c.get("airs") or end + 1) > end]
+    sting = clips.get("sting")
 
     def add(kind, dur, **more):
         nonlocal t
         out.append({"kind": kind, "start": t, "end": t + dur, **more})
         t += dur
 
+    if sting and 0 < float(sting.get("dur") or 0) <= end - t - reserve:
+        add("clip", float(sting["dur"]), clip=sting, role="sting")
     if idents:
-        ident = idents[slot_no % len(idents)] if options.get("ident_order", "in_order") == "in_order" else idents[rng.below(len(idents))]
+        in_order = options.get("ident_order", "in_order") == "in_order" and not clips.get("random_idents")
+        ident = idents[slot_no % len(idents)] if in_order else idents[rng.below(len(idents))]
         if ident["dur"] <= end - t - reserve:
             add("clip", float(ident["dur"]), clip=ident, role="ident")
     last = None

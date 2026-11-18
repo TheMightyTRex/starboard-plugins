@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-"""The TV station plug-in's installer: opens your Starboard's Settings, Plug-ins with this plug-in ready to add.
+"""The Create your own TV channel plug-in's installer: opens your Starboard's Settings, Plug-ins with this plug-in ready to add.
 
     python3 install.py                      asks for your Starboard's address
     python3 install.py http://192.0.2.10:8095

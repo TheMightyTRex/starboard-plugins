@@ -62,7 +62,7 @@ def xmltv(channels, base, station, start=None, days=7):
     now = time.time() if start is None else start
     since = now - now % 3600
     until = since + days * 86400
-    out = ['<?xml version="1.0" encoding="UTF-8"?>', f'<tv generator-info-name={quoteattr(station + " (TV station plug-in)")}>']
+    out = ['<?xml version="1.0" encoding="UTF-8"?>', f'<tv generator-info-name={quoteattr(station + " (Create your own TV channel plug-in)")}>']
     live = [ch for ch in channels if ch.get("on", True)]
     for ch in live:
         out.append(f'  <channel id={quoteattr(channel_key(ch))}>')

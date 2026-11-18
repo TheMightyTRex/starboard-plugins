@@ -1,9 +1,12 @@
-# TV station
+# Create your own TV channel
 
 Your own TV channels in Jellyfin's Live TV, made from your films and series. Each channel runs to a schedule, like
 broadcast television: choose a channel and you join it at the point it has reached, part way through a programme if
-that is what is on. Between programmes, the breaks have idents, trailers, your own clips and Coming up next cards,
-and each channel can have its own on-screen logo.
+that is what is on. Between programmes, the breaks have idents, trailers, promos, your own clips and Coming up next
+cards, and a broadcast pack gives the channels your own branding: the on-screen logo, the logo with its music, idents,
+transitions and the card and promo backgrounds. Try the example pack, Example TV, to find out how it works.
+
+Its id and folder stay `tv-station`, so nothing that already uses it changes.
 
 Starboard never adds it by itself: you choose to add it from the catalogue.
 
@@ -22,6 +25,15 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   programmes and cards; fade in after the opening; have a clock beside it; and a New, Repeat or Live label in words.
   A backing plate keeps it clear on any picture. The station sets it for every channel, and each channel can have
   its own. **Preview a frame** opens a frame drawn with the settings.
+- **A broadcast pack.** One zip with set names: `logo/dog.png` for the on-screen logo, `logo/logo-with-music.mp4` as
+  a sting, `idents/identNN.mp4` played in a random order, `coming-next/background.mp4` and `promo/background.mp4` with
+  a clip area and text fields placed in `pack.json`, music beds in `promo/music`, and transitions with transparency in
+  `transitions`. The station has one, and each channel can have its own. Every file is checked before it is used. The
+  plug-in's page offers the template, placement guides that mark where the clip, each text field and the safe areas
+  go, and the example pack. [Make a broadcast pack](../help/use/make-a-broadcast-pack.md) is the specification.
+- **Promos.** Made in quiet hours from a few short clips of a programme coming up, a music bed from the pack, and its
+  title, channel and day and time from the schedule. Each channel keeps 3 unless you change it, and old ones are
+  replaced after 2 days. They play on their own channel and on your other channels.
 - **In Jellyfin's Live TV, first.** Its channels are numbered from 1 in your order, before the free channels from
   101, with a 7-day guide: titles, episode names, synopses, pictures, and New or Repeat.
 
@@ -32,6 +44,8 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   copied). The guide is worked out when Jellyfin asks for it, about once a day.
 - **A stream starts only when a channel is chosen,** at the right point, and stops 30 seconds after the last viewer
   leaves. People watching the same channel share one stream.
+- **Promos are made one at a time,** by one FFmpeg at the lowest priority with one thread, in Starboard's quiet
+  hours, and never while anyone is watching: a channel starting stops it at once.
 - **One conversion for each channel being watched,** at 720p unless you choose 1080p, and at most 2 channels at once
   unless you change it. A channel with no on-screen logo and no straps copies its programmes with no converting.
 - **Measured** (17 November 2026, as Starboard runs it): 16.4 MiB of memory and no measurable processor (0.00%) at rest;
@@ -44,7 +58,8 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
 - It reaches your home network, and has its own web page on it, at a port Starboard chooses. Jellyfin reads the
   channel list, the guide and the streams there, at addresses with a random word in them that only Jellyfin is given.
 - It runs one container with 768 MB of memory and 2 processor cores at most.
-- It keeps its channels, idents, clips and logos in its own folder. It never changes your films, series or Jellyfin's
+- It keeps its channels, idents, clips, logos, broadcast packs and promos in its own folder. Nothing in a pack is run:
+  its pictures and sounds are only read by FFmpeg. It never changes your films, series or Jellyfin's
   library.
 
 ## Add it
@@ -75,4 +90,5 @@ Jellyfin's **Live TV** settings.
 - The idea of a channel as a function of time, and of line-ups that change at a programme's end: Clickarr, by
   thegregstengel, MIT.
 - The font on the television: Atkinson Hyperlegible Next, SIL Open Font License 1.1 (`LICENSE-OFL.txt`).
+- The example pack, Example TV: made in code by `example_pack.py`, its logo, pictures and music included. Free to use.
 - FFmpeg, LGPL and GPL, from Alpine Linux.
