@@ -30,7 +30,7 @@ jobs:
           ref: main
           fetch-depth: 0
       - name: Pin the images built from these files
-        run: python3 tools/publish_images.py | tee -a "$GITHUB_STEP_SUMMARY"
+        run: python3 tools/publish_images.py | tee pinned.txt | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Anything to publish?
         id: diff
         run: |
@@ -56,8 +56,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add -A
+          git add -A -- . ":!pinned.txt"
           git commit -m "Publish built images: pinned by digest, catalogue, zips"
           git push origin "$branch"
-          body="$(printf 'Made by the Publish built images workflow after an image build on main.\n\n%s\n\nThe catalogue, zips, unit tests and help check were run. Merge to publish; nothing reaches the catalogue before.\n\nTheMightyTRexUK' "$(python3 tools/publish_images.py --check 2>/dev/null | tail -n 1)")"
+          body="$(printf 'Made by the Publish built images workflow after an image build on main.\n\n%s\n\nThe catalogue, zips, unit tests and help check were run. Merge to publish; nothing reaches the catalogue before.\n\nTheMightyTRexUK' "$(cat pinned.txt)")"
           gh pr create --base main --head "$branch" --title "Publish built images" --body "$body"
