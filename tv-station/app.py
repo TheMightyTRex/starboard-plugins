@@ -23,7 +23,6 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import dog
-import example_pack
 import guide
 import library
 import pack
@@ -1050,6 +1049,7 @@ def make_example(use=True):
     def run():
         try:
             with sbplugin.working("the example pack being made"):
+                import example_pack  # only when it is made, so it takes no memory at rest
                 if not load_pack("example"):
                     tmp = pack_dir(".example-new")
                     example_pack.make(tmp)
