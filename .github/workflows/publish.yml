@@ -44,6 +44,7 @@ jobs:
         if: steps.diff.outputs.changed == 'yes'
         run: |
           python3 -m pip install --quiet --disable-pip-version-check pillow
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
           python3 -m unittest discover -s tests
           python3 tools/check_help.py
           python3 tools/make_zips.py --check
