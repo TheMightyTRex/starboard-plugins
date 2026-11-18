@@ -41,7 +41,8 @@ def targets():
     ("file", path) for the examples, or ("manifest", path) for an app plug-in."""
     out = []
     for wf in sorted(glob.glob(os.path.join(WORKFLOWS, "*.yml"))):
-        text = open(wf, encoding="utf-8").read()
+        with open(wf, encoding="utf-8") as f:
+            text = f.read()
         m = re.search(r"ghcr\.io/themightytrex/(starboard-plugin-[a-z0-9-]+):\$\{\{", text)
         if not m:
             continue
@@ -55,7 +56,8 @@ def targets():
                         "pin": ("file", os.path.join(ROOT, "tools", "examples-digest.txt"))})
         else:
             manifest = os.path.join(ROOT, context, "starboard-plugin.json")
-            data = json.load(open(manifest, encoding="utf-8"))
+            with open(manifest, encoding="utf-8") as f:
+                data = json.load(f)
             out.append({"name": data.get("name", context), "repo": repo, "tag": data["version"], "paths": _paths(text),
                         "pin": ("manifest", manifest)})
     return out
@@ -102,22 +104,37 @@ def same_files(revision, paths):
 
 def pinned(t):
     kind, path = t["pin"]
-    text = open(path, encoding="utf-8").read() if os.path.isfile(path) else ""
+    if os.path.isfile(path):
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    else:
+        text = ""
     if kind == "file":
         return text.strip()
     m = re.search(rf"ghcr\.io/themightytrex/{re.escape(t['repo'])}@(sha256:[0-9a-f]{{64}})", text)
     return m.group(1) if m else ""
 
 
-def pin(t, digest):
+def _repin(path, repo, digest):
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    new = re.sub(rf'(ghcr\.io/themightytrex/{re.escape(repo)})(@sha256:[0-9a-f]{{64}}|:[A-Za-z0-9._-]+)?(?=")', rf"\1@{digest}", text)
+    if new != text:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(new)
+
+
+def pin(t, digest, root=None):
+    """Pins the image where its digest is kept, and in every manifest that names it, the hand-made ones included
+    (Audio description runs the examples' shared image but is not made by tools/make_examples.py)."""
     kind, path = t["pin"]
     if kind == "file":
-        open(path, "w", encoding="utf-8").write(digest + "\n")
-        return
-    text = open(path, encoding="utf-8").read()
-    new = re.sub(rf'(ghcr\.io/themightytrex/{re.escape(t["repo"])})(@sha256:[0-9a-f]{{64}}|:[A-Za-z0-9._-]+)?(?=")',
-                 rf"\1@{digest}", text)
-    open(path, "w", encoding="utf-8").write(new)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(digest + "\n")
+    else:
+        _repin(path, t["repo"], digest)
+    for manifest in glob.glob(os.path.join(root or ROOT, "*", "starboard-plugin.json")):
+        _repin(manifest, t["repo"], digest)
 
 
 def main(argv):

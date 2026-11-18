@@ -6,7 +6,7 @@ name: Publish built images
 on:
   workflow_run:
     workflows: ["Image", "Audio description tracks image", "Direct play image", "Jellystat helper image",
-                "Library clean-up image", "Picture shrinker image", "Remote access image"]
+                "Library clean-up image", "Picture shrinker image", "Remote access image", "TV station image"]
     types: [completed]
     branches: [main]
   schedule:
