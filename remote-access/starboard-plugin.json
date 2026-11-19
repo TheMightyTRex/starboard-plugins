@@ -16,7 +16,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-remote-access@sha256:2919ce59bfe059c82c10e6541fd6c2c1b904b4d0fafb1c040931376bf5c69873",
+   "image": "ghcr.io/themightytrex/starboard-plugin-remote-access@sha256:2b285193ac09b3d638c46dd22fc837050755bb8218dc28b7dd7dafee801d5239",
    "port": 8080,
    "network": "lan",
    "volumes": [

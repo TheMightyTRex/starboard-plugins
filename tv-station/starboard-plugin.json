@@ -20,7 +20,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-tv-station:0.1.0",
+   "image": "ghcr.io/themightytrex/starboard-plugin-tv-station@sha256:062096cb48acb3929b590150a5f57931272cd30763b195e7c10d5a0a4ff1b28e",
    "port": 8080,
    "network": "lan",
    "publish": true,
