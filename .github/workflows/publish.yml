@@ -61,4 +61,6 @@ jobs:
           git commit -m "Publish built images: pinned by digest, catalogue, zips"
           git push origin "$branch"
           body="$(printf 'Made by the Publish built images workflow after an image build on main.\n\n%s\n\nThe catalogue, zips, unit tests and help check were run. Merge to publish; nothing reaches the catalogue before.\n\nTheMightyTRexUK' "$(cat pinned.txt)")"
+          old="$(gh pr list --state open --search 'in:title "Publish built images"' --json number,headRefName --jq '.[] | select(.headRefName | startswith("publish/images-")) | .number')"
           gh pr create --base main --head "$branch" --title "Publish built images" --body "$body"
+          for n in $old; do gh pr close "$n" --delete-branch --comment "Replaced by a newer Publish built images pull request."; done
