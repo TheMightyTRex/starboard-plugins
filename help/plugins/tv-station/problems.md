@@ -15,6 +15,7 @@ q: Where is the problem?
   The schedule grid does not open -> 8
   Jellyfin's Live TV has no programmes -> 9
   The holding slide or music was refused -> 10
+  A series starts from an episode I have watched -> 11
 q2: What happens?
   Jellyfin says no tuner is free -> 3
   It starts, then stops -> 5
@@ -28,6 +29,7 @@ q2: What happens?
 8: Open the schedule grid #open-the-schedule-grid
 9: Check Jellyfin has the guide #check-jellyfin-has-the-guide
 10: Choose a file it can use #choose-a-file-it-can-use
+11: Count what you have watched #count-what-you-have-watched
 ```
 
 ## Start it again
@@ -106,6 +108,15 @@ Every file is checked with FFmpeg before it is used, and the message says what w
 
 - **A holding slide:** a PNG or JPEG picture, or a video (MP4, MOV, WEBM or MKV) of 1 to 120 seconds, up to 90 MB (with Starboard 0.24.1 or later; 60 MB before) and 4096 pixels across.
 - **Music for promos:** an MP3, M4A, OGG or FLAC file with sound, of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks for the station and 20 for each channel. Remove one first when there are 20.
+
+## Count what you have watched
+
+A series on the schedule grid set to **From the next episode not watched** starts at the first episode, in the channel's order, that Jellyfin says was not played and that the channel has not played to someone watching. The channel never tells Jellyfin what it played, so an episode watched on the channel is not marked as played in Jellyfin.
+
+1. Open the channel in **Channels**. On its **Played on this channel** card, check **Count what this channel has played as watched** is **Yes**.
+2. Check the episode is listed as **Watched**. An episode counts once 70% or more of it was played to someone watching; **Part watched** means less was.
+3. For an episode watched somewhere else, mark it as played in Jellyfin.
+4. Open the schedule grid, select the series and choose **From the next episode not watched** again. Where it starts is worked out when you choose it.
 
 ## Find out more
 

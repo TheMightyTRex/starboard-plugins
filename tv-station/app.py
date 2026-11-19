@@ -23,17 +23,19 @@ import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+import animate
 import dog
 import grid
 import guide
 import library
 import pack
+import played
 import promo
 import sbplugin
 import schedule
 import stream
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -41,6 +43,7 @@ PROMOS = "promos"
 GRIDS = "grid"  # the schedule grid: <channel>.json, and .draft.json for a suggestion, .prev.json for Undo
 MUSIC = "music"  # music for promos the owner uploads (0.2.0): station/ for every channel, ch-<channel>/ for one
 HOLDING = "holding"  # holding slides (0.2.0): station.<ending> and ch-<channel>.<ending>
+PLAYED = "played"  # what each channel has played to someone watching (0.3.0): <channel>.json
 NAME = "Create your own TV channel"
 MAX_UPLOAD = 60 * 1024 * 1024
 CLIP_TYPES = (".mp4", ".mkv", ".mov", ".ts", ".webm", ".m4v")
@@ -62,6 +65,16 @@ _streams = stream.Streams()
 _refreshing = set()
 _promo_lock = threading.Lock()
 _example = {"making": False, "error": "", "use": False}
+_previewing = threading.Lock()  # one animation preview at a time
+_record = None
+
+
+def record():
+    """What each channel has played (played.py), in the plug-in's folder."""
+    global _record
+    if _record is None or _record.folder != os.path.join(sbplugin.DATA, PLAYED):
+        _record = played.Record(os.path.join(sbplugin.DATA, PLAYED))
+    return _record
 
 
 # Kept state ---------------------------------------------------------------------------------------------------------
@@ -360,6 +373,17 @@ def pack_name(p):
     return os.path.basename(p["folder"])
 
 
+def station_anim(s):
+    """The station's animation choices (0.3.0) as settings for dog.resolve: "pack" is the broadcast pack's choice."""
+    got = s.get("anim") or {}
+    return {f"dog_{animate.key(i, p)}": got.get(animate.key(i, p)) or "pack" for i in animate.ITEMS for p in animate.PARTS}
+
+
+def opts_for(s, ch, cfg=None, pk=None):
+    """Everything drawn on a channel: its own choices, the station's, then its broadcast pack's."""
+    return dog.resolve({**(settings() if cfg is None else cfg), **station_anim(s)}, ch, pk)
+
+
 def truthy(v, default=True):
     if v in (None, ""):
         return default
@@ -628,8 +652,8 @@ def plan_for(cid, still=False):
         if not ch:
             return None, None, None
         sched = sched_of(ch)
-        opts = dog.resolve(cfg, ch)
         pk = channel_pack(s, ch)
+        opts = opts_for(s, ch, cfg, pk)
         if piece is None:
             a, pieces = schedule.pieces_at(sched, now, clips_for(s, ch, pk, cfg), {"seed": ch["seed"], "cards": opts["cards"],
                                                                                   "ident_order": ch.get("ident_order", "in_order")})
@@ -717,6 +741,182 @@ def preview(cid, kind="programme", at=None):
     return r.stdout
 
 
+# Animation (0.3.0) -----------------------------------------------------------------------------------------------------
+ANIM_DETAIL = {
+    "cards": "The words, the bar and the programme's picture on each card, over its background: on as the card starts, off by its end.",
+    "straps": "The programme's name as it starts, and Up next during the end credits: on as each starts, off by its end.",
+    "logo": "As a programme starts and ends, when it shows only during programmes or with cards; and when it appears after the opening.",
+    "clock": "With the on-screen logo: as a programme starts and ends, when it shows only then.",
+    "label": "New, Repeat or Live: on as the programme starts, off at 2 minutes.",
+    "holding": "Back soon or the countdown: on as the slide starts, off by the time the next programme starts."}
+PREVIEW_SECONDS = {"straps": 8.0}  # the start strap shows for 8 seconds; everything else for 5
+PACK_ANIM = "The broadcast pack's, or none"
+PACK_SPEED = "The broadcast pack's, or normal"
+
+
+def anim_words(item, part, value):
+    if part == "speed":
+        return animate.SPEED_WORDS.get(value, value)
+    return animate.MOVES.get(value, (value, value))[0 if part == "in" else 1]
+
+
+def anim_options(part):
+    if part == "speed":
+        return dict(animate.SPEED_WORDS)
+    return {k: v[0 if part == "in" else 1] for k, v in animate.MOVES.items()}
+
+
+def anim_rows(s, ch, base, group):
+    """The rows for each thing that animates: how it comes on, how it goes off, its speed, and a preview link. For a
+    channel (ch) each starts at Station default; for the station (ch None) at the broadcast pack's choice."""
+    rows = []
+    own = ((ch or {}).get("dog") or {}) if ch else (s.get("anim") or {})
+    where = ch["id"] if ch else "station"
+    for item, name in animate.ITEMS.items():
+        for part, label in (("in", "Coming on"), ("out", "Going off"), ("speed", "Speed")):
+            k = animate.key(item, part)
+            if ch:
+                st = (s.get("anim") or {}).get(k) or "pack"
+                dw = "the pack's" if st == "pack" else anim_words(item, part, st)
+                choice = _choice(label, own.get(k, ""), anim_options(part), dw)
+            else:
+                choice = _choice(label, own.get(k) or "pack", {"pack": PACK_SPEED if part == "speed" else PACK_ANIM, **anim_options(part)})
+            row = {"id": f"{where}:anim-{item}-{part}", "title": f"{name}: {label.lower()}", "group": group,
+                   "state": "ok", "state_label": "Saved", "choice": choice}
+            if part == "in":
+                row["detail"] = ANIM_DETAIL[item]
+                if base:
+                    row["link"] = {"url": f"{base}/t/{s['token']}/animation/{where}/{item}.mp4",
+                                   "label": f"Preview: {name}, on and off, in a new tab"}
+            if ch:
+                row["menu"] = ch["id"]
+            rows.append(row)
+    return rows
+
+
+def set_anim(holder, key, value):
+    """Saves one animation choice: holder is a channel's "dog" (where "" is the station's choice) or the station's
+    "anim" (where "pack" is the pack's). Returns the words for what was saved."""
+    m = re.match(r"^anim-([a-z]+)-(in|out|speed)$", key)
+    if not m or m.group(1) not in animate.ITEMS:
+        raise ValueError("That is not one of the choices")
+    item, part = m.groups()
+    allowed = animate.SPEEDS if part == "speed" else animate.MOVES
+    k = animate.key(item, part)
+    v = "" if value is None else str(value)
+    if v in ("", "pack"):
+        holder.pop(k, None)
+    elif v in allowed:
+        holder[k] = v
+    else:
+        raise ValueError("That is not one of the choices")
+    words = anim_words(item, part, v) if v in allowed else ("the station's choice" if v == "" else "the broadcast pack's choice")
+    return f"{animate.ITEMS[item]}, {('coming on' if part == 'in' else 'going off' if part == 'out' else 'speed')}: {words}. Saved"
+
+
+def anim_preview(target, item):
+    """A few seconds of one thing animating on and off, with the choices saved for a channel (target: its id) or the
+    station ("station"), as an MP4. Drawn over a made-up picture, so it needs nothing from Jellyfin; everything else
+    stays still, so the one thing chosen is what moves."""
+    if item not in animate.ITEMS:
+        raise LookupError("No such thing to animate")
+    s = state()
+    cfg = settings()
+    ch = None if target == "station" else find(s, target)
+    if target != "station" and not ch:
+        raise LookupError("No such channel")
+    pk = channel_pack(s, ch) if ch else station_pack(s)
+    opts = opts_for(s, ch, cfg, pk)
+    for i in animate.ITEMS:
+        if i != item:
+            opts[animate.key(i, "in")] = opts[animate.key(i, "out")] = "none"
+    if item in ("logo", "clock"):
+        opts.update({"when": "programmes", "fade_in": 0})
+        if item == "logo" and opts["kind"] == "none":
+            opts["kind"] = "channel_name"
+        if item == "clock":
+            opts["clock"] = True
+    if item == "label" and opts["label"] == "none":
+        opts["label"] = "new_repeat"
+    # Only the start strap for Straps, and none for the rest, so the one thing chosen is all that moves.
+    opts.update({"strap_start": item == "straps", "strap_end": False})
+    W, H, kbps = stream.SIZES.get(str(cfg.get("picture") or "720"), stream.SIZES["720"])
+    secs = PREVIEW_SECONDS.get(item, 5.0)
+    now = time.time()
+    entry = {"id": "0" * 32, "title": "Your next programme", "kind": "Episode", "s": 1, "e": 2, "ep": "The middle",
+             "plot": "What the programme is about, in a sentence or two, from Jellyfin.", "has_audio": False, "premiere": "2000-01-01"}
+    airing = {"entry": entry, "start": now, "end": now + secs, "content_end": now + secs}
+    folder = os.path.join("/tmp", "tv-station", f"anim-{secrets.token_hex(4)}")
+    texts = dog.Texts(folder)
+    out = os.path.join(folder, "preview.mp4")
+    names = {"channel": ch["name"] if ch else "Your channel", "station": station_name(cfg)}
+    ctx = {"W": W, "H": H, "kbps": kbps, "opts": opts, "names": names, "texts": texts, "ts_offset": 0.0, "to_file": out,
+           "colour": (ch or {}).get("colour") or "0x1f5f99", "logo": logo_file(ch["id"], pk) if ch else logo_file("station", pk),
+           "start_words": "Your programme: Series 1, episode 2", "next_words": "Up next at 21:00: Your next programme"}
+    if item == "cards":
+        piece = {"kind": "card", "card": "next", "start": now, "end": now + secs, "airing": {**airing, "start": now + 300}}
+        if pk and pk.get("coming_next"):
+            ctx["layout"] = {**pk["coming_next"], "file": os.path.join(pk["folder"], pk["coming_next"]["background"])}
+    elif item == "holding":
+        h = holding_for(s, ch) if ch else None
+        if not h:
+            bg = os.path.join(folder, "slide.png")
+            subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-f", "lavfi", "-i", f"color=c=0x10202c:s={W}x{H}", "-frames:v", "1",
+                            "-y", bg], capture_output=True, timeout=30, check=False)
+            words = ((ch or {}).get("holding_words") or s.get("holding_words") or "countdown")
+            h = {"file": bg, "still": True, "has_audio": False, "words": words if words in dog.HOLDING_WORDS else "countdown"}
+        piece = {"kind": "holding", "holding": {**h, "has_audio": False}, "start": now, "end": now + secs, "airing": airing}
+    else:
+        piece = {"kind": "programme", "start": now, "end": now + secs, "airing": airing}
+        ctx["stand_in"] = ["-f", "lavfi", "-t", f"{secs + 1:.0f}", "-i",
+                           f"gradients=s={W}x{H}:r={stream.FPS}:c0=0x1f5f99:c1=0x10202c:nb_colors=2:speed=0.02"]
+    if not _previewing.acquire(timeout=60):
+        raise RuntimeError("Another preview is being made. Try again in a moment")
+    try:
+        r = subprocess.run(stream.piece_command(piece, now, ctx), capture_output=True, timeout=120, check=False)
+        if r.returncode != 0 or not os.path.isfile(out):
+            raise RuntimeError((r.stderr.decode("utf-8", "replace").strip().splitlines() or ["FFmpeg did not make the preview"])[-1][:200])
+        with open(out, "rb") as f:
+            return f.read()
+    finally:
+        _previewing.release()
+        shutil.rmtree(folder, ignore_errors=True)
+
+
+def animation_page(said=None):
+    """The Animation page (0.3.0): the station's choices, which every channel uses unless it has its own."""
+    s = state()
+    base = address()
+    items = []
+    for row in anim_rows(s, None, base, ""):
+        item = row["id"].split("-")[1]
+        row["group"] = animate.ITEMS[item]
+        if not base and row["id"].endswith("-in"):
+            row["detail"] = row.get("detail", "") + " " + NO_ADDRESS
+        items.append(row)
+    p = station_pack(s)
+    out = {"type": "list", "title": "Animation", "items": items,
+           "intro": ("How each thing drawn over the picture comes on and goes off, for every channel unless it has its own choice. "
+                     + ("The station's broadcast pack, " + p["name"] + ", chooses for anything left at The broadcast pack's. " if p and p.get("animation")
+                        else "Anything left at The broadcast pack's has no animation, unless the station's broadcast pack chooses one. ")
+                     + "Each preview opens a few seconds of it in a new tab.")}
+    if said:
+        out["said"] = said[:200]
+    return out
+
+
+def animation_post(body):
+    action, rid, value = body.get("action"), str(body.get("id") or ""), body.get("value")
+    where, _, key = rid.partition(":")
+    if action != "choose" or where != "station":
+        raise ValueError("That cannot be changed here")
+    with _lock:
+        s = state()
+        said = set_anim(s.setdefault("anim", {}), key, value)
+        save(s)
+    return animation_page(said)
+
+
 def made_logo(ch):
     """A plain logo for a channel with none of its own: its number and name on its colour, made once and kept."""
     s = state()
@@ -781,8 +981,12 @@ CARDS = (("Name and number", "Its name and number in Jellyfin's Live TV, whether
          ("Breaks", "What plays between programmes: when programmes start, how long the break is, idents, trailers and your clips."),
          ("On-screen logo and branding", "The logo in the corner, the straps and cards, and the broadcast pack they come from. "
                                          "Each one follows the station's setting until you choose another."),
+         ("Animation", "How the cards, straps, on-screen logo, clock, label and holding slide words come on and go off. "
+                       "Each one follows the station's choice until you choose another."),
          ("Holding slide and promos", "The slide that loops at the end of a break until the next programme starts, and the music for its promos."),
-         ("Today and tomorrow", "What it shows in the next 24 hours, worked out from what it shows and its breaks."))
+         ("Today and tomorrow", "What it shows in the next 24 hours, worked out from what it shows and its breaks."),
+         ("Played on this channel", "What it has played to someone watching, which From the next episode not watched can count as watched. "
+                                    "Jellyfin's own watched marks are never changed."))
 PICK_KINDS = (("series", "Series"), ("film", "Films"), ("collection", "Collections"), ("playlist", "Playlists"), ("genre", "Genres"),
               ("decade", "Decades"))
 
@@ -900,6 +1104,9 @@ def channel_rows(s, ch, cfg, base, now):
         prev["detail"] = NO_ADDRESS
     row("preview", "Preview a frame", g, state="unknown", state_label="Preview", **prev)
 
+    # Animation (0.3.0)
+    items += anim_rows(s, ch, base, "Animation")
+
     # Holding slide and promos
     g = "Holding slide and promos"
     h = holding_for(s, ch)
@@ -944,7 +1151,30 @@ def channel_rows(s, ch, cfg, base, now):
             state="ok" if new else "unknown", state_label="New" if new else "Repeat")
     if not got:
         row("today-none", "Nothing yet", g, state="unknown", state_label="Empty", detail="Choose what it shows, and its programmes are listed here.")
+
+    # Played on this channel (0.3.0)
+    g = "Played on this channel"
+    row("count_played", "Count what this channel has played as watched", g,
+        choice=_choice("Count as watched", "on" if ch.get("count_played", True) else "off", {"on": "Yes", "off": "No"}),
+        detail="For From the next episode not watched: an episode it played to someone watching, 70% or more of it, counts as watched. "
+               "Jellyfin's own watched marks are never changed.")
+    rec = record()
+    for k, r in enumerate(rec.latest(cid, PLAYED_SHOWN)):
+        row(f"played{k}", f"{day_hm(r['at'], now)}  {r['title']}" + (f", {r['ep']}" if r.get("ep") else ""), g,
+            detail=f"{round(r['seconds'] / 60)} of {round(r['length'] / 60)} minutes played to someone watching",
+            state="ok" if r.get("seen") else "unknown", state_label="Watched" if r.get("seen") else "Part watched")
+    n = rec.count(cid)
+    if n:
+        row("forget-played", "The record of what it has played", g, actions=["remove"], state="ok",
+            state_label=sbplugin.plural(n, "programme"),
+            detail="Remove forgets it all, so every episode counts as watched only when Jellyfin says it is. Jellyfin is not changed.")
+    else:
+        row("played-none", "Nothing played yet", g, state="unknown", state_label="Empty",
+            detail="Once someone watches it in Jellyfin's Live TV, what it plays is listed here.")
     return menu, items
+
+
+PLAYED_SHOWN = 5  # programmes listed in Played on this channel
 
 
 NO_ADDRESS = ("It does not know its address yet. Update Starboard in Settings, Updates (0.23.0 and later give it), "
@@ -1137,6 +1367,9 @@ def channels_post(body, now=None):
             for role in ("idents", "clips"):
                 own[role] = [c for c in own.get(role) or [] if c["id"] != key[5:]]
             said = "Removed the clip. Its file stays in the plug-in's folder until you add another with the same name"
+        elif key == "forget-played" and action == "remove":
+            record().forget(cid)
+            said = f"{ch['name']} has forgotten what it played. Jellyfin's watched marks are as they were"
         elif action == "choose":
             said = choose(ch, key, value)
             refresh = key in ("order", "run", "start_on", "break_seconds", "trailers")
@@ -1182,6 +1415,11 @@ def choose(ch, key, value):
     elif key == "holding_words" and (v == "" or v in dog.HOLDING_WORDS):
         ch["holding_words"] = v
         return "Saved: " + (dog.HOLDING_WORDS[v] if v else "the station's words") + " on the holding slide"
+    elif key.startswith("anim-"):
+        return set_anim(ch.setdefault("dog", {}), key, v)
+    elif key == "count_played" and v in ("on", "off"):
+        ch["count_played"] = v == "on"
+        return ("What it plays counts as watched" if v == "on" else "Only Jellyfin's watched marks count") + " for From the next episode not watched"
     elif key.startswith("dog-") and key[4:] in dog.DEFAULTS:
         k = key[4:]
         d = dog.DEFAULTS[k]
@@ -1832,20 +2070,43 @@ def grid_state(cid, said="", now=None):
     return out
 
 
-def unwatched_index(series_id, episodes):
-    """The position of the next episode nobody has watched, from the first Jellyfin administrator's played list."""
+def note_played(cid, piece, seconds):
+    """From a channel's stream: `seconds` of a programme piece were streamed to someone watching. (None, 0) as the
+    stream stops, so the record is written then. Only kept in the plug-in's folder: nothing goes to Jellyfin."""
+    if piece is None:
+        record().flush(cid, force=True)
+        return
+    a = piece.get("airing") or {}
+    e = a.get("entry") or {}
+    if e.get("id") and a.get("content_end"):
+        record().note(cid, e, a["start"], a["content_end"] - a["start"], seconds)
+
+
+def seen_on(cid):
+    """What a channel has played to someone watching, when it counts that as watched (its setting, Yes unless changed)."""
+    ch = find(state(), cid) if cid else None
+    return record().seen_ids(cid) if ch and ch.get("count_played", True) else set()
+
+
+def unwatched_index(series_id, episodes, seen=None):
+    """The position of the next episode not watched: the first, in the channel's order, that the first Jellyfin
+    administrator has not played and that the channel has not played to someone watching (seen, from played.py)."""
+    seen = seen or set()
+
+    def first(watched):
+        return next((i for i, e in enumerate(episodes) if not watched(e["id"])), 0)
     try:
         users = jf("/Users") or []
         admin = next((u for u in users if (u.get("Policy") or {}).get("IsAdministrator")), users[0] if users else None)
         if not admin:
-            return 0
+            return first(seen.__contains__)
         got = jf(f"/Users/{admin['Id']}/Items?" + urllib.parse.urlencode({
             "ParentId": series_id, "IncludeItemTypes": "Episode", "Recursive": "true", "Filters": "IsUnplayed",
-            "SortBy": "ParentIndexNumber,IndexNumber", "Limit": 1})) or {}
-        first = (got.get("Items") or [{}])[0].get("Id")
-        return next((i for i, e in enumerate(episodes) if e["id"] == first), 0)
+            "SortBy": "ParentIndexNumber,IndexNumber", "Limit": 2000})) or {}
+        unplayed = {i.get("Id") for i in got.get("Items") or []}
+        return first(lambda iid: iid not in unplayed or iid in seen)
     except (urllib.error.URLError, OSError, ValueError, LookupError):
-        return 0
+        return first(seen.__contains__)
 
 
 def grid_search(words):
@@ -1894,7 +2155,7 @@ def grid_op(body, now=None):
                 if mode == "episode":
                     sm.update({"s": _int(body.get("s"), 0, 999, "a series number"), "e": _int(body.get("e"), 0, 9999, "an episode number")})
                 elif mode == "unwatched":
-                    sm["unwatched_index"] = unwatched_index(iid, eps)
+                    sm["unwatched_index"] = unwatched_index(iid, eps, seen_on(cid))
                 doc, focus, said = grid.add(doc, day, start, "series", {"id": iid, "name": eps[0]["title"]}, now, eps,
                                             start_mode=sm if iid not in doc["series"] else None)
             elif item_kind == "film":
@@ -1926,7 +2187,7 @@ def grid_op(body, now=None):
             if mode == "episode":
                 extra = {"s": _int(body.get("s"), 0, 999, "a series number"), "e": _int(body.get("e"), 0, 9999, "an episode number")}
             elif mode == "unwatched":
-                extra = {"unwatched_index": unwatched_index(sid, (doc["series"].get(sid) or {}).get("episodes") or [])}
+                extra = {"unwatched_index": unwatched_index(sid, (doc["series"].get(sid) or {}).get("episodes") or [], seen_on(cid))}
             doc, said = grid.set_start(doc, sid, mode, now, **extra)
         elif op == "undo":
             prev = grid_doc(cid, "prev")
@@ -2006,11 +2267,12 @@ def suggest_for(s, ch, now, source="history", hours=None):
         return sbplugin.fetch(c["url"].rstrip("/") + path, sbplugin.jellyfin_headers(c["api_key"]), data=body, method="POST")
     plays = suggest.history(jf, jf_post)
     cache = {}
+    seen = seen_on(ch["id"])
 
     def series_info(sid):
         if sid not in cache:
             eps = library.lineup(jf, [{"kind": "series", "id": sid}])
-            cache[sid] = {"id": sid, "name": eps[0]["title"], "episodes": eps, "unwatched": unwatched_index(sid, eps)} if eps else None
+            cache[sid] = {"id": sid, "name": eps[0]["title"], "episodes": eps, "unwatched": unwatched_index(sid, eps, seen)} if eps else None
         return cache[sid]
 
     def film_info(fid):
@@ -2136,11 +2398,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"ok": True, "ffmpeg": stream.has_ffmpeg()})
             if p == "/card":
                 return self._json(200, card())
-            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule"):
+            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule", "/animation"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may open this"})
                 return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page, "/pack": pack_page,
-                                        "/schedule": schedule_page}[p]())
+                                        "/schedule": schedule_page, "/animation": animation_page}[p]())
             if p == "/":
                 self._learn()
                 s = state()
@@ -2200,6 +2462,9 @@ class Handler(BaseHTTPRequestHandler):
             kind = (query.get("kind") or [""])[0]
             kind = kind if kind in ("card", "ident", "sting", "promo", "holding") else "programme"
             return self._bytes(200, preview(m.group(1), kind), "image/png", "no-store")
+        m = re.match(r"^animation/([0-9a-f]{8}|station)/([a-z]+)\.mp4$", rest)
+        if m:
+            return self._bytes(200, anim_preview(m.group(1), m.group(2)), "video/mp4", "no-store")
         m = re.match(r"^stream/([0-9a-f]{8})\.ts$", rest)
         if m:
             return self._stream(m.group(1))
@@ -2260,7 +2525,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(503, {"error": "The example pack is being made, which takes a minute or two. Choose the channel again then"})
         promo.stop()  # a promo being made gives way at once: nothing is made while anyone watches
         try:
-            hub = _streams.get(cid, plan_for(cid), most, grace)
+            hub = _streams.get(cid, plan_for(cid), most, grace, on_piece=lambda piece, secs: note_played(cid, piece, secs))
         except stream.Busy as e:
             return self._json(503, {"error": str(e)})
         q = hub.join()
@@ -2292,7 +2557,7 @@ class Handler(BaseHTTPRequestHandler):
                     _streams.stop_all()
                     return self._json(200, sbplugin.before_update(body))
                 return self._json(200, sbplugin.after_update(body))
-            if p in ("/channels", "/clips", "/guide", "/pack", "/channels/file", "/clips/file", "/pack/file"):
+            if p in ("/channels", "/clips", "/guide", "/pack", "/animation", "/channels/file", "/clips/file", "/pack/file"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may change this"})
                 if p.endswith("/file"):
@@ -2303,7 +2568,7 @@ class Handler(BaseHTTPRequestHandler):
                                                   int(self.headers.get("Content-Length") or 0), self.rfile))
                 body = self._body()
                 return self._json(200, {"/channels": lambda: channels_post(body), "/clips": lambda: clips_post(body),
-                                        "/pack": lambda: pack_post(body), "/guide": guide_page}[p]())
+                                        "/pack": lambda: pack_post(body), "/animation": lambda: animation_post(body), "/guide": guide_page}[p]())
             if p == "/jobs/refresh":
                 if sbplugin.holding():
                     return self._json(200, {"said": "Not started: the plug-in is about to be updated"})

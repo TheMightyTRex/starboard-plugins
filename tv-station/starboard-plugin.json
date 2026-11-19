@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.2.1",
+ "version": "0.3.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -45,7 +45,7 @@
    "label": "Channels",
    "type": "custom",
    "choices": "/channels",
-   "hint": "Add a channel and open it: a card each for its name and number, what it shows, its breaks, its on-screen logo, its holding slide and promos, and its programmes."
+   "hint": "Add a channel and open it: a card each for its name and number, what it shows, its breaks, its on-screen logo, its animation, its holding slide and promos, its programmes and what it has played."
   },
   {
    "key": "guide",
@@ -74,6 +74,13 @@
    "type": "custom",
    "choices": "/pack",
    "hint": "Your own branding for the channels: upload a pack made from the template, try the example pack, and download the template and placement guides."
+  },
+  {
+   "key": "animation",
+   "label": "Animation",
+   "type": "custom",
+   "choices": "/animation",
+   "hint": "How the cards, straps, on-screen logo, clock, label and holding slide words come on and go off, for every channel, with a preview of each."
   },
   {
    "key": "station_name",
@@ -531,6 +538,19 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.3.0",
+   "date": "2026-11-19",
+   "added": [
+    "**Animation on and off:** the cards, straps, on-screen logo, clock, label and holding slide words can fade, slide in from the left, right or bottom, wipe or grow, and go off the same ways, quick, normal or slow. Choose on the Animation page or a channel's Animation card, with a preview of each.",
+    "**A broadcast pack can choose its animation** in pack.json, under animation. A choice in the settings comes first.",
+    "**Each channel remembers what it has played** to someone watching: From the next episode not watched counts an episode it played, 70% or more of it, as watched, as well as what Jellyfin says. Jellyfin's watched marks are never changed.",
+    "**Played on this channel:** a new card on each channel lists the last few programmes it played, with a way to forget them."
+   ],
+   "changed": [
+    "**From the next episode not watched** finds the first episode, in the channel's order, that is not watched, where before it took the first not played in Jellyfin's order."
+   ]
+  },
   {
    "version": "0.2.1",
    "date": "2026-11-19",

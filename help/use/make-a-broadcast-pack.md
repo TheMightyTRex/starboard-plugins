@@ -66,7 +66,12 @@ Every position is a box, `[left, top, right, bottom]`, in pixels of 1920 by 1080
   "fields": {"Heading": [140, 200, 940, 280], "Title": [140, 330, 940, 470], "Day and time": [140, 500, 940, 640],
              "Channel name": [140, 680, 940, 740]}
  },
- "transitions": ["wipe01.webm"]
+ "transitions": ["wipe01.webm"],
+ "animation": {
+  "cards": {"in": "left", "out": "fade", "speed": "normal"},
+  "straps": {"in": "wipe", "out": "wipe", "speed": "normal"},
+  "logo": {"in": "fade", "out": "fade", "speed": "slow"}
+ }
 }
 ```
 
@@ -79,6 +84,7 @@ Every position is a box, `[left, top, right, bottom]`, in pixels of 1920 by 1080
 | `clip` | Where the programme's picture (Coming up next) or its clips (promo) play. Keep it 16:9, such as 800 by 450 |
 | `fields` | Where each text goes. Leave out the ones you do not want |
 | `seconds` | How long each promo is: 10 to 30, 15 unless you change it |
+| `animation` | Optional, from 0.3.0: how each thing drawn over the picture comes on and goes off. Leave it out for none |
 
 ### The text fields
 
@@ -95,9 +101,33 @@ The words are made as large as the box allows, on as many lines as the field has
 
 Leave the clip area and the text fields clear in your backgrounds: the plug-in draws into them. Put the heading in a **Heading** field, not in the background, so Later cards can say Later.
 
+### Animation
+
+`animation` gives your pack its own movement. Each part is optional, and anything left out has no animation. A choice made in Starboard, on the **Animation** page or a channel's **Animation** card, comes before the pack's.
+
+| Part | What animates |
+|---|---|
+| `cards` | The Coming up next and Later cards: the clip area and every field move together, over your background, which stays still |
+| `straps` | The programme's name as it starts, and Up next during the end credits |
+| `logo` | The on-screen logo, as a programme starts and ends when it shows only during programmes (or with cards), and when it appears after the opening |
+| `clock` | The clock beside the on-screen logo, with it |
+| `label` | New, Repeat or Live, for the first 2 minutes of a programme |
+| `holding` | The words on the holding slide |
+
+Each part is `{"in": "left", "out": "fade", "speed": "normal"}`:
+
+| Key | Values |
+|---|---|
+| `in` | How it comes on: `none`, `fade`, `left`, `right` or `bottom` (slides in from that edge), `wipe` (wipes on from the left) or `grow` (grows from its centre) |
+| `out` | How it goes off: the same values. `left`, `right` and `bottom` slide off to that edge, `wipe` wipes off to the right and `grow` shrinks to its centre |
+| `speed` | `quick` (0.3 seconds), `normal` (0.6 seconds) or `slow` (1 second). `normal` unless you change it |
+
+Timing stays exact: a thing comes on from its start and is gone by its end, so an animation never makes a break longer. A thing shown for less than two animations has both made shorter to fit. The coming-next placement guide reminds you that the clip area and the fields move together; leave room in your design for them to slide through.
+
 ## What the plug-in does with it
 
 - **The on-screen logo** is `logo/dog.png`, at the size and in the corner the on-screen logo settings say. A channel's own logo, added on its page, is used in its place.
+- **Animation**, when `pack.json` has it, is used for every thing the settings leave at **The broadcast pack's, or none**.
 - **Each break** opens with the logo with music, when the break has room, then an ident chosen at random, then trailers, clips and promos, then Later and Coming up next cards drawn on your background.
 - **Transitions** play at each cut between a programme and a break, chosen at random, the same one on both sides of the cut.
 - **Promos** are made in quiet hours, one at a time at the lowest priority and never while anyone is watching: a few short clips of a programme coming up in the clip area, a music bed from `promo/music`, and its title, day and time and channel. Each channel keeps the number the settings say; old ones are replaced. They play on their own channel and, unless you deactivate it, on your other channels.

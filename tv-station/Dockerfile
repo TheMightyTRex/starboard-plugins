@@ -6,7 +6,7 @@ FROM alpine:3.21
 # Every package takes Alpine's fixed version at build, so a fix reaches the next build with no change here.
 RUN apk upgrade --no-cache && apk add --no-cache python3 ffmpeg tzdata
 WORKDIR /app
-COPY sbplugin.py app.py schedule.py guide.py dog.py stream.py library.py pack.py promo.py example_pack.py grid.py suggest.py pack.schema.json grid.html grid.js grid.css ds-tokens.css /app/
+COPY sbplugin.py app.py schedule.py guide.py dog.py animate.py played.py stream.py library.py pack.py promo.py example_pack.py grid.py suggest.py pack.schema.json grid.html grid.js grid.css ds-tokens.css /app/
 COPY atkinson-hyperlegible-next.woff2 LICENSE-OFL.txt /app/
 # The Python modules the app imports, compiled once here: the container's file system is read only, so otherwise
 # every start compiles them again (measured 16 November 2026 on the other plug-ins: start 0.71 to 0.15 processor seconds).

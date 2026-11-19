@@ -528,6 +528,10 @@ def check(folder):
             b = f["box"]
             if b[0] < TITLE_SAFE[0] or b[1] < TITLE_SAFE[1] or b[2] > TITLE_SAFE[2] or b[3] > TITLE_SAFE[3]:
                 notes.append(f"pack.json, {part}, {k}: outside the title safe area, so some televisions cut it")
+    # Animation (0.3.0): kept as pack.json gives it, once the schema has passed it.
+    anim = doc.get("animation") if isinstance(doc.get("animation"), dict) else {}
+    out["animation"] = {k: {p: v for p, v in a.items() if p in ("in", "out", "speed") and isinstance(v, str)}
+                        for k, a in anim.items() if isinstance(a, dict)}
     return {"ok": not problems, "problems": problems, "notes": notes[:20], "pack": out}
 
 
@@ -625,6 +629,8 @@ def placement_filters(which, layout, font, dog_box=None):
         out.append(_ff_text(font, "logo/dog.png: a PNG with a transparent background, at least 256 pixels tall", 40, "(w-tw)/2", 430, "white", box="black@0.6"))
         out.append(_ff_text(font, "Drawn 8.5% of the picture's height (92 pixels at 1080) unless the size is changed", 32, "(w-tw)/2", 500, "white", box="black@0.6"))
         out.append(_ff_text(font, "Keep it simple and light: it sits on every programme", 32, "(w-tw)/2", 556, "white", box="black@0.6"))
+        out.append(_ff_text(font, "pack.json, animation, logo: how it comes on as a programme starts and goes off as it ends", 28, "(w-tw)/2", 612, "white",
+                            box="black@0.6"))
         return out
     clip = layout.get("clip") or [0, 0, W, H]
     out += _rect_filters(font, clip, f"Clip area: {clip[2] - clip[0]} by {clip[3] - clip[1]}, at {clip[0]}, {clip[1]}", "0xffd54f")
@@ -637,6 +643,9 @@ def placement_filters(which, layout, font, dog_box=None):
         out += _rect_filters(font, r, label, "0x69f0ae", size=26)
     head = "Coming up next card" if which == "coming_next" else "Promo, with music from promo/music"
     out.append(_ff_text(font, f"{head}: 1920 by 1080, 25 frames a second", 30, "(w-tw)/2", TITLE_SAFE[1] + 40, "white", box="black@0.6"))
+    if which == "coming_next":
+        out.append(_ff_text(font, "pack.json, animation, cards: the clip area and every field animate on and off together, over the background",
+                            24, "(w-tw)/2", TITLE_SAFE[1] + 84, "white", box="black@0.6"))
     return out
 
 
@@ -667,7 +676,10 @@ def template_pack_json(name="Your channel"):
             "logo": {"dog": "logo/dog.png", "with_music": "logo/logo-with-music.mp4"},
             "idents": ["ident01.mp4", "ident02.mp4"],
             "coming_next": json.loads(json.dumps(DEFAULT_LAYOUT["coming_next"])), "promo": json.loads(json.dumps(DEFAULT_LAYOUT["promo"])),
-            "transitions": ["wipe01.webm"]}
+            "transitions": ["wipe01.webm"],
+            "animation": {"cards": {"in": "left", "out": "fade", "speed": "normal"}, "straps": {"in": "wipe", "out": "wipe", "speed": "normal"},
+                          "logo": {"in": "fade", "out": "fade", "speed": "slow"}, "clock": {"in": "fade", "out": "fade", "speed": "slow"},
+                          "label": {"in": "right", "out": "right", "speed": "quick"}, "holding": {"in": "bottom", "out": "fade", "speed": "normal"}}}
 
 
 README = """Broadcast pack template, for Create your own TV channel
@@ -714,6 +726,19 @@ align is left, centre or right. The words are made as large as the box allows, o
 "clip" is the box where the programme's picture (Coming up next) or its clips (promo) play: keep it 16:9.
 "colours": {"text": "#FFFFFF", "accent": "#FFD54F"}: words are the text colour, Day and time the accent.
 promo "seconds" is how long each promo is: 10 to 30, 15 unless you change it.
+
+Animation, optional, in pack.json under "animation": how each thing drawn over the picture comes on and goes off.
+  cards          The Coming up next and Later cards: the clip area and every field move together
+  straps         The programme's name as it starts, and Up next during the end credits
+  logo           The on-screen logo, as a programme starts and ends (and when it appears after the opening)
+  clock          The clock beside the logo, with it
+  label          New, Repeat or Live, for the first 2 minutes of a programme
+  holding        The words on the holding slide
+Each is {"in": "left", "out": "fade", "speed": "normal"}. in and out are none, fade, left, right, bottom (slide
+from or to that edge), wipe (on from the left, off to the right) or grow (from or to its centre). speed is quick
+(0.3 seconds), normal (0.6) or slow (1). Leave a thing out, or the whole part, for none. A choice in Starboard's
+settings comes before the pack's. Each thing is fully on at its start plus the speed, and off by its end, so
+leave the background's design clear where a thing slides through.
 
 The zip may be up to 60 MB, and 400 MB unpacked, with up to 150 files. A zip with its files inside one folder is
 read from inside that folder. Files with other names, links and paths outside the folder are refused.

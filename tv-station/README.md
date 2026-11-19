@@ -27,6 +27,10 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   programmes and cards; fade in after the opening; have a clock beside it; and a New, Repeat or Live label in words.
   A backing plate keeps it clear on any picture. The station sets it for every channel, and each channel can have
   its own. **Preview a frame** opens a frame drawn with the settings.
+- **Animation on and off.** The Coming up next and Later cards, the straps, the on-screen logo, the clock, the label
+  and the holding slide's words can fade, slide in from the left, the right or the bottom, wipe or grow, and go off
+  the same ways, quick, normal or slow: for every channel on the **Animation** page, or for one channel, or as its
+  broadcast pack says. Each has a **Preview**, a few seconds of it. Timing stays exact: nothing runs past its end.
 - **A broadcast pack.** One zip with set names: `logo/dog.png` for the on-screen logo, `logo/logo-with-music.mp4` as
   a sting, `idents/identNN.mp4` played in a random order, `coming-next/background.mp4` and `promo/background.mp4` with
   a clip area and text fields placed in `pack.json`, music beds in `promo/music`, and transitions with transparency in
@@ -41,6 +45,9 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
 - **A schedule grid.** A week for each channel in 15 minute steps: drag films and series onto it, or use buttons and
   the keyboard; copy a day; stripe a series across weekdays with a number of episodes a day; choose where a series
   starts; or suggest a week from watch history, everyone's history, all TV, all films or both (`suggest.py`, also a script). Empty times keep the automatic line-up.
+- **It remembers what it has played.** Each channel keeps what it played to someone watching, so From the next
+  episode not watched passes over an episode watched on the channel, 70% or more of it. Jellyfin's own watched marks
+  are never changed.
 - **In Jellyfin's Live TV, first.** Its channels are numbered from 1 in your order, before the free channels from
   101, with a 7-day guide: titles, episode names, synopses, pictures, and New or Repeat.
 

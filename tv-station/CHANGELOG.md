@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]: 0.3.0
+
+### Added
+- Animation on and off (owner, 19 November 2026): the Coming up next and Later cards, the straps, the on-screen logo, the clock, the New, Repeat or Live label and the words on the holding slide each come on and go off with None, Fade, Slide from the left, the right or the bottom, Wipe or Grow, at Quick (0.3 seconds), Normal (0.6) or Slow (1). Chosen on the new Animation page for every channel, or on a channel's Animation card. Each thing is drawn on a small layer of its own and moved by FFmpeg's overlay with expressions of t, faded with the fade filter, wiped with a moving crop and grown with a scale, so None draws exactly as before and timing stays inside each thing's own time.
+- A Preview for each animation: a few seconds as MP4, drawn with the choices saved, over a made-up picture, in a new tab.
+- Broadcast packs: an optional animation part in pack.json and pack.schema.json, in the template, its README and the placement guides. The settings come first when chosen.
+- What each channel has played (owner, 19 November 2026): for each episode and film, when it was on and how many seconds were streamed to someone watching, in a small file for each channel (the newest 5,000, written about once a minute while it plays). An episode with 70% or more played counts as watched for From the next episode not watched, with Count what this channel has played as watched (Yes unless changed). Nothing is sent to Jellyfin.
+- Played on this channel, a card on each channel: the last 5 programmes, the setting, and Remove to forget the record.
+
+### Changed
+- From the next episode not watched starts at the first episode, in the channel's order, that is neither played in Jellyfin nor watched on the channel, where it took the first not played in Jellyfin's order before.
+
 ## 0.2.1 (19 November 2026)
 
 ### Added

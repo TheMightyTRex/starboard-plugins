@@ -1,17 +1,31 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.2.1 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.3.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.3.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not yet released |
 | 0.2.1 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.2.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.1.1 | 1.15 or later | 19 November 2026 |
 | 0.1.0 | 1.15 or later | 19 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.3.0
+
+Added:
+
+- **Animation on and off:** the Coming up next and Later cards, the straps, the on-screen logo, the clock, the New, Repeat or Live label and the words on the holding slide can each fade, slide in from the left, the right or the bottom, wipe or grow, and go off the same ways, quick, normal or slow. Choose them for every channel on the new **Animation** page, or for one channel on its **Animation** card. Each has a **Preview**: a few seconds of it, in a new tab.
+- **A broadcast pack can choose its animation** in `pack.json`, under `animation`. A choice in the settings comes first.
+- **Each channel remembers what it has played** to someone watching. **From the next episode not watched** counts an episode it played, 70% or more of it, as watched, as well as what Jellyfin says. Jellyfin's own watched marks are never changed.
+- **Played on this channel:** a card on each channel lists the last 5 programmes it played, with **Count what this channel has played as watched** and a way to forget them.
+
+Changed:
+
+- **From the next episode not watched** starts at the first episode, in the channel's order, that is not watched; before, it took the first not played in Jellyfin's order.
 
 ## What is new in 0.2.1
 
