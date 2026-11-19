@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.5.4",
+ "version": "0.5.5",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -163,6 +163,14 @@
    "default": true,
    "hint": "A channel with no on-screen logo and no straps plays its programmes as they are, with no converting.",
    "group": "Streaming"
+  },
+  {
+   "key": "leave_out_3d",
+   "label": "Leave out 3D films",
+   "type": "switch",
+   "default": true,
+   "group": "Streaming",
+   "hint": "A 3D film plays as two pictures. Films Jellyfin or their file name says are 3D are left out, and each film on a channel is checked once in quiet hours."
   },
   {
    "key": "promos",
@@ -643,6 +651,14 @@
    "every_hours": 1,
    "quiet_hours": true,
    "time_limit_minutes": 45
+  },
+  {
+   "id": "three-d",
+   "label": "Check films for 3D",
+   "path": "/jobs/three-d",
+   "every_hours": 1,
+   "quiet_hours": true,
+   "time_limit_minutes": 45
   }
  ],
  "update": {
@@ -660,6 +676,16 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.5.5",
+   "date": "2026-11-19",
+   "fixed": [
+    "**Reading the channels again updates each programme's details**, such as which sound track it plays, its title and its picture, even when the programmes are the same. The schedule does not change."
+   ],
+   "added": [
+    "**Leave out 3D films** (Yes unless changed): a film Jellyfin or its file name says is 3D is left out of channels, and each film is checked once in quiet hours for two pictures side by side or one over the other."
+   ]
+  },
   {
    "version": "0.5.4",
    "date": "2026-11-19",

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.5 (19 November 2026)
+
+### Added
+- Leave out 3D films (owner, 19 November 2026: "I dont want any 3d films as it plays as 2 images"), Yes unless changed: a film Jellyfin marks as 3D, or whose file name says 3D (3D, SBS, HSBS, HOU and the like), is left out of every channel's line-up when it is read. As some 3D films are named like any film (the owner's Cloudy with a Chance of Meatballs was), a new quiet-hours job, Check films for 3D, also checks each film on the channels once: two frames, at 30% and 60%, compared half against half for two pictures side by side or one over the other, at the lowest priority and never while anyone is watching (it stops at once when someone starts). What it finds is kept in three_d.json, and a channel with a film found to be 3D is read again, so the film is left out. Reading a channel says how many 3D films were left out.
+
+### Fixed
+- Read the channels from Jellyfin again (and the nightly refresh) now brings each programme's details up to date even when the line-up has the same programmes: which sound track it plays (the 0.5.4 fix reaches line-ups read before it), its title, episode, plot and pictures. What the timing rests on (each programme's id, length, series and kind) is never changed this way, so the schedule stays exactly as it was. Before, a line-up with the same programmes was kept as it was.
+
 ## 0.5.4 (19 November 2026)
 
 ### Fixed

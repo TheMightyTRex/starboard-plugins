@@ -14,6 +14,16 @@ Create your own TV channel 0.3.0 is the latest version. It needs Starboard with 
 
 The catalogue offers each Starboard the newest version it can run.
 
+## What is new in 0.5.5
+
+Added:
+
+- **Leave out 3D films:** a film that is 3D, by what Jellyfin or its file name says or by a check of its picture in quiet hours, is left out of every channel.
+
+Changed:
+
+- **Reading the channels again** updates each programme's details, such as which sound track it plays, even when the programmes are the same.
+
 ## What is new in 0.5.2
 
 Added:

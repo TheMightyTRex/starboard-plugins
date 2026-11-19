@@ -35,8 +35,9 @@ import promo
 import sbplugin
 import schedule
 import stream
+import three_d
 
-VERSION = "0.5.4"
+VERSION = "0.5.5"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -67,6 +68,8 @@ BREAKS = {"0": "No break", "60": "1 minute", "120": "2 minutes", "180": "3 minut
 MID_BREAKS = {"0": "Off", "60": "Up to 1 minute each", "120": "Up to 2 minutes each", "180": "Up to 3 minutes each"}  # 0.4.0
 BREAKS_FILE = "breaks.json"  # breaks inside programmes found in quiet hours (0.4.0)
 BREAKS_AHEAD = 48 * 3600  # programmes airing this soon are looked at
+THREE_D_FILE = "three_d.json"  # films looked at for 3D in quiet hours (0.5.5)
+THREE_D_MOST = 60  # films looked at in one quiet-hours run
 ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer", "extras": "Extra video"}
 PER_BREAK = {"2": "Up to 2", "3": "Up to 3", "4": "Up to 4", "6": "Up to 6"}  # promos, trailers and clips in a break (0.5.0)
 EXTRA_MOST = 90 * 1024 * 1024  # bytes: an extra video for the breaks (0.5.0)
@@ -189,6 +192,7 @@ def refresh_channel(cid, now=None):
             return "That channel has gone"
         sources = list(ch["sources"])
     entries = library.lineup(jf, sources)
+    entries, left_out = without_3d(entries)
     trailers = library.trailers(jf, entries) if ch.get("trailers") else []
     with _lock:
         s = state()
@@ -200,10 +204,101 @@ def refresh_channel(cid, now=None):
         if h != ch.get("lineup_hash"):
             ch["eras"] = schedule.new_era(ch, entries, now)
             ch["lineup_hash"] = h
+        else:  # the same programmes: their details (such as which sound track, 0.5.5) are brought up to date in place
+            schedule.refresh_details(ch.get("eras"), entries)
         ch["refreshed"] = int(now)
         save(s)
     later_jellyfin()
-    return f"{ch['name']}: {sbplugin.plural(len(entries), 'programme')}"
+    return f"{ch['name']}: {sbplugin.plural(len(entries), 'programme')}" + (
+        f", {sbplugin.plural(left_out, '3D film')} left out" if left_out else "")
+
+
+def found_3d():
+    """Films checked for 3D so far (three_d.py), in the plug-in's folder."""
+    return three_d.Found(os.path.join(sbplugin.DATA, THREE_D_FILE))
+
+
+def leave_out_3d(cfg=None):
+    return truthy((cfg if cfg is not None else settings()).get("leave_out_3d"), True)
+
+
+def is_3d(e, found=None):
+    """Why a programme is 3D: what Jellyfin or its file name says, or what the quiet-hours check found; "" for 2D."""
+    return e.get("three_d") or (found or found_3d()).how(e.get("id"))
+
+
+def without_3d(entries, cfg=None):
+    """The line-up without 3D films, unless Leave out 3D films is deactivated; and how many were left out."""
+    if not leave_out_3d(cfg):
+        return entries, 0
+    found = found_3d()
+    keep = [e for e in entries if not is_3d(e, found)]
+    return keep, len(entries) - len(keep)
+
+
+def three_d_job(now=None, limit_seconds=40 * 60, most=None):
+    """In quiet hours (0.5.5): each film on a channel checked once for 3D, at the lowest priority, at most `most` in a
+    run, never while anyone is watching. A channel with a film found to be 3D is read again, so the film is left out."""
+    if not leave_out_3d():
+        return {"said": "Leave out 3D films is deactivated, so films are not checked"}
+    if not _promo_lock.acquire(blocking=False):
+        return {"said": "Promos are being made, so the check for 3D films waits for the next quiet hour"}
+    try:
+        return _three_d_run(limit_seconds, most or THREE_D_MOST)
+    finally:
+        _promo_lock.release()
+
+
+def _three_d_run(limit_seconds, most):
+    if someone_watching():
+        return {"said": "Someone is watching, so the check for 3D films waits for the next quiet hour"}
+    s = state()
+    found = found_3d()
+    todo, seen, where = [], set(), {}
+    for ch in s["channels"]:
+        eras = ch.get("eras") or []
+        for e in (eras[-1].get("lineup") if eras else None) or []:
+            if e.get("kind") != "Movie" or not e.get("id") or float(e.get("dur") or 0) < 20 * 60:
+                continue
+            where.setdefault(e["id"], set()).add(ch["id"])
+            if e["id"] not in seen and not found.known(e["id"]) and not e.get("three_d"):
+                seen.add(e["id"])
+                todo.append(e)
+    if not todo:
+        return {"said": "Every film on the channels has been checked for 3D"}
+    c = jf_conf()
+    three_d.begin()
+    looked, new, unread, stopped, began = 0, [], 0, "", time.monotonic()
+    for e in todo[:most]:
+        if time.monotonic() - began > limit_seconds or sbplugin.holding() or someone_watching():
+            break
+        try:
+            how = three_d.look(c.get("url", ""), c.get("api_key", ""), e)
+        except InterruptedError as err:
+            stopped = str(err)
+            break
+        except OSError:
+            how = None
+        if how is None:
+            unread += 1  # checked again in the next quiet hour
+            continue
+        found.put(e["id"], how)
+        looked += 1
+        if how:
+            new.append(e)
+    for cid in sorted({cid for e in new for cid in where.get(e["id"], ())}):
+        refresh_soon(cid)
+    said = f"Checked {sbplugin.plural(looked, 'film')} for 3D: {len(new)} 3D"
+    if new:
+        said += " (" + ", ".join(e.get("title") or "a film" for e in new[:3]) + (", and more" if len(new) > 3 else "") + "), left out"
+    left = len(todo) - looked - unread
+    if left > 0:
+        said += f". {left} more in the next quiet hour"
+    if unread:
+        said += f". {sbplugin.plural(unread, 'film')} could not be read"
+    if stopped:
+        said += f". {stopped}"
+    return {"said": said[:200]}
 
 
 def refresh_soon(cid):
@@ -2854,6 +2949,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(503, {"error": "The example pack is being made, which takes a minute or two. Choose the channel again then"})
         promo.stop()  # a promo being made gives way at once: nothing is made while anyone watches
         breaks.stop()  # and so does a search for breaks inside programmes (0.4.0)
+        three_d.stop()  # and a check for 3D films (0.5.5)
         try:
             hub = _streams.get(cid, plan_for(cid), most, grace, on_piece=lambda piece, secs: note_played(cid, piece, secs))
         except stream.Busy as e:
@@ -2920,6 +3016,11 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(200, {"said": "Not started: the plug-in is about to be updated"})
                 with sbplugin.working("promos"):
                     return self._json(200, promos_job())
+            if p == "/jobs/three-d":
+                if sbplugin.holding():
+                    return self._json(200, {"said": "Not started: the plug-in is about to be updated"})
+                with sbplugin.working("3D films"):
+                    return self._json(200, three_d_job())
             if p == "/jobs/breaks":
                 if sbplugin.holding():
                     return self._json(200, {"said": "Not started: the plug-in is about to be updated"})

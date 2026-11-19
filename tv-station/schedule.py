@@ -235,6 +235,29 @@ def new_era(spec, lineup, now, settings_changed=False):
     return keep + [era]
 
 
+# What a refresh may change in a programme already in a line-up (0.5.5): its details, never what the timing rests on
+# (its id, length, series or kind), so the schedule stays exactly as it was.
+DETAIL_KEYS = ("audio_n", "has_audio", "title", "ep", "s", "e", "plot", "year", "premiere", "genres", "art", "backdrop")
+
+
+def refresh_details(eras, entries):
+    """Brings the programmes in every era up to date from a fresh read of Jellyfin, by id: the DETAIL_KEYS change, and
+    the sound field from before 0.5.4 ("audio", Jellyfin's Index) goes. Returns how many programmes changed."""
+    fresh = {e["id"]: e for e in entries}
+    changed = 0
+    for era in eras or []:
+        for e in era.get("lineup") or []:
+            f = fresh.get(e.get("id"))
+            if not f:
+                continue
+            new = {k: f[k] for k in DETAIL_KEYS if k in f}
+            if any(e.get(k) != v for k, v in new.items()) or "audio" in e:
+                e.update(new)
+                e.pop("audio", None)
+                changed += 1
+    return changed
+
+
 def lineup_hash(lineup):
     return hashlib.sha256("|".join(f"{e['id']}:{round(float(e['dur']), 1)}" for e in lineup).encode()).hexdigest()[:16]
 
