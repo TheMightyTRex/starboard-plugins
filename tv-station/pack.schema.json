@@ -26,10 +26,20 @@
             "properties": {"music": {"type": "array", "maxItems": 20,
                                      "items": {"type": "string", "pattern": "^promo/music/[A-Za-z0-9 _.-]{1,60}\\.(m4a|mp3|wav|flac|ogg|opus)$"}},
                            "seconds": {"description": "How long each promo is. 15 unless you change it.", "type": "integer", "minimum": 10, "maximum": 30}}},
-  "transitions": {"type": "array", "maxItems": 20, "items": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}\\.(webm|mov)$"}}
+  "transitions": {"type": "array", "maxItems": 20, "items": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}\\.(webm|mov)$"}},
+  "animation": {"description": "Optional (0.3.0): how each thing drawn over the picture animates on and off. A setting chosen in Starboard comes first; anything not given here is None.",
+                "type": "object", "additionalProperties": false,
+                "properties": {"cards": {"$ref": "#/$defs/animation"}, "straps": {"$ref": "#/$defs/animation"},
+                               "logo": {"$ref": "#/$defs/animation"}, "clock": {"$ref": "#/$defs/animation"},
+                               "label": {"$ref": "#/$defs/animation"}, "holding": {"$ref": "#/$defs/animation"}}}
  },
  "$defs": {
   "colour": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+  "animation": {"description": "in: how it comes on; out: how it goes off; speed: quick (0.3 seconds), normal (0.6) or slow (1). left, right and bottom slide from or to that edge; wipe wipes on from the left and off to the right; grow grows from or shrinks to its centre.",
+                "type": "object", "additionalProperties": false,
+                "properties": {"in": {"enum": ["none", "fade", "left", "right", "bottom", "wipe", "grow"]},
+                               "out": {"enum": ["none", "fade", "left", "right", "bottom", "wipe", "grow"]},
+                               "speed": {"enum": ["quick", "normal", "slow"]}}},
   "rect": {"description": "[left, top, right, bottom] in pixels of 1920 by 1080.", "type": "array", "minItems": 4, "maxItems": 4,
            "items": {"type": "integer", "minimum": 0, "maximum": 1920}},
   "field": {"oneOf": [

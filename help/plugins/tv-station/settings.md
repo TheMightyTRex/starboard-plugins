@@ -1,10 +1,10 @@
 # Create your own TV channel: Settings
 
-Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **Idents, clips and music** and **Broadcast pack**, open from the same tab. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
+Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **Idents, clips and music**, **Broadcast pack** and **Animation**, open from the same tab. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
 
 ## Channels
 
-**Channels** lists your channels, each on a card with its number, its name, whether it is on air and what is on now. Select a channel to open it. An opened channel has a card for each part of it, each saying what it is for: **Name and number**, **What it shows**, **Breaks**, **On-screen logo and branding**, **Holding slide and promos**, and **Today and tomorrow**.
+**Channels** lists your channels, each on a card with its number, its name, whether it is on air and what is on now. Select a channel to open it. An opened channel has a card for each part of it, each saying what it is for: **Name and number**, **What it shows**, **Breaks**, **On-screen logo and branding**, **Animation**, **Holding slide and promos**, **Today and tomorrow**, and **Played on this channel**.
 
 ### Add a channel
 
@@ -42,6 +42,11 @@ Its line-up is read from Jellyfin straight away. The programmes for today and to
 | On-screen logo and branding | Every on-screen logo setting | **Station default** uses the station's choice, which the option names |
 | On-screen logo and branding | **Preview a frame** | Opens a frame of what is on now, drawn with the settings, in a new tab |
 | On-screen logo and branding | **Preview a Coming up next card** | Opens the next card, in a new tab |
+| Animation | For each thing that animates: **Coming on**, **Going off** and **Speed** | **Station default** uses the choice on the **Animation** page, which the option names. The rest are as on that page |
+| Animation | **Preview** | Opens a few seconds of that thing coming on and going off, with this channel's choices, in a new tab |
+| Played on this channel | **Count what this channel has played as watched** | **Yes** unless you change it: for **From the next episode not watched**, an episode this channel played to someone watching, 70% or more of it, counts as watched, as well as the ones Jellyfin says were played. Jellyfin's own watched marks are never changed |
+| Played on this channel | The last 5 programmes | When each was on, and how many of its minutes were played to someone watching: **Watched** at 70% or more, else **Part watched** |
+| Played on this channel | **The record of what it has played** | **Remove**, in its More menu, forgets everything this channel has played, after you confirm. Jellyfin is not changed |
 | Holding slide and promos | **Holding slide** | **The station's holding slide**, **Its own holding slide** or **No holding slide**. The slide loops at the end of each break, after the promos, until the next programme starts, so the channel never shows black. With none, breaks end on Coming up next cards |
 | Holding slide and promos | **Its own holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 60 MB, which loops. It is checked with FFmpeg first |
 | Holding slide and promos | **Words on the slide** | **A countdown to the next programme** (Next programme in 4:32, with the programme's name, reaching 0:00 as it starts), **Back soon** or **No words**. **Station default** uses the choice in Idents, clips and music |
@@ -50,6 +55,10 @@ Its line-up is read from Jellyfin straight away. The programmes for today and to
 | Holding slide and promos | **Add music for its promos** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes. Used for this channel's promos in place of the station's music |
 
 A change to what a channel shows, its order or its times starts after the programme on air ends, so nobody watching meets a jump.
+
+### What a channel has played
+
+A channel streams only while someone is watching it in Jellyfin's Live TV, so what it plays is what was watched. For each episode and film it keeps when it was on and how much of it was played, in its own small file in the plug-in's folder, the newest 5,000 programmes, written about once a minute while it plays and once as it stops. It never tells Jellyfin, so Jellyfin's watched marks, and **Continue watching**, stay as they were. On the schedule grid, **From the next episode not watched** then starts a series at the first episode, in the channel's order, that is neither played in Jellyfin nor watched on the channel.
 
 ## Guide
 
@@ -97,6 +106,28 @@ Your own branding for every channel: the on-screen logo, the logo with its music
 | **Downloads** | The template (folders, `pack.json`, its schema and a README), the placement guides for the Coming up next card, the promo and the on-screen logo, and the example pack as a zip |
 | **Promos kept** | Each promo, with its programme, its day and time and its channel |
 | **Each channel's pack** | Which pack each channel uses. Change it on the channel's page |
+
+## Animation
+
+**Animation** sets how each thing drawn over the picture comes on and goes off, for every channel. A channel can choose its own on its **Animation** card.
+
+| Thing | When it animates |
+|---|---|
+| **Coming up next and Later cards** | The words, the bar and the programme's picture come on as each card starts and go off by its end. The background stays still |
+| **Straps** | The programme's name as it starts, and Up next during the end credits |
+| **On-screen logo** | As a programme starts and ends, when **When it shows** is only during programmes or programmes and cards; and when it appears after the opening, with **Fades in after the opening**. When it shows always, it stays where it is |
+| **Clock** | With the on-screen logo |
+| **New, Repeat or Live label** | On as the programme starts, off at 2 minutes |
+| **Words on the holding slide** | On as the slide starts, off by the time the next programme starts |
+
+| Setting | What it does |
+|---|---|
+| **Coming on** | **The broadcast pack's, or none**: what the station's pack says, or no animation. Or **None**, **Fade in**, **Slide in from the left**, **Slide in from the right**, **Slide up from the bottom**, **Wipe on from the left** or **Grow from the centre** |
+| **Going off** | **The broadcast pack's, or none**, **None**, **Fade out**, **Slide off to the left**, **Slide off to the right**, **Slide down off the bottom**, **Wipe off to the right** or **Shrink to the centre** |
+| **Speed** | **The broadcast pack's, or normal**, **Quick, 0.3 seconds**, **Normal, 0.6 seconds** or **Slow, 1 second** |
+| **Preview** | On each thing's **Coming on** row: opens a few seconds of it coming on and going off, in a new tab, drawn over a made-up picture with the choices saved |
+
+Timing stays exact: each thing comes on from its start and has gone by its end, so an animation never makes a break or a strap longer. Something shown for less time than two animations has both made shorter to fit. Each thing is drawn on its own layer only while it moves, and straight on the picture the rest of the time, so it costs little: measured at 720p, a programme with everything animating used no more processor than one without, and a card with animation used about half the processor of a plain one. A **Preview a frame** picture shows each thing where it rests.
 
 ## Station
 

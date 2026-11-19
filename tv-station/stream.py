@@ -12,7 +12,9 @@ import subprocess
 import threading
 import time
 
+import animate
 import dog
+import played
 from guide import episode_words, is_new
 
 CHUNK = 188 * 348  # whole MPEG-TS packets, about 64 KB
@@ -63,16 +65,19 @@ def piece_command(piece, now, ctx):
     layout:    a broadcast pack's Coming up next layout, with "file" its background, for cards
     trans_in:  a pack's transition, {"file", "dur", "codec"}: its second half plays over the start of this piece
     trans_out: the same, its first half over the end; the piece then has "tail_from", where its last half starts
+    stand_in:  in place of a programme from Jellyfin, these input arguments (an animation's preview)
+    to_file:   an MP4 file to write, as fast as it can, in place of the stream (an animation's preview)
     """
     W, H = ctx["W"], ctx["H"]
-    opts = ctx["opts"]
     still = bool(ctx.get("still"))
+    opts = dog.still(ctx["opts"]) if still else ctx["opts"]  # a still frame shows each thing where it rests
+    to_file = ctx.get("to_file")
     into = max(0.0, now - piece["start"])
     left = piece["end"] - now
     kind = piece["kind"]
     # Two decoder threads for each input: FFmpeg left to choose starts one for each processor it can find, and the
     # container has a limit on threads (a programme, a background, a picture and a transition at once).
-    pace = ([] if still else ["-re", "-readrate_initial_burst", "2"]) + ["-threads", "2"]
+    pace = ([] if still or to_file else ["-re", "-readrate_initial_burst", "2"]) + ["-threads", "2"]
     # Few threads: Starboard's containers have a limit on processes and threads, and the plug-in has 2 cores.
     args = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-filter_threads", "2", "-filter_complex_threads", "2"]
     audio_from = None
@@ -84,7 +89,10 @@ def piece_command(piece, now, ctx):
     if kind == "programme":
         e = piece["airing"]["entry"]
         rel = into
-        args += pace + ["-ss", f"{into:.3f}"] + jellyfin_input(ctx["jf_url"], ctx["jf_key"], e["id"])
+        if ctx.get("stand_in"):
+            args += pace + ctx["stand_in"]
+        else:
+            args += pace + ["-ss", f"{into:.3f}"] + jellyfin_input(ctx["jf_url"], ctx["jf_key"], e["id"])
         if e.get("has_audio", True):
             audio_from = f"0:{e['audio']}" if e.get("audio") is not None else "0:a:0"
         label = ""
@@ -121,25 +129,38 @@ def piece_command(piece, now, ctx):
         args += pace + ["-f", "lavfi", "-t", f"{most:.3f}", "-i", f"color=c=0x14202e:s={W}x{H}:r={FPS}"]
     n_inputs = 1
     if audio_from is None:
-        args += ([] if still else ["-re"]) + ["-f", "lavfi", "-t", f"{most:.3f}", "-i", "anullsrc=r=48000:cl=stereo"]
+        args += ([] if still or to_file else ["-re"]) + ["-f", "lavfi", "-t", f"{most:.3f}", "-i", "anullsrc=r=48000:cl=stereo"]
         audio_from = f"{n_inputs}:a"
         n_inputs += 1
     trans_in, trans_out = ctx.get("trans_in"), ctx.get("trans_out")
-    copy = (kind == "programme" and ctx.get("copy_ok") and dog.needs_encoding(opts) and not still and not trans_in and not trans_out)
+    copy = (kind == "programme" and ctx.get("copy_ok") and dog.needs_encoding(opts) and not still and not trans_in and not trans_out
+            and not to_file)
     if copy:
         args += ["-map", "0:v:0", "-map", audio_from]
         return args + output_args(W, H, ctx["kbps"], ctx["ts_offset"], left, copy=True)
     pre = []
+    layers = []  # animated things (0.3.0), each laid over the picture in turn
+    # The card's words, and the holding slide's, animate on as the piece starts and off by its end.
+    whole = animate.fit(animate.spec(opts, "cards" if kind == "card" else "holding"), -into, left) if kind in ("card", "holding") else None
     if layout:
         base = f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={FPS},format=yuv420p"
         sx, sy = W / 1920, H / 1080
         x0, y0, x1, y1 = layout["clip"]
         cw, ch = int((x1 - x0) * sx) // 2 * 2, int((y1 - y0) * sy) // 2 * 2
+        group = animate.canvas(W, H)
         if ctx.get("art"):
             args += pace + ["-loop", "1", "-framerate", str(FPS), "-t", f"{most:.3f}", "-headers",
                             f'Authorization: MediaBrowser Token="{ctx["jf_key"]}"\r\n', "-i", ctx["art"]]
-            pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuv420p[art]")
-            base += f"[bgc];[bgc][art]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat"
+            if whole:  # the programme's picture moves with the words while they move, and rests on the background between
+                moves = len(animate.windows(whole))
+                pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuva420p,"
+                           f"split={moves + 1}[artr]" + "".join(f"[art0_{j}]" for j in range(moves)))
+                group += f"[cv@J@];[cv@J@][art@J@]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat:format=auto"
+                base += (f"[bgc];[bgc][artr]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat:format=auto"
+                         f":enable='{animate.at_rest(whole)}'")
+            else:
+                pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuv420p[art]")
+                base += f"[bgc];[bgc][art]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat"
             n_inputs += 1
         a = piece["airing"]["entry"]
         said = {"Heading": "Coming up next" if piece.get("card") == "next" else f"Later on {ctx['names']['channel']}",
@@ -149,13 +170,16 @@ def piece_command(piece, now, ctx):
         for name, style in (layout.get("fields") or {}).items():
             if said.get(name):
                 chain += dog.box_text(ctx["texts"], said[name], style, sx, sy)
+        if whole:
+            layers.append({"src": group, "draw": chain, "rest": chain, "static": True, "f": whole, "x": 0, "y": 0, "w": W, "h": H})
+            chain = []
     elif kind == "card":
         base = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={FPS},format=yuv420p"
         a = piece["airing"]["entry"]
         card = {"kicker": "Coming up next" if piece.get("card") == "next" else f"Later on {ctx['names']['channel']}",
                 "title": a.get("title") or "Programme", "episode": episode_words(a), "when": dog.when_words(piece["airing"]["start"], now),
                 "plot": a.get("plot") or "", "footer": f"{ctx['names']['station']}  ·  {ctx['names']['channel']}"}
-        chain = dog.card_chain(W, H, ctx["texts"], card, ctx.get("colour") or "0x1f5f99")
+        chain = dog.card_chain(W, H, ctx["texts"], card, ctx.get("colour") or "0x1f5f99", layers, whole)
     elif kind == "holding":
         # A holding slide (0.2.0): the picture or short video looped until the next programme, with Back soon or a
         # countdown to it, worked out from what is left of the piece, so it reaches 0:00 as the programme starts.
@@ -163,7 +187,7 @@ def piece_command(piece, now, ctx):
                 f"setsar=1,fps={FPS},format=yuv420p")
         nxt = (piece.get("airing") or {}).get("entry") or {}
         title = (nxt.get("title") or "") + (f": {episode_words(nxt)}" if episode_words(nxt) else "")
-        chain = dog.holding_chain(W, H, ctx["texts"], piece["holding"].get("words") or "countdown", title, left)
+        chain = dog.holding_chain(W, H, ctx["texts"], piece["holding"].get("words") or "countdown", title, left, layers, whole)
     elif kind == "slate":
         base = "setsar=1,format=yuv420p"
         chain = dog.slate_chain(W, H, ctx["texts"], f"{ctx['names']['station']}  ·  {ctx['names']['channel']}")
@@ -171,13 +195,34 @@ def piece_command(piece, now, ctx):
         base = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=black,"
                 f"setsar=1,fps={FPS},format=yuv420p")
         chain = []
-    extra, logo_f = dog.overlay_chain(opts, W, H, kind, ctx["texts"], ctx["names"], logo=ctx.get("logo"), rel=rel, programme=programme)
+    extra, logo_f = dog.overlay_chain(opts, W, H, kind, ctx["texts"], ctx["names"], logo=ctx.get("logo"), rel=rel, programme=programme,
+                                      layers=layers)
     chain = chain + extra
+    for ly in layers:
+        if not ly.get("logo"):
+            chain += [r + f":enable='{animate.at_rest(ly['f'])}'" for r in ly.get("rest") or []]
     graph = ";".join(pre + [f"[0:v]{base}" + ("," + ",".join(chain) if chain else "")])
+    logo_anim = next((ly["f"] for ly in layers if ly.get("logo")), None)
+    drawn = [ly for ly in layers if not ly.get("logo")]
+    for k, ly in enumerate(drawn):
+        # Each animated thing moves on a layer of its own, only while it moves: the layer is trimmed to each animation,
+        # and between them the thing is drawn straight on the picture (its "rest" filters), as with None.
+        for j, (a, b) in enumerate(animate.windows(ly["f"])):
+            src = ly["src"].replace("@J@", f"{k}_{j}")
+            if ly["static"]:  # drawn once, repeated, then only the frames of this animation
+                steps = ly["draw"] + [animate.HOLD, animate.trim(a, b)]
+            else:  # words that change, such as the clock: drawn only for the frames of this animation
+                steps = [animate.trim(a, b)] + ly["draw"]
+            steps += animate.layer_filters(ly["f"], ly["w"], ly["h"])
+            graph += (f"[a{k}_{j}];{src}" + "".join("," + x for x in steps) + f"[l{k}_{j}];[a{k}_{j}][l{k}_{j}]"
+                      + animate.moving_overlay(ly["f"], ly["x"], ly["y"], a, b))
     if logo_f:
         args += ["-loop", "1", "-t", f"{most:.3f}", "-i", ctx["logo"]]
         x, y = dog.logo_position(opts, W, H)
-        graph += f"[b];[{n_inputs}:v]{logo_f}[lg];[b][lg]overlay=x={x}:y={y}:shortest=1:format=auto[v0]"
+        if logo_anim:
+            graph += f"[b];[{n_inputs}:v]{logo_f}[lg];[b][lg]" + animate.overlay(logo_anim, x, y).replace(":format=auto", ":shortest=1:format=auto") + "[v0]"
+        else:
+            graph += f"[b];[{n_inputs}:v]{logo_f}[lg];[b][lg]overlay=x={x}:y={y}:shortest=1:format=auto[v0]"
         n_inputs += 1
     else:
         graph += "[v0]"
@@ -198,6 +243,9 @@ def piece_command(piece, now, ctx):
             out, n_inputs = "v2", n_inputs + 1
     if still:
         return args + ["-filter_complex", graph, "-map", f"[{out}]", "-frames:v", "1", "-c:v", "png", "-f", "image2", "pipe:1"]
+    if to_file:
+        return args + ["-filter_complex", graph, "-map", f"[{out}]", "-t", f"{max(0.5, left):.3f}", "-c:v", "libx264", "-preset", "veryfast",
+                       "-crf", "20", "-pix_fmt", "yuv420p", "-threads", "2", "-movflags", "+faststart", "-an", "-y", to_file]
     args += ["-filter_complex", graph, "-map", f"[{out}]", "-map", audio_from]
     if audio_gain:
         args += ["-af", f"volume={audio_gain:+.1f}dB"]
@@ -211,8 +259,10 @@ class Busy(Exception):
 class Hub:
     """One channel being watched: one FFmpeg at a time, its output shared by every viewer."""
 
-    def __init__(self, cid, plan, grace, on_stop):
+    def __init__(self, cid, plan, grace, on_stop, on_piece=None):
         self.cid = cid
+        self.on_piece = on_piece  # on_piece(piece, seconds streamed to a viewer) after each piece; (None, 0) as it stops
+        self.watched = 0.0
         self.plan = plan  # plan(now) -> (piece, ctx) for what is on now
         self.grace = grace
         self.on_stop = on_stop
@@ -291,6 +341,8 @@ class Hub:
                 ok = self._play(argv)
                 if cleanup:
                     cleanup()
+                if self.on_piece and piece.get("kind") == "programme":
+                    self._tell(piece, played.streamed(piece, now, ok, self.watched))
                 self.pieces_played += 1
                 cursor = piece["end"] if ok else time.time()
                 if self.stopping:
@@ -303,6 +355,8 @@ class Hub:
                     if cleanup2:
                         cleanup2()
         finally:
+            if self.on_piece:
+                self._tell(None, 0.0)
             with self.lock:
                 for q in self.viewers:
                     try:
@@ -312,16 +366,28 @@ class Hub:
                 self.viewers.clear()
             self.on_stop(self)
 
+    def _tell(self, piece, seconds):
+        try:
+            self.on_piece(piece, seconds)
+        except Exception:  # noqa: BLE001 - the record is never a reason for a channel to stop
+            pass
+
     def _play(self, argv):
+        self.watched = 0.0  # seconds of this piece sent while someone was watching
         try:
             self.proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
         except OSError:
             return False
         fd = self.proc.stdout.fileno()
         held = b""
+        last = time.monotonic()
         try:
             while not self.stopping:
                 got = os.read(fd, CHUNK)
+                at = time.monotonic()
+                if self.viewers:
+                    self.watched += at - last
+                last = at
                 if not got:
                     break
                 held += got
@@ -352,14 +418,14 @@ class Streams:
         self.lock = threading.Lock()
         self._watcher = None
 
-    def get(self, cid, plan, most, grace):
+    def get(self, cid, plan, most, grace, on_piece=None):
         with self.lock:
             hub = self.hubs.get(cid)
             if hub and not hub.stopping:
                 return hub
             if len([h for h in self.hubs.values() if not h.stopping]) >= most:
                 raise Busy(f"{most} channels are playing, the most at once")
-            hub = Hub(cid, plan, grace, self._gone)
+            hub = Hub(cid, plan, grace, self._gone, on_piece)
             self.hubs[cid] = hub
             if not self._watcher or not self._watcher.is_alive():
                 self._watcher = threading.Thread(target=self._watch, name="watcher", daemon=True)
