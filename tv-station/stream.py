@@ -43,11 +43,16 @@ def output_args(W, H, kbps, ts_offset, duration, copy=False):
                     "pipe:1"]
 
 
-def _pack_input(path, still, pace, most):
-    """A pack's background, looped, and never longer than the piece: no input here is ever endless."""
+PREVIEW_INTO = 1.5  # seconds into a card's background video that a preview frame is taken (0.3.1)
+
+
+def _pack_input(path, still, pace, most, into=0.0):
+    """A pack's background, looped, and never longer than the piece: no input here is ever endless. into: seconds to
+    start in, for a preview frame of a background that opens with a movement, such as bands sweeping off (0.3.1)."""
     if still:
         return pace + ["-loop", "1", "-framerate", str(FPS), "-t", f"{most:.3f}", "-i", path]
-    return pace + ["-stream_loop", "-1", "-t", f"{most:.3f}", "-i", path]
+    seek = ["-ss", f"{into:.3f}"] if into > 0 else []
+    return pace + ["-stream_loop", "-1", *seek, "-t", f"{most:.3f}", "-i", path]
 
 
 def _transition_input(tr, start, pace):
@@ -121,7 +126,7 @@ def piece_command(piece, now, ctx):
             audio_from = "0:a:0"
             audio_gain = float(h.get("gain") or 0)
     elif layout:
-        args += _pack_input(layout["file"], layout.get("still"), pace, most)
+        args += _pack_input(layout["file"], layout.get("still"), pace, most, into=PREVIEW_INTO if still else 0.0)
     elif kind == "card" and ctx.get("art"):
         args += pace + ["-loop", "1", "-framerate", str(FPS), "-t", f"{most:.3f}", "-headers", f'Authorization: MediaBrowser Token="{ctx["jf_key"]}"\r\n',
                         "-i", ctx["art"]]
