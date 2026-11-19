@@ -43,7 +43,7 @@ Its line-up is read from Jellyfin straight away. The programmes for today and to
 | On-screen logo and branding | **Preview a frame** | Opens a frame of what is on now, drawn with the settings, in a new tab |
 | On-screen logo and branding | **Preview a Coming up next card** | Opens the next card, in a new tab |
 | Holding slide and promos | **Holding slide** | **The station's holding slide**, **Its own holding slide** or **No holding slide**. The slide loops at the end of each break, after the promos, until the next programme starts, so the channel never shows black. With none, breaks end on Coming up next cards |
-| Holding slide and promos | **Its own holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 60 seconds and 60 MB, which loops. It is checked with FFmpeg first |
+| Holding slide and promos | **Its own holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 60 MB, which loops. It is checked with FFmpeg first |
 | Holding slide and promos | **Words on the slide** | **A countdown to the next programme** (Next programme in 4:32, with the programme's name, reaching 0:00 as it starts), **Back soon** or **No words**. **Station default** uses the choice in Idents, clips and music |
 | Holding slide and promos | **Preview the holding slide** | Opens a frame of the slide with its words, in a new tab |
 | Holding slide and promos | **Promos** | How this channel's promos are made: with its pack's promo, or on its colour with your music, or none yet |
@@ -78,7 +78,7 @@ The station's own idents and clips, for every channel that chooses **The station
 
 | Setting | What it does |
 |---|---|
-| **The station's holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 60 seconds and 60 MB. Every channel without its own slide uses it |
+| **The station's holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 60 MB. Every channel without its own slide uses it |
 | **Words on the slide** | A countdown to the next programme, Back soon, or no words. Each channel can choose its own |
 | **Music the promos use** | **Your music and the pack's**, **Only your music** or **Only the pack's music**. A channel's own music comes first. With no music of the kind chosen, the other is used |
 | **Add music for promos** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks. Each is checked with FFmpeg and played at the same loudness as the rest. **Remove** in its More menu takes it off |

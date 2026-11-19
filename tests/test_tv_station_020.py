@@ -291,14 +291,19 @@ class Uploads(App):
         d = self.tmp.name
         cid = self.channel(lineup=episodes("a", 3, 1300))
         clip = make(os.path.join(d, "loop.mp4"), ["-f", "lavfi", "-i", "testsrc2=s=320x180:d=3", "-c:v", "libx264", "-preset", "ultrafast"])
-        long = make(os.path.join(d, "long.mp4"), ["-f", "lavfi", "-i", "testsrc2=s=160x90:r=5:d=70", "-c:v", "libx264", "-preset", "ultrafast"])
+        long = make(os.path.join(d, "long.mp4"), ["-f", "lavfi", "-i", "testsrc2=s=160x90:r=5:d=125", "-c:v", "libx264", "-preset", "ultrafast"])
+        fine = make(os.path.join(d, "fine.mp4"), ["-f", "lavfi", "-i", "testsrc2=s=160x90:r=5:d=100", "-c:v", "libx264", "-preset", "ultrafast"])
         pic = make(os.path.join(d, "slide.png"), ["-f", "lavfi", "-i", "testsrc2=s=320x180:d=1", "-frames:v", "1"])
 
         def send(path, item):
             data = open(path, "rb").read()
             return self.app.channels_file(os.path.basename(path), item, len(data), io.BytesIO(data))
-        with self.assertRaisesRegex(ValueError, "up to 60 seconds"):
+        with self.assertRaisesRegex(ValueError, "up to 120 seconds"):  # 120 seconds from 0.2.1 (owner, 19 November 2026)
             send(long, f"{cid}:holding-own")
+        send(fine, f"{cid}:holding-own")  # 100 seconds is fine now
+        self.assertEqual(self.app.HOLDING_MOST, 90 * 1024 * 1024)
+        with self.assertRaisesRegex(ValueError, "up to 90 MB"):
+            self.app.add_holding(f"ch-{cid}", "big.mp4", 91 * 1024 * 1024, io.BytesIO(b""))
         self.can("partial")
         page = send(clip, f"{cid}:holding-own")
         self.assertEqual(page["partial"], {"menus": [cid]})

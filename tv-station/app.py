@@ -48,7 +48,8 @@ LOGO_TYPES = (".png", ".svg")
 MUSIC_TYPES = (".mp3", ".m4a", ".ogg", ".flac")
 HOLDING_TYPES = (".png", ".jpg", ".jpeg", ".mp4", ".mov", ".webm", ".mkv")
 MUSIC_MOST = 20  # tracks for the station, and for each channel
-HOLDING_LONGEST = 60  # seconds: a holding slide's video loops, so a short one is enough
+HOLDING_LONGEST = 120  # seconds: a holding slide's video loops (owner, 19 November 2026: 120 seconds and 90 MB)
+HOLDING_MOST = 90 * 1024 * 1024  # bytes: Starboard 0.24.1 and later pass files of up to 100 MB
 MUSIC_USE = {"both": "Your music and the pack's", "mine": "Only your music", "pack": "Only the pack's music"}
 HOLDING_MODES = {"": "The station's holding slide", "own": "Its own holding slide", "none": "No holding slide"}
 COLOURS = {"0x1f5f99": "Blue", "0x2e7d32": "Green", "0xb3261e": "Red", "0x6a3d9a": "Purple", "0xb35c00": "Orange",
@@ -434,7 +435,7 @@ def add_holding(key, name, length, rfile):
     """A holding slide's picture or short video, checked with ffprobe like a pack's files: key is station or
     ch-<channel>. The one before it is replaced. Returns what is kept about it."""
     folder = os.path.join(sbplugin.DATA, HOLDING)
-    path, base = save_upload(name, length, rfile, os.path.join(folder, ".new"), HOLDING_TYPES)
+    path, base = save_upload(name, length, rfile, os.path.join(folder, ".new"), HOLDING_TYPES, most=HOLDING_MOST)
     try:
         info = pack.probe(path)
         v = info["video"]
@@ -908,8 +909,8 @@ def channel_rows(s, ch, cfg, base, now):
                 "None yet, so breaks end on Coming up next cards. ") + "It loops after the promos until the next programme starts.")
     row("holding-own", "Its own holding slide: " + (holding_words(ch["holding"]) if ch.get("holding") else "none yet"), g,
         actions=["attach", "detach"] if ch.get("holding") else ["attach"], state="ok" if ch.get("holding") else "unknown",
-        state_label="Ready" if ch.get("holding") else "Add one", detail="A picture, or a video of up to 60 seconds that loops. The station's is in Idents, clips and music.",
-        attach={"label": "Upload a holding slide", "field": "Holding slide", "detach_label": "Remove the slide", "hint": "A PNG or JPEG picture, or a video of up to 60 seconds and 60 MB",
+        state_label="Ready" if ch.get("holding") else "Add one", detail="A picture, or a video of up to 120 seconds that loops. The station's is in Idents, clips and music.",
+        attach={"label": "Upload a holding slide", "field": "Holding slide", "detach_label": "Remove the slide", "hint": "A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB",
                 "accept": ",".join(HOLDING_TYPES)})
     st_words = dog.HOLDING_WORDS.get(s.get("holding_words") or "countdown")
     row("holding_words", "Words on the slide", g, choice=_choice("Words", ch.get("holding_words") or "", dog.HOLDING_WORDS, st_words),
@@ -1339,7 +1340,7 @@ def clips_page(said=None):
                              if h else "Upload a picture or a short video, and it loops at the end of each break until the next programme starts. ")[:200],
                   "actions": ["attach", "detach"] if h else ["attach"],
                   "attach": {"label": "Upload a holding slide", "field": "Holding slide", "accept": ",".join(HOLDING_TYPES), "detach_label": "Remove the slide",
-                             "hint": "A PNG or JPEG picture, or a video of up to 60 seconds and 60 MB. Choose a file: names are not used here"}})
+                             "hint": "A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Choose a file: names are not used here"}})
     items.append({"id": "holding-words", "title": "Words on the slide", "group": "Holding slide", "state": "ok", "state_label": "Saved",
                   "detail": "A countdown says Next programme in 4:32 with the programme's name, and reaches 0:00 as it starts. Each channel can choose its own.",
                   "choice": _choice("Words", s.get("holding_words") or "countdown", dog.HOLDING_WORDS)})
