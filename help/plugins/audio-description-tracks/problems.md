@@ -55,6 +55,7 @@ Your Starboard's plug-in API is outside what this version of Audio description t
 - For **Choose the title**, choose the right one in **Film or episode** on **Description tracks to add**.
 - For **No match**, rename the file as the film and its year, such as `Dune (2021).mp3`, or a series with its episode, such as `Slow Horses S01E03.mp3`. Then select **Check the folder now**.
 - If it says the series is in Jellyfin but not that episode, check the series and episode numbers in the name.
+- If the film is in a Jellyfin collection and you have version 1.2.0 or earlier, update the plug-in. On Jellyfin 12, those versions could not find a film in a collection.
 
 ## Move the film into the media folder
 

@@ -175,7 +175,10 @@ def described(streams):
 def find(parsed):
     """(the title it surely is or None, up to 11 titles it may be, words when nothing matched)."""
     if parsed["kind"] == "episode":
-        shows = (jellyfin("/Items?" + _q(Recursive="true", IncludeItemTypes="Series", searchTerm=parsed["name"], Limit=5)) or {}).get("Items") or []
+        # CollapseBoxSetItems=false (DASH-478): on Jellyfin 12, once a collection exists, a search answers with the
+        # collection in place of the films or series in it unless it is asked not to.
+        shows = (jellyfin("/Items?" + _q(Recursive="true", IncludeItemTypes="Series", searchTerm=parsed["name"], CollapseBoxSetItems="false",
+                                         Limit=5)) or {}).get("Items") or []
         same = [s for s in shows if same_name(s.get("Name"), parsed["name"])] or shows[:1]
         if not same:
             return None, [], f"No series called {parsed['name']} is in Jellyfin"
@@ -185,7 +188,8 @@ def find(parsed):
         if not hit:
             return None, [], f"{show.get('Name')} is in Jellyfin, but not series {parsed['season']} episode {parsed['episode']}"
         return _entry({**hit[0], "SeriesName": hit[0].get("SeriesName") or show.get("Name")}), [], ""
-    films = (jellyfin("/Items?" + _q(Recursive="true", IncludeItemTypes="Movie", searchTerm=parsed["name"], Fields="Path,MediaStreams", Limit=11)) or {}).get("Items") or []
+    films = (jellyfin("/Items?" + _q(Recursive="true", IncludeItemTypes="Movie", searchTerm=parsed["name"], Fields="Path,MediaStreams",
+                                     CollapseBoxSetItems="false", Limit=11)) or {}).get("Items") or []
     maybe = [_entry(f) for f in films if f.get("Id")]
     same = [f for f in films if same_name(f.get("Name"), parsed["name"]) and (not parsed["year"] or int(f.get("ProductionYear") or 0) == parsed["year"])]
     if len(same) == 1:

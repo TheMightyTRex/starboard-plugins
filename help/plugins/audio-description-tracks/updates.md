@@ -1,11 +1,12 @@
 # Audio description tracks: Updates
 
-Audio description tracks 1.2.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description tracks 1.2.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.2.1 | 1.14 or later | 19 November 2026 |
 | 1.2.0 | 1.14 or later | 17 November 2026 |
 | 1.1.4 | 1.14 or later | 17 November 2026 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
@@ -15,6 +16,12 @@ Audio description tracks 1.2.0 is the latest version. It needs Starboard with pl
 | 1.0.0 | 1.12 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.2.1
+
+Fixed:
+
+- **Films in a collection:** on Jellyfin 12, a film in a collection was not found, because Jellyfin answered the search with the collection in its place. It now asks Jellyfin for the films themselves, so a track for a film in a collection is added. The same goes for series.
 
 ## What is new in 1.2.0
 

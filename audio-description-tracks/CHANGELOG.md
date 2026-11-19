@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 (19 November 2026)
+
+### Fixed
+- Films in a collection: on Jellyfin 12, a film in a collection was not found, because Jellyfin answered the search with the collection in its place. It now asks Jellyfin for the films themselves, so a track for a film in a collection is added. The same goes for series.
+
 ## 1.2.0 (17 November 2026)
 
 ### Changed
