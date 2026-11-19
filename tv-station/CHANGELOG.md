@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]: 0.3.0
+## 0.3.0 (19 November 2026)
 
 ### Added
 - Animation on and off (owner, 19 November 2026): the Coming up next and Later cards, the straps, the on-screen logo, the clock, the New, Repeat or Live label and the words on the holding slide each come on and go off with None, Fade, Slide from the left, the right or the bottom, Wipe or Grow, at Quick (0.3 seconds), Normal (0.6) or Slow (1). Chosen on the new Animation page for every channel, or on a channel's Animation card. Each thing is drawn on a small layer of its own and moved by FFmpeg's overlay with expressions of t, faded with the fade filter, wiped with a moving crop and grown with a scale, so None draws exactly as before and timing stays inside each thing's own time.
