@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Schedule grid</title>
+<link rel="stylesheet" href="grid/grid.css">
+<script src="grid/grid.js" defer></script>
+</head>
+<body>
+<div id="desktop-only" class="desktop-only" hidden>
+  <h1>Use a computer</h1>
+  <p>Create your own TV channel works in a desktop browser. Open Starboard on a computer to set up your channels.</p>
+</div>
+<div id="app">
+<a class="skip" href="#grid">Skip to the grid</a>
+<header class="top">
+  <h1>Schedule grid</h1>
+  <p class="lede">Place films and series at set times. Empty times keep the channel's automatic line-up and breaks. Each change is kept at once, and <strong>Undo</strong> takes back the last one.</p>
+</header>
+<main>
+  <section class="controls" aria-label="Channel, day and tools">
+    <div class="field">
+      <label for="channel">Channel</label>
+      <select id="channel"></select>
+    </div>
+    <div class="field">
+      <label for="view">Show</label>
+      <select id="view">
+        <option value="week">The whole week</option>
+        <option value="day">One day</option>
+      </select>
+    </div>
+    <div class="field" id="day-field" hidden>
+      <label for="day">Day</label>
+      <select id="day"></select>
+    </div>
+    <div class="buttons">
+      <button type="button" id="add" class="primary">Add a programme</button>
+      <button type="button" id="copy">Copy a day</button>
+      <button type="button" id="suggest">Suggest a schedule</button>
+      <button type="button" id="undo">Undo</button>
+    </div>
+  </section>
+  <div id="draft" class="banner" hidden>
+    <h2 id="draft-title" tabindex="-1">A suggestion from watch history</h2>
+    <p>Nothing is saved yet. Change it on the grid, then save it to use it, or discard it to keep the grid as it was.</p>
+    <ul id="draft-notes"></ul>
+    <div class="buttons">
+      <button type="button" id="save-draft" class="primary">Save the suggestion</button>
+      <button type="button" id="discard-draft">Discard the suggestion</button>
+    </div>
+  </div>
+  <div id="picked" class="banner" hidden>
+    <p><span id="picked-words"></span> Choose an empty time on the grid to place it, or <button type="button" id="unpick" class="link">put it back</button>.</p>
+  </div>
+  <p id="said" class="said" role="status" aria-live="polite"></p>
+  <p id="problem" class="problem" role="alert"></p>
+  <p class="hint" id="grid-hint">In the grid, the arrow keys move between times and days. Enter opens a programme's actions, or adds a programme at an empty time. A programme can also be dragged to an empty time.</p>
+  <div class="scroll" id="grid-wrap">
+    <table id="grid" aria-describedby="grid-hint"></table>
+  </div>
+</main>
+</div>
+
+<dialog id="slot-dialog" aria-labelledby="slot-title">
+  <form method="dialog">
+    <h2 id="slot-title" tabindex="-1"></h2>
+    <p id="slot-detail"></p>
+    <div class="buttons stack">
+      <button type="button" data-act="earlier">Move 15 minutes earlier</button>
+      <button type="button" data-act="later">Move 15 minutes later</button>
+      <button type="button" data-act="pick">Pick it up, then choose a time</button>
+    </div>
+    <fieldset>
+      <legend>Move to</legend>
+      <div class="row">
+        <div class="field"><label for="move-day">Day</label><select id="move-day"></select></div>
+        <div class="field"><label for="move-time">Time</label><select id="move-time"></select></div>
+        <button type="button" data-act="move">Move</button>
+      </div>
+    </fieldset>
+    <div class="buttons stack" id="series-acts">
+      <button type="button" data-act="stripe">Stripe across the week</button>
+      <button type="button" data-act="start">Where the series starts</button>
+    </div>
+    <div class="buttons">
+      <button type="button" data-act="remove" class="danger">Remove from the grid</button>
+      <button value="close">Close</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="add-dialog" aria-labelledby="add-title">
+  <form method="dialog" id="add-form">
+    <h2 id="add-title" tabindex="-1">Add a programme</h2>
+    <div class="row">
+      <div class="field grow"><label for="search">Search films and series</label><input id="search" type="search" autocomplete="off"></div>
+      <button type="button" id="search-go">Search</button>
+    </div>
+    <fieldset id="results-set" hidden>
+      <legend>Results</legend>
+      <div id="results"></div>
+    </fieldset>
+    <fieldset id="add-start" hidden>
+      <legend>Where the series starts</legend>
+      <div class="choice"><input type="radio" name="add-mode" id="add-first" value="first" checked><label for="add-first">From the first episode</label></div>
+      <div class="choice"><input type="radio" name="add-mode" id="add-unwatched" value="unwatched"><label for="add-unwatched">From the next episode not watched</label></div>
+      <div class="choice"><input type="radio" name="add-mode" id="add-episode" value="episode"><label for="add-episode">From a series and episode</label></div>
+      <div class="row">
+        <div class="field"><label for="add-s">Series</label><input id="add-s" type="number" min="0" max="999" value="1" inputmode="numeric"></div>
+        <div class="field"><label for="add-e">Episode</label><input id="add-e" type="number" min="0" max="9999" value="1" inputmode="numeric"></div>
+      </div>
+    </fieldset>
+    <div class="row">
+      <div class="field"><label for="add-day">Day</label><select id="add-day"></select></div>
+      <div class="field"><label for="add-time">Time</label><select id="add-time"></select></div>
+    </div>
+    <div class="buttons">
+      <button type="button" id="add-go" class="primary">Add to the grid</button>
+      <button value="close">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="copy-dialog" aria-labelledby="copy-title">
+  <form method="dialog">
+    <h2 id="copy-title" tabindex="-1">Copy a day</h2>
+    <p>The days copied to have their slots replaced. Series carry on with their next episodes.</p>
+    <div class="field"><label for="copy-from">Copy</label><select id="copy-from"></select></div>
+    <fieldset>
+      <legend>To</legend>
+      <div id="copy-to" class="checks"></div>
+      <div class="buttons">
+        <button type="button" id="copy-weekdays" class="link">Every other weekday</button>
+        <button type="button" id="copy-all" class="link">Every other day</button>
+      </div>
+    </fieldset>
+    <div class="buttons">
+      <button type="button" id="copy-go" class="primary">Copy</button>
+      <button value="close">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="stripe-dialog" aria-labelledby="stripe-title">
+  <form method="dialog">
+    <h2 id="stripe-title" tabindex="-1">Stripe across the week</h2>
+    <p id="stripe-about"></p>
+    <fieldset>
+      <legend>Weekdays</legend>
+      <div id="stripe-days" class="checks"></div>
+    </fieldset>
+    <div class="field"><label for="stripe-n">Episodes each day</label>
+      <select id="stripe-n"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+    <div class="choice"><input type="checkbox" id="stripe-weekends"><label for="stripe-weekends">Saturday and Sunday too</label></div>
+    <div class="buttons">
+      <button type="button" id="stripe-go" class="primary">Stripe</button>
+      <button value="close">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="start-dialog" aria-labelledby="start-title">
+  <form method="dialog">
+    <h2 id="start-title" tabindex="-1">Where the series starts</h2>
+    <p id="start-now"></p>
+    <div class="choice"><input type="radio" name="start-mode" id="start-first" value="first" checked><label for="start-first">From the first episode</label></div>
+    <div class="choice"><input type="radio" name="start-mode" id="start-unwatched" value="unwatched"><label for="start-unwatched">From the next episode not watched</label></div>
+    <div class="choice"><input type="radio" name="start-mode" id="start-episode" value="episode"><label for="start-episode">From this episode</label></div>
+    <div class="field"><label for="start-pick">Episode</label><select id="start-pick"></select></div>
+    <div class="buttons">
+      <button type="button" id="start-go" class="primary">Start there this week</button>
+      <button value="close">Cancel</button>
+    </div>
+  </form>
+</dialog>
+</body>
+</html>

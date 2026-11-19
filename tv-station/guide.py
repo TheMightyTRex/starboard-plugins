@@ -4,7 +4,7 @@ import datetime as dt
 import time
 from xml.sax.saxutils import escape, quoteattr
 
-from schedule import Channel
+from grid import channel_of
 
 NEW_DAYS = 30  # an episode or film first shown in the last 30 days is New in the guide; anything older is a repeat
 
@@ -71,7 +71,7 @@ def xmltv(channels, base, station, start=None, days=7):
         out.append(f'    <icon src={quoteattr(base + "/logo/" + ch["id"] + ".png")}/>')
         out.append("  </channel>")
     for ch in live:
-        for a in Channel(ch).airings(since, until):
+        for a in channel_of(ch).airings(since, until):
             e = a["entry"]
             out.append(f'  <programme start="{_xmltime(a["start"])}" stop="{_xmltime(a["end"])}" channel={quoteattr(channel_key(ch))}>')
             out.append(f"    <title>{escape(programme_title(e))}</title>")

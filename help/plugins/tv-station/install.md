@@ -7,6 +7,7 @@ Add Create your own TV channel from Starboard's **Catalogue**, where it is liste
 - Starboard with plug-in API 1.15 or later.
 - Jellyfin added in Starboard, in **Settings**, then **Apps**, with its API key. Create your own TV channel reads your films and series from Jellyfin and plays them from there.
 - Your Starboard password. Adding and removing a plug-in ask for it.
+- A computer with a desktop browser. Setting up channels, the schedule grid and the broadcast pack are made for a computer; on a phone or tablet, the grid says to use a computer. The dashboard card works anywhere.
 
 ## What it may do
 

@@ -8,6 +8,8 @@ transitions and the card and promo backgrounds. Try the example pack, Example TV
 
 Its id and folder stay `tv-station`, so nothing that already uses it changes.
 
+**Works in a desktop browser.** Setting up channels, the schedule grid and the broadcast pack are made for a computer; on a phone or tablet the grid says to use a computer. The dashboard card works anywhere.
+
 Starboard never adds it by itself: you choose to add it from the catalogue.
 
 ## What it does
@@ -34,6 +36,9 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
 - **Promos.** Made in quiet hours from a few short clips of a programme coming up, a music bed from the pack, and its
   title, channel and day and time from the schedule. Each channel keeps 3 unless you change it, and old ones are
   replaced after 2 days. They play on their own channel and on your other channels.
+- **A schedule grid.** A week for each channel in 15 minute steps: drag films and series onto it, or use buttons and
+  the keyboard; copy a day; stripe a series across weekdays with a number of episodes a day; choose where a series
+  starts; or suggest a week from watch history (`suggest.py`, also a script). Empty times keep the automatic line-up.
 - **In Jellyfin's Live TV, first.** Its channels are numbered from 1 in your order, before the free channels from
   101, with a 7-day guide: titles, episode names, synopses, pictures, and New or Repeat.
 

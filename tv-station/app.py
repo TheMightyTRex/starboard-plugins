@@ -23,6 +23,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import dog
+import grid
 import guide
 import library
 import pack
@@ -36,6 +37,7 @@ CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
 PROMOS = "promos"
+GRIDS = "grid"  # the schedule grid: <channel>.json, and .draft.json for a suggestion, .prev.json for Undo
 NAME = "Create your own TV channel"
 MAX_UPLOAD = 60 * 1024 * 1024
 CLIP_TYPES = (".mp4", ".mkv", ".mov", ".ts", ".webm", ".m4v")
@@ -88,8 +90,34 @@ def number(s, ch):
 
 
 def numbered(s):
-    """The channels in the owner's order, each with its number."""
-    return [{**ch, "number": number(s, ch)} for ch in s["channels"]]
+    """The channels in the owner's order, each with its number and its schedule grid (for the guide)."""
+    return [{**ch, "number": number(s, ch), "_grid": grid_doc(ch["id"])} for ch in s["channels"]]
+
+
+_grids = {}
+
+
+def grid_folder():
+    return os.path.join(sbplugin.DATA, GRIDS)
+
+
+def grid_doc(cid, kind=""):
+    """A channel's saved grid (or its draft), read again only when its file changes. None when it has none."""
+    p = grid.path(grid_folder(), cid, kind)
+    try:
+        mtime = os.path.getmtime(p)
+    except OSError:
+        return None
+    got = _grids.get((cid, kind))
+    if not got or got[0] != mtime:
+        got = (mtime, grid.load(grid_folder(), cid, kind))
+        _grids[(cid, kind)] = got
+    return got[1]
+
+
+def sched_of(ch):
+    """What a channel shows: its schedule grid's fixed slots, over its automatic line-up."""
+    return grid.channel_of(ch, grid_doc(ch["id"]))
 
 
 def find(s, cid):
@@ -165,6 +193,7 @@ def refresh_all(body=None):
     said = []
     for ch in list(state()["channels"]):
         said.append(refresh_channel(ch["id"]))
+        refresh_grid(ch["id"])
     sbplugin.clear_error()
     note = connect_jellyfin()
     return {"said": ("; ".join(said) or "No channels yet") + (f". {note}" if note else "")[:160]}
@@ -412,7 +441,7 @@ def plan_for(cid, still=False):
         cfg = settings()
         if not ch:
             return None, None, None
-        sched = schedule.Channel(ch)
+        sched = sched_of(ch)
         opts = dog.resolve(cfg, ch)
         pk = channel_pack(s, ch)
         if piece is None:
@@ -466,7 +495,7 @@ def preview(cid, kind="programme", at=None):
     if not ch:
         raise LookupError("No such channel")
     now = time.time() if at is None else at
-    a = schedule.Channel(ch).airing(now)
+    a = sched_of(ch).airing(now)
     if not a:
         raise LookupError("The channel has nothing to show yet")
     if kind in ("ident", "sting", "promo"):
@@ -480,7 +509,7 @@ def preview(cid, kind="programme", at=None):
         seek = min(clip["dur"] * 0.55, clip["dur"] - 0.5)
         piece = {"kind": "clip", "clip": clip, "role": kind, "start": now - seek, "end": now - seek + clip["dur"], "airing": a}
     elif kind == "card":
-        nxt = schedule.Channel(ch).airing(a["end"]) or a
+        nxt = sched_of(ch).airing(a["end"]) or a
         piece = {"kind": "card", "card": "next", "start": now, "end": now + 10, "airing": nxt}
     else:
         piece = {"kind": "programme", "start": a["start"], "end": a["content_end"], "airing": a}
@@ -551,7 +580,7 @@ def channels_page(said=None, now=None):
     menus, items = [], []
     for ch in numbered(s):
         cid, n = ch["id"], ch["number"]
-        sched = schedule.Channel(ch)
+        sched = sched_of(ch)
         a = sched.airing(now)
         detail = (f"Now: {describe(a['entry'])}" if a else "Nothing to show yet: add a series, film, collection or playlist")
         menus.append({"id": cid, "title": f"{n}  {ch['name']}", "group": "Channels", "detail": detail[:200], "active": bool(ch.get("on", True))})
@@ -958,7 +987,7 @@ def guide_page(now=None):
     for ch in numbered(s):
         if not ch.get("on", True):
             continue
-        for k, a in enumerate(schedule.Channel(ch).airings(now, now + 86400, limit=100)):
+        for k, a in enumerate(sched_of(ch).airings(now, now + 86400, limit=100)):
             e = a["entry"]
             items.append({"id": f"{ch['id']}:{k}", "title": e.get("title") or "Programme", "group": f"{ch['number']} {ch['name']}"[:40],
                           "cells": {"time": f"{day_hm(a['start'], now)} to {hm(a['end'])}", "programme": (e.get("title") or "")[:80],
@@ -981,7 +1010,7 @@ def card(now=None):
     for ch in numbered(s):
         if not ch.get("on", True):
             continue
-        sched = schedule.Channel(ch)
+        sched = sched_of(ch)
         a = sched.airing(now)
         if not a:
             continue
@@ -1262,7 +1291,7 @@ def promos_job(now=None, limit_seconds=40 * 60):
         keep, days = promo_settings(cfg)
         now = time.time() if now is None else now
         s = state()
-        chans = [{"id": ch["id"], "sched": schedule.Channel(ch), "can": bool((channel_pack(s, ch) or {}).get("promo")) and ch.get("on", True)}
+        chans = [{"id": ch["id"], "sched": sched_of(ch), "can": bool((channel_pack(s, ch) or {}).get("promo")) and ch.get("on", True)}
                  for ch in s["channels"]]
         remove, make = promo.plan(chans, s.get("promos") or [], keep, days, now)
         gone = {p["id"] for p in remove}
@@ -1317,6 +1346,249 @@ def promos_job(now=None, limit_seconds=40 * 60):
         return {"said": said[:200]}
     finally:
         _promo_lock.release()
+
+
+# The schedule grid ----------------------------------------------------------------------------------------------------
+_grid_lock = threading.Lock()
+
+
+def grid_target(cid):
+    """What a change applies to: the suggestion being looked over, when there is one, else the saved grid."""
+    draft = grid_doc(cid, "draft")
+    return (draft, "draft") if draft is not None else (grid_doc(cid) or grid.empty(), "")
+
+
+def grid_state(cid, said="", now=None):
+    now = time.time() if now is None else now
+    s = state()
+    chans = numbered(s)
+    if not chans:
+        return {"channels": [], "cid": "", "said": "Add a channel first, in Settings, Plug-ins, Create your own TV channel, Channels"}
+    if not find(s, cid):
+        cid = chans[0]["id"]
+    doc, kind = grid_target(cid)
+    monday = grid.week_start(now)
+    out = {"channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans], "cid": cid, "monday": monday,
+           "today": time.localtime(now).tm_wday, "days": list(grid.DAYS), "draft": kind == "draft",
+           "can_undo": kind == "" and grid_doc(cid, "prev") is not None, "said": said, **grid.view(doc, monday)}
+    if kind == "draft":
+        out["note"] = doc.get("note") or []
+    return out
+
+
+def unwatched_index(series_id, episodes):
+    """The position of the next episode nobody has watched, from the first Jellyfin administrator's played list."""
+    try:
+        users = jf("/Users") or []
+        admin = next((u for u in users if (u.get("Policy") or {}).get("IsAdministrator")), users[0] if users else None)
+        if not admin:
+            return 0
+        got = jf(f"/Users/{admin['Id']}/Items?" + urllib.parse.urlencode({
+            "ParentId": series_id, "IncludeItemTypes": "Episode", "Recursive": "true", "Filters": "IsUnplayed",
+            "SortBy": "ParentIndexNumber,IndexNumber", "Limit": 1})) or {}
+        first = (got.get("Items") or [{}])[0].get("Id")
+        return next((i for i, e in enumerate(episodes) if e["id"] == first), 0)
+    except (urllib.error.URLError, OSError, ValueError, LookupError):
+        return 0
+
+
+def grid_search(words):
+    """Films and series in Jellyfin for the grid's search: [{"id", "kind", "name"}]."""
+    out = []
+    for kind in ("series", "film"):
+        for iid, name in library.search(jf, kind, words)[:8]:
+            out.append({"id": iid, "kind": kind, "name": name})
+    return out[:16]
+
+
+def _int(v, lo, hi, what):
+    try:
+        n = int(v)
+    except (TypeError, ValueError):
+        raise grid.GridError(f"Choose {what}") from None
+    if not lo <= n <= hi:
+        raise grid.GridError(f"Choose {what}")
+    return n
+
+
+def grid_op(body, now=None):
+    """One change to a channel's grid, from the grid page. Every change is kept at once (a suggestion stays a draft
+    until it is saved); the change before is kept for Undo."""
+    now = time.time() if now is None else now
+    cid = str(body.get("cid") or "")
+    op = str(body.get("op") or "")
+    with _grid_lock:
+        s = state()
+        ch = find(s, cid)
+        if not ch:
+            raise grid.GridError("That channel has gone")
+        doc, kind = grid_target(cid)
+        focus = str(body.get("slot") or "")
+        if op == "add":
+            day, start = _int(body.get("day"), 0, 6, "a day"), _int(body.get("start"), 0, grid.DAY - grid.STEP, "a time")
+            item_kind, iid = str(body.get("kind") or ""), str(body.get("id") or "")
+            if not library.ID.match(iid):
+                raise grid.GridError("Choose a film or series from the search")
+            if item_kind == "series":
+                eps = library.lineup(jf, [{"kind": "series", "id": iid}])
+                if not eps:
+                    raise grid.GridError("Jellyfin has no episodes of that series to play")
+                mode = str(body.get("start_mode") or "first")
+                sm = {"mode": mode}
+                if mode == "episode":
+                    sm.update({"s": _int(body.get("s"), 0, 999, "a series number"), "e": _int(body.get("e"), 0, 9999, "an episode number")})
+                elif mode == "unwatched":
+                    sm["unwatched_index"] = unwatched_index(iid, eps)
+                doc, focus, said = grid.add(doc, day, start, "series", {"id": iid, "name": eps[0]["title"]}, now, eps,
+                                            start_mode=sm if iid not in doc["series"] else None)
+            elif item_kind == "film":
+                got = library.lineup(jf, [{"kind": "film", "id": iid}])
+                if not got:
+                    raise grid.GridError("Jellyfin cannot play that film")
+                doc, focus, said = grid.add(doc, day, start, "film", got[0], now)
+            else:
+                raise grid.GridError("Choose a film or series from the search")
+        elif op == "move":
+            doc, said = grid.move(doc, focus, _int(body.get("day"), 0, 6, "a day"), _int(body.get("start"), 0, grid.DAY - grid.STEP, "a time"), now)
+        elif op == "nudge":
+            doc, said = grid.nudge(doc, focus, _int(body.get("minutes"), -grid.DAY, grid.DAY, "how far"), now)
+        elif op == "remove":
+            doc, said = grid.remove(doc, focus, now)
+            focus = ""
+        elif op == "copy_day":
+            to = [int(d) for d in body.get("to") or [] if str(d).isdigit()]
+            doc, said = grid.copy_day(doc, _int(body.get("from"), 0, 6, "a day to copy"), to, now)
+            focus = ""
+        elif op == "stripe":
+            days = [int(d) for d in body.get("weekdays") or [] if str(d).isdigit()]
+            doc, said = grid.stripe(doc, focus, days, _int(body.get("per_day"), 1, 6, "how many episodes a day"),
+                                    bool(body.get("weekends")), now)
+        elif op == "set_start":
+            sid = str(body.get("series") or "")
+            mode = str(body.get("mode") or "first")
+            extra = {}
+            if mode == "episode":
+                extra = {"s": _int(body.get("s"), 0, 999, "a series number"), "e": _int(body.get("e"), 0, 9999, "an episode number")}
+            elif mode == "unwatched":
+                extra = {"unwatched_index": unwatched_index(sid, (doc["series"].get(sid) or {}).get("episodes") or [])}
+            doc, said = grid.set_start(doc, sid, mode, now, **extra)
+        elif op == "undo":
+            prev = grid_doc(cid, "prev")
+            if kind == "draft" or prev is None:
+                raise grid.GridError("Nothing to undo")
+            grid.store(grid_folder(), cid, prev)
+            grid.drop(grid_folder(), cid, "prev")
+            return grid_state(cid, "Undone: the grid is as it was before the last change", now)
+        elif op == "suggest":
+            doc, notes = suggest_for(s, ch, now)
+            grid.store(grid_folder(), cid, doc, "draft")
+            n = len(doc["slots"])
+            return grid_state(cid, (f"Suggested {n} slot{'s' if n != 1 else ''} from watch history. Change them, then save or discard the suggestion"
+                                    if n else notes[-1]), now)
+        elif op == "save_draft":
+            if kind != "draft":
+                raise grid.GridError("There is no suggestion to save")
+            old = grid_doc(cid)
+            if old is not None:
+                grid.store(grid_folder(), cid, old, "prev")
+            doc = {k: v for k, v in doc.items() if k not in ("suggested", "note")}
+            grid.store(grid_folder(), cid, doc)
+            grid.drop(grid_folder(), cid, "draft")
+            later_jellyfin()
+            return grid_state(cid, "Saved the suggestion: it is the grid now. Undo goes back to the grid before it", now)
+        elif op == "discard_draft":
+            grid.drop(grid_folder(), cid, "draft")
+            return grid_state(cid, "Discarded the suggestion. The saved grid is as it was", now)
+        else:
+            raise grid.GridError("That is not something the grid does")
+        if kind == "draft":
+            grid.store(grid_folder(), cid, doc, "draft")
+        else:
+            old = grid_doc(cid)
+            grid.store(grid_folder(), cid, old or grid.empty(), "prev")
+            doc["saved"] = int(now)
+            grid.store(grid_folder(), cid, doc)
+            later_jellyfin()
+    out = grid_state(cid, said, now)
+    out["focus"] = focus
+    return out
+
+
+def suggest_for(s, ch, now):
+    """A proposed week for one channel from watch history (suggest.py), not saved."""
+    import suggest  # only when asked
+    groups = {e.get("group") or e["id"] for era in ch.get("eras") or [] for e in era.get("lineup") or []} or None
+    if groups is not None:
+        groups |= {e["id"] for era in ch.get("eras") or [] for e in era.get("lineup") or [] if e.get("kind") == "Movie"}
+    c = jf_conf()
+
+    def jf_post(path, body):
+        return sbplugin.fetch(c["url"].rstrip("/") + path, sbplugin.jellyfin_headers(c["api_key"]), data=body, method="POST")
+    plays = suggest.history(jf, jf_post)
+    cache = {}
+
+    def series_info(sid):
+        if sid not in cache:
+            eps = library.lineup(jf, [{"kind": "series", "id": sid}])
+            cache[sid] = {"id": sid, "name": eps[0]["title"], "episodes": eps, "unwatched": unwatched_index(sid, eps)} if eps else None
+        return cache[sid]
+
+    def film_info(fid):
+        got = library.lineup(jf, [{"kind": "film", "id": fid}])
+        return got[0] if got else None
+    return suggest.propose(groups, plays, now, series_info, film_info)
+
+
+def refresh_grid(cid):
+    """Once a night with the line-up: each series on the grid has its new episodes, and carries on where it was."""
+    doc = grid_doc(cid)
+    if not doc or not doc["series"]:
+        return
+    now = time.time()
+    changed = False
+    for sid, item in doc["series"].items():
+        try:
+            eps = library.lineup(jf, [{"kind": "series", "id": sid}])
+        except (urllib.error.URLError, OSError, ValueError, LookupError):
+            continue
+        if eps and [e["id"] for e in eps] != [e["id"] for e in item["episodes"]]:
+            occ = grid.occurrences(doc, sid)
+            due = item["episodes"][grid.episode_index(doc, sid, occ[0]["id"], grid.week_start(now))]["id"] if occ else None
+            item["episodes"] = eps[:grid.MAX_EPISODES]
+            item["first"] = next((i for i, e in enumerate(eps) if e["id"] == due), 0)
+            item["anchor"] = grid.week_start(now)
+            changed = True
+    if changed:
+        grid.store(grid_folder(), cid, doc)
+
+
+def schedule_page(said=None):
+    """Starboard's page for the grid: a link to each channel's grid, which opens on this plug-in's own web page."""
+    s = state()
+    base = address()
+    items = []
+    for ch in numbered(s):
+        doc = ch.get("_grid") or grid.empty()
+        n = len(doc["slots"])
+        draft = grid_doc(ch["id"], "draft") is not None
+        it = {"id": f"grid-{ch['id']}", "title": f"{ch['number']}  {ch['name']}"[:120], "group": "Each channel's grid",
+              "state": "ok" if n else "unknown", "state_label": (f"{n} slot{'s' if n != 1 else ''}" if n else "Automatic only"),
+              "detail": ("A suggestion is waiting to be saved or discarded. " if draft else "") +
+                        ("Fixed slots, with the automatic line-up between them" if n else "Its automatic line-up only, until slots are added")}
+        if base:
+            it["link"] = {"url": f"{base}/t/{s['token']}/grid?channel={ch['id']}", "label": f"Open the schedule grid for {ch['name']}"}
+        else:
+            it["detail"] = "Open this plug-in's web page once from its page in Settings, Plug-ins, so it knows its address."
+        items.append(it)
+    if not items:
+        items.append({"id": "none", "title": "No channels yet", "group": "Each channel's grid", "state": "unknown", "state_label": "None",
+                      "detail": "Add a channel in Channels first."})
+    out = {"type": "list", "title": "Schedule grid", "items": items,
+           "intro": ("Place films and series at set times on a week's grid, by dragging or with buttons and the keyboard. Copy a day, "
+                     "stripe a series across weekdays, or suggest a week from watch history. It opens in a new tab, in a desktop browser.")}
+    if said:
+        out["said"] = said[:200]
+    return out
 
 
 # The web server -------------------------------------------------------------------------------------------------------
@@ -1375,10 +1647,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"ok": True, "ffmpeg": stream.has_ffmpeg()})
             if p == "/card":
                 return self._json(200, card())
-            if p in ("/channels", "/clips", "/guide", "/pack"):
+            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may open this"})
-                return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page, "/pack": pack_page}[p]())
+                return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page, "/pack": pack_page,
+                                        "/schedule": schedule_page}[p]())
             if p == "/":
                 self._learn()
                 s = state()
@@ -1434,6 +1707,8 @@ class Handler(BaseHTTPRequestHandler):
         m = re.match(r"^stream/([0-9a-f]{8})\.ts$", rest)
         if m:
             return self._stream(m.group(1))
+        if rest == "grid" or rest.startswith("grid/"):
+            return self._grid_get(rest, query)
         m = re.match(r"^download/([a-z-]+\.(png|zip))$", rest)
         if m:
             data, kind, filename = download(m.group(1), query)
@@ -1445,6 +1720,35 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(data)
             return None
+        return self._json(404, {"error": "Not found"})
+
+    def _grid_get(self, rest, query):
+        """The schedule grid's own page, its script, style and font, and the answers it reads."""
+        static = {"grid": ("grid.html", "text/html; charset=utf-8"), "grid/grid.js": ("grid.js", "text/javascript; charset=utf-8"),
+                  "grid/grid.css": ("grid.css", "text/css; charset=utf-8"),
+                  "grid/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2")}
+        if rest in static:
+            name, kind = static[rest]
+            with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), name), "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", kind)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(data)
+            return None
+        one = {k: (v or [""])[0] for k, v in query.items()}
+        if rest == "grid/api/state":
+            return self._json(200, grid_state(one.get("channel", "")))
+        if rest == "grid/api/search":
+            return self._json(200, {"items": grid_search(one.get("q", "")[:80])})
+        if rest == "grid/api/episodes":
+            doc, _ = grid_target(one.get("channel", ""))
+            eps = (doc["series"].get(one.get("series", "")) or {}).get("episodes") or []
+            return self._json(200, {"items": [{"s": e.get("s"), "e": e.get("e"), "name": e.get("ep") or ""} for e in eps[:2000]]})
         return self._json(404, {"error": "Not found"})
 
     def _stream(self, cid):
@@ -1505,6 +1809,17 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(200, {"said": "Not started: the plug-in is about to be updated"})
                 with sbplugin.working("refresh"):
                     return self._json(200, refresh_all())
+            m = re.match(r"^/t/([A-Za-z0-9_-]+)/grid/api/op$", p)
+            if m:
+                if not secrets.compare_digest(m.group(1), state()["token"]):
+                    return self._json(404, {"error": "Not found"})
+                if (self.headers.get("Content-Type") or "").split(";")[0] != "application/json":
+                    return self._json(415, {"error": "Send JSON"})
+                return self._json(200, grid_op(self._body()))
+            if p == "/schedule":
+                if not self._keyed():
+                    return self._json(403, {"error": "Only Starboard may change this"})
+                return self._json(200, schedule_page())
             if p == "/jobs/promos":
                 if sbplugin.holding():
                     return self._json(200, {"said": "Not started: the plug-in is about to be updated"})

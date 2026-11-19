@@ -10,6 +10,16 @@ Starboard draws everything Create your own TV channel shows in Starboard: its se
 - **New or Repeat** is in words, in the guide, on the card and on the television, never by colour alone. Each channel's colour is decoration: its name and number always say which it is.
 - **Its logo**, a television with an aerial, has the text description "Create your own TV channel logo" where it is shown without its name.
 
+## The schedule grid
+
+The grid is the plug-in's own page, built to the same rules as Starboard's, and checked with axe (WCAG 2.2 AA) in light and dark, with a keyboard walk.
+
+- **Nothing needs dragging** (WCAG 2.2, 2.5.7): each programme's actions have **Move 15 minutes earlier**, **Move 15 minutes later**, **Move to** a day and time, and **Pick it up, then choose a time**.
+- **One Tab stop for the grid**, then the arrow keys between times and days, Page Up and Page Down by an hour, Home and End for the start and end of the day. Each time is read with its day and what is on.
+- **Focus** goes to a dialog's heading when it opens, back to what opened it when it closes, and to the programme after each move.
+- **Works in a desktop browser.** On a phone or tablet, the grid shows one notice: to use a computer. It checks the device, not the width of the window, so a desktop browser zoomed to 400% keeps the whole page (WCAG 1.4.4 and 1.4.10).
+- **Messages** are read out: what changed, from a status region, and what could not be done, from an alert.
+
 ## On the television
 
 - **Contrast on any picture.** Words on the television have a dark outline, and the backing plate, activated unless you change it, puts a dark box behind the on-screen logo, the clock and the labels. Coming up next cards darken their picture to a third of its brightness, so white words on them have at least 7 to 1 contrast whatever the picture.

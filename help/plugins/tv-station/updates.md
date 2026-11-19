@@ -15,6 +15,7 @@ The catalogue offers each Starboard the newest version it can run.
 Added:
 
 - **Your own channels:** name the station and each channel, with its number, logo and colour, and fill it from series, films, collections, playlists, genres or decades, in order or shuffled, with episodes of a series in a row.
+- **Schedule grid:** place films and series at set times on a week's grid, by dragging or with buttons and the keyboard; copy a day; stripe a series across weekdays; choose where a series starts; suggest a week from watch history.
 - **In Jellyfin's Live TV, first:** numbered from 1 in your order, with a 7-day guide of titles, episode names, synopses, pictures and New or Repeat. Tuning in joins part way through, as on television.
 - **Breaks:** idents, Jellyfin's trailers, your own clips, and Coming up next and Later cards with the programme's picture, title, date and time and a short synopsis.
 - **Broadcast pack:** your own branding from a zip made from the template: the on-screen logo, the logo with its music, idents in a random order, transitions, and Coming up next and promo backgrounds. Every file is checked first. Or try the example pack.

@@ -1,6 +1,6 @@
 # Create your own TV channel: Settings
 
-Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Idents and clips** and **Broadcast pack**, open from the same tab.
+Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **Idents and clips** and **Broadcast pack**, open from the same tab.
 
 ## Channels
 
@@ -44,6 +44,23 @@ A change to what a channel shows, its order or its times starts after the progra
 ## Guide
 
 **Guide** has a table for each channel: what is on in the next 24 hours, with the time, the programme, the episode, New or Repeat, and what it is about. Jellyfin's own guide has 7 days.
+
+## Schedule grid
+
+**Schedule grid** lists your channels, each with a link that opens its grid in a new tab: a week, Monday to Sunday, in 15 minute steps. Films and series placed on it play at those times every week; the time between them keeps the channel's automatic line-up, whole programmes only, and the rest is a break. A channel with nothing on its grid is as it was. The guide in Jellyfin follows the grid.
+
+| On the grid | What it does |
+|---|---|
+| **Channel**, **Show** and **Day** | Which channel, and the whole week or one day |
+| **Add a programme**, or an empty time | Search Jellyfin, choose a film or series, its day and time and, for a series, where it starts: from the first episode, from the next episode not watched, or from a series and episode |
+| Drag a programme to an empty time | Moves it. Everything a drag does can also be done without one: select a programme for **Move 15 minutes earlier**, **Move 15 minutes later**, **Move to** a day and time, or **Pick it up, then choose a time** and select an empty time |
+| **Stripe across the week** | On a series: the same time on the weekdays you choose, 1 to 4 episodes each day, Saturday and Sunday too if you choose. Each slot plays the next episode in order, and the next week carries on |
+| **Where the series starts** | The first episode, the next episode not watched, or an episode you choose, from this week |
+| **Copy a day** | Copies one day to the days you choose, in place of what was on them |
+| **Suggest a schedule** | Proposes a week from watch history: the series people watch most, on weekdays at the time they watch them, and films on Saturday and Sunday evenings. Nothing is saved until you select **Save the suggestion**; **Discard the suggestion** keeps the grid as it was |
+| **Undo** | Takes back the last change |
+
+A programme takes the time of its longest episode, rounded up to 15 minutes, so programmes never run into each other. A change that would overlap another programme is refused, and the message names it. In the grid, the arrow keys move between times and days, Page Up and Page Down by an hour, and Enter opens a programme's actions or adds one at an empty time.
 
 ## Idents and clips
 
