@@ -165,6 +165,14 @@
    "group": "Streaming"
   },
   {
+   "key": "leave_out_3d",
+   "label": "Leave out 3D films",
+   "type": "switch",
+   "default": true,
+   "group": "Streaming",
+   "hint": "A 3D film plays as two pictures. Films Jellyfin or their file name says are 3D are left out, and each film on a channel is checked once in quiet hours."
+  },
+  {
    "key": "promos",
    "label": "Make promos in quiet hours",
    "type": "switch",
@@ -643,6 +651,14 @@
    "every_hours": 1,
    "quiet_hours": true,
    "time_limit_minutes": 45
+  },
+  {
+   "id": "three-d",
+   "label": "Check films for 3D",
+   "path": "/jobs/three-d",
+   "every_hours": 1,
+   "quiet_hours": true,
+   "time_limit_minutes": 45
   }
  ],
  "update": {
@@ -665,6 +681,9 @@
    "date": "2026-11-19",
    "fixed": [
     "**Reading the channels again updates each programme's details**, such as which sound track it plays, its title and its picture, even when the programmes are the same. The schedule does not change."
+   ],
+   "added": [
+    "**Leave out 3D films** (Yes unless changed): a film Jellyfin or its file name says is 3D is left out of channels, and each film is checked once in quiet hours for two pictures side by side or one over the other."
    ]
   },
   {

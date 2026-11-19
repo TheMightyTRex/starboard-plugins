@@ -154,6 +154,7 @@ Timing stays exact: each thing comes on from its start and has gone by its end, 
 | **Most channels at once** | Each channel being watched is one conversion. People watching the same channel share it. 2 unless you change it |
 | **Stop a channel after the last viewer leaves** | 30 seconds unless you change it |
 | **Copy programmes when nothing is drawn on them** | A channel with no on-screen logo and no straps plays its programmes as they are, with no converting |
+| **Leave out 3D films** | A 3D film plays as two pictures, side by side or one over the other. Films Jellyfin marks as 3D, or whose file name says 3D, are left out of every channel. Each film on a channel is also checked once, in quiet hours and never while anyone is watching, and one found to be 3D is left out too. Activated unless you change it |
 
 ## Promos
 

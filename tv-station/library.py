@@ -3,9 +3,11 @@ for its breaks. Asked only when a channel changes and once a night, never while 
 import re
 import urllib.parse
 
+import three_d
+
 MAX_ENTRIES = 5000  # the most programmes in one channel's line-up
 PAGE = 200
-FIELDS = "Overview,PremiereDate,Genres,MediaStreams,ProductionYear,ParentBackdropItemId"
+FIELDS = "Overview,PremiereDate,Genres,MediaStreams,ProductionYear,ParentBackdropItemId,Path,Video3DFormat"  # 0.5.5: 3D
 VIDEO_TYPES = "Movie,Episode"
 KINDS = {"series": "Series", "film": "Film", "collection": "Collection", "playlist": "Playlist", "genre": "Genre",
          "decade": "Decade"}
@@ -46,7 +48,8 @@ def entry(item):
            "plot": (item.get("Overview") or "")[:400], "year": item.get("ProductionYear"),
            "premiere": (item.get("PremiereDate") or "")[:10], "genres": (item.get("Genres") or [])[:3],
            "art": item["Id"], "backdrop": item.get("ParentBackdropItemId") or item.get("SeriesId") or item["Id"],
-           "audio_n": inside.index(default) if default else None, "has_audio": bool(inside)}
+           "audio_n": inside.index(default) if default else None, "has_audio": bool(inside),
+           "three_d": three_d.said(item)}  # 0.5.5: why Jellyfin or the file name says it is 3D, or ""
     if episode:
         out.update({"ep": item.get("Name") or "", "s": item.get("ParentIndexNumber"), "e": item.get("IndexNumber")})
     return out
