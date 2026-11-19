@@ -15,6 +15,7 @@ or SMOKE_IMAGE for the shared image. SMOKE_UPDATE=0 leaves the update pass out; 
 
 App plug-ins whose helper runs in the official Python image from the manifest's files (Themearr and Checkrr): the
 helper runs as Starboard runs it, against stand-ins for the app's own API, and its cards, pages and buttons are checked."""
+import atexit
 import json
 import os
 import subprocess
@@ -222,6 +223,8 @@ def tracks_check(run, image):
 
 # Direct play's stand-in media (DASH-483): a small folder of its own, a 64 MB tmpfs volume, so the free-space margin it
 # keeps (a tenth of the disk, up to 50 GB) is measured there and not on this computer's /tmp, which may be fuller.
+# Docker mounts a tmpfs volume afresh for each container that has none mounted, so a holder container keeps it, and
+# what is in it, until the run ends (dp_done).
 DP_VOLUME = f"smoke-direct-play-media-{os.getpid()}"
 
 
@@ -234,14 +237,23 @@ def dp_docker(image, program, *args, write=False):
 def dp_media(run, image):
     """The stand-in media folder for Direct play (DASH-425): an AVI to repackage and an episode with FLAC 5.1 only,
     each a second long, made by ffmpeg in the plug-in's own image, in a 64 MB folder of its own (DASH-483)."""
-    subprocess.run(["docker", "volume", "rm", "-f", DP_VOLUME], capture_output=True)
+    dp_done()
+    atexit.register(dp_done)  # also when the run stops part way
     subprocess.run(["docker", "volume", "create", "--driver", "local", "--opt", "type=tmpfs", "--opt", "device=tmpfs",
                     "--opt", "o=size=64m,mode=1777", DP_VOLUME], check=True, capture_output=True)
+    subprocess.run(["docker", "run", "-d", "--name", DP_VOLUME, "--network", "none", "-v", f"{DP_VOLUME}:/m", "--entrypoint", "sleep",
+                    image, "3600"], check=True, capture_output=True)
     dp_docker(image, "mkdir", "-p", "-m", "777", "/m/movies/Old (1999)", "/m/tv/Show/Season 1", write=True)
     for out, audio in (("movies/Old (1999)/Old (1999).avi", ["-c:a", "mp3"]), ("tv/Show/Season 1/Show S01E01.mkv", ["-ac", "6", "-c:a", "flac"])):
         dp_docker(image, "ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc=size=160x90:rate=10:duration=1",
                   "-f", "lavfi", "-i", "sine=duration=1", "-c:v", "libx264", "-pix_fmt", "yuv420p", *audio, f"/m/{out}", write=True)
     return ["-v", f"{DP_VOLUME}:/media"]
+
+
+def dp_done():
+    """Removes the holder container and the 64 MB folder with it."""
+    subprocess.run(["docker", "rm", "-f", DP_VOLUME], capture_output=True)
+    subprocess.run(["docker", "volume", "rm", "-f", DP_VOLUME], capture_output=True)
 
 
 def dp_check(run, image):
@@ -629,7 +641,7 @@ def main():
         print(f"{pid}: memory {stats}")
         subprocess.run(["docker", "rm", "-f", name], capture_output=True)
         if pid == "direct-play":
-            subprocess.run(["docker", "volume", "rm", "-f", DP_VOLUME], capture_output=True)
+            dp_done()
     failed += app_helpers(port + 30, only)
     if os.environ.get("SMOKE_UPDATE", "1") != "0":
         failed += update_pass(port + 50, only)
