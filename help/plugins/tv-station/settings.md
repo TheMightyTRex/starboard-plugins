@@ -167,7 +167,7 @@ Promos are made for channels whose broadcast pack has a promo background, and fo
 | **Use the programme's sound in promos** | Each clip plays with its own sound, brought to the same loudness as the rest. Activated unless you change it. A programme with no sound has the music alone |
 | **Music under the programme's sound** | 10%, 20%, 30% or 50%: how loud the music is while a clip's sound plays. 20% unless you change it. The music is at full before the first clip and after the last |
 | **Promos kept for each channel** | 3 unless you change it, up to 6 |
-| **Replace each promo after** | 2 days unless you change it. A promo is also replaced once its programme has started, so they never pile up |
+| **Replace each promo after** | 2 days unless you change it. A promo is also replaced once its programme has started, so they never pile up. When a channel's broadcast pack changes, its promos made with the old pack stop showing at once and are made again in the next quiet hour |
 | **Show promos for your other channels** | Each channel's breaks show the promos of your other channels too. Activated unless you change it |
 
 ## On-screen logo

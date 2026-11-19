@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1 (19 November 2026)
+
+### Fixed
+- A channel's promos are made again when its broadcast pack changes. Each promo now records the design it was made with (the pack, and when it was checked, or the plain colour); one made with a design the channel no longer uses is not shown in any break, and is removed and made again in the next quiet hour. Before, a promo made minutes before a new pack arrived kept the old pack's look for up to two days. Promos made before 0.5.1 are kept.
+
 ## 0.5.0 (19 November 2026)
 
 ### Added

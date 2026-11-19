@@ -36,7 +36,7 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.5.0"
+VERSION = "0.5.1"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -405,9 +405,12 @@ def promo_clips(s, ch, cfg=None):
     cfg = cfg or settings()
     others = truthy(cfg.get("promo_other"), True)
     on = {c["id"]: c for c in s["channels"] if c.get("on", True)}
+    designs = {cid: promo.design_of(promo_design(s, c)) for cid, c in on.items()}
     out = []
     for p in s.get("promos") or []:
         if p.get("cid") not in on or (p["cid"] != ch["id"] and not others):
+            continue
+        if not promo.current(p, designs):  # made with a pack the channel no longer uses (0.5.1): not shown, made again
             continue
         out.append({"id": f"promo-{p['id']}", "src": f"promo:{p['id']}", "dur": float(p.get("dur") or 15), "title": f"Promo: {p.get('title')}",
                     "has_audio": True, "airs": float(p.get("airs") or 0), "role": "promo", "cid": p["cid"]})
@@ -2264,7 +2267,8 @@ def promos_job(now=None, limit_seconds=40 * 60):
         keep, days = promo_settings(cfg)
         now = time.time() if now is None else now
         s = state()
-        chans = [{"id": ch["id"], "sched": sched_of(ch), "can": bool(promo_design(s, ch)) and ch.get("on", True)}
+        chans = [{"id": ch["id"], "sched": sched_of(ch), "can": bool(promo_design(s, ch)) and ch.get("on", True),
+                  "design": promo.design_of(promo_design(s, ch))}
                  for ch in s["channels"]]
         remove, make = promo.plan(chans, s.get("promos") or [], keep, days, now)
         gone = {p["id"] for p in remove}
@@ -2319,7 +2323,7 @@ def promos_job(now=None, limit_seconds=40 * 60):
                 s = state()
                 s["promos"] = (s.get("promos") or []) + [{"id": pid, "cid": job["cid"], "group": promo.group_of(e), "entry": e["id"],
                                                           "title": e.get("title") or "Programme", "airs": int(a["start"]), "made": int(time.time()),
-                                                          "dur": seconds}]
+                                                          "dur": seconds, "design": promo.design_of(pk)}]
                 save(s)
             made += 1
         said = f"Made {sbplugin.plural(made, 'promo')}" + (f", removed {len(remove)}" if remove else "")
