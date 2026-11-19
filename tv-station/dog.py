@@ -248,6 +248,9 @@ def fit_lines(words, box_w, box_h, lines):
     def size_for(n):
         return max(12.0, 0.85 * box_h / (n * LINE_GAP - (LINE_GAP - 1)))  # a little room for the tails of g, p and y
 
+    one = min(size_for(1), box_w / max(1, len(words) * CHAR_WIDTH))  # on one line, as large as its width allows
+    if words and (one >= size_for(2) or (lines == 1 and one >= size_for(1) * 0.45)):
+        return one, [words]
     for n in range(1, max(1, lines) + 1):
         size = size_for(n)
         got = textwrap.wrap(words, max(4, int(box_w / (size * CHAR_WIDTH)))) or [""]
