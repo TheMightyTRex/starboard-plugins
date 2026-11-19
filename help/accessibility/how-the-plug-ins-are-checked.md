@@ -28,7 +28,7 @@ you add it. What a plug-in shows in Starboard is drawn by Starboard itself, so i
 |---|---|---|
 | Starboard's plug-in tester | The words people read: labels, hints, card titles, button names; every style in light and dark | Passed for all 27 plug-ins on 15 November 2026 |
 | Logo check | Each logo's colour has at least 4.5 to 1 contrast with its white symbol, and a text description | Passed for all 27 logos (`tools/make_logos.py`) |
-| Styles | Every one of the 21 styles, in light and dark: text at least 4.5 to 1, edges and the focus ring 3 to 1 | Passed: a style that fails cannot be added |
+| Styles | Every one of the 22 styles, in light and dark: text at least 4.5 to 1, edges, the focus ring and the hover edge on menus 3 to 1 | Passed: a style that fails cannot be added |
 
 ## Not checked
 

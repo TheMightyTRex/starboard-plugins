@@ -1,6 +1,6 @@
 # Styles: Settings
 
-Styles has no settings of its own, and no buttons. You choose one of its 21 styles in **Display**: select **Display** in the header, then choose under **Style**.
+Styles has no settings of its own, and no buttons. You choose one of its 22 styles in **Display**: select **Display** in the header, then choose under **Style**.
 
 ## Things to note
 

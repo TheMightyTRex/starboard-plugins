@@ -1,9 +1,10 @@
 # Styles, a Starboard plug-in
 
-21 styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
+22 styles for Starboard, chosen from current interface trends and checked for accessibility in light and dark.
 
 | Style | What it is like |
 |---|---|
+| Mica | Starboard's own design since 18 November 2026: calm greys, small corners, drop shadows and frosted menus |
 | Midnight | Dark first and dense, with calm blue accents |
 | Frost | Soft frosted tints and gentle shadows, with solid panels for reading |
 | Bold | Neo-brutalist: hard edges, thick shadows and a yellow highlight |
@@ -24,9 +25,9 @@
 | Swiss | White, black and red on a grid, heavy rules and capital labels |
 | Neon | Synthwave glows on a faint grid, with a gradient button |
 | Clay | Puffy, matte soft-3D panels in calm pastels |
-| Mica | A calm desktop style with transparent menus |
+| Classic | Starboard's design before Mica: teal on cool blue-grey, square corners and flat cards |
 
-The last six change every part of Starboard: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
+Mica is Starboard's own style since 18 November 2026, so Classic keeps the design from before it. Mica and the five from Studio to Clay change every part of Starboard: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
 API 1.2).
 
 ## Install

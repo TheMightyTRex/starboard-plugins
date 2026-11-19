@@ -47,7 +47,7 @@ Starboard adds none by itself, and each one you add uses a little memory and pro
 | Plug-in | What it does | Memory at most |
 |---|---|---|
 | [Home Assistant](../../home-assistant/README.md) | Your house in one sentence on the dashboard | 48 MB |
-| [Styles](../../styles/README.md) | 21 accessible styles for **Display** | None: it runs nothing |
+| [Styles](../../styles/README.md) | 22 accessible styles for **Display** | None: it runs nothing |
 
 ## Apps you can add
 
