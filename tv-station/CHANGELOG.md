@@ -9,7 +9,12 @@
 - What each channel has played (owner, 19 November 2026): for each episode and film, when it was on and how many seconds were streamed to someone watching, in a small file for each channel (the newest 5,000, written about once a minute while it plays). An episode with 70% or more played counts as watched for From the next episode not watched, with Count what this channel has played as watched (Yes unless changed). Nothing is sent to Jellyfin.
 - Played on this channel, a card on each channel: the last 5 programmes, the setting, and Remove to forget the record.
 
+- Promos with the programme's sound (owner, 19 November 2026): each clip plays with its own sound, brought to -23 LUFS, and the music falls to 20% under it (Music under the programme's sound: 10%, 20%, 30% or 50%), at full before the first clip and after the last. Use the programme's sound in promos (Yes unless changed) turns it off; a programme with no sound FFmpeg can read gets the music alone.
+- Promo length: As the pack says, or 10, 15, 20, 30, 45 or 60 seconds. Clips in each promo: by its length (about one every 5 seconds) or 2 to 6, from different parts of the programme, moved a little for each promo so two seldom show the same moments.
+- Background loops for promos: upload videos of 2 to 60 seconds, or pictures, up to 90 MB and 20 of each, for the station in Idents, clips and music and for one channel on its Holding slide and promos card. Each promo chooses one at random from the channel's, the station's and its pack's promo background. Music or a loop alone is enough for plain promos.
+
 ### Changed
+- Promos take their clips from 12% to 78% of the programme, as many as their length needs, where they took three from fixed places.
 - From the next episode not watched starts at the first episode, in the channel's order, that is neither played in Jellyfin nor watched on the channel, where it took the first not played in Jellyfin's order before.
 
 ## 0.2.1 (19 November 2026)

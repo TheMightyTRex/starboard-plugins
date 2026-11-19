@@ -170,7 +170,7 @@
    "type": "switch",
    "default": true,
    "group": "Promos",
-   "hint": "For channels whose broadcast pack has a promo: short clips of a programme coming up, a music bed and its day and time. One at a time, at the lowest priority, never while anyone is watching."
+   "hint": "Short clips of a programme coming up, with its sound, a music bed and its day and time, on a background loop. One at a time, at the lowest priority, never while anyone is watching."
   },
   {
    "key": "promo_keep",
@@ -207,6 +207,112 @@
     }
    ],
    "hint": "A promo is also replaced once its programme has started."
+  },
+  {
+   "key": "promo_seconds",
+   "label": "Promo length",
+   "type": "choice",
+   "default": "",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "",
+     "label": "As the pack says (15 seconds unless it says otherwise)"
+    },
+    {
+     "value": "10",
+     "label": "10 seconds"
+    },
+    {
+     "value": "15",
+     "label": "15 seconds"
+    },
+    {
+     "value": "20",
+     "label": "20 seconds"
+    },
+    {
+     "value": "30",
+     "label": "30 seconds"
+    },
+    {
+     "value": "45",
+     "label": "45 seconds"
+    },
+    {
+     "value": "60",
+     "label": "60 seconds"
+    }
+   ],
+   "hint": "How long each promo is. Longer promos show more clips. A change shows in the promos made from the next quiet hour."
+  },
+  {
+   "key": "promo_clips",
+   "label": "Clips in each promo",
+   "type": "choice",
+   "default": "",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "",
+     "label": "By its length (about one every 5 seconds)"
+    },
+    {
+     "value": "2",
+     "label": "2 clips"
+    },
+    {
+     "value": "3",
+     "label": "3 clips"
+    },
+    {
+     "value": "4",
+     "label": "4 clips"
+    },
+    {
+     "value": "5",
+     "label": "5 clips"
+    },
+    {
+     "value": "6",
+     "label": "6 clips"
+    }
+   ],
+   "hint": "Short clips from different parts of the programme, clear of its opening titles and end credits."
+  },
+  {
+   "key": "promo_sound",
+   "label": "Use the programme's sound in promos",
+   "type": "switch",
+   "default": true,
+   "group": "Promos",
+   "hint": "Each clip plays with its own sound, at the same loudness as the rest, and the music goes quieter under it."
+  },
+  {
+   "key": "promo_music_level",
+   "label": "Music under the programme's sound",
+   "type": "choice",
+   "default": "20",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "10",
+     "label": "10%"
+    },
+    {
+     "value": "20",
+     "label": "20%"
+    },
+    {
+     "value": "30",
+     "label": "30%"
+    },
+    {
+     "value": "50",
+     "label": "50%"
+    }
+   ],
+   "hint": "How loud the music is while a clip's sound plays. It is at full before the first clip and after the last."
   },
   {
    "key": "promo_other",

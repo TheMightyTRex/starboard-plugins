@@ -48,11 +48,12 @@ Its line-up is read from Jellyfin straight away. The programmes for today and to
 | Played on this channel | The last 5 programmes | When each was on, and how many of its minutes were played to someone watching: **Watched** at 70% or more, else **Part watched** |
 | Played on this channel | **The record of what it has played** | **Remove**, in its More menu, forgets everything this channel has played, after you confirm. Jellyfin is not changed |
 | Holding slide and promos | **Holding slide** | **The station's holding slide**, **Its own holding slide** or **No holding slide**. The slide loops at the end of each break, after the promos, until the next programme starts, so the channel never shows black. With none, breaks end on Coming up next cards |
-| Holding slide and promos | **Its own holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 60 MB, which loops. It is checked with FFmpeg first |
+| Holding slide and promos | **Its own holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB, which loops. It is checked with FFmpeg first |
 | Holding slide and promos | **Words on the slide** | **A countdown to the next programme** (Next programme in 4:32, with the programme's name, reaching 0:00 as it starts), **Back soon** or **No words**. **Station default** uses the choice in Idents, clips and music |
 | Holding slide and promos | **Preview the holding slide** | Opens a frame of the slide with its words, in a new tab |
 | Holding slide and promos | **Promos** | How this channel's promos are made: with its pack's promo, or on its colour with your music, or none yet |
 | Holding slide and promos | **Add music for its promos** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes. Used for this channel's promos in place of the station's music |
+| Holding slide and promos | **Add a background loop for its promos** | Select **Upload a background loop** and choose a video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080 and up to 90 MB. Add as many as 20. Each promo chooses one at random from this channel's, the station's and its pack's promo background. Leave the clip area and the places for the words clear |
 
 A change to what a channel shows, its order or its times starts after the programme on air ends, so nobody watching meets a jump.
 
@@ -87,12 +88,13 @@ The station's own idents and clips, for every channel that chooses **The station
 
 | Setting | What it does |
 |---|---|
-| **The station's holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 60 MB. Every channel without its own slide uses it |
+| **The station's holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Every channel without its own slide uses it |
 | **Words on the slide** | A countdown to the next programme, Back soon, or no words. Each channel can choose its own |
 | **Music the promos use** | **Your music and the pack's**, **Only your music** or **Only the pack's music**. A channel's own music comes first. With no music of the kind chosen, the other is used |
 | **Add music for promos** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks. Each is checked with FFmpeg and played at the same loudness as the rest. **Remove** in its More menu takes it off |
+| **Add a background loop for promos** | Select **Upload a background loop** and choose a video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080 and up to 90 MB, up to 20 loops. Every channel's promos choose from these, its own and its pack's promo background, one at random for each promo. The pack's `promo/placement.png` shows where the clip and the words go. **Remove** in its More menu takes it off |
 
-With music here, a channel whose pack has no promo, or that has no pack, gets plain promos: the programme's clips and words on the channel's colour.
+With music or a background loop here, a channel whose pack has no promo, or that has no pack, gets plain promos: the programme's clips and words on a loop, or on the channel's colour.
 
 ## Broadcast pack
 
@@ -149,11 +151,15 @@ Timing stays exact: each thing comes on from its start and has gone by its end, 
 
 ## Promos
 
-Promos are made only for channels whose broadcast pack has a promo background.
+Promos are made for channels whose broadcast pack has a promo background, and for any channel when there is music or a background loop for promos in Idents, clips and music or on the channel.
 
 | Setting | What it does |
 |---|---|
-| **Make promos in quiet hours** | In Starboard's quiet hours, one at a time at the lowest priority, and never while anyone is watching: a few short clips of a programme coming up, a music bed from the pack, and its title, day and time and channel. Activated unless you change it |
+| **Make promos in quiet hours** | In Starboard's quiet hours, one at a time at the lowest priority, and never while anyone is watching: a few short clips of a programme coming up, with its sound, a music bed, and its title, day and time and channel, on a background loop. Activated unless you change it |
+| **Promo length** | **As the pack says** (15 seconds unless the pack says otherwise), or 10, 15, 20, 30, 45 or 60 seconds |
+| **Clips in each promo** | **By its length**, about one clip every 5 seconds, or 2 to 6 clips. They come from different parts of the programme, clear of its opening titles and end credits |
+| **Use the programme's sound in promos** | Each clip plays with its own sound, brought to the same loudness as the rest. Activated unless you change it. A programme with no sound has the music alone |
+| **Music under the programme's sound** | 10%, 20%, 30% or 50%: how loud the music is while a clip's sound plays. 20% unless you change it. The music is at full before the first clip and after the last |
 | **Promos kept for each channel** | 3 unless you change it, up to 6 |
 | **Replace each promo after** | 2 days unless you change it. A promo is also replaced once its programme has started, so they never pile up |
 | **Show promos for your other channels** | Each channel's breaks show the promos of your other channels too. Activated unless you change it |
