@@ -46,7 +46,7 @@ Themearr's image is about 1 GB to download, as it brings its own copy of FFmpeg.
 2. Under **Apps you can add**, find **Themearr** and select **Install…**.
 3. A slide-out opens with what it can read, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Themearr**. To stop, select **Cancel**: nothing is installed.
-5. Themearr's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
+5. Themearr's own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Activate**.
 
 ### Add it by its address
 

@@ -15,7 +15,7 @@ is new first, keeps the version you had, and goes back to it by itself if the ne
 
 1. Go to **Settings**, then **Plug-ins**. A plug-in with a newer version has an **Update** chip in **Manage**.
 2. Select the plug-in's name to open its tab.
-3. In **Versions**, select **Update to** and the new version.
+3. In **General**, **Versions**, select **Update to** and the new version.
 4. Read **What is new since** your version and **How the update is kept safe**.
 5. Enter your Starboard password and select **Update** and the plug-in's name.
 6. When the dialog says it is updated, select **Done**.

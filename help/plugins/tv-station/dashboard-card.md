@@ -24,4 +24,4 @@ The card works out what is on from the schedule, as the guide does. It starts no
 ## Find out more
 
 - [Settings](settings.md)
-- [Dashboard cards, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/dashboard-cards.html)
+- [Use and change the dashboard, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/use-the-dashboard.html)
