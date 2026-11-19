@@ -6,7 +6,7 @@ Remote access 1.1.4 is the latest version. It needs Starboard with plug-in API 1
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 1.1.4 | 1.14 or later | 19 November 2026 |
+| 1.1.4 | 1.14 or later | 18 November 2026 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
 | 1.1.2 | 1.14 or later | 17 November 2026 |
 | 1.1.1 | 1.14 or later | 16 November 2026 |
@@ -19,7 +19,8 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Changed:
 
-- **Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
+- **Clearer messages with what to do:** when it cannot reach Starboard it says so and to update Starboard, then Start again; an app it could not check says Not checked instead of saying it is missing; a missing app says to add it in Settings, Apps.
+- **Your Tailscale name:** it checks whether Starboard opens at the name, says when it works, and otherwise gives the steps to add it to STARBOARD_ALLOWED_HOSTS.
 
 ## What is new in 1.1.3
 

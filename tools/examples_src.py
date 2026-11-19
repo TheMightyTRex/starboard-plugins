@@ -8,7 +8,11 @@ COMMON = {"manifest_version": 1, "author": "TheMightyTRexUK", "licence": "MIT",
 # 1.1.2 (17 November 2026, DASH-458): sbplugin sends Jellyfin's key in Authorization too, for Jellyfin 12.
 # 1.1.3 (17 November 2026, design system audit): clearer words, chips with no numbers, and the logo's alt text is the
 # plug-in's name. Not published until the owner's OK: the changed apps name the image's next tag until then.
-VERSION = "1.1.3"
+# 1.1.4 (19 November 2026, DASH-482): sbplugin reaches Starboard's API through the socket in its run folder when
+# Starboard gives one (STARBOARD_API_SOCKET, Starboard 0.23.0), so plug-ins on their own internal network can call it.
+# The shared image pinned on 19 November 2026 (sha256:7e1f325875b0, built from 985c491) already has it.
+VERSION = "1.1.4"
+VERSION_113 = "1.1.3"
 VERSION_112 = "1.1.2"
 VERSION_111 = "1.1.1"
 VERSION_110 = "1.1.0"
@@ -27,13 +31,16 @@ RELEASED = "2026-11-15"
 RELEASED_111 = "2026-11-16"
 RELEASED_112 = "2026-11-17"
 RELEASED_113 = "2026-11-17"
+RELEASED_114 = "2026-11-19"
+SOCKET_114 = ["**Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in "
+              "its own folder, so it works on its own closed network too. An older Starboard works as before."]
 FIRST = "2026-11-12"
 
 
 def changes_for(pid, m):
     """What is new in each version (plug-in API 1.10, shown before an update from API 1.14): 1.1.0 first, then the
     plug-in's own list, or its first version."""
-    earlier = [c for c in m.get("changes") or [] if c.get("version") not in (VERSION, VERSION_112, VERSION_111, VERSION_110)] or [
+    earlier = [c for c in m.get("changes") or [] if c.get("version") not in (VERSION, VERSION_113, VERSION_112, VERSION_111, VERSION_110)] or [
         {"version": "1.0.0", "date": FIRST, "added": [m["description"]]}]
     added = ["**A logo** in Settings, Plug-ins, in the Catalogue and on its dashboard cards.",
              "**Its cards say how things are:** a status and when they last changed, in the grey band at the top of each card."]
@@ -46,11 +53,12 @@ def changes_for(pid, m):
               "fail."] if pid == "library-health" else [])
     v111 = {"version": VERSION_111, "date": RELEASED_111, "changed": light, **({"fixed": fixed} if fixed else {})}
     v112 = {"version": VERSION_112, "date": RELEASED_112, **({"fixed": JELLYFIN_12} if pid in CALLS_JELLYFIN else {"changed": SHARED_ONLY})}
-    newest = {"version": VERSION, "date": RELEASED_113, "changed": WORDS_113.get(pid, []) + [
+    v114 = {"version": VERSION, "date": RELEASED_114, "changed": SOCKET_114}
+    newest = {"version": VERSION_113, "date": RELEASED_113, "changed": WORDS_113.get(pid, []) + [
         f"**Logo description:** where its logo stands on its own, a screen reader says \"{m['name']} logo\", the plug-in's name, "
         "instead of a description of the symbol."]}
     own = [m["_newest"]] if m.get("_newest") else []  # a version of its own after the shared one (Notifications 1.2.0)
-    return own + [newest, v112, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
+    return own + [v114, newest, v112, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
              "changed": ["Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."]}] + earlier
 
 

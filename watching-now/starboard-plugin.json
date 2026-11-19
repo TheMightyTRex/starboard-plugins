@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "watching-now",
  "name": "Watching now",
- "version": "1.1.3",
+ "version": "1.1.4",
  "description": "Who is watching what in Jellyfin right now, with how far through they are.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -56,6 +56,13 @@
   "alt": "Watching now logo"
  },
  "changes": [
+  {
+   "version": "1.1.4",
+   "date": "2026-11-19",
+   "changed": [
+    "**Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
+   ]
+  },
   {
    "version": "1.1.3",
    "date": "2026-11-17",
