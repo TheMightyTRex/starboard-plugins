@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.4 (19 November 2026)
+
+### Fixed
+- A programme with an external subtitle file showed only the fallback card, the station's and channel's names (owner, 19 November 2026: "Late ink just shows a card with the words T-Rex TV - late ink on it"). The plug-in mapped the programme's sound by Jellyfin's stream Index, which counts external files such as an .srt beside the video (often as 0), so in a file with an embedded subtitle FFmpeg was asked to use a subtitle as sound and stopped ("Encoder not found"), and every try fell back to the card. The sound is now mapped as the default track's place among the file's own sound tracks (0:a:N), for programmes and for clips from Jellyfin. Line-ups read before 0.5.4 use the first sound track until they are read again (the daily refresh, or Read the channels from Jellyfin again).
+
 ## 0.5.3 (19 November 2026)
 
 ### Fixed
