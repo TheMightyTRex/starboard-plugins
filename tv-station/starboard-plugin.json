@@ -170,7 +170,7 @@
    "type": "switch",
    "default": true,
    "group": "Promos",
-   "hint": "For channels whose broadcast pack has a promo: short clips of a programme coming up, a music bed and its day and time. One at a time, at the lowest priority, never while anyone is watching."
+   "hint": "Short clips of a programme coming up, with its sound, a music bed and its day and time, on a background loop. One at a time, at the lowest priority, never while anyone is watching."
   },
   {
    "key": "promo_keep",
@@ -207,6 +207,112 @@
     }
    ],
    "hint": "A promo is also replaced once its programme has started."
+  },
+  {
+   "key": "promo_seconds",
+   "label": "Promo length",
+   "type": "choice",
+   "default": "",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "",
+     "label": "As the pack says (15 seconds unless it says otherwise)"
+    },
+    {
+     "value": "10",
+     "label": "10 seconds"
+    },
+    {
+     "value": "15",
+     "label": "15 seconds"
+    },
+    {
+     "value": "20",
+     "label": "20 seconds"
+    },
+    {
+     "value": "30",
+     "label": "30 seconds"
+    },
+    {
+     "value": "45",
+     "label": "45 seconds"
+    },
+    {
+     "value": "60",
+     "label": "60 seconds"
+    }
+   ],
+   "hint": "How long each promo is. Longer promos show more clips. A change shows in the promos made from the next quiet hour."
+  },
+  {
+   "key": "promo_clips",
+   "label": "Clips in each promo",
+   "type": "choice",
+   "default": "",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "",
+     "label": "By its length (about one every 5 seconds)"
+    },
+    {
+     "value": "2",
+     "label": "2 clips"
+    },
+    {
+     "value": "3",
+     "label": "3 clips"
+    },
+    {
+     "value": "4",
+     "label": "4 clips"
+    },
+    {
+     "value": "5",
+     "label": "5 clips"
+    },
+    {
+     "value": "6",
+     "label": "6 clips"
+    }
+   ],
+   "hint": "Short clips from different parts of the programme, clear of its opening titles and end credits."
+  },
+  {
+   "key": "promo_sound",
+   "label": "Use the programme's sound in promos",
+   "type": "switch",
+   "default": true,
+   "group": "Promos",
+   "hint": "Each clip plays with its own sound, at the same loudness as the rest, and the music goes quieter under it."
+  },
+  {
+   "key": "promo_music_level",
+   "label": "Music under the programme's sound",
+   "type": "choice",
+   "default": "20",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "10",
+     "label": "10%"
+    },
+    {
+     "value": "20",
+     "label": "20%"
+    },
+    {
+     "value": "30",
+     "label": "30%"
+    },
+    {
+     "value": "50",
+     "label": "50%"
+    }
+   ],
+   "hint": "How loud the music is while a clip's sound plays. It is at full before the first clip and after the last."
   },
   {
    "key": "promo_other",
@@ -545,7 +651,10 @@
     "**Animation on and off:** the cards, straps, on-screen logo, clock, label and holding slide words can fade, slide in from the left, right or bottom, wipe or grow, and go off the same ways, quick, normal or slow. Choose on the Animation page or a channel's Animation card, with a preview of each.",
     "**A broadcast pack can choose its animation** in pack.json, under animation. A choice in the settings comes first.",
     "**Each channel remembers what it has played** to someone watching: From the next episode not watched counts an episode it played, 70% or more of it, as watched, as well as what Jellyfin says. Jellyfin's watched marks are never changed.",
-    "**Played on this channel:** a new card on each channel lists the last few programmes it played, with a way to forget them."
+    "**Played on this channel:** a new card on each channel lists the last few programmes it played, with a way to forget them.",
+    "**Promos with the programme's sound:** each clip plays with its own sound, and the music goes down to 20% under it (10%, 20%, 30% or 50% in Music under the programme's sound).",
+    "**Promo length** from 10 to 60 seconds, and **Clips in each promo**, about one every 5 seconds unless you choose 2 to 6.",
+    "**Background loops for promos:** upload several videos or pictures for the station or one channel; each promo chooses one at random with the pack's."
    ],
    "changed": [
     "**From the next episode not watched** finds the first episode, in the channel's order, that is not watched, where before it took the first not played in Jellyfin's order."

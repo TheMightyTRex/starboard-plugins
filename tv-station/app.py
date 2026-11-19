@@ -43,6 +43,7 @@ PROMOS = "promos"
 GRIDS = "grid"  # the schedule grid: <channel>.json, and .draft.json for a suggestion, .prev.json for Undo
 MUSIC = "music"  # music for promos the owner uploads (0.2.0): station/ for every channel, ch-<channel>/ for one
 HOLDING = "holding"  # holding slides (0.2.0): station.<ending> and ch-<channel>.<ending>
+BACKS = "promo-backgrounds"  # background loops for promos the owner uploads (0.3.0): station/ and ch-<channel>/
 PLAYED = "played"  # what each channel has played to someone watching (0.3.0): <channel>.json
 NAME = "Create your own TV channel"
 MAX_UPLOAD = 60 * 1024 * 1024
@@ -51,6 +52,9 @@ LOGO_TYPES = (".png", ".svg")
 MUSIC_TYPES = (".mp3", ".m4a", ".ogg", ".flac")
 HOLDING_TYPES = (".png", ".jpg", ".jpeg", ".mp4", ".mov", ".webm", ".mkv")
 MUSIC_MOST = 20  # tracks for the station, and for each channel
+BACK_TYPES = (".mp4", ".mov", ".webm", ".mkv", ".png", ".jpg", ".jpeg")
+BACK_MOST = 20  # background loops for the station, and for each channel
+BACK_LONGEST = 60  # seconds: a background loop's video
 HOLDING_LONGEST = 120  # seconds: a holding slide's video loops (owner, 19 November 2026: 120 seconds and 90 MB)
 HOLDING_MOST = 90 * 1024 * 1024  # bytes: Starboard 0.24.1 and later pass files of up to 100 MB
 MUSIC_USE = {"both": "Your music and the pack's", "mine": "Only your music", "pack": "Only the pack's music"}
@@ -535,15 +539,83 @@ def drop_music(tracks, mid):
     return keep
 
 
+def back_files(backs):
+    """Uploaded background loops that are still there, as promo.py takes them: [{"file", "still"}]."""
+    out, top = [], os.path.realpath(os.path.join(sbplugin.DATA, BACKS))
+    for b in backs or []:
+        path = os.path.join(top, b.get("file") or "")
+        if os.path.realpath(path).startswith(top + os.sep) and os.path.isfile(path):
+            out.append({"file": path, "still": bool(b.get("still"))})
+    return out
+
+
+def add_background(backs, key, name, length, rfile):
+    """One background loop for promos (0.3.0): a picture, or a video of 2 to 60 seconds, up to 90 MB, checked with
+    ffprobe. key is station or ch-<channel>. Returns (the loops with it added, the words said)."""
+    if len(backs or []) >= BACK_MOST:
+        raise ValueError(f"There are {BACK_MOST} background loops already, the most. Remove one first")
+    path, base = save_upload(name, length, rfile, os.path.join(sbplugin.DATA, BACKS, key), BACK_TYPES, most=HOLDING_MOST)
+    still = base.lower().endswith((".png", ".jpg", ".jpeg"))
+    info = pack.probe(path)
+    if not info["ok"] or not info["video"]:
+        os.remove(path)
+        raise ValueError(f"{base} is not a picture or video FFmpeg can read")
+    if not still and not 2 <= info["duration"] <= BACK_LONGEST:
+        os.remove(path)
+        raise ValueError(f"{base} is {round(info['duration'])} seconds long. Choose a picture, or a video of 2 to {BACK_LONGEST} seconds")
+    bid = hashlib.sha256(f"{key}/{base}".encode()).hexdigest()[:10]
+    item = {"id": bid, "file": f"{key}/{base}", "title": base, "still": still, "dur": 0 if still else round(info["duration"], 1)}
+    words = "a picture" if still else f"{round(info['duration'])} seconds"
+    return [b for b in backs or [] if b["id"] != bid] + [item], f"Added {base}, {words}"
+
+
+def drop_background(backs, bid):
+    """The loops without one; its file goes from the plug-in's folder."""
+    keep, top = [], os.path.realpath(os.path.join(sbplugin.DATA, BACKS))
+    for b in backs or []:
+        if b.get("id") == bid:
+            path = os.path.join(top, b.get("file") or "")
+            if os.path.realpath(path).startswith(top + os.sep):
+                with contextlib.suppress(OSError):
+                    os.remove(path)
+        else:
+            keep.append(b)
+    return keep
+
+
+def back_words(b):
+    return "a picture" if b.get("still") else f"{round(b.get('dur') or 0)} seconds, looped"
+
+
 def promo_design(s, ch):
-    """What a channel's promos are made with: its pack when the pack has a promo, else a plain design on its colour when
-    there is music uploaded for it or for the station (0.2.0), else nothing, so it has no promos."""
+    """What a channel's promos are made with: its pack when the pack has a promo, else a plain design (the default
+    layout on its colour) when there is music or a background loop uploaded for it or for the station (0.2.0, loops
+    0.3.0), else nothing, so it has no promos."""
     pk = channel_pack(s, ch)
     if pk and pk.get("promo"):
         return pk
-    if music_files(ch.get("music")) or music_files(s.get("music")):
+    if (music_files(ch.get("music")) or music_files(s.get("music")) or back_files(ch.get("promo_backgrounds"))
+            or back_files(s.get("promo_backgrounds"))):
         return promo.plain_pack(ch.get("colour"))
     return None
+
+
+def backgrounds_for(s, ch, design):
+    """The background loops a promo chooses from (0.3.0): the channel's own and the station's uploaded loops, and the
+    pack's promo background (None in the list, as promo.command takes it). With no loops uploaded, only the pack's."""
+    pool = back_files(ch.get("promo_backgrounds")) + back_files(s.get("promo_backgrounds"))
+    if (design or {}).get("promo", {}).get("background"):
+        pool.append(None)
+    return pool
+
+
+def promo_seconds(cfg):
+    """The setting Promo length (0.3.0): seconds, or None for what the pack says (15 unless it says otherwise)."""
+    try:
+        v = int(cfg.get("promo_seconds") or 0)
+    except (TypeError, ValueError):
+        return None
+    return max(promo.SHORTEST, min(promo.LONGEST, v)) if v else None
 
 
 def music_for(s, ch, design):
@@ -1135,6 +1207,13 @@ def channel_rows(s, ch, cfg, base, now):
     for m in ch.get("music") or []:
         row(f"music-{m['id']}", f"Music: {m['title']}", g, detail=f"{round(m.get('dur') or 0)} seconds. Used for this channel's promos.",
             actions=["remove"], state_label="Ready")
+    for b in ch.get("promo_backgrounds") or []:
+        row(f"back-{b['id']}", f"Background loop: {b['title']}", g, detail=f"{back_words(b).capitalize()}. Each promo chooses one at random.",
+            actions=["remove"], state_label="Ready")
+    row("add-back", "Add a background loop for its promos", g, actions=["attach"], state="unknown", state_label="Add one",
+        detail="Used with the station's and the pack's, one chosen at random for each promo. Leave the clip area and the words' places clear.",
+        attach={"label": "Upload a background loop", "field": "Background loop", "accept": ",".join(BACK_TYPES),
+                "hint": "A video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080, up to 90 MB"})
     row("add-music", "Add music for its promos", g, actions=["attach"], state="unknown", state_label="Add one",
         detail="Its own music, used in place of the station's. " + MUSIC_USE.get(s.get("music_use") or "both", "") + " are used.",
         attach={"label": "Upload music", "field": "Music", "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB",
@@ -1348,6 +1427,9 @@ def channels_post(body, now=None):
         elif key.startswith("music-") and action == "remove":
             ch["music"] = drop_music(ch.get("music"), key[6:])
             said = "Removed the music"
+        elif key.startswith("back-") and action == "remove":
+            ch["promo_backgrounds"] = drop_background(ch.get("promo_backgrounds"), key[5:])
+            said = "Removed the background loop"
         elif key in ("add-ident", "add-clip") and action == "attach":
             role = "idents" if key == "add-ident" else "clips"
             said = add_jellyfin_clips(ch.setdefault("own", {"idents": [], "clips": [], "sources": []}), role, str(value or ""))
@@ -1510,13 +1592,15 @@ def channels_file(name, item, length, rfile):
                 save(s)
         whose = f"{ch['name']}'s" if ch else "the channel's"
         return channels_page(f"{got['pack']['name']} is now {whose} own pack: {pack.summary(got['pack']).lower()}", only=cid if can("partial") and ch else None)
-    if key in ("holding-own", "add-music"):
+    if key in ("holding-own", "add-music", "add-back"):
         # Checked outside the lock too: ffprobe, and FFmpeg measuring the loudness, take a moment.
         ch = find(state(), cid)
         if not ch:
             raise ValueError("That channel has gone")
         if key == "holding-own":
             got = add_holding(f"ch-{cid}", name, length, rfile)
+        elif key == "add-back":
+            backs, said = add_background(ch.get("promo_backgrounds"), f"ch-{cid}", name, length, rfile)
         else:
             tracks, said = add_music(ch.get("music"), f"ch-{cid}", name, length, rfile)
         with _lock:
@@ -1527,6 +1611,9 @@ def channels_file(name, item, length, rfile):
             if key == "holding-own":
                 ch["holding"], ch["holding_mode"] = got, "own"
                 said = f"{got['title']} is {ch['name']}'s holding slide. It loops after the promos until the next programme starts"
+            elif key == "add-back":
+                ch["promo_backgrounds"] = backs
+                said += f". {ch['name']}'s promos use it from the next quiet hour"
             else:
                 ch["music"] = tracks
                 said += f". {ch['name']}'s promos use it from the next quiet hour"
@@ -1593,6 +1680,15 @@ def clips_page(said=None):
                   "state_label": "Add one", "detail": "With music here, a channel without a pack promo gets plain promos on its colour.",
                   "attach": {"label": "Upload music", "field": "Music", "accept": ",".join(MUSIC_TYPES),
                              "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB. Choose a file: names are not used here"}})
+    # Background loops for promos (0.3.0)
+    for b in s.get("promo_backgrounds") or []:
+        items.append({"id": f"back:{b['id']}", "title": b["title"][:120], "group": "Background loops for promos", "actions": ["remove"],
+                      "state": "ok", "state_label": "Ready", "detail": f"{back_words(b).capitalize()}. Each promo chooses one at random"})
+    items.append({"id": "add:back", "title": "Add a background loop for promos", "group": "Background loops for promos", "actions": ["attach"],
+                  "state": "unknown", "state_label": "Add one",
+                  "detail": "Used with each channel's own and its pack's. Leave the clip area and the words' places clear: the pack's promo/placement.png shows where.",
+                  "attach": {"label": "Upload a background loop", "field": "Background loop", "accept": ",".join(BACK_TYPES),
+                             "hint": "A video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080, up to 90 MB. Choose a file: names are not used here"}})
     out = {"type": "list", "title": "Idents, clips and music", "items": items,
            "intro": ("Idents, clips, the holding slide and music for promos that every channel can use. Each channel chooses whether "
                      "to use these, its own or both.")}
@@ -1612,9 +1708,12 @@ def clips_post(body):
         elif action == "remove" and role == "music":
             s["music"] = drop_music(s.get("music"), cid)
             said = "Removed the music"
+        elif action == "remove" and role == "back":
+            s["promo_backgrounds"] = drop_background(s.get("promo_backgrounds"), cid)
+            said = "Removed the background loop"
         elif action == "attach" and role == "add" and cid in ("idents", "clips"):
             said = add_jellyfin_clips(s["shared"], cid, str(value or ""))
-        elif action == "attach" and rid in ("add:music", "holding"):
+        elif action == "attach" and rid in ("add:music", "add:back", "holding"):
             raise ValueError("Choose a file, then Upload")
         elif action == "detach" and rid == "holding":
             drop_holding(s.pop("holding", None))
@@ -1639,6 +1738,13 @@ def clips_file(name, item, length, rfile):
             s["holding"] = got
             save(s)
         return clips_page(f"{got['title']} is the station's holding slide. It loops at the end of each break until the next programme starts")
+    if item == "add:back":
+        backs, said = add_background(state().get("promo_backgrounds"), "station", name, length, rfile)
+        with _lock:
+            s = state()
+            s["promo_backgrounds"] = backs
+            save(s)
+        return clips_page(said + ". Promos use it from the next quiet hour")
     if item == "add:music":
         tracks, said = add_music(state().get("music"), "station", name, length, rfile)
         with _lock:
@@ -2007,9 +2113,20 @@ def promos_job(now=None, limit_seconds=40 * 60):
             a = job["airing"]
             out = clip_path(f"promo:{pid}")
             texts = dog.Texts(os.path.join("/tmp", "tv-station", f"promo-{pid}"))
-            argv, seconds = promo.command(pk, a, ch["name"], promo.pick_music(music_for(s, ch, pk), schedule.seed_of(ch["seed"], "music", a["start"])), W, H,
-                                          c.get("url", ""), c.get("api_key", ""), texts, out + ".part")
+            seed = schedule.seed_of(ch["seed"], "promo", a["start"])
+            how = dict(seed=seed, seconds=promo_seconds(cfg), level=promo.music_level(cfg.get("promo_music_level") or 20),
+                       clips=int(cfg.get("promo_clips") or 0) or None,
+                       background=promo.pick_background(backgrounds_for(s, ch, pk), schedule.seed_of(ch["seed"], "back", a["start"])))
+            music = promo.pick_music(music_for(s, ch, pk), schedule.seed_of(ch["seed"], "music", a["start"]))
+            sound = truthy(cfg.get("promo_sound"), True)
+            argv, seconds = promo.command(pk, a, ch["name"], music, W, H, c.get("url", ""), c.get("api_key", ""), texts, out + ".part",
+                                          clip_sound=sound, **how)
             ok, why = promo.run(argv)
+            if not ok and sound and "watching" not in (why or ""):
+                # A programme with no sound FFmpeg can read: made again with the music alone.
+                argv, seconds = promo.command(pk, a, ch["name"], music, W, H, c.get("url", ""), c.get("api_key", ""), texts, out + ".part",
+                                              clip_sound=False, **how)
+                ok, why = promo.run(argv)
             shutil.rmtree(texts.folder, ignore_errors=True)
             if not ok:
                 with contextlib.suppress(OSError):
