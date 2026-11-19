@@ -1117,7 +1117,7 @@ def pack_page(said=None):
     items = []
     using_example = s.get("station_pack") == "example"
     title = f"Station's pack: {sp['name']}" + (" (the example pack)" if using_example else "") if sp else "Station's pack: none yet"
-    detail = (pack.summary(sp) + (f". Made {sp['made']}" if sp.get("made") else "") + ". Every channel uses it unless it has its own, or none."
+    detail = (pack.summary(sp) + (f". Made {sp['made']}" if sp.get("made") else "") + ". Used by every channel without its own."
               if sp else "Upload a zip made from the template: every channel uses it unless it has its own, or none.")
     items.append({"id": "station", "title": title[:120], "detail": detail[:200], "group": "The station's pack",
                   "state": "ok" if sp else "unknown", "state_label": "In use" if sp else "None yet",
@@ -1130,7 +1130,8 @@ def pack_page(said=None):
     else:
         ex_state, ex_label = ("ok", "In use") if using_example else ("off", "Not in use")
         ex_detail = ("Example TV, made in code: a logo, the logo with music, 3 idents, a Coming up next card, a promo with 2 music beds "
-                     "and 3 transitions. Activate to use it for every channel without its own pack.")
+                     "and 3 transitions. " + ("Deactivate to go back to your own pack, or none." if using_example else
+                                              "Activate to use it for every channel without its own pack."))
     items.append({"id": "example", "title": "Try the example pack", "detail": ex_detail[:200], "group": "The station's pack",
                   "on": using_example, "actions": ["toggle"], "state": ex_state, "state_label": ex_label})
     chk = sbplugin.remember("pack_check", None) or {}

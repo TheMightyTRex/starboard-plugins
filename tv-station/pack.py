@@ -588,7 +588,8 @@ def summary(p):
             ("a promo" + (f" with {len(p['music'])} music bed{'s' if len(p['music']) != 1 else ''}" if p.get("music") else "")) if p.get("promo") else "",
             f"{len(p['transitions'])} transition{'s' if len(p['transitions']) != 1 else ''}" if p.get("transitions") else ""]
     bits = [b for b in bits if b]
-    return (", ".join(bits[:-1]) + " and " + bits[-1] if len(bits) > 1 else bits[0] if bits else "nothing").capitalize()
+    words = ", ".join(bits[:-1]) + " and " + bits[-1] if len(bits) > 1 else bits[0] if bits else "nothing"
+    return words[0].upper() + words[1:]
 
 
 # Placement guides and the template --------------------------------------------------------------------------------
