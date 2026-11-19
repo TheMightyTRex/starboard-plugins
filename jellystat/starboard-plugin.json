@@ -20,7 +20,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-jellystat@sha256:c9f69e70ac7a34c12f6c7cc84157c8ad1e5df6d67523501dbcadb566d216d2a0",
+   "image": "ghcr.io/themightytrex/starboard-plugin-jellystat@sha256:3b03e15a99c7c07e8d15ac2e88d9174ac537d0ca61df6a9b0c8bd5dca7c60586",
    "port": 8080,
    "user": "70:70",
    "volumes": [
