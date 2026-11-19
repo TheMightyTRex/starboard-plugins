@@ -34,7 +34,11 @@ def entry(item):
     if ticks <= 0 or item.get("IsFolder"):
         return None
     audio = [s for s in item.get("MediaStreams") or [] if s.get("Type") == "Audio"]
-    default = next((s for s in audio if s.get("IsDefault")), audio[0] if audio else None)
+    # The sound track as FFmpeg numbers it inside the file (0.5.4, owner, 19 November 2026: Late ink showed only the
+    # fallback slate). Jellyfin's Index counts external files too (an .srt beside the video is often 0), so it is not
+    # the file's own stream number; the default track's place among the file's own sound tracks is, as 0:a:N.
+    inside = sorted((s for s in audio if not s.get("IsExternal")), key=lambda s: s.get("Index") or 0)
+    default = next((s for s in inside if s.get("IsDefault")), inside[0] if inside else None)
     episode = item.get("Type") == "Episode"
     out = {"id": item["Id"], "dur": round(ticks / 1e7, 2), "kind": "Episode" if episode else "Movie",
            "title": (item.get("SeriesName") if episode else item.get("Name")) or item.get("Name") or "Programme",
@@ -42,7 +46,7 @@ def entry(item):
            "plot": (item.get("Overview") or "")[:400], "year": item.get("ProductionYear"),
            "premiere": (item.get("PremiereDate") or "")[:10], "genres": (item.get("Genres") or [])[:3],
            "art": item["Id"], "backdrop": item.get("ParentBackdropItemId") or item.get("SeriesId") or item["Id"],
-           "audio": default.get("Index") if default else None, "has_audio": bool(audio)}
+           "audio_n": inside.index(default) if default else None, "has_audio": bool(inside)}
     if episode:
         out.update({"ep": item.get("Name") or "", "s": item.get("ParentIndexNumber"), "e": item.get("IndexNumber")})
     return out
@@ -191,7 +195,7 @@ def jellyfin_clips(jf, folder_id, role):
         e = entry(i)
         if e and e["dur"] <= 600:  # a clip longer than 10 minutes is not a break
             out.append({"id": f"jf-{i['Id']}", "src": f"jf:{i['Id']}", "dur": e["dur"], "title": i.get("Name") or "Clip",
-                        "role": role, "has_audio": e["has_audio"], "audio": e["audio"]})
+                        "role": role, "has_audio": e["has_audio"], "audio_n": e["audio_n"]})
     return out
 
 

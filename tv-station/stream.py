@@ -46,6 +46,14 @@ def output_args(W, H, kbps, ts_offset, duration, copy=False):
 PREVIEW_INTO = 1.5  # seconds into a card's background video that a preview frame is taken (0.3.1)
 
 
+def sound_map(item):
+    """The -map for a programme's or clip's sound: its default track among the file's own sound tracks (0:a:N, 0.5.4).
+    A line-up read before 0.5.4 has only Jellyfin's Index ("audio"), which counts external subtitle files and so can
+    name a subtitle stream; it gets the first sound track until the line-up is read again."""
+    n = item.get("audio_n")
+    return f"0:a:{int(n)}" if isinstance(n, int) and n >= 0 else "0:a:0"
+
+
 def _pack_input(path, still, pace, most, into=0.0):
     """A pack's background, looped, and never longer than the piece: no input here is ever endless. into: seconds to
     start in, for a preview frame of a background that opens with a movement, such as bands sweeping off (0.3.1)."""
@@ -99,7 +107,7 @@ def piece_command(piece, now, ctx):
         else:
             args += pace + ["-ss", f"{rel:.3f}"] + jellyfin_input(ctx["jf_url"], ctx["jf_key"], e["id"])
         if e.get("has_audio", True):
-            audio_from = f"0:{e['audio']}" if e.get("audio") is not None else "0:a:0"
+            audio_from = sound_map(e)
         label = ""
         if opts["label"] == "live":
             label = "Live"
@@ -117,7 +125,7 @@ def piece_command(piece, now, ctx):
         else:
             args += pace + seek + ["-i", ctx["clip_path"](src)]
         if c.get("has_audio", True):
-            audio_from = f"0:{c['audio']}" if c.get("audio") is not None else "0:a:0"
+            audio_from = sound_map(c)
             audio_gain = float(c.get("gain") or 0)
     elif kind == "holding":
         h = piece["holding"]

@@ -19,6 +19,7 @@ q: Where is the problem?
 q2: What happens?
   Jellyfin says no tuner is free -> 3
   It starts, then stops -> 5
+  It shows only a card with the station's and channel's names -> 12
 1: Start it again #start-it-again
 2: Give Jellyfin its address #give-jellyfin-its-address
 3: Let more channels play at once #let-more-channels-play-at-once
@@ -30,6 +31,7 @@ q2: What happens?
 9: Check Jellyfin has the guide #check-jellyfin-has-the-guide
 10: Choose a file it can use #choose-a-file-it-can-use
 11: Count what you have watched #count-what-you-have-watched
+12: Update the plug-in #update-the-plug-in
 ```
 
 ## Start it again
@@ -117,6 +119,16 @@ A series on the schedule grid set to **From the next episode not watched** start
 2. Check the episode is listed as **Watched**. An episode counts once 70% or more of it was played to someone watching; **Part watched** means less was.
 3. For an episode watched somewhere else, mark it as played in Jellyfin.
 4. Open the schedule grid, select the series and choose **From the next episode not watched** again. Where it starts is worked out when you choose it.
+
+## Update the plug-in
+
+A channel that shows only a card with the station's and channel's names is replacing each programme it could not start.
+
+1. Update Create your own TV channel to 0.5.4 or later. Before 0.5.4, a programme with a subtitle file beside it could
+   not start, because the plug-in asked for the subtitle in place of its sound.
+2. Select **Read the channels from Jellyfin again** on the plug-in's **General** tab, so each programme's sound is read
+   again. This also happens every night.
+3. If the card stays, follow [Check the stream](#check-the-stream).
 
 ## Find out more
 

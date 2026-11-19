@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.5.3",
+ "version": "0.5.4",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -660,6 +660,13 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.5.4",
+   "date": "2026-11-19",
+   "fixed": [
+    "**A programme with a subtitle file beside it showed only the channel's name card:** the plug-in asked for the subtitle in place of the sound. It now picks the sound among the file's own sound tracks."
+   ]
+  },
   {
    "version": "0.5.3",
    "date": "2026-11-19",
