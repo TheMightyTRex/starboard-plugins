@@ -36,7 +36,7 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -67,7 +67,9 @@ BREAKS = {"0": "No break", "60": "1 minute", "120": "2 minutes", "180": "3 minut
 MID_BREAKS = {"0": "Off", "60": "Up to 1 minute each", "120": "Up to 2 minutes each", "180": "Up to 3 minutes each"}  # 0.4.0
 BREAKS_FILE = "breaks.json"  # breaks inside programmes found in quiet hours (0.4.0)
 BREAKS_AHEAD = 48 * 3600  # programmes airing this soon are looked at
-ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer"}
+ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer", "extras": "Extra video"}
+PER_BREAK = {"2": "Up to 2", "3": "Up to 3", "4": "Up to 4", "6": "Up to 6"}  # promos, trailers and clips in a break (0.5.0)
+EXTRA_MOST = 90 * 1024 * 1024  # bytes: an extra video for the breaks (0.5.0)
 _lock = threading.RLock()
 _streams = stream.Streams()
 _refreshing = set()
@@ -425,7 +427,13 @@ def clips_for(s, ch, p=None, cfg=None):
     if ch.get("clips") in ("shared", "both"):
         fillers += shared.get("clips") or []
     fillers += promo_clips(s, ch, cfg)
-    out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False, "holding": holding_for(s, ch), "bumpers": []}
+    extras = []  # 0.5.0: the owner's extra videos, one at random after the promos
+    if (ch.get("extras") or "both") in ("own", "both"):
+        extras += own.get("extras") or []
+    if (ch.get("extras") or "both") in ("shared", "both"):
+        extras += shared.get("extras") or []
+    out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False, "holding": holding_for(s, ch), "bumpers": [],
+           "extras": extras}
     if p:
         name = pack_name(p)
         out["bumpers"] = [{"id": f"pk-{b['path']}", "src": f"pack:{name}/{b['path']}", "dur": b["dur"], "title": os.path.basename(b["path"]),
@@ -689,7 +697,8 @@ def found_breaks():
 
 def break_options(ch, opts):
     """What schedule.pieces_at needs to plan a channel's breaks."""
-    out = {"seed": ch["seed"], "cards": opts["cards"], "ident_order": ch.get("ident_order", "in_order")}
+    out = {"seed": ch["seed"], "cards": opts["cards"], "ident_order": ch.get("ident_order", "in_order"),
+           "fill_most": int(ch.get("per_break") or 3)}  # 0.5.0: each once, up to this many
     mid = int(ch.get("mid_break_seconds") or 0)
     if mid:
         found = found_breaks()
@@ -1217,8 +1226,12 @@ def channel_rows(s, ch, cfg, base, now):
     row("ident_order", "Idents play", g, choice=_choice("Idents play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
     row("trailers", "Trailers", g, choice=_choice("Trailers", "on" if ch.get("trailers") else "off", {"off": "None", "on": "Trailers of its films, from Jellyfin"}))
     row("clips", "Your clips", g, choice=_choice("Clips", ch.get("clips"), both))
+    row("per_break", "Promos and clips in each break", g, choice=_choice("In each break", str(ch.get("per_break") or 3), PER_BREAK),
+        detail="Each plays once at most, in a random order, after the bumper. The holding slide fills the rest of the break.")
+    row("extras", "Extra videos", g, choice=_choice("Extra videos", ch.get("extras") or "both", both),
+        detail="One plays at random after the promos in each break, when it fits.")
     own = ch.get("own") or {}
-    for role in ("idents", "clips"):
+    for role in ("idents", "clips", "extras"):
         for c in own.get(role) or []:
             row(f"clip-{c['id']}", f"{ROLES[role]}: {c['title']}", g, detail=f"{round(c['dur'])} seconds", actions=["remove"], state_label="Ready")
     row("add-ident", "Add an ident", g, actions=["attach"], state="unknown", state_label="Add one",
@@ -1226,6 +1239,10 @@ def channel_rows(s, ch, cfg, base, now):
                 "accept": ",".join(CLIP_TYPES)})
     row("add-clip", "Add a clip", g, actions=["attach"], state="unknown", state_label="Add one",
         attach={"label": "Add a clip", "field": "Clip", "hint": "A trailer or clip, up to 60 MB, or the name of a Jellyfin collection of them",
+                "accept": ",".join(CLIP_TYPES)})
+    row("add-extra", "Add an extra video", g, actions=["attach"], state="unknown", state_label="Add one",
+        detail="As many as you like. One plays at random after the promos in each break.",
+        attach={"label": "Upload an extra video", "field": "Extra video", "hint": "A video of up to 10 minutes and 90 MB",
                 "accept": ",".join(CLIP_TYPES)})
 
     # On-screen logo and branding
@@ -1595,7 +1612,7 @@ def channels_post(body, now=None):
                 refresh = True
         elif key.startswith("clip-") and action == "remove":
             own = ch.get("own") or {}
-            for role in ("idents", "clips"):
+            for role in ("idents", "clips", "extras"):
                 own[role] = [c for c in own.get(role) or [] if c["id"] != key[5:]]
             said = "Removed the clip. Its file stays in the plug-in's folder until you add another with the same name"
         elif key == "forget-played" and action == "remove":
@@ -1635,6 +1652,10 @@ def choose(ch, key, value):
         ch["mid_break_seconds"] = int(v)
     elif key in ("idents", "clips") and v in ("none", "own", "shared", "both"):
         ch[key] = v
+    elif key == "per_break" and v in PER_BREAK:
+        ch["per_break"] = int(v)
+    elif key == "extras" and v in ("none", "own", "shared", "both"):
+        ch["extras"] = v
     elif key == "ident_order" and v in ("in_order", "random"):
         ch["ident_order"] = v
     elif key == "trailers" and v in ("on", "off"):
@@ -1716,7 +1737,8 @@ def save_upload(name, length, rfile, folder, types, most=MAX_UPLOAD):
 
 
 def add_clip_file(holder, role, name, length, rfile):
-    path, base = save_upload(name, length, rfile, os.path.join(sbplugin.DATA, CLIPS), CLIP_TYPES)
+    path, base = save_upload(name, length, rfile, os.path.join(sbplugin.DATA, CLIPS), CLIP_TYPES,
+                             most=EXTRA_MOST if role == "extras" else MAX_UPLOAD)
     dur, has_audio, has_video = probe_seconds(path)
     if not has_video or dur <= 0:
         raise ValueError(f"{base} has no picture FFmpeg can read")
@@ -1786,9 +1808,9 @@ def channels_file(name, item, length, rfile):
             if r.returncode != 0:
                 raise ValueError(f"{base} could not be read as a picture. Choose a PNG")
             said = f"Added the logo {base}"
-        elif key in ("add-ident", "add-clip"):
+        elif key in ("add-ident", "add-clip", "add-extra"):
             said = add_clip_file(ch.setdefault("own", {"idents": [], "clips": [], "sources": []}),
-                                 "idents" if key == "add-ident" else "clips", name, length, rfile)
+                                 {"add-ident": "idents", "add-clip": "clips", "add-extra": "extras"}[key], name, length, rfile)
         else:
             raise ValueError("That row takes no file")
         save(s)
@@ -1799,11 +1821,16 @@ def clips_page(said=None):
     s = state()
     sh = s["shared"]
     items = []
-    for role in ("idents", "clips"):
+    groups = {"idents": "The station's idents", "clips": "The station's clips", "extras": "Extra videos for the breaks"}
+    for role in ("idents", "clips", "extras"):
         for c in sh.get(role) or []:
             items.append({"id": f"{role}:{c['id']}", "title": c["title"][:120], "detail": f"{round(c['dur'])} seconds",
-                          "group": "The station's idents" if role == "idents" else "The station's clips", "actions": ["remove"],
-                          "state": "ok", "state_label": "Ready"})
+                          "group": groups[role], "actions": ["remove"], "state": "ok", "state_label": "Ready"})
+    items.append({"id": "add:extras", "title": "Add an extra video for the breaks", "group": "Extra videos for the breaks", "actions": ["attach"],
+                  "state": "unknown", "state_label": "Add one",
+                  "detail": "As many as you like. One plays at random after the promos in each break, on every channel that uses the station's.",
+                  "attach": {"label": "Upload an extra video", "field": "Extra video", "accept": ",".join(CLIP_TYPES),
+                             "hint": "A video of up to 10 minutes and 90 MB. Choose a file: names are not used here"}})
     for role, label in (("idents", "Add the station's idents"), ("clips", "Add the station's clips")):
         items.append({"id": f"add:{role}", "title": label, "group": "Add", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
                       "attach": {"label": label, "field": "Name", "hint": "A video up to 60 MB, or the name of a Jellyfin collection or folder",
@@ -1853,7 +1880,7 @@ def clips_post(body):
     with _lock:
         s = state()
         role, _, cid = rid.partition(":")
-        if action == "remove" and role in ("idents", "clips"):
+        if action == "remove" and role in ("idents", "clips", "extras"):
             s["shared"][role] = [c for c in s["shared"].get(role) or [] if c["id"] != cid]
             said = "Removed"
         elif action == "remove" and role == "music":
@@ -1864,7 +1891,7 @@ def clips_post(body):
             said = "Removed the background loop"
         elif action == "attach" and role == "add" and cid in ("idents", "clips"):
             said = add_jellyfin_clips(s["shared"], cid, str(value or ""))
-        elif action == "attach" and rid in ("add:music", "add:back", "holding"):
+        elif action == "attach" and rid in ("add:music", "add:back", "add:extras", "holding"):
             raise ValueError("Choose a file, then Upload")
         elif action == "detach" and rid == "holding":
             drop_holding(s.pop("holding", None))
@@ -1904,7 +1931,7 @@ def clips_file(name, item, length, rfile):
             save(s)
         return clips_page(said + ". Promos use it from the next quiet hour")
     role = item.partition(":")[2]
-    if role not in ("idents", "clips"):
+    if role not in ("idents", "clips", "extras"):
         raise ValueError("That row takes no file")
     with _lock:
         s = state()

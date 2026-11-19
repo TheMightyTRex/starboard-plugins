@@ -21,7 +21,7 @@
                           "with_music": {"type": "string", "pattern": "^logo/logo-with-music\\.(mp4|mov)$"}}},
   "idents": {"description": "The idents in idents/, for a check that none is missing. Every identNN file in the folder is used.",
              "type": "array", "maxItems": 99, "items": {"type": "string", "pattern": "^ident[0-9]{2,3}\\.(mp4|mov|mkv|webm)$"}},
-  "bumpers": {"description": "Optional (0.4.0): the bumpers in bumpers/, short and silent, opening and closing each break.",
+  "bumpers": {"description": "Optional (0.4.0): the bumpers in bumpers/, short and silent, opening each break and closing each break inside a programme.",
               "type": "array", "maxItems": 20, "items": {"type": "string", "pattern": "^bumper[0-9]{2,3}\\.(mp4|mov|mkv|webm)$"}},
   "coming_next": {"$ref": "#/$defs/layout"},
   "promo": {"allOf": [{"$ref": "#/$defs/layout"}],

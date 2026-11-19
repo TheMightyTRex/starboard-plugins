@@ -714,8 +714,8 @@ idents/ident01.mp4, ident02.mp4   As many as you like (up to 99), each named ide
                                   2 to 60 seconds each, with sound. One plays immediately before each programme, in a
                                   random order. Also .mov, .mkv or .webm.
 bumpers/bumper01.mp4              Optional. Short versions of the ident with no music, 0.5 to 10 seconds (2 is
-                                  plenty), up to 20. One opens and one closes every break. Sound in them is not
-                                  played. Also .mov, .mkv or .webm.
+                                  plenty), up to 20. One opens every break, and one closes each break inside a
+                                  programme. Sound in them is not played. Also .mov, .mkv or .webm.
 coming-next/background.mp4        The Coming up next card: a video of 2 to 60 seconds that loops, or a .png or
                                   .jpg still. Leave the clip area and the text fields clear: the plug-in draws
                                   them. coming-next/placement.png shows where they go.
@@ -765,7 +765,7 @@ The full specification is in the plug-in's help: Make a broadcast pack.
 WHAT_GOES_HERE = {
     "logo": "dog.png: the on-screen logo, a PNG with a transparent background.\nlogo-with-music.mp4: the logo with its music baked in, 1 to 20 seconds.\n",
     "idents": "ident01.mp4, ident02.mp4 and so on: as many as you like, 2 to 60 seconds each, played in a random order.\n",
-    "bumpers": "bumper01.mp4 and so on: short and silent, 0.5 to 10 seconds, opening and closing each break.\n",
+    "bumpers": "bumper01.mp4 and so on: short and silent, 0.5 to 10 seconds, opening each break.\n",
     "coming-next": "background.mp4 (or .png, .jpg): the Coming up next card. placement.png shows where the clip and the words go.\n",
     "promo": "background.mp4 (or .png, .jpg): the promo. placement.png shows where the clips and the words go.\n",
     "promo/music": "music01.m4a and so on: music beds for the promos, 5 to 300 seconds each.\n",
