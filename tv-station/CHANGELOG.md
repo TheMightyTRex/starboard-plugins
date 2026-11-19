@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.3 (19 November 2026)
+
+### Fixed
+- A broadcast pack's logo was refused as having no transparent parts when the check could not run, because the plug-in was busy (FFmpeg did not start). The check now tries again up to three times, and if it still cannot run it says the logo could not be read at the moment and to upload the pack again in a minute.
+
 ## 0.5.2 (19 November 2026)
 
 ### Added
