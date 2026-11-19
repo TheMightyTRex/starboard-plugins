@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.5.0",
+ "version": "0.5.1",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -652,6 +652,13 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.5.1",
+   "date": "2026-11-19",
+   "fixed": [
+    "**Promos follow a new pack:** when a channel's broadcast pack changes, its promos made with the old pack stop showing and are made again in the next quiet hour."
+   ]
+  },
   {
    "version": "0.5.0",
    "date": "2026-11-19",

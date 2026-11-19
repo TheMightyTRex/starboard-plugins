@@ -35,11 +35,29 @@ def group_of(entry):
     return str(entry.get("group") or entry.get("id"))
 
 
+def design_of(p):
+    """Which design a promo is made with (0.5.1): the pack's folder and when it was checked, so a new pack, or the same
+    pack uploaded again, is a new design; or "plain" and the channel's colour. None when there is no design."""
+    if not p:
+        return None
+    if p.get("name") == "Plain":
+        return f"plain:{(p.get('promo') or {}).get('colour') or ''}"
+    return f"{os.path.basename(str(p.get('folder') or ''))}:{int(p.get('checked') or 0)}"
+
+
+def current(promo_, designs):
+    """True when a kept promo was made with its channel's design as it is now. Promos from before 0.5.1 have no design
+    and count as current, so an update alone never throws good promos away."""
+    made_with = promo_.get("design")
+    return made_with is None or made_with == designs.get(promo_.get("cid"))
+
+
 def plan(channels, existing, keep, replace_days, now):
     """What to remove and what to make. Pure, so it can be tested.
 
-    channels: [{"id", "sched": schedule.Channel, "can": True when its pack has a promo}]
-    existing: the promos kept, each {"id", "cid", "group", "airs", "made"}
+    channels: [{"id", "sched": schedule.Channel, "can": True when its pack has a promo, "design": design_of(its design)}]
+    existing: the promos kept, each {"id", "cid", "group", "airs", "made", "design"}; one made with another design
+              than its channel's now (its pack changed, 0.5.1) is removed, and made again
     keep:     how many each channel keeps
     Returns (remove, make): promos to remove, and [{"cid", "airing"}] to make, soonest first.
     """
@@ -48,6 +66,7 @@ def plan(channels, existing, keep, replace_days, now):
     remove, kept = [], {}
     for p in sorted(existing, key=lambda p: -float(p.get("made") or 0)):
         old = float(p.get("made") or 0) < now - float(replace_days) * 86400
+        old = old or not current(p, {c["id"]: c.get("design") for c in channels})
         if p.get("cid") not in can or float(p.get("airs") or 0) < now + LEAD or old:
             remove.append(p)
             continue
