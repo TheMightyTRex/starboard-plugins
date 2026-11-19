@@ -1,7 +1,9 @@
 """The small helper every example plug-in uses: Python's standard library only.
 
 - settings(): the plug-in's settings, kept by Starboard at /run/starboard/settings.json (read only).
-- starboard(path): Starboard's API v1 with the plug-in's own key (only the scopes the owner approved).
+- starboard(path): Starboard's API v1 with the plug-in's own key (only the scopes the owner approved). Through the
+  socket STARBOARD_API_SOCKET when Starboard gives one (Starboard 0.22 and later, DASH-482): a plug-in on its own
+  network has no other way to reach Starboard, which runs on the server's own network. Over HTTP otherwise.
 - jellyfin(path): Jellyfin's API with the key Starboard keeps (only for plug-ins allowed jellyfin:key).
 - fetch(url): any address, JSON or bytes, with a time limit and a size limit.
 - remember(name) and keep(name, value): a small JSON file in /data, the plug-in's own folder.
@@ -16,8 +18,10 @@
   that is running to finish, and POST /update/after by letting them run again, so an update never cuts one short.
 """
 import contextlib
+import http.client
 import json
 import os
+import socket
 import threading
 import time
 import urllib.error
@@ -28,6 +32,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 DATA = os.environ.get("PLUGIN_DATA", "/data")
 RUN = os.environ.get("PLUGIN_RUN", "/run/starboard")
 API = os.environ.get("STARBOARD_API", "http://starboard:8095/api/v1/")
+API_SOCKET = os.environ.get("STARBOARD_API_SOCKET", "")  # /run/starboard/api.sock, kept by Starboard (DASH-482)
 AGENT = "Starboard plug-in"
 MAX = 4 * 1024 * 1024
 POLL_SECONDS = 60  # how often the idle HTTP server looks for a shutdown that never comes
@@ -69,8 +74,40 @@ def fetch(url, headers=None, data=None, method=None, timeout=15, raw=False, limi
     return out if raw else json.loads(out or b"null")
 
 
-def starboard(path):
-    return fetch(urllib.parse.urljoin(API, path.lstrip("/")), {"Authorization": f"Bearer {_key()}"})
+class _SocketConnection(http.client.HTTPConnection):
+    """HTTP to Starboard through its socket in /run/starboard, instead of a network address."""
+
+    def __init__(self, path, timeout):
+        super().__init__("localhost", timeout=timeout)
+        self.socket_path = path
+
+    def connect(self):
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.settimeout(self.timeout)
+        try:
+            s.connect(self.socket_path)
+        except OSError:
+            s.close()
+            raise
+        self.sock = s
+
+
+def starboard(path, timeout=15):
+    url = urllib.parse.urljoin(API, path.lstrip("/"))
+    headers = {"Authorization": f"Bearer {_key()}"}
+    if not (API_SOCKET and os.path.exists(API_SOCKET)):
+        return fetch(url, headers, timeout=timeout)
+    u = urllib.parse.urlsplit(url)
+    c = _SocketConnection(API_SOCKET, timeout)
+    try:
+        c.request("GET", u.path + (f"?{u.query}" if u.query else ""), headers={"User-Agent": AGENT, "Accept": "application/json", **headers})
+        r = c.getresponse()
+        out = r.read(MAX)
+        if r.status >= 400:  # as urlopen does, so a plug-in's error handling stays the same
+            raise urllib.error.HTTPError(url, r.status, r.reason, r.headers, None)
+    finally:
+        c.close()
+    return json.loads(out or b"null")
 
 
 def jellyfin(path):
