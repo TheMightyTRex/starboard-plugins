@@ -247,12 +247,22 @@ def gain_for(lufs):
     return round(max(-MOST_GAIN, min(MOST_GAIN, LOUDNESS - lufs)), 1)
 
 
-def has_transparency(path):
-    """Whether a picture has clear parts: read small, as RGBA, and any pixel less than solid."""
-    r = subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-i", path, "-vf", "scale=96:-1,format=rgba", "-frames:v", "1",
-                        "-f", "rawvideo", "-"], capture_output=True, timeout=30, check=False, preexec_fn=_nice)
-    data = r.stdout
-    return bool(data) and min(data[3::4]) < 250
+def has_transparency(path, tries=3):
+    """Whether a picture has clear parts: read small, as RGBA, and any pixel less than solid. None when FFmpeg could
+    not read it at all (0.5.3): busy, out of processes or timed out. That is tried again a few times, and is never
+    taken for a picture with no clear parts, which gave a wrong "no transparent parts" (owner, 19 November 2026)."""
+    for attempt in range(max(1, tries)):
+        try:
+            r = subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-i", path, "-vf", "scale=96:-1,format=rgba", "-frames:v", "1",
+                                "-f", "rawvideo", "-"], capture_output=True, timeout=30, check=False, preexec_fn=_nice)
+            data = r.stdout
+        except (OSError, subprocess.SubprocessError):
+            data = b""
+        if data:
+            return min(data[3::4]) < 250
+        if attempt + 1 < tries:
+            time.sleep(1 + attempt)
+    return None
 
 
 def alpha_video(info):
@@ -469,7 +479,9 @@ def check(folder):
             problems.append(f"{rel}: not a PNG")
         elif int(v.get("height") or 0) < 64 or int(v.get("width") or 0) > W or int(v.get("height") or 0) > H:
             problems.append(f"{rel}: {v.get('width')} by {v.get('height')} pixels. Make it at least 64 pixels tall and at most 1920 by 1080")
-        elif not has_transparency(os.path.join(folder, rel)):
+        elif (clear := has_transparency(os.path.join(folder, rel))) is None:
+            problems.append(f"{rel}: could not be read at the moment (the plug-in was busy). Upload the pack again in a minute")
+        elif not clear:
             problems.append(f"{rel}: has no transparent parts. Save it with a transparent background")
         else:
             out["dog"] = rel

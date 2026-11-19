@@ -36,7 +36,7 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.5.2"
+VERSION = "0.5.3"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
