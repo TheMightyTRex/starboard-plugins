@@ -36,7 +36,7 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.5.4"
+VERSION = "0.5.5"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -200,6 +200,8 @@ def refresh_channel(cid, now=None):
         if h != ch.get("lineup_hash"):
             ch["eras"] = schedule.new_era(ch, entries, now)
             ch["lineup_hash"] = h
+        else:  # the same programmes: their details (such as which sound track, 0.5.5) are brought up to date in place
+            schedule.refresh_details(ch.get("eras"), entries)
         ch["refreshed"] = int(now)
         save(s)
     later_jellyfin()

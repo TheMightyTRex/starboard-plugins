@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.5 (19 November 2026)
+
+### Fixed
+- Read the channels from Jellyfin again (and the nightly refresh) now brings each programme's details up to date even when the line-up has the same programmes: which sound track it plays (the 0.5.4 fix reaches line-ups read before it), its title, episode, plot and pictures. What the timing rests on (each programme's id, length, series and kind) is never changed this way, so the schedule stays exactly as it was. Before, a line-up with the same programmes was kept as it was.
+
 ## 0.5.4 (19 November 2026)
 
 ### Fixed
