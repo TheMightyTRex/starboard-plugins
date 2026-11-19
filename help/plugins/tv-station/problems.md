@@ -89,7 +89,7 @@ The pack is checked before anything in it is used, and the pack in use stays whe
 The grid is on the plug-in's own page on your home network, not inside Starboard, so it opens in a new tab.
 
 1. In **Schedule grid**, select **Open the schedule grid** under the channel. Use a desktop browser: on a phone or tablet the page says to use a computer.
-2. Check Starboard is 0.23.0 or later, in **Settings**, **Updates**: the link then uses the address you opened Starboard with. With an older Starboard it uses the server's home network address, which a browser that reaches Starboard another way, such as by a name or from outside your home, may not reach.
+2. Check Starboard is 0.24.0 or later, in **Settings**, **Updates**: the link then uses the address you opened Starboard with. With an older Starboard it uses the server's home network address, which a browser that reaches Starboard another way, such as by a name or from outside your home, may not reach.
 3. If the grid says to add a channel first, add one in **Channels**.
 4. Still nothing: on the plug-in's tab, under **Its web page**, select **Open**. If that page does not open either, the browser cannot reach the plug-in's port: open Starboard from a computer on your home network.
 

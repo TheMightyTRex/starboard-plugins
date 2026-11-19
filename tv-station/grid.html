@@ -181,9 +181,23 @@
       <div class="choice"><input type="radio" name="suggest-from" id="from-tv" value="tv" aria-describedby="from-tv-h"><label for="from-tv">All TV</label>
         <p class="hint" id="from-tv-h">Series from the whole library, every day, the most watched first.</p></div>
       <div class="choice"><input type="radio" name="suggest-from" id="from-films" value="films" aria-describedby="from-films-h"><label for="from-films">All films</label>
-        <p class="hint" id="from-films-h">A film from the whole library every evening, the most watched first.</p></div>
+        <p class="hint" id="from-films-h">Films from the whole library, the most watched first.</p></div>
       <div class="choice"><input type="radio" name="suggest-from" id="from-both" value="both" aria-describedby="from-both-h"><label for="from-both">TV and Films</label>
         <p class="hint" id="from-both-h">Series on weekdays and films at the weekend, from the whole library.</p></div>
+    </fieldset>
+    <fieldset>
+      <legend>Hours to fill</legend>
+      <p class="hint" id="hours-h">Programmes go one after another from the start time. One that would run past the end time is left out.</p>
+      <div class="hours-row">
+        <div class="choice"><input type="checkbox" id="fill-weekdays" checked aria-describedby="hours-h"><label for="fill-weekdays">Fill weekdays</label></div>
+        <label for="weekdays-from">From</label><select id="weekdays-from"></select>
+        <label for="weekdays-to">To</label><select id="weekdays-to"></select>
+      </div>
+      <div class="hours-row">
+        <div class="choice"><input type="checkbox" id="fill-weekends" checked aria-describedby="hours-h"><label for="fill-weekends">Fill Saturday and Sunday</label></div>
+        <label for="weekends-from">From</label><select id="weekends-from"></select>
+        <label for="weekends-to">To</label><select id="weekends-to"></select>
+      </div>
     </fieldset>
     <div class="buttons">
       <button type="button" id="suggest-go" class="primary">Suggest a week</button>

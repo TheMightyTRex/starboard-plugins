@@ -14,7 +14,7 @@ Create your own TV channel's settings are on its tab in **Settings**, then **Plu
 4. Tick each one you want. Ticks are kept as you change kind or search, and the ones on the channel already show as added.
 5. Select **Add the ticked ones**. The slide-out closes, focus goes back to **Choose from your library**, and the card says what was added.
 
-With Starboard before 0.23.0 there is no slide-out: the card has **Add a series**, **Add a film** and the rest, each taking a name.
+With Starboard before 0.24.0 there is no slide-out: the card has **Add a series**, **Add a film** and the rest, each taking a name.
 
 Its line-up is read from Jellyfin straight away. The programmes for today and tomorrow are listed at the end of the channel's page, under **Today and tomorrow**.
 
@@ -57,7 +57,7 @@ A change to what a channel shows, its order or its times starts after the progra
 
 ## Schedule grid
 
-**Schedule grid** lists your channels, each with an **Open the schedule grid** link that opens its grid in a new tab, on the plug-in's own page, in a desktop browser. From Starboard 0.23.0 the link uses the address you opened Starboard with. The grid is: a week, Monday to Sunday, in 15 minute steps. Films and series placed on it play at those times every week; the time between them keeps the channel's automatic line-up, whole programmes only, and the rest is a break. A channel with nothing on its grid is as it was. The guide in Jellyfin follows the grid.
+**Schedule grid** lists your channels, each with an **Open the schedule grid** link that opens its grid in a new tab, on the plug-in's own page, in a desktop browser. From Starboard 0.24.0 the link uses the address you opened Starboard with. The grid is: a week, Monday to Sunday, in 15 minute steps. Films and series placed on it play at those times every week; the time between them keeps the channel's automatic line-up, whole programmes only, and the rest is a break. A channel with nothing on its grid is as it was. The guide in Jellyfin follows the grid.
 
 | On the grid | What it does |
 |---|---|
@@ -67,7 +67,7 @@ A change to what a channel shows, its order or its times starts after the progra
 | **Stripe across the week** | On a series: the same time on the weekdays you choose, 1 to 4 episodes each day, Saturday and Sunday too if you choose. Each slot plays the next episode in order, and the next week carries on |
 | **Where the series starts** | The first episode, the next episode not watched, or an episode you choose, from this week |
 | **Copy a day** | Copies one day to the days you choose, in place of what was on them |
-| **Suggest a schedule** | Asks what to make the week from, then proposes it. **Watch history**: the channel's own series and films people have watched, as its settings say. **General watch history**: everything anyone has watched, whatever the channel shows. **All TV**: series from the whole library, every day. **All films**: a film from the whole library every evening. **TV and Films**: series on weekdays and films at the weekend, from the whole library. The most watched come first. The choice is remembered for each channel. Nothing is saved until you select **Save the suggestion**; **Discard the suggestion** keeps the grid as it was |
+| **Suggest a schedule** | Asks what to make the week from, then proposes it. **Watch history**: the channel's own series and films people have watched, as its settings say. **General watch history**: everything anyone has watched, whatever the channel shows. **All TV**: series from the whole library, every day. **All films**: films from the whole library. **TV and Films**: series on weekdays and films at the weekend, from the whole library. The most watched come first. Then **Hours to fill**: **Fill weekdays** and **Fill Saturday and Sunday**, each **From** and **To**, in half hours; programmes go one after another from the start, and one that would run past the end is left out. The choices and hours are remembered for each channel. Nothing is saved until you select **Save the suggestion**; **Discard the suggestion** keeps the grid as it was |
 | **Undo** | Takes back the last change |
 
 A programme takes the time of its longest episode, rounded up to 15 minutes, so programmes never run into each other. A change that would overlap another programme is refused, and the message names it. In the grid, the arrow keys move between times and days, Page Up and Page Down by an hour, and Enter opens a programme's actions or adds one at an empty time.

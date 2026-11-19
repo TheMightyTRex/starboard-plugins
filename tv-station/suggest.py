@@ -135,7 +135,127 @@ def best_time(hours):
     return max(sorted(evening), key=lambda h: evening[h]) if evening else 20 * 60
 
 
-def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST_SERIES, source="history", pool=None):
+# The hours a suggestion fills (owner, 19 November 2026: "For the TV Channel Suggest a schedule - can you put times in";
+# he chose "Choose the hours it fills"): one window for weekdays and one for Saturday and Sunday, in minutes from
+# midnight, filled one programme after another. A programme that would run past the end is left out.
+DEFAULT_HOURS = {"weekdays": (18 * 60, 23 * 60), "weekends": (12 * 60, 23 * 60)}
+
+
+def hm24(minutes):
+    """A time of day, with midnight at the end of the day written 24:00."""
+    return "24:00" if int(minutes) == 24 * 60 else grid.hm(minutes)
+
+
+def parse_hours(raw):
+    """{"weekdays": ["18:00", "23:00"], "weekends": ["12:00", "23:00"]} -> minutes; a window may be None (left empty).
+    Raises ValueError in words."""
+    out = {}
+    names = {"weekdays": "weekdays", "weekends": "the weekend"}
+    for key in ("weekdays", "weekends"):
+        pair = (raw or {}).get(key)
+        if not pair:
+            out[key] = None
+            continue
+        try:
+            a, b = (int(x.split(":")[0]) * 60 + int(x.split(":")[1]) for x in pair)
+        except (ValueError, AttributeError, IndexError, TypeError):
+            raise ValueError(f"Choose a start and an end time for {names[key]}") from None
+        if not (0 <= a < b <= 24 * 60) or a % grid.STEP or b % grid.STEP:
+            raise ValueError(f"Choose an end time after the start time for {names[key]}, on the quarter hour")
+        out[key] = (a, b)
+    if not out["weekdays"] and not out["weekends"]:
+        raise ValueError("Choose hours for weekdays, the weekend or both")
+    return out
+
+
+def _fill_day(doc, day, window, picks, now, stripe_days=None):
+    """Lays programmes one after another from the window's start; `picks` gives (kind, item, episodes, start_mode) in
+    turn. Returns the doc and [(name, minute)] placed. A series slot is repeated on `stripe_days`, each the next episode."""
+    start, end = window
+    t, placed, tries = start, [], 0
+    while t < end and tries < 40:
+        tries += 1
+        kind, item, episodes, mode = next(picks)
+        trial_ref = f"s:{item['id']}" if kind == "series" else f"f:{item['id']}"
+        probe = {**doc, "series": dict(doc["series"]), "films": dict(doc["films"])}
+        if kind == "series" and str(item["id"]) not in probe["series"]:
+            probe["series"][str(item["id"])] = {"episodes": episodes}
+        if kind == "film":
+            probe["films"][str(item["id"])] = item
+        L = grid.length(probe, trial_ref)
+        if t + L > end:
+            continue  # too long for what is left: try the next one, and stop once none fits
+        try:
+            doc, sid, _ = grid.add(doc, day, t, kind, item, now, episodes, start_mode=mode)
+            if stripe_days and kind == "series":
+                doc, _ = grid.stripe(doc, sid, stripe_days, 1, False, now)
+        except grid.GridError:
+            t += grid.STEP
+            continue
+        placed.append((item.get("name") or item.get("title") or "Programme", t, t + L))
+        t += L
+    return doc, placed
+
+
+def _words(placed):
+    """'Show A 18:00 to 20:00 (4 in a row), A Film at 20:00': runs of the same programme one after another, together."""
+    runs = []
+    for name, a, b in placed:
+        if runs and runs[-1][0] == name and runs[-1][2] == a:
+            runs[-1] = (name, runs[-1][1], b, runs[-1][3] + 1)
+        else:
+            runs.append((name, a, b, 1))
+    return ", ".join(f"{n} {hm24(a)} to {hm24(b)} ({k} in a row)" if k > 1 else f"{n} at {hm24(a)}" for n, a, b, k in runs)
+
+
+def _cycle(items):
+    while items:
+        yield from items
+
+
+def _fill_hours(ranked, hours, now, series_info, film_info, most_series, source):
+    series, films = [], []
+    for (kind, iid), s in ranked:
+        if kind == "series" and len(series) < most_series * 3:
+            info = series_info(iid)
+            if info and info.get("episodes"):
+                series.append(("series", {"id": info["id"], "name": info["name"]}, info["episodes"],
+                               {"mode": "unwatched", "unwatched_index": info.get("unwatched", 0)}))
+        elif kind == "film" and len(films) < 40:
+            f = film_info(iid)
+            if f:
+                films.append(("film", f, None, None))
+    weekday_items = films if source == "films" else (series or films)
+    weekend_items = series if source == "tv" else (films or series)
+    doc, notes = grid.empty(), []
+    if hours.get("weekdays") and weekday_items:
+        if weekday_items is series:
+            doc, placed = _fill_day(doc, 0, hours["weekdays"], _cycle(series[:most_series]), now, [0, 1, 2, 3, 4])
+            if placed:
+                notes.append(f"Weekdays {hm24(hours['weekdays'][0])} to {hm24(hours['weekdays'][1])}: "
+                             + _words(placed))
+        else:
+            pick = _cycle(weekday_items)
+            for day in range(5):
+                doc, placed = _fill_day(doc, day, hours["weekdays"], pick, now)
+                if placed:
+                    notes.append(f"{grid.DAYS[day]}: " + _words(placed))
+    if hours.get("weekends") and weekend_items:
+        pick = _cycle(weekend_items)
+        for day in (5, 6):
+            doc, placed = _fill_day(doc, day, hours["weekends"], pick, now)
+            if placed:
+                notes.append(f"{grid.DAYS[day]}: " + _words(placed))
+    if not doc["slots"]:
+        notes.append({"history": "No watch history for this channel's series and films yet, so nothing to suggest. Try General watch history",
+                      "everyone": "No watch history yet, so nothing to suggest. Try All TV, All films or TV and Films"}.get(
+                          source, "Jellyfin's library has nothing of that kind to suggest"))
+    doc["suggested"] = int(now)
+    doc["note"] = notes[:12]
+    return doc, notes
+
+
+def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST_SERIES, source="history", pool=None, hours=None):
     """A week for one channel, as a grid document, and the reasons in words.
 
     channel_groups: the series and film ids of the channel's line-up, or None for anything watched
@@ -143,6 +263,7 @@ def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST
     film_info(id)   -> a programme (library.entry) or None
     source:         one of SOURCES: what the week is made from
     pool:           for All TV, All films and TV and Films, the library's [(kind, id, name)], kind series or film
+    hours:          parse_hours(...): fill these windows one programme after another, instead of the fixed times
     """
     sc = scores(plays, now)
     ranked = sorted(sc.items(), key=lambda kv: -kv[1]["score"])
@@ -154,6 +275,8 @@ def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST
         ranked += [((kind, str(iid)), {"score": 0.0, "name": name, "hours": {}}) for kind, iid, name in pool or [] if (kind, str(iid)) not in have]
         keep = {"tv": ("series",), "films": ("film",), "both": ("series", "film")}[source]
         ranked = [kv for kv in ranked if kv[0][0] in keep]
+    if hours:  # the hours the owner chose: filled one programme after another
+        return _fill_hours(ranked, hours, now, series_info, film_info, most_series, source)
     doc, notes = grid.empty(), []
     taken_series = 0
     for (kind, iid), s in ranked:

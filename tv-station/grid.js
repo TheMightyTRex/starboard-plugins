@@ -414,17 +414,42 @@
 
   // Suggest, save, discard, undo.
   // Suggest asks first what to make the week from (owner, 19 November 2026), starting on the channel's last choice.
+  // The hours it fills (owner, 19 November 2026): weekdays and the weekend, each from and to, in half hours.
+  const halfHours = [...Array(49).keys()].map((i) => `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`);
+  const fillSelect = (sel, value, last) => {
+    sel.replaceChildren(...halfHours.filter((t, i) => (last ? i > 0 : i < 48)).map((t) => new Option(t, t, false, t === value)));
+  };
+  const showHours = () => {
+    const h = st.suggest_hours || {};
+    for (const key of ["weekdays", "weekends"]) {
+      const pair = h[key];
+      $(`fill-${key}`).checked = Boolean(pair);
+      fillSelect($(`${key}-from`), (pair || [key === "weekdays" ? "18:00" : "12:00"])[0], false);
+      fillSelect($(`${key}-to`), (pair || [null, "23:00"])[1], true);
+      for (const id of [`${key}-from`, `${key}-to`]) $(id).disabled = !pair;
+    }
+  };
+  for (const key of ["weekdays", "weekends"]) {
+    $(`fill-${key}`).addEventListener("change", (e) => { for (const id of [`${key}-from`, `${key}-to`]) $(id).disabled = !e.target.checked; });
+  }
   $("suggest").addEventListener("click", (e) => {
     const want = document.getElementById(`from-${st.suggest_from || "history"}`) || $("from-history");
     want.checked = true;
+    showHours();
     open($("suggest-dialog"), e.currentTarget);
   });
   $("suggest-go").addEventListener("click", async () => {
     const from = document.querySelector("input[name=suggest-from]:checked").value;
+    const hours = {};
+    for (const key of ["weekdays", "weekends"]) hours[key] = $(`fill-${key}`).checked ? [$(`${key}-from`).value, $(`${key}-to`).value] : null;
+    if (!hours.weekdays && !hours.weekends) { say("Choose hours for weekdays, the weekend or both"); $("fill-weekdays").focus(); return; }
+    for (const key of ["weekdays", "weekends"]) {
+      if (hours[key] && hours[key][1] <= hours[key][0]) { say(`Choose an end time after the start time for ${key === "weekdays" ? "weekdays" : "the weekend"}`); $(`${key}-to`).focus(); return; }
+    }
     const b = $("suggest-go");
     b.disabled = true;
     say("Suggesting a week. This takes a moment");
-    const got = await op({ op: "suggest", from });
+    const got = await op({ op: "suggest", from, hours });
     b.disabled = false;
     if (got) { returnTo = got.draft ? $("draft-title") : $("suggest"); $("suggest-dialog").close(); }
   });
