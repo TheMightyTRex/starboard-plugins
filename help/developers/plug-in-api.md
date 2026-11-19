@@ -1,6 +1,6 @@
 [Help centre](../README.md) · Developers · reference
 <!-- help: dev / build -->
-<!-- plugin-api: 1.15 -->
+<!-- plugin-api: 1.16 -->
 
 # Plug-in API 1.15 for the collection
 
@@ -11,7 +11,18 @@ Starboard's help has the full references.
 ## When would you use it
 
 - You want to change a plug-in here, or add one, and need to know what it must do.
-- You are bringing a plug-in of your own up to 1.14 or 1.15.
+- You are bringing a plug-in of your own up to 1.14, 1.15 or 1.16.
+
+## What plug-in API 1.16 added
+
+Plug-in API 1.16 comes with Starboard 0.23.0. Nothing was taken away: a plug-in made for 1.15 works as before.
+
+| Part | What it is | Used here by |
+|---|---|---|
+| The `disk.changed` event, with `system:read` | Sent when Starboard's disk pool helper finishes a job, however it was asked for: `action` (`add`, `remove` or `balance`), `state`, `disk`, `erased` (the disks it erased) and `result` | Notifications 1.2.0 |
+| `STARBOARD_HOME_ADDRESS` | For a container with `publish` on the `lan` network: its own address on the home network, such as `http://192.0.2.20:8790` | Create your own TV channel 0.1.1 |
+| Plain text boxes | A custom setting's `add` box and an item's `attach` form take plain text, not only a web address: check what you are sent | Create your own TV channel |
+| Activated when installed | Starboard activates a plug-in as soon as it is installed, unless it needs settings first or an app it brings in is on the computer | Every plug-in |
 
 ## What plug-in API 1.15 added
 

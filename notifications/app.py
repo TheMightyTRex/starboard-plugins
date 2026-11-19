@@ -20,7 +20,7 @@ SECRETS = ("smtp_password", "telegram_token", "discord_webhook", "pushover_user"
 CHANNELS = {"email": "Email", "telegram": "Telegram", "discord": "Discord", "signal": "Signal", "pushover": "Pushover",
             "ntfy": "ntfy", "webhook": "Webhooks"}
 KINDS = {"request.available": "send_requests", "download.failed": "send_failed", "app.down": "send_apps", "app.up": "send_apps",
-         "disk.nearly_full": "send_disk", "update.available": "send_updates", "weekly": "send_weekly"}
+         "disk.nearly_full": "send_disk", "disk.changed": "send_disk_changes", "update.available": "send_updates", "weekly": "send_weekly"}
 DAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
 TIMEOUT = 8  # a Test button has 10 seconds
 
@@ -59,6 +59,17 @@ def words(event, data):
     if event == "disk.nearly_full":
         return (f"{d.get('disk') or 'A disk'} is {d.get('percent', '')}% full",
                 f"{d.get('disk') or 'The disk'} has {_size(d.get('free'))} free. Starboard's Clean up page shows what can go.", "warning")
+    if event == "disk.changed":
+        disk = d.get("disk") or "A disk"
+        did = {"add": "was added to the pool", "remove": "was taken out of the pool", "balance": "pool was balanced"}.get(d.get("action"), "changed")
+        if d.get("action") == "balance":
+            did, disk = "was balanced", "The pool"
+        erased = [x for x in d.get("erased") or [] if x]
+        failed = d.get("state") == "failed"
+        title = f"{disk} {did}" + (" (it stopped with a problem)" if failed else "")
+        text = (f"Erased: {', '.join(erased)}. " if erased else "") + (f"{d['result']} " if d.get("result") else "")
+        text += "If you did not start this, check Starboard's System, Disks and its log now."
+        return title, text.strip(), "warning" if erased or failed else "info"
     if event == "update.available":
         have = f" You have {d['current']}." if d.get("current") else ""
         return (f"An update for {d.get('app') or 'an app'}: {d.get('latest')}",

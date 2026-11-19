@@ -49,7 +49,8 @@ def changes_for(pid, m):
     newest = {"version": VERSION, "date": RELEASED_113, "changed": WORDS_113.get(pid, []) + [
         f"**Logo description:** where its logo stands on its own, a screen reader says \"{m['name']} logo\", the plug-in's name, "
         "instead of a description of the symbol."]}
-    return [newest, v112, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
+    own = [m["_newest"]] if m.get("_newest") else []  # a version of its own after the shared one (Notifications 1.2.0)
+    return own + [newest, v112, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
              "changed": ["Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."]}] + earlier
 
 
@@ -581,9 +582,15 @@ def _switch(key, label, hint, group, default=True):
 
 # 11. Notifications (DASH-401) -------------------------------------------------------------------------------------
 EXAMPLES["notifications"] = ({
-    "name": "Notifications", "version": VERSION,
+    "name": "Notifications", "version": "1.2.0",
     "description": "Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week.",
-    "starboard_api": ">=1.14 <2.0",
+    "starboard_api": ">=1.16 <2.0",
+    # 1.2.0 (owner, 19 November 2026, Starboard issue #187): a message whenever a disk is erased, added to the pool or
+    # taken out of it, from Starboard's disk.changed event (plug-in API 1.16).
+    "_newest": {"version": "1.2.0", "date": "2026-11-19", "added": [
+        "**Disk changes:** a message whenever a disk is erased, added to the pool or taken out of it, however it was asked "
+        "for, so an erase you did not start reaches you at once. Needs Starboard with plug-in API 1.16 or later; an older "
+        "Starboard keeps 1.1.3."]},
     "permissions": ["apps:read", "downloads:read", "media:read", "system:read", "network:lan"],
     "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
                     "idle_stop_minutes": 5}],
@@ -594,6 +601,7 @@ EXAMPLES["notifications"] = ({
         _switch("send_failed", "A download failed", "A download that stops with a problem.", "What to send"),
         _switch("send_apps", "An app stops answering, and when it is back", "After two checks in a row with no answer.", "What to send"),
         _switch("send_disk", "A disk is nearly full", "At the limit set for alerts in Settings, Alerts, or 90%.", "What to send"),
+        _switch("send_disk_changes", "A disk is erased, added or taken out", "Every change Starboard's disk pool helper makes, however it was asked for.", "What to send"),
         _switch("send_updates", "An update is ready", "For Starboard, your apps and your plug-ins.", "What to send"),
         _switch("send_weekly", "New this week", "Films, series and more that arrived in the last 7 days, once a week at 09:00.", "What to send"),
         {"key": "weekly_day", "label": "Send New this week on", "type": "choice", "default": "monday", "group": "What to send",
@@ -648,7 +656,7 @@ EXAMPLES["notifications"] = ({
                "example": {"state": "ok", "text": "Mon 09:00, New this week: sent by Email, Telegram", "status": "ok", "updated": 1794694110}},
               {"id": "recent", "title": "Notifications sent", "type": "list", "path": "/recent", "refresh_minutes": 60,
                "example": {"items": [{"title": "Ready to watch: Dune (2021)", "detail": "Mon 12 Nov 20:15, sent by Email, Telegram"}], "status": "ok", "updated": 1794694110}}],
-    "events": ["request.available", "download.failed", "app.down", "app.up", "disk.nearly_full", "update.available", "item.added"],
+    "events": ["request.available", "download.failed", "app.down", "app.up", "disk.nearly_full", "disk.changed", "update.available", "item.added"],
     "jobs": [{"id": "weekly", "label": "Send New this week on the chosen day", "path": "/jobs/weekly", "daily": "09:00", "time_limit_minutes": 2}],
     "changes": [{"version": "1.0.0", "date": "2026-11-13", "added": [
         "**Seven ways to send:** email, Telegram, Discord, Signal (through signal-cli-rest-api), Pushover, ntfy and Apprise-style webhooks, each with a Test button.",
