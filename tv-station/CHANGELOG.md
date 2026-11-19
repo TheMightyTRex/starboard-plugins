@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2 (19 November 2026)
+
+### Added
+- Create initial schedule (owner, 19 November 2026): a button on a channel's What it shows card, with the hours to fill (Weekdays 18:00 to 23:00, weekends 12:00 to 23:00 unless changed). It makes a week from the channel's own series and films, in its order and whether watched or not: series one after another on weekdays, each the next episode every day, and films at the weekend. The week is kept as the schedule grid's unsaved suggestion, so a saved grid stays as it is until the new one is saved; the row links to the grid.
+- This channel's line-up, a new choice in Suggest a schedule on the grid page, does the same from the grid.
+
 ## 0.3.1 (19 November 2026)
 
 ### Changed

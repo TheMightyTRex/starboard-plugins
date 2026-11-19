@@ -13,6 +13,8 @@ What it does, in the way broadcast schedulers work (stripping series on weekdays
 What it is made from is chosen first (0.2.0, owner, 19 November 2026: "ignore the settings and give a choice"):
 - Watch history: as described first, the channel's own series and films that have been watched.
 - General watch history: everything anyone has watched, whatever the channel shows.
+- This channel's line-up (0.3.2, owner, 19 November 2026: "Create initial schedule"): every series and film the
+  channel shows, in its order, watched or not, so a new channel gets a week to edit straight away.
 - All TV, All films, TV and Films: from the whole library, the most watched first and then the rest; All TV strips
   series every day, All films puts a film on every evening, TV and Films does both, as described first.
 
@@ -32,7 +34,7 @@ import grid
 EVENING = (18 * 60, 23 * 60)  # series are stripped in the evening, between these times
 FILM_TIMES = ((5, 20 * 60), (6, 20 * 60), (5, 15 * 60), (6, 15 * 60))  # (day, minute): Saturday and Sunday
 MOST_SERIES = 4
-SOURCES = {"history": "Watch history", "everyone": "General watch history", "tv": "All TV", "films": "All films", "both": "TV and Films"}
+SOURCES = {"channel": "This channel's line-up", "history": "Watch history", "everyone": "General watch history", "tv": "All TV", "films": "All films", "both": "TV and Films"}
 FILM_EVENINGS = tuple((d, 20 * 60) for d in range(7)) + ((5, 15 * 60), (6, 15 * 60))  # All films: every evening
 HALF_LIFE = 30 * 86400  # a play a month old counts half
 
@@ -225,6 +227,8 @@ def _fill_hours(ranked, hours, now, series_info, film_info, most_series, source)
             f = film_info(iid)
             if f:
                 films.append(("film", f, None, None))
+    if source == "channel":
+        most_series = max(1, min(10, len(series)))
     weekday_items = films if source == "films" else (series or films)
     weekend_items = series if source == "tv" else (films or series)
     doc, notes = grid.empty(), []
@@ -247,12 +251,15 @@ def _fill_hours(ranked, hours, now, series_info, film_info, most_series, source)
             if placed:
                 notes.append(f"{grid.DAYS[day]}: " + _words(placed))
     if not doc["slots"]:
-        notes.append({"history": "No watch history for this channel's series and films yet, so nothing to suggest. Try General watch history",
-                      "everyone": "No watch history yet, so nothing to suggest. Try All TV, All films or TV and Films"}.get(
-                          source, "Jellyfin's library has nothing of that kind to suggest"))
+        notes.append(EMPTY.get(source, "Jellyfin's library has nothing of that kind to suggest"))
     doc["suggested"] = int(now)
     doc["note"] = notes[:12]
     return doc, notes
+
+
+EMPTY = {"history": "No watch history for this channel's series and films yet, so nothing to suggest. Try General watch history",
+         "everyone": "No watch history yet, so nothing to suggest. Try All TV, All films or TV and Films",
+         "channel": "This channel shows no series or films yet. Add some on its What it shows card first"}
 
 
 def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST_SERIES, source="history", pool=None, hours=None):
@@ -262,7 +269,8 @@ def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST
     series_info(id) -> {"id", "name", "episodes": [...], "unwatched": index} or None
     film_info(id)   -> a programme (library.entry) or None
     source:         one of SOURCES: what the week is made from
-    pool:           for All TV, All films and TV and Films, the library's [(kind, id, name)], kind series or film
+    pool:           for All TV, All films and TV and Films, the library's [(kind, id, name)], kind series or film; for
+                    This channel's line-up, the channel's own, in its order
     hours:          parse_hours(...): fill these windows one programme after another, instead of the fixed times
     """
     sc = scores(plays, now)
@@ -275,6 +283,10 @@ def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST
         ranked += [((kind, str(iid)), {"score": 0.0, "name": name, "hours": {}}) for kind, iid, name in pool or [] if (kind, str(iid)) not in have]
         keep = {"tv": ("series",), "films": ("film",), "both": ("series", "film")}[source]
         ranked = [kv for kv in ranked if kv[0][0] in keep]
+    if source == "channel":
+        # The channel's own series and films, in its order, whether watched or not (0.3.2).
+        ranked = [((kind, str(iid)), sc.get((kind, str(iid))) or {"score": 0.0, "name": name, "hours": {}}) for kind, iid, name in pool or []]
+        most_series = max(1, min(10, sum(1 for kind, _, _ in pool or [] if kind == "series")))
     if hours:  # the hours the owner chose: filled one programme after another
         return _fill_hours(ranked, hours, now, series_info, film_info, most_series, source)
     doc, notes = grid.empty(), []
@@ -315,9 +327,7 @@ def propose(channel_groups, plays, now, series_info, film_info, most_series=MOST
         except grid.GridError:
             continue
     if not doc["slots"]:
-        notes.append({"history": "No watch history for this channel's series and films yet, so nothing to suggest. Try General watch history",
-                      "everyone": "No watch history yet, so nothing to suggest. Try All TV, All films or TV and Films"}.get(
-                          source, "Jellyfin's library has nothing of that kind to suggest"))
+        notes.append(EMPTY.get(source, "Jellyfin's library has nothing of that kind to suggest"))
     doc["suggested"] = int(now)
     doc["note"] = notes[:12]
     return doc, notes

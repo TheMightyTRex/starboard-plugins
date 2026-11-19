@@ -386,7 +386,7 @@ class SuggestFrom(unittest.TestCase):
         doc, _ = suggest.propose(None, [], NOW, self.info, self.film, source="both", pool=pool)
         kinds = {s["ref"][0] for s in doc["slots"]}
         self.assertEqual(kinds, {"s", "f"})
-        self.assertEqual(list(suggest.SOURCES.values()), ["Watch history", "General watch history", "All TV", "All films", "TV and Films"])
+        self.assertEqual(list(suggest.SOURCES.values()), ["This channel's line-up", "Watch history", "General watch history", "All TV", "All films", "TV and Films"])
 
 
 class SuggestRemembered(App):

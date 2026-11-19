@@ -14,6 +14,13 @@ Create your own TV channel 0.3.0 is the latest version. It needs Starboard with 
 
 The catalogue offers each Starboard the newest version it can run.
 
+## What is new in 0.3.2
+
+Added:
+
+- **Create initial schedule:** on a channel's What it shows card, a week made from the channel's own series and films in the hours you give, waiting in the schedule grid for you to change and save.
+- **This channel's line-up** in Suggest a schedule does the same from the grid page.
+
 ## What is new in 0.3.0
 
 Added:
