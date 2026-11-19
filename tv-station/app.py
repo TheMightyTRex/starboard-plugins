@@ -35,7 +35,7 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -1113,6 +1113,17 @@ def channel_rows(s, ch, cfg, base, now):
             state="unknown", state_label="Add one", detail="Every film and series from those 10 years.")
     row("order", "Order", g, choice=_choice("Order", ch.get("order"), {"in_order": "In order", "shuffle": "Shuffled"}))
     row("run", "Episodes of a series in a row", g, choice=_choice("In a row", ch.get("run"), {str(k): str(k) for k in (1, 2, 3, 4, 6)}))
+    # Create initial schedule (0.3.2, owner, 19 November 2026: "a Create initial schedule to put something together to
+    # edit in the schedule grid"): a week from this channel's own series and films, kept as an unsaved suggestion.
+    draft = grid_doc(cid, "draft") is not None
+    grid_link = {"url": f"{base}/t/{s['token']}/grid?channel={cid}", "label": f"Open the schedule grid for {ch['name']}"} if base else None
+    row("initial", "Create initial schedule", g, actions=["attach"], state="unknown" if not draft else "ok",
+        state_label="Waiting to be saved" if draft else "Make one",
+        detail=("Made: open the schedule grid to change it, then save it. " if draft else "") +
+               "Fills the hours you give with this channel's series and films: series on weekdays, films at the weekend.",
+        attach={"label": "Create initial schedule", "field": "Hours to fill", "value": initial_hours_words(ch),
+                "hint": "Weekdays 18:00 to 23:00, weekends 12:00 to 23:00, on the quarter hour"},
+        **({"link": grid_link} if grid_link else {}))
 
     # Breaks
     g = "Breaks"
@@ -1349,8 +1360,65 @@ def add_source(ch, kind, words):
     return f"Added {m[1]}" + (f". Also found: {', '.join(others)}" if others else "")
 
 
+def initial_hours_words(ch):
+    """The hours Create initial schedule fills, in words, from the hours last chosen for this channel's suggestions."""
+    h = ch.get("suggest_hours") or suggest_defaults()
+    parts = [f"{name} {h[k][0]} to {h[k][1]}" for k, name in (("weekdays", "Weekdays"), ("weekends", "weekends")) if h.get(k)]
+    return ", ".join(parts) or "Weekdays 18:00 to 23:00, weekends 12:00 to 23:00"
+
+
+def initial_hours(words):
+    """'Weekdays 18:00 to 23:00, weekends 12:00 to 23:00' -> {"weekdays": [...], "weekends": [...]} for suggest.parse_hours.
+    Times are read in order: the first two are weekdays, the next two the weekend; with only two, both. A part that
+    names weekends only fills the weekend. Raises ValueError in words."""
+    text = str(words or "").lower()
+    times = [f"{int(h):02d}:{m}" for h, m in re.findall(r"\b(\d{1,2})[:.](\d{2})\b", text)]
+    if len(times) < 2:
+        raise ValueError("Give the hours as a start and an end, such as Weekdays 18:00 to 23:00, weekends 12:00 to 23:00")
+    if "weekend" in text and "weekday" not in text:
+        return {"weekdays": None, "weekends": times[:2]}
+    if "weekday" in text and "weekend" not in text and len(times) == 2:
+        return {"weekdays": times[:2], "weekends": None}
+    return {"weekdays": times[:2], "weekends": times[2:4] if len(times) >= 4 else times[:2]}
+
+
+def create_initial(cid, words, now):
+    """Create initial schedule: a week from the channel's own line-up, kept as the grid's unsaved suggestion. Worked
+    out outside the lock: it asks Jellyfin for each series' episodes."""
+    import suggest  # only when asked
+    try:
+        hours = suggest.parse_hours(initial_hours(words))
+    except ValueError as e:
+        raise ValueError(str(e)) from None
+    s = state()
+    ch = find(s, cid)
+    if not ch:
+        raise ValueError("That channel has gone")
+    if not ch.get("eras"):
+        raise ValueError("This channel shows nothing yet. Add series or films first, then create its schedule")
+    doc, notes = suggest_for(s, ch, now, "channel", hours)
+    if not doc["slots"]:
+        raise ValueError(notes[-1] if notes else "Nothing fitted those hours")
+    with _lock:
+        s2 = state()
+        c2 = find(s2, cid)
+        if c2:
+            c2["suggest_from"] = "channel"
+            c2["suggest_hours"] = {k: ([suggest.hm24(v[0]), suggest.hm24(v[1])] if v else None) for k, v in hours.items()}
+            save(s2)
+    grid.store(grid_folder(), cid, doc, "draft")
+    n = len(doc["slots"])
+    saved = bool((grid_doc(cid) or {}).get("slots"))
+    return (f"Made a schedule of {n} slot{'s' if n != 1 else ''} from this channel's line-up. Open the schedule grid to change it, then save it"
+            + (". Your saved grid stays as it is until then" if saved else ""))
+
+
 def channels_post(body, now=None):
     action, rid, value = body.get("action"), str(body.get("id") or ""), body.get("value")
+    if action == "attach" and rid.endswith(":initial"):
+        cid = rid.partition(":")[0]
+        said = create_initial(cid, value, time.time() if now is None else now)
+        return channels_page(said, now, only=cid if can("partial") else None)
     with _lock:
         s = state()
         if action == "add":
@@ -2396,6 +2464,20 @@ def suggest_for(s, ch, now, source="history", hours=None):
         got = library.lineup(jf, [{"kind": "film", "id": fid}])
         return got[0] if got else None
     pool = suggest.library_pool(jf, source) if source in ("tv", "films", "both") else None
+    if source == "channel":  # the channel's own series and films, in its order (0.3.2)
+        pool, seen_ids = [], set()
+        for era in (ch.get("eras") or [])[-1:]:
+            for e in era.get("lineup") or []:
+                kind = "film" if e.get("kind") == "Movie" else "series"
+                key = (kind, str(e["id"] if kind == "film" else (e.get("group") or e["id"])))
+                title = (e.get("title") or "").strip().lower()
+                if key not in seen_ids and not (kind == "film" and title and ("title", title) in seen_ids):
+                    seen_ids.add(key)
+                    if kind == "film":
+                        seen_ids.add(("title", title))  # two copies of one film in Jellyfin are used once
+                    pool.append((key[0], key[1], e.get("title") or ""))
+        if ch.get("order") == "shuffle":  # a shuffled channel gets a shuffled week, the same each time for a day
+            pool = schedule.shuffled(pool, schedule.seed_of(ch.get("seed", 0), "initial", int(now // 86400)))
     return suggest.propose(groups, plays, now, series_info, film_info, source=source, pool=pool, hours=hours)
 
 

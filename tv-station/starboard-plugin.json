@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.3.1",
+ "version": "0.3.2",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -644,6 +644,14 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.3.2",
+   "date": "2026-11-19",
+   "added": [
+    "**Create initial schedule** on a channel's What it shows card: a week from the channel's own series and films, in the hours you give, ready to change in the schedule grid and save.",
+    "**This channel's line-up** in Suggest a schedule: every series and film the channel shows, watched or not."
+   ]
+  },
   {
    "version": "0.3.1",
    "date": "2026-11-19",
