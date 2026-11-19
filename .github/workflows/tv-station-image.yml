@@ -5,7 +5,7 @@ name: TV station image
 on:
   push:
     branches: [main]
-    paths: ["tv-station/Dockerfile", "tv-station/*.py", "tv-station/pack.schema.json", "tv-station/grid.*", "tv-station/*.woff2", ".github/workflows/tv-station-image.yml"]
+    paths: ["tv-station/Dockerfile", "tv-station/*.py", "tv-station/pack.schema.json", "tv-station/grid.*", "tv-station/ds-tokens.css", "tv-station/*.woff2", ".github/workflows/tv-station-image.yml"]
   workflow_dispatch:
 permissions:
   contents: read

@@ -1726,6 +1726,7 @@ class Handler(BaseHTTPRequestHandler):
         """The schedule grid's own page, its script, style and font, and the answers it reads."""
         static = {"grid": ("grid.html", "text/html; charset=utf-8"), "grid/grid.js": ("grid.js", "text/javascript; charset=utf-8"),
                   "grid/grid.css": ("grid.css", "text/css; charset=utf-8"),
+                  "grid/tokens.css": ("ds-tokens.css", "text/css; charset=utf-8"),
                   "grid/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2")}
         if rest in static:
             name, kind = static[rest]

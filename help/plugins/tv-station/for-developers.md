@@ -16,7 +16,7 @@ How Create your own TV channel is built, for anyone who wants to change it or ma
 - [`promo.py`](../../../tv-station/promo.py): which promos to make and replace, and the FFmpeg command for one
 - [`grid.py`](../../../tv-station/grid.py): the schedule grid: every change as a function on a small JSON document, the week worked out, and the channel that follows it
 - [`suggest.py`](../../../tv-station/suggest.py): suggests a week from watch history; also a script: `python3 suggest.py --url <Jellyfin> --key <key>`
-- [`grid.html`](../../../tv-station/grid.html), [`grid.js`](../../../tv-station/grid.js), [`grid.css`](../../../tv-station/grid.css): the grid's own page
+- [`grid.html`](../../../tv-station/grid.html), [`grid.js`](../../../tv-station/grid.js), [`grid.css`](../../../tv-station/grid.css): the grid's own page, on [`ds-tokens.css`](../../../tv-station/ds-tokens.css), the design system's tokens (Mica): light unless Dark is chosen on the page
 - [`example_pack.py`](../../../tv-station/example_pack.py): makes the Example TV pack with FFmpeg alone: `python3 example_pack.py <folder> --zip <file>`
 - [`sbplugin.py`](../../../tv-station/sbplugin.py)
 - [`Dockerfile`](../../../tv-station/Dockerfile)

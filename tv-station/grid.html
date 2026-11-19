@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Schedule grid</title>
+<link rel="stylesheet" href="grid/tokens.css">
 <link rel="stylesheet" href="grid/grid.css">
 <script src="grid/grid.js" defer></script>
 </head>
@@ -15,8 +16,14 @@
 <div id="app">
 <a class="skip" href="#grid">Skip to the grid</a>
 <header class="top">
+  <div>
   <h1>Schedule grid</h1>
   <p class="lede">Place films and series at set times. Empty times keep the channel's automatic line-up and breaks. Each change is kept at once, and <strong>Undo</strong> takes back the last one.</p>
+  </div>
+  <div class="field">
+    <label for="theme">Colours</label>
+    <select id="theme"><option value="light">Light</option><option value="dark">Dark</option></select>
+  </div>
 </header>
 <main>
   <section class="controls" aria-label="Channel, day and tools">

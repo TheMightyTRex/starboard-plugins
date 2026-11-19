@@ -324,8 +324,8 @@ class Page(unittest.TestCase):
         with urllib.request.urlopen(self.base, timeout=10) as r:
             page = r.read().decode()
             self.assertIn("default-src 'self'", r.headers["Content-Security-Policy"])
-        self.assertIn('<html lang="en-GB">', page)
-        for f in ("grid.js", "grid.css", "font.woff2"):
+        self.assertIn('<html lang="en-GB" data-theme="light">', page, "light unless dark is chosen")
+        for f in ("grid.js", "grid.css", "tokens.css", "font.woff2"):
             with urllib.request.urlopen(f"{self.base}/{f}", timeout=10) as r:
                 self.assertEqual(r.status, 200)
         with self.assertRaises(urllib.error.HTTPError):
@@ -348,7 +348,10 @@ class Page(unittest.TestCase):
         self.assertIn('"(pointer: coarse) and (hover: none)"', js)
         self.assertNotRegex(js + page, r"innerWidth|max-width: *\d+(rem|px)\) *\{", "no test of the width")
         with urllib.request.urlopen(self.base + "/grid.css", timeout=10) as r:
-            self.assertNotIn("@media (max-width", r.read().decode(), "no phone layout")
+            css = r.read().decode()
+        self.assertNotIn("@media (max-width", css, "no phone layout")
+        self.assertNotIn("prefers-color-scheme", css, "light unless dark is chosen on the page")
+        self.assertNotRegex(css.split("*/", 1)[1], r"#[0-9a-fA-F]{3,6}\b", "every colour from the design system's tokens")
 
     def test_add_search_start_point_undo_and_the_starboard_page(self):
         with urllib.request.urlopen(self.base + "/api/search?q=show", timeout=10) as r:

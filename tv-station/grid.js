@@ -15,6 +15,14 @@
     document.title = "Use a computer: Schedule grid";
     return;
   }
+  // Light unless dark is chosen here (the page is on its own address, so it cannot read Starboard's choice).
+  const theme = (() => { try { return localStorage.getItem("tvgrid-theme") === "dark" ? "dark" : "light"; } catch { return "light"; } })();
+  document.documentElement.dataset.theme = theme;
+  document.getElementById("theme").value = theme;
+  document.getElementById("theme").addEventListener("change", (e) => {
+    document.documentElement.dataset.theme = e.target.value === "dark" ? "dark" : "light";
+    try { localStorage.setItem("tvgrid-theme", document.documentElement.dataset.theme); } catch { /* private window */ }
+  });
   const base = location.pathname.replace(/\/grid\/?$/, "/grid");
   const $ = (id) => document.getElementById(id);
   const STEP = 15;
