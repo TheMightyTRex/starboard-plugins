@@ -1,11 +1,12 @@
 # VPN check: Updates
 
-VPN check 1.1.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+VPN check 1.1.4 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.4 | 1.14 or later | 19 November 2026 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
 | 1.1.2 | 1.14 or later | 17 November 2026 |
 | 1.1.1 | 1.14 or later | 16 November 2026 |
@@ -13,6 +14,12 @@ VPN check 1.1.3 is the latest version. It needs Starboard with plug-in API 1.14 
 | 1.0.0 | 1.1 or later | 12 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.4
+
+Changed:
+
+- **Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
 
 ## What is new in 1.1.3
 

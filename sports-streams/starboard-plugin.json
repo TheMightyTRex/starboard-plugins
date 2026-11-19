@@ -1,0 +1,101 @@
+{
+ "manifest_version": 1,
+ "id": "sports-streams",
+ "name": "Sports streams",
+ "version": "1.0.0",
+ "description": "Live and upcoming sports matches from a Stremio sports addon: football, basketball, cricket, tennis, and more.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/sports-streams",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.14 <2.0",
+ "permissions": [
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:7e1f325875b04b3366cf6abbda7ef54826aada0fae05f7ee3d324fdd5f725376",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ],
+   "env": {
+    "EXAMPLE": "sports-streams"
+   }
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "addon_url",
+   "label": "Addon address",
+   "type": "text",
+   "default": "https://sports.highfly.dev",
+   "hint": "The base address of the Stremio sports addon, such as https://sports.highfly.dev"
+  },
+  {
+   "key": "minutes",
+   "label": "Check every",
+   "type": "number",
+   "unit": "minutes",
+   "default": 5,
+   "min": 1,
+   "max": 60
+  }
+ ],
+ "cards": [
+  {
+   "id": "summary",
+   "title": "Sports streams",
+   "type": "status",
+   "path": "/status",
+   "example": {
+    "state": "ok",
+    "text": "15 matches live",
+    "status": "running",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "list",
+   "title": "Live now",
+   "type": "list",
+   "path": "/card",
+   "example": {
+    "items": [
+     {
+      "title": "SKY SPORTS MAIN EVENT",
+      "detail": "Football"
+     },
+     {
+      "title": "South Africa vs Bangladesh",
+      "detail": "Cricket"
+     }
+    ],
+    "status": "running",
+    "updated": 1794694110
+   }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "Sports streams logo"
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-19",
+   "added": [
+    "Live and upcoming sports matches from a Stremio sports addon: football, basketball, cricket, tennis, and more."
+   ]
+  }
+ ]
+}
