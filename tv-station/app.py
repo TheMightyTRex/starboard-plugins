@@ -24,6 +24,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import animate
+import breaks
 import dog
 import grid
 import guide
@@ -35,7 +36,7 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.3.2"
+VERSION = "0.4.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -63,6 +64,9 @@ COLOURS = {"0x1f5f99": "Blue", "0x2e7d32": "Green", "0xb3261e": "Red", "0x6a3d9a
            "0x00695c": "Teal", "0xad1457": "Pink", "0x455a64": "Grey", "0x8d6e00": "Gold", "0x1a237e": "Navy"}
 START_ON = {"0": "Back to back", "15": "On the quarter hour", "30": "On the half hour", "60": "On the hour"}
 BREAKS = {"0": "No break", "60": "1 minute", "120": "2 minutes", "180": "3 minutes", "300": "5 minutes"}
+MID_BREAKS = {"0": "Off", "60": "Up to 1 minute each", "120": "Up to 2 minutes each", "180": "Up to 3 minutes each"}  # 0.4.0
+BREAKS_FILE = "breaks.json"  # breaks inside programmes found in quiet hours (0.4.0)
+BREAKS_AHEAD = 48 * 3600  # programmes airing this soon are looked at
 ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer"}
 _lock = threading.RLock()
 _streams = stream.Streams()
@@ -421,9 +425,11 @@ def clips_for(s, ch, p=None, cfg=None):
     if ch.get("clips") in ("shared", "both"):
         fillers += shared.get("clips") or []
     fillers += promo_clips(s, ch, cfg)
-    out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False, "holding": holding_for(s, ch)}
+    out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False, "holding": holding_for(s, ch), "bumpers": []}
     if p:
         name = pack_name(p)
+        out["bumpers"] = [{"id": f"pk-{b['path']}", "src": f"pack:{name}/{b['path']}", "dur": b["dur"], "title": os.path.basename(b["path"]),
+                           "has_audio": False} for b in p.get("bumpers") or []]
         if ch.get("idents") != "none" and p.get("idents"):
             out["idents"] = idents + [{"id": f"pk-{i['path']}", "src": f"pack:{name}/{i['path']}", "dur": i["dur"],
                                        "title": os.path.basename(i["path"]), "has_audio": i.get("has_audio", True), "gain": i.get("gain", 0)}
@@ -676,6 +682,77 @@ def pick_transition(p, seed, at):
     return {"file": os.path.join(p["folder"], t["path"]), "dur": float(t["dur"]), "codec": t.get("codec", "")}
 
 
+def found_breaks():
+    """Breaks inside programmes found so far (breaks.py), in the plug-in's folder."""
+    return breaks.Found(os.path.join(sbplugin.DATA, BREAKS_FILE))
+
+
+def break_options(ch, opts):
+    """What schedule.pieces_at needs to plan a channel's breaks."""
+    out = {"seed": ch["seed"], "cards": opts["cards"], "ident_order": ch.get("ident_order", "in_order")}
+    mid = int(ch.get("mid_break_seconds") or 0)
+    if mid:
+        found = found_breaks()
+        out["mid_seconds"] = mid
+        out["breaks_in"] = lambda e: found.points(e.get("id"))
+    return out
+
+
+def breaks_job(now=None, limit_seconds=40 * 60, most=12):
+    """In quiet hours (0.4.0): breaks inside programmes looked for, for channels with Breaks inside programmes on and
+    the programmes they air in the next 48 hours, one at a time at the lowest priority, at most `most` in a run, and
+    never while anyone is watching."""
+    if not _promo_lock.acquire(blocking=False):
+        return {"said": "Promos are being made, so the search for breaks waits for the next quiet hour"}
+    try:
+        return _breaks_run(now, limit_seconds, most)
+    finally:
+        _promo_lock.release()
+
+
+def _breaks_run(now, limit_seconds, most):
+    now = time.time() if now is None else now
+    if someone_watching():
+        return {"said": "Someone is watching, so the search for breaks waits for the next quiet hour"}
+    s = state()
+    found = found_breaks()
+    todo, seen = [], set()
+    for ch in s["channels"]:
+        if not ch.get("on", True) or not int(ch.get("mid_break_seconds") or 0):
+            continue
+        for a in sched_of(ch).airings(now, now + BREAKS_AHEAD, limit=400):
+            e = a["entry"]
+            if e.get("id") and e["id"] not in seen and not found.known(e["id"]) and float(e.get("dur") or 0) >= 15 * 60:
+                seen.add(e["id"])
+                todo.append((a["start"], e))
+    if not todo:
+        return {"said": "Nothing new to check for breaks inside programmes"}
+    todo.sort(key=lambda x: x[0])
+    c = jf_conf()
+    breaks.begin()
+    looked, with_breaks, failed, began = 0, 0, "", time.monotonic()
+    for _, e in todo[:most]:
+        if time.monotonic() - began > limit_seconds or sbplugin.holding() or someone_watching():
+            break
+        try:
+            at, how = breaks.find(c.get("url", ""), c.get("api_key", ""), e)
+        except InterruptedError as err:
+            failed = str(err)
+            break
+        except (OSError, ValueError) as err:
+            failed = str(err)[:100]
+            continue
+        found.put(e["id"], at, how)
+        looked += 1
+        with_breaks += bool(at)
+    said = f"Checked {sbplugin.plural(looked, 'programme')}: {with_breaks} with breaks inside"
+    if len(todo) > looked:
+        said += f". {len(todo) - looked} more in the next quiet hour"
+    if failed:
+        said += f". Stopped: {failed}"
+    return {"said": said[:200]}
+
+
 def with_transitions(pieces, p, seed):
     """The pieces with a pack's transitions at each cut between programme and break. A transition's second half
     plays over the start of the programme and of the break, its first half over the end of each, and the cut is at
@@ -687,9 +764,12 @@ def with_transitions(pieces, p, seed):
     prog = out[0]
     prog["trans_in_at"] = prog["airing"]["start"]
     if len(out) > 1:
-        prog["trans_out_at"] = prog["end"]
-        out[1]["trans_in_at"] = prog["end"]
-        out[-1]["trans_out_at"] = out[-1]["end"]  # the start of the next programme
+        # Every cut between the programme (or a part of it, 0.4.0) and a break, and the start of the next programme.
+        for x, y in zip(out, out[1:]):
+            if (x["kind"] == "programme") != (y["kind"] == "programme"):
+                x["trans_out_at"] = x["end"]
+                y["trans_in_at"] = x["end"]
+        out[-1]["trans_out_at"] = out[-1]["end"]
     else:
         prog["trans_out_at"] = prog["airing"]["end"]
     final = []
@@ -727,8 +807,7 @@ def plan_for(cid, still=False):
         pk = channel_pack(s, ch)
         opts = opts_for(s, ch, cfg, pk)
         if piece is None:
-            a, pieces = schedule.pieces_at(sched, now, clips_for(s, ch, pk, cfg), {"seed": ch["seed"], "cards": opts["cards"],
-                                                                                  "ident_order": ch.get("ident_order", "in_order")})
+            a, pieces = schedule.pieces_at(sched, now, clips_for(s, ch, pk, cfg), break_options(ch, opts))
             if not a:
                 return None, None, None
             pieces = with_transitions(pieces, pk, ch["seed"])
@@ -1131,6 +1210,8 @@ def channel_rows(s, ch, cfg, base, now):
         detail="On the quarter, half or whole hour, the break fills the time to the next one.")
     row("break_seconds", "Break between programmes", g, choice=_choice("Break", ch.get("break_seconds"), BREAKS),
         detail="Added after each programme. With programmes on the half hour, the break also fills the rest of the slot.")
+    row("mid_break_seconds", "Breaks inside programmes", g, choice=_choice("Breaks inside", str(ch.get("mid_break_seconds") or 0), MID_BREAKS),
+        detail="Where a programme fades to black for its adverts, found in quiet hours. Their time comes from the break after it.")
     both = {"none": "None", "own": "This channel's", "shared": "The station's", "both": "This channel's and the station's"}
     row("idents", "Idents", g, choice=_choice("Idents", ch.get("idents"), both))
     row("ident_order", "Idents play", g, choice=_choice("Idents play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
@@ -1550,6 +1631,8 @@ def choose(ch, key, value):
         ch["start_on"] = int(v)
     elif key == "break_seconds" and v in BREAKS:
         ch["break_seconds"] = int(v)
+    elif key == "mid_break_seconds" and v in MID_BREAKS:
+        ch["mid_break_seconds"] = int(v)
     elif key in ("idents", "clips") and v in ("none", "own", "shared", "both"):
         ch[key] = v
     elif key == "ident_order" and v in ("in_order", "random"):
@@ -2723,6 +2806,7 @@ class Handler(BaseHTTPRequestHandler):
         if _example["making"]:
             return self._json(503, {"error": "The example pack is being made, which takes a minute or two. Choose the channel again then"})
         promo.stop()  # a promo being made gives way at once: nothing is made while anyone watches
+        breaks.stop()  # and so does a search for breaks inside programmes (0.4.0)
         try:
             hub = _streams.get(cid, plan_for(cid), most, grace, on_piece=lambda piece, secs: note_played(cid, piece, secs))
         except stream.Busy as e:
@@ -2789,6 +2873,11 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(200, {"said": "Not started: the plug-in is about to be updated"})
                 with sbplugin.working("promos"):
                     return self._json(200, promos_job())
+            if p == "/jobs/breaks":
+                if sbplugin.holding():
+                    return self._json(200, {"said": "Not started: the plug-in is about to be updated"})
+                with sbplugin.working("breaks"):
+                    return self._json(200, breaks_job())
             if p == "/actions/promos":
                 threading.Thread(target=lambda: _safe(promos_job), daemon=True).start()
                 return self._json(200, {"said": "Making promos one at a time, at the lowest priority, unless someone is watching"})

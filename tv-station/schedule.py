@@ -240,18 +240,30 @@ def lineup_hash(lineup):
 
 
 # Breaks -------------------------------------------------------------------------------------------------------------
+MID_LEAST = 20.0  # a break inside a programme shorter than this (bumpers and clips) is left out (0.4.0)
+END_ROOM = 15.0  # the end break keeps at least this, past its bumpers and ident, when breaks inside take their time
+
+
+def _pick(items, rng, last=None):
+    choice = [c for c in items if c.get("id") != last] or items
+    return choice[rng.below(len(choice))]
+
+
 def plan_break(airing, after, clips, options):
-    """The pieces that fill the gap between a programme's end and the next slot: an ident, trailers and clips, then
-    Later and Coming up next cards. The same airing always gets the same break.
+    """The pieces that fill the gap between a programme's end and the next slot. The same airing always gets the same
+    break.
 
     after:   the next few airings (the first is the programme after this one), for the cards
-    clips:   {"idents": [...], "fillers": [...], "sting": {...} or None, "random_idents": False, "holding": {...} or None},
-             each clip {"id", "dur", "title", "src"}; a promo filler also has "airs", when its programme starts
+    clips:   {"idents": [...], "fillers": [...], "bumpers": [...], "sting": {...} or None, "random_idents": False,
+             "holding": {...} or None}, each clip {"id", "dur", "title", "src"}; a promo filler also has "airs", when
+             its programme starts
     options: {"ident_order": "in_order" | "random", "cards": True, "seed": ...}
 
-    A broadcast pack's logo with music (the sting) opens the break when it fits; a pack's idents are always played
-    in a random order (random_idents); a promo is only shown before its programme has started. With a holding slide
-    (holding), the slide fills the rest of the break, looping until the next programme starts, in place of the cards.
+    The order (owner, 19 November 2026, 0.4.0): a bumper opens the break; trailers, clips and promos; then the
+    holding slide, looping to the tail (or Later and Coming up next cards, or a slate); a bumper closes the break; and
+    one ident, with its music, plays immediately before the next programme. The ident comes from the idents (a pack's in a
+    random order), else the pack's logo with music. When the gap is short the ident comes first, then both bumpers,
+    then the rest. A promo is only shown before its programme has started.
     """
     t, end = airing["content_end"], airing["end"]
     gap = end - t
@@ -261,61 +273,114 @@ def plan_break(airing, after, clips, options):
     slot_no = airing["slot_no"]
     rng = Rng(seed_of(options.get("seed", 0), "break", int(airing["start"]), slot_no))
     holding = clips.get("holding")
-    cards = bool(options.get("cards", True)) and bool(after) and not holding
-    reserve = min(CARD_SECONDS, gap) if cards else 0.0
     idents = [c for c in clips.get("idents") or [] if c.get("dur", 0) > 0]
     fillers = [c for c in clips.get("fillers") or [] if c.get("dur", 0) > 0 and float(c.get("airs") or end + 1) > end]
-    sting = clips.get("sting")
+    bumpers = [c for c in clips.get("bumpers") or [] if c.get("dur", 0) > 0]
+    sting = clips.get("sting") if clips.get("sting") and float(clips["sting"].get("dur") or 0) > 0 else None
+
+    # The tail first: the ident immediately before the programme, then the bumpers round the break.
+    ident = None
+    if idents:
+        in_order = options.get("ident_order", "in_order") == "in_order" and not clips.get("random_idents")
+        ident = idents[slot_no % len(idents)] if in_order else idents[rng.below(len(idents))]
+    elif sting:
+        ident = sting
+    if ident and float(ident["dur"]) > gap:
+        ident = None
+    room = gap - (float(ident["dur"]) if ident else 0.0)
+    opening = closing = None
+    if bumpers:
+        opening = _pick(bumpers, rng)
+        closing = _pick(bumpers, rng, opening["id"])
+        if float(opening["dur"]) + float(closing["dur"]) > room:
+            opening = closing = None
+    tail = (float(closing["dur"]) if closing else 0.0) + (float(ident["dur"]) if ident else 0.0)
+    stop = end - tail  # where the middle of the break ends
+    cards = bool(options.get("cards", True)) and bool(after) and not holding
+    reserve = min(CARD_SECONDS, max(0.0, stop - t)) if cards else 0.0
 
     def add(kind, dur, **more):
         nonlocal t
         out.append({"kind": kind, "start": t, "end": t + dur, **more})
         t += dur
 
-    if sting and 0 < float(sting.get("dur") or 0) <= end - t - reserve:
-        add("clip", float(sting["dur"]), clip=sting, role="sting")
-    if idents:
-        in_order = options.get("ident_order", "in_order") == "in_order" and not clips.get("random_idents")
-        ident = idents[slot_no % len(idents)] if in_order else idents[rng.below(len(idents))]
-        if ident["dur"] <= end - t - reserve:
-            add("clip", float(ident["dur"]), clip=ident, role="ident")
+    if opening:
+        add("clip", float(opening["dur"]), clip=opening, role="bumper")
     last = None
     while fillers:
-        room = end - t - reserve
-        fits = [c for c in fillers if c["dur"] <= room and (c["id"] != last or len(fillers) == 1)]
+        fits = [c for c in fillers if c["dur"] <= stop - t - reserve and (c["id"] != last or len(fillers) == 1)]
         if not fits:
             break
         c = fits[rng.below(len(fits))]
         add("clip", float(c["dur"]), clip=c, role="filler")
         last = c["id"]
-    left = end - t
-    if left < MIN_PIECE:
-        if out:
-            out[-1]["end"] = end
-        return out
-    if holding:
-        add("holding", left, holding=holding, airing=after[0] if after else None)
-        return out
-    if not cards:
-        add("slate", left)
-        return out
-    # Later cards first, each for a programme after the next one, then Coming up next for the rest.
-    later = [a for a in after[1:]]
-    k = 0
-    while left > CARD_MAX and later:
-        d = min(CARD_MAX, left - CARD_SECONDS)
-        add("card", d, card="later", airing=later[k % len(later)])
-        k += 1
-        left = end - t
-    while left > CARD_MAX * 2:  # nothing later to show: Coming up next again, in turns
-        add("card", CARD_MAX, card="next", airing=after[0])
-        left = end - t
-    add("card", left, card="next", airing=after[0])
+    left = stop - t
+    if left >= MIN_PIECE:
+        if holding:
+            add("holding", left, holding=holding, airing=after[0] if after else None)
+        elif not cards:
+            add("slate", left)
+        else:
+            # Later cards first, each for a programme after the next one, then Coming up next for the rest.
+            later = list(after[1:])
+            k = 0
+            while left > CARD_MAX and later:
+                add("card", min(CARD_MAX, left - CARD_SECONDS), card="later", airing=later[k % len(later)])
+                k += 1
+                left = stop - t
+            while left > CARD_MAX * 2:  # nothing later to show: Coming up next again, in turns
+                add("card", CARD_MAX, card="next", airing=after[0])
+                left = stop - t
+            add("card", left, card="next", airing=after[0])
+    elif out and left > 0:
+        out[-1]["end"] = stop
+        t = stop
+    elif left > 0 and not out:
+        t = stop  # under a second before the tail: a short pause at the end of the programme
+    if closing:
+        add("clip", float(closing["dur"]), clip=closing, role="bumper")
+    if ident:
+        add("clip", float(ident["dur"]), clip=ident, role="ident")
+    if out:
+        out[-1]["end"] = end
+    return out
+
+
+def plan_mid_break(t, most, clips, seed):
+    """A break inside a programme (0.4.0), from t for at most `most` seconds: a bumper, trailers, clips and promos
+    that fit, and a bumper; no cards and no holding slide. Empty when no clip fits, so the programme carries on."""
+    rng = Rng(seed)
+    end = t + most
+    fillers = [c for c in clips.get("fillers") or [] if c.get("dur", 0) > 0 and float(c.get("airs") or end + 1) > end]
+    bumpers = [c for c in clips.get("bumpers") or [] if c.get("dur", 0) > 0]
+    opening = _pick(bumpers, rng) if bumpers else None
+    closing = _pick(bumpers, rng, opening["id"]) if bumpers else None
+    ends = (float(opening["dur"]) + float(closing["dur"])) if bumpers else 0.0
+    picked, used, last = [], 0.0, None
+    while fillers:
+        fits = [c for c in fillers if c["dur"] <= most - ends - used and (c["id"] != last or len(fillers) == 1)]
+        if not fits:
+            break
+        c = fits[rng.below(len(fits))]
+        picked.append(c)
+        used += float(c["dur"])
+        last = c["id"]
+    if not picked:
+        return []
+    out = []
+    for c, role in ([(opening, "bumper")] if opening else []) + [(c, "filler") for c in picked] + ([(closing, "bumper")] if closing else []):
+        out.append({"kind": "clip", "start": t, "end": t + float(c["dur"]), "clip": c, "role": role, "mid": True})
+        t += float(c["dur"])
     return out
 
 
 def pieces_at(channel, t, clips, options, look=3):
-    """Everything that plays in the slot on air at t: the programme, then its break pieces."""
+    """Everything that plays in the slot on air at t: the programme, then its break pieces.
+
+    options may also have (0.4.0) "breaks_in": a function of an entry giving the seconds into it where a break may go,
+    and "mid_seconds": how long each break inside a programme may be (0, none). The programme is then played in
+    parts, {"kind": "programme", "offset": seconds into it, "length": its running time}, with a break between; their
+    time comes from the end break, so the slot, and the schedule, never move."""
     a = channel.airing(t)
     if not a:
         return None, []
@@ -326,6 +391,52 @@ def pieces_at(channel, t, clips, options, look=3):
             break
         after.append(n)
         s = n["end"]
-    pieces = [{"kind": "programme", "start": a["start"], "end": a["content_end"], "airing": a}]
-    pieces += plan_break(a, after, clips, options)
+    length = a["content_end"] - a["start"]
+    parts, mids = split_programme(a, clips, options)
+    pieces = []
+    t0 = a["start"]
+    for (o0, o1), mid in zip(parts, mids + [[]]):
+        pieces.append({"kind": "programme", "start": t0, "end": t0 + (o1 - o0), "airing": a, "offset": o0, "length": length})
+        t0 += o1 - o0
+        pieces += mid
+        if mid:
+            t0 = mid[-1]["end"]
+    pieces += plan_break({**a, "content_end": t0}, after, clips, options)
     return a, pieces
+
+
+def split_programme(a, clips, options):
+    """Where a programme is played in parts (0.4.0): ([(from, to) seconds into it, ...], [the break after each part
+    but the last]). One part, the whole programme, unless breaks inside programmes are chosen, points are known, and
+    the end break has the time."""
+    length = a["content_end"] - a["start"]
+    whole = ([(0.0, length)], [])
+    most = float(options.get("mid_seconds") or 0)
+    find = options.get("breaks_in")
+    if most <= 0 or not find or length <= 0:
+        return whole
+    points = sorted(p for p in (find(a["entry"]) or []) if 60 < p < length - 60)
+    if not points:
+        return whole
+    # The end break keeps room for its bumpers, its ident and a little more; the rest may go inside.
+    bumper = max([float(c.get("dur") or 0) for c in clips.get("bumpers") or []] or [0.0])
+    ident = max([float(c.get("dur") or 0) for c in clips.get("idents") or []] or [float((clips.get("sting") or {}).get("dur") or 0)])
+    spare = (a["end"] - a["content_end"]) - (2 * bumper + ident + END_ROOM)
+    parts, mids, at, taken = [], [], 0.0, 0.0
+    for p in points:
+        give = min(most, spare)
+        if give < MID_LEAST:
+            break
+        mid = plan_mid_break(a["start"] + p + taken, give, clips, seed_of(options.get("seed", 0), "mid", int(a["start"]), int(p)))
+        if not mid:
+            continue
+        parts.append((at, p))
+        mids.append(mid)
+        took = mid[-1]["end"] - mid[0]["start"]
+        spare -= took
+        taken += took
+        at = p
+    if not mids:
+        return whole
+    parts.append((at, length))
+    return parts, mids

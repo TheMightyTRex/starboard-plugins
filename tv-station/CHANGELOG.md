@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 (19 November 2026)
+
+### Added
+- Bumpers (owner, 19 November 2026: "a very short version of the ident but with no music"): a broadcast pack may have bumpers/bumper01.mp4 and on, 0.5 to 10 seconds, up to 20, in pack.json and pack.schema.json as "bumpers". One opens and one closes every break; any sound in them is not played.
+- Breaks inside programmes (owner: "use the video to guess where the break would be"): Breaks inside programmes on a channel's Breaks card, Off unless chosen, or up to 1, 2 or 3 minutes each. A new quiet-hours job, Find breaks inside programmes, looks at the programmes each such channel airs in the next 48 hours, once each: Jellyfin's Commercial media segments first, else FFmpeg listens to the sound alone for silences and checks 3 seconds of a small picture round each of the 12 longest for a black frame. Points between 20% and 85% of the running time, 8 minutes apart, at most 1, 2 or 3 by length, nearest to even spacing. Kept in breaks.json. Each break inside is a bumper, trailers or promos that fit, and a bumper, and is left out when nothing fits; its time comes from the end break, so the schedule never moves. The programme is played in parts, each starting where the last stopped.
+
+### Changed
+- A break's order (owner: "It should play at the start and end of the break only. The Ident should just play before the program"): a bumper, trailers, clips and promos, the holding slide (or cards, or a slate), a bumper, then one ident with its music immediately before the next programme. When a break is short the ident comes first, then the bumpers. The logo with music no longer opens the break; it plays before the programme when there are no idents.
+- A transition plays at every cut between a programme, or a part of it, and a break.
 ## 0.3.2 (19 November 2026)
 
 ### Added

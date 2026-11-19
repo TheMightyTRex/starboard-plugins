@@ -93,11 +93,11 @@ def piece_command(piece, now, ctx):
     most = max(0.5, left) + 1.0  # every looped or made-up input stops a second after the piece
     if kind == "programme":
         e = piece["airing"]["entry"]
-        rel = into
+        rel = float(piece.get("offset") or 0) + into  # a part after a break inside the programme starts part way in (0.4.0)
         if ctx.get("stand_in"):
             args += pace + ctx["stand_in"]
         else:
-            args += pace + ["-ss", f"{into:.3f}"] + jellyfin_input(ctx["jf_url"], ctx["jf_key"], e["id"])
+            args += pace + ["-ss", f"{rel:.3f}"] + jellyfin_input(ctx["jf_url"], ctx["jf_key"], e["id"])
         if e.get("has_audio", True):
             audio_from = f"0:{e['audio']}" if e.get("audio") is not None else "0:a:0"
         label = ""
@@ -105,7 +105,7 @@ def piece_command(piece, now, ctx):
             label = "Live"
         elif opts["label"] == "new_repeat":
             label = "New" if is_new(e, piece["start"]) else "Repeat"
-        programme = {"duration": piece["airing"]["content_end"] - piece["start"], "label": label,
+        programme = {"duration": float(piece.get("length") or piece["airing"]["content_end"] - piece["start"]), "label": label,
                      "start_words": ctx.get("start_words") or f"{e.get('title')}" + (f": {episode_words(e)}" if episode_words(e) else ""),
                      "next_words": ctx.get("next_words")}
     elif kind == "clip":
