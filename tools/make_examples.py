@@ -204,6 +204,11 @@ def versions(pid, m):
         {"version": m["version"], "starboard_api": m["starboard_api"], "released": first.get("date", ""),
          "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
          "changelog": words[:600]},
+        # Later versions kept the same way (19 November 2026): each pinned to its own commit, newest first, so a
+        # Starboard on plug-in API 1.14 or 1.15 keeps Notifications 1.1.3 when 1.2.0 needs 1.16.
+        *[{"version": x["version"], "starboard_api": x["starboard_api"],
+           "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/{x['commit']}/{pid}/starboard-plugin.json",
+           "manifest_sha256": x["sha256"]} for x in (PREVIOUS.get("more") or {}).get(pid) or []],
         {"version": old["version"], "starboard_api": old["starboard_api"],
          "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/{PREVIOUS['commit']}/{pid}/starboard-plugin.json",
          "manifest_sha256": old["sha256"]}]}

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0 (19 November 2026)
+
+### Added
+- Disk changes: a message whenever a disk is erased, added to the pool or taken out of it, however it was asked for, so an erase you did not start reaches you at once. Needs Starboard with plug-in API 1.16 or later; an older Starboard keeps 1.1.3.
+
 ## 1.1.3 (17 November 2026)
 
 ### Changed

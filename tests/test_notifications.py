@@ -18,6 +18,7 @@ EVENTS = {"request.available": {"title": "Dune", "year": "2021", "kind": "Film",
           "download.failed": {"title": "Dune.2021.1080p", "app": "qBittorrent", "reason": "Not enough space."},
           "app.down": {"app": "Jellyfin", "type": "jellyfin"}, "app.up": {"app": "Jellyfin", "type": "jellyfin"},
           "disk.nearly_full": {"disk": "Media", "percent": 93, "free": 152_000_000_000},
+          "disk.changed": {"action": "add", "state": "done", "disk": "pool3", "erased": ["pool3"], "result": ""},
           "update.available": {"app": "Starboard", "current": "0.17.0", "latest": "0.18.0"}}
 
 
@@ -35,6 +36,18 @@ class Words(unittest.TestCase):
         self.assertEqual(self.app.words("request.available", EVENTS["request.available"])[1],
                          "Dune (2021), which Sam asked for, is ready to watch in Jellyfin.")
         self.assertIn("152.0 GB free", self.app.words("disk.nearly_full", EVENTS["disk.nearly_full"])[1])
+
+    def test_a_disk_change_names_what_was_erased_and_what_to_do(self):
+        # 1.2.0 (Starboard issue #187): every pool change is said, a warning when a disk was erased.
+        title, body, tone = self.app.words("disk.changed", EVENTS["disk.changed"])
+        self.assertEqual(title, "pool3 was added to the pool")
+        self.assertIn("Erased: pool3.", body)
+        self.assertIn("If you did not start this", body)
+        self.assertEqual(tone, "warning")
+        title, _, tone = self.app.words("disk.changed", {"action": "balance", "state": "done", "erased": []})
+        self.assertEqual((title, tone), ("The pool was balanced", "info"))
+        title, _, tone = self.app.words("disk.changed", {"action": "remove", "state": "failed", "disk": "pool1", "erased": []})
+        self.assertEqual((title, tone), ("pool1 was taken out of the pool (it stopped with a problem)", "warning"))
 
     def test_a_link_has_words_before_it(self):
         self.app._set(starboard_address="http://192.0.2.10:8095")
