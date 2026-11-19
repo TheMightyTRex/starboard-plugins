@@ -157,7 +157,7 @@
    "permissions": [
     "system:read"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json",
    "published": true,
@@ -166,11 +166,11 @@
    "logo_alt": "Disk forecast logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/disk-forecast/starboard-plugin.json",
-     "changelog": "Clearer words: the band says Filling fast, and the card says when each disk fills. Logo description: where its logo stands on its own, a screen reader says \"Disk forecast logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -189,7 +189,7 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json",
    "published": true,
@@ -198,11 +198,11 @@
    "logo_alt": "Ad blocking logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json",
-     "changelog": "Logo description: where its logo stands on its own, a screen reader says \"Ad blocking logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -221,7 +221,7 @@
    "permissions": [
     "downloads:read"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/download-summary/starboard-plugin.json",
    "published": true,
@@ -230,11 +230,11 @@
    "logo_alt": "Download summary logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/download-summary/starboard-plugin.json",
-     "changelog": "Clearer words: its description says it counts the download queue in Starboard. Logo description: where its logo stands on its own, a screen reader says \"Download summary logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -253,7 +253,7 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assistant/starboard-plugin.json",
    "published": true,
@@ -262,11 +262,11 @@
    "logo_alt": "Home Assistant logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/home-assistant/starboard-plugin.json",
-     "changelog": "Clearer words: Warn when any is says the card gives a warning, not what colour it turns. Logo description: where its logo stands on its own, a screen reader says \"Home Assistant logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -381,7 +381,7 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json",
    "published": true,
@@ -390,11 +390,11 @@
    "logo_alt": "Library health logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/library-health/starboard-plugin.json",
-     "changelog": "Clearer words: the band says To fix, and the number card says how many. Logo description: where its logo stands on its own, a screen reader says \"Library health logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -413,7 +413,7 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-speed/starboard-plugin.json",
    "published": true,
@@ -422,11 +422,11 @@
    "logo_alt": "Line speed logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/line-speed/starboard-plugin.json",
-     "changelog": "Clearer words: Test now asks \"Download a test file now? It uses some of any data allowance.\" Before the first test, the band says Scheduled and the card says when the next test is. Logo description: where its logo stands on its own, a screen reader says \"Line speed logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -483,7 +483,7 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/most-watched/starboard-plugin.json",
    "published": true,
@@ -492,11 +492,11 @@
    "logo_alt": "Most watched logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/most-watched/starboard-plugin.json",
-     "changelog": "Logo description: where its logo stands on its own, a screen reader says \"Most watched logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -594,7 +594,7 @@
    "permissions": [
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
    "published": true,
@@ -603,11 +603,11 @@
    "logo_alt": "Outside services logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
-     "changelog": "Clearer words: the band says Not answering, and the card names each one. Its description spells out NAS. Logo description: where its logo stands on its own, a screen reader says \"Outside services logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -863,7 +863,7 @@
    "permissions": [
     "network:vpn"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/vpn-check/starboard-plugin.json",
    "published": true,
@@ -872,11 +872,11 @@
    "logo_alt": "VPN check logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/vpn-check/starboard-plugin.json",
-     "changelog": "Clearer words: the hint and the card's example use addresses kept for examples, and the hint says the card says Problem, not what colour it turns. Logo description: where its logo stands on its own, a screen reader says \"VPN check logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -896,7 +896,7 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json",
    "published": true,
@@ -905,11 +905,11 @@
    "logo_alt": "Watch statistics logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json",
-     "changelog": "Clearer words: Read the figures again now is now Check now, as on the other plug-ins. Logo description: where its logo stands on its own, a screen reader says \"Watch statistics logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",
@@ -929,7 +929,7 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.1.3",
+   "version": "1.1.4",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json",
    "published": true,
@@ -938,11 +938,11 @@
    "logo_alt": "Watching now logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watching-now/starboard-plugin.json",
-     "changelog": "Clearer words: the band says Watching, and the card lists each person. Logo description: where its logo stands on its own, a screen reader says \"Watching now logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
     },
     {
      "version": "1.0.0",

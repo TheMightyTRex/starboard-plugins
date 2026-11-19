@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.4 (19 November 2026)
+
+### Changed
+- Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
+
 ## 1.1.3 (17 November 2026)
 
 ### Changed

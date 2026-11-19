@@ -5,6 +5,11 @@
 ### Added
 - Disk changes: a message whenever a disk is erased, added to the pool or taken out of it, however it was asked for, so an erase you did not start reaches you at once. Needs Starboard with plug-in API 1.16 or later; an older Starboard keeps 1.1.3.
 
+## 1.1.4 (19 November 2026)
+
+### Changed
+- Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
+
 ## 1.1.3 (17 November 2026)
 
 ### Changed
