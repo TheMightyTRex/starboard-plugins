@@ -85,7 +85,7 @@ Your own branding for every channel: the on-screen logo, the logo with its music
 |---|---|
 | **Station name** | Shown in Jellyfin's Live TV, on the cards and with the on-screen logo. Home TV unless you change it |
 | **First channel number** | 1 puts your channels first in Jellyfin's Live TV, before the free channels from 101 |
-| **Address Jellyfin uses to reach this plug-in** | Filled in when you select **Open** on its tab. Enter it yourself only if Jellyfin runs on another computer that reaches this one by another address |
+| **Address Jellyfin uses to reach this plug-in** | Filled in by itself: Starboard 0.23.0 and later give the plug-in its address on your home network. Enter one only if Jellyfin runs on another computer that reaches this one by another address |
 | **Days in Jellyfin's guide** | 7 unless you change it, up to 14 |
 
 ## Streaming

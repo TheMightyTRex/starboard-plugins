@@ -37,8 +37,8 @@ Measured on 17 November 2026: 16.4 MiB of memory and no measurable processor (0.
 2. Under **Jellyfin**, find **Create your own TV channel** and select **Install…**.
 3. A slide-out opens with what it can read, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Create your own TV channel**. To stop, select **Cancel**: nothing is installed.
-5. Create your own TV channel's own tab opens under **Settings**, then **Plug-ins**. Select **Activate**. Its state changes to **Active**.
-6. Next to its web page's address, select **Open**. A page with the station's name opens in a new tab. Create your own TV channel keeps that address, which Jellyfin uses to reach it, and adds its channel list and guide to Jellyfin's Live TV.
+5. Create your own TV channel's own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Activate**.
+6. Within a minute, Create your own TV channel adds its channel list and guide to Jellyfin's Live TV, at the address Starboard gives it on your home network (Starboard 0.23.0 and later). With an older Starboard, next to its web page's address, select **Open** once, so it learns that address.
 7. In **Station**, enter the **Station name**.
 8. Open **Channels** and add your first channel. Read [Settings](settings.md).
 9. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).

@@ -26,7 +26,7 @@ q3: Does the card's band say Problem?
 
 ## 1. Activate it
 
-A deactivated plug-in cannot answer. Go to **Settings**, then **Plug-ins**, then its name, and select **Activate**.
+A deactivated plug-in cannot answer. Go to **Settings**, then **Plug-ins**, then its name, and select **Activate** in **General**, **State**.
 
 ## 2. Let it wake up
 

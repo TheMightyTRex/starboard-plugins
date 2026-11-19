@@ -200,8 +200,11 @@ def refresh_all(body=None):
 
 
 def address():
+    """How Jellyfin reaches this plug-in: the setting when you gave one, else the address Starboard gives it on the
+    home network (STARBOARD_HOME_ADDRESS, Starboard 0.23.0 and later), else the one learned when its page was opened."""
     a = str(settings().get("address") or "").strip().rstrip("/")
-    return a or str((sbplugin.remember("learned", {}) or {}).get("address") or "")
+    given = str(os.environ.get("STARBOARD_HOME_ADDRESS") or "").strip().rstrip("/")
+    return a or given or str((sbplugin.remember("learned", {}) or {}).get("address") or "")
 
 
 def connect_jellyfin():
@@ -668,7 +671,8 @@ def channels_page(said=None, now=None):
                           "state": "unknown", "state_label": "Preview",
                           "link": {"url": f"{base}/t/{s['token']}/preview/{cid}.png?kind=card", "label": f"Preview a Coming up next card on {ch['name']}"}})
         else:
-            prev["detail"] = "Open this plug-in's web page once from its page in Settings, Plug-ins, so it knows its address."
+            prev["detail"] = ("It does not know its address yet. Update Starboard in Settings, Updates (0.23.0 and later give it), "
+                            "or open this plug-in's web page once from its page in Settings, Plug-ins.")
         row("preview", prev.pop("title"), "On-screen logo and straps", state="unknown", state_label="Preview", **prev)
         for k, a2 in enumerate(sched.airings(now, now + 86400, limit=60)):
             e = a2["entry"]
@@ -1162,7 +1166,8 @@ def pack_page(said=None):
                 "Unzip it, add your files with the same names, zip the folder and upload it" if key == "template" else
                 "Unzip it to change it, then upload it as your own pack")
         else:
-            it["detail"] = "Open this plug-in's web page once from its page in Settings, Plug-ins, so it knows its address."
+            it["detail"] = ("It does not know its address yet. Update Starboard in Settings, Updates (0.23.0 and later give it), "
+                            "or open this plug-in's web page once from its page in Settings, Plug-ins.")
         items.append(it)
     if not load_pack("example") and base:
         items.append({"id": "dl-example-later", "title": "The example pack, as a zip", "group": "Downloads", "state": "unknown",
@@ -1583,7 +1588,8 @@ def schedule_page(said=None):
         if base:
             it["link"] = {"url": f"{base}/t/{s['token']}/grid?channel={ch['id']}", "label": f"Open the schedule grid for {ch['name']}"}
         else:
-            it["detail"] = "Open this plug-in's web page once from its page in Settings, Plug-ins, so it knows its address."
+            it["detail"] = ("It does not know its address yet. Update Starboard in Settings, Updates (0.23.0 and later give it), "
+                            "or open this plug-in's web page once from its page in Settings, Plug-ins.")
         items.append(it)
     if not items:
         items.append({"id": "none", "title": "No channels yet", "group": "Each channel's grid", "state": "unknown", "state_label": "None",

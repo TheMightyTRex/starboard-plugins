@@ -108,7 +108,7 @@ If Starboard says "That person is not in Jellyfin any more. Reload the page", re
 On **Titles with audio description**, each film and episode links to its page in Jellyfin. Starboard gives the plug-in Jellyfin's address as Starboard reaches it, which a browser often cannot open, such as host.docker.internal. Then the titles have no link, and the page says so.
 
 1. Go to **Settings**, then **Plug-ins**, then **Audio description**.
-2. Under **Your library**, enter the address you open Jellyfin at in **Jellyfin address for links**, such as http://192.168.1.10:8096, and save.
+2. Under **Your library**, enter the address you open Jellyfin at in **Jellyfin address for links**, such as http://192.0.2.10:8096, and save.
 3. Open **Titles with audio description** again. Each title now has a link such as "Open Harbour Lights (2019) in Jellyfin".
 
 A link that opens Jellyfin's home page instead of the title means the address is for another Jellyfin, or the title has gone since the last check. Select **Check for described titles now**.

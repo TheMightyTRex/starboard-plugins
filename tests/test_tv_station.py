@@ -350,6 +350,11 @@ class RealFFmpeg(unittest.TestCase):
         for m in ("sbplugin", "app"):
             sys.modules.pop(m, None)
         import app
+        # 19 November 2026 (owner: "is this not populated automatically?"): with the setting empty, the address
+        # Starboard gives it on the home network is the one Jellyfin uses.
+        os.environ["STARBOARD_HOME_ADDRESS"] = "http://192.0.2.9:8790/"
+        self.assertEqual(app.address(), "http://192.0.2.9:8790")
+        os.environ.pop("STARBOARD_HOME_ADDRESS")
         lineup = [{"id": f"ep{i}", "dur": 30, "title": f"Pattern {i}", "group": f"g{i}", "kind": "Movie", "plot": "A test.",
                    "backdrop": "none", "has_audio": True, "audio": None} for i in (1, 2)]
         s = app.state()

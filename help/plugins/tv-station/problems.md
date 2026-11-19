@@ -35,7 +35,7 @@ q2: What happens?
 
 Jellyfin reads the channel list and the guide from Create your own TV channel's own web page, so Create your own TV channel needs to know the address Jellyfin can reach it at.
 
-1. On Create your own TV channel's tab, next to its web page's address, select **Open**. A page with the station's name opens.
+1. Check Starboard is 0.23.0 or later, in **Settings**, **Updates**: it gives Create your own TV channel its address on your home network by itself. With an older Starboard, on Create your own TV channel's tab, next to its web page's address, select **Open**, and a page with the station's name opens.
 2. Within a minute, Create your own TV channel adds its tuner and guide to Jellyfin and starts Jellyfin's guide refresh.
 3. If Jellyfin runs on another computer, enter the address it reaches this server at in **Address Jellyfin uses to reach this plug-in**, in **Station**, then select **Read the channels from Jellyfin again**.
 4. In Jellyfin, go to **Dashboard**, then **Live TV**: the tuner has the station's name. Select **Refresh guide data** if the channels have no programmes.

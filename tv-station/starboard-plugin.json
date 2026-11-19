@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.1.0",
+ "version": "0.1.1",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -97,7 +97,7 @@
    "key": "address",
    "label": "Address Jellyfin uses to reach this plug-in",
    "type": "text",
-   "hint": "Filled in by itself when you open the plug-in's web page from its page here. Such as http://192.168.1.20:8790.",
+   "hint": "Filled in by itself: Starboard gives this plug-in its address on your home network, such as http://192.168.1.20:8790. Enter one only when Jellyfin reaches the server by another address.",
    "group": "Station"
   },
   {
@@ -526,6 +526,16 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.1.1",
+   "date": "2026-11-19",
+   "changed": [
+    "**Its address for Jellyfin fills in by itself:** with Starboard 0.23.0 and later, Starboard gives it its address on your home network, so Jellyfin's Live TV works without opening its page first."
+   ],
+   "fixed": [
+    "**Channel names and numbers are accepted:** with Starboard 0.23.0 and later, Add a channel, Rename and Change number take plain text, not only web addresses."
+   ]
+  },
   {
    "version": "0.1.0",
    "date": "2026-11-17",

@@ -23,7 +23,7 @@ Audio description's settings are on its own tab: go to **Settings**, then **Plug
 | **Titles with audio description** | A page of its own that lists every film and every episode with a described sound track, from the last check. Read [Titles with audio description](#titles-with-audio-description). | Not a setting |
 | **Films to list** | How many films **Titles with audio description** lists: **All**, or the **Last 10**, **Last 20**, **Last 50**, **Last 100** or **Last 500** added to Jellyfin, newest first. | Last 20 |
 | **Series to list** | How many series **Titles with audio description** lists, by their newest described episode: **All**, or the **Last 10**, **Last 20**, **Last 50**, **Last 100** or **Last 500**, newest first. Each series still lists all its described episodes. | Last 20 |
-| **Jellyfin address for links** | The address you open Jellyfin at in a browser, such as http://192.168.1.10:8096. Each title on **Titles with audio description** opens its page there. Left empty, Starboard's own address for Jellyfin is used when a browser can open it; when Starboard reaches Jellyfin at an address only it can use, such as host.docker.internal, the titles have no link until you enter this. | Empty |
+| **Jellyfin address for links** | The address you open Jellyfin at in a browser, such as http://192.0.2.10:8096. Each title on **Titles with audio description** opens its page there. Left empty, Starboard's own address for Jellyfin is used when a browser can open it; when Starboard reaches Jellyfin at an address only it can use, such as host.docker.internal, the titles have no link until you enter this. | Empty |
 
 ## Titles with audio description
 

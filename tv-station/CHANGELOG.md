@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 (19 November 2026)
+
+### Changed
+- Its address for Jellyfin fills in by itself: with Starboard 0.23.0 and later, Starboard gives it its address on your home network, so Jellyfin's Live TV works without opening its page first. The setting is only for a different address.
+
+### Fixed
+- Channel names and numbers are accepted: with Starboard 0.23.0 and later, Add a channel, Rename and Change number take plain text, not only web addresses.
+
 ## 0.1.0 (17 and 18 November 2026)
 
 Named Create your own TV channel (18 November 2026); its id and folder stay tv-station.
