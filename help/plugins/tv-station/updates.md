@@ -1,14 +1,36 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.1.0 is the latest version. It needs Starboard with plug-in API 1.15 or later.
+Create your own TV channel 0.2.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.23.0 (plug-in API 1.16).
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.2.0 | 1.15 or later; 1.16 for the slide-out, the cards and saving in place | Not yet released |
+| 0.1.1 | 1.15 or later | Not yet released |
 | 0.1.0 | 1.15 or later | Not yet released |
 
 The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.2.0
+
+Added:
+
+- **Choose from your library:** a slide-out lists every series, film, collection, playlist, genre and decade in Jellyfin, with search; tick several and add them to a channel at once. Needs Starboard 0.23.0.
+- **A holding slide:** a picture or short video with Back soon or a countdown to the next programme, looping at the end of each break until the next programme starts.
+- **Music for promos:** upload music for the station or one channel. A channel with music but no pack promo gets plain promos on its colour.
+- **Jellyfin's guide:** the Guide page says when Jellyfin last read the guide, and **Refresh Jellyfin's guide** asks it to read it again.
+- **Suggest a schedule asks what to make it from:** Watch history, General watch history, All TV, All films or TV and Films.
+- **Logos show on their rows** as a small picture once uploaded.
+
+Changed:
+
+- **Channels in cards**, and **changes save in place**, keeping the open channel, where you were and focus. Need Starboard 0.23.0.
+- **Renaming the station renames its tuner** in Jellyfin's Live TV.
+
+Fixed:
+
+- **The schedule grid opens** from the address you opened Starboard with (Starboard 0.23.0), and says what to do when there are no channels.
 
 ## What is new in 0.1.0
 

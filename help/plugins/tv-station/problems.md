@@ -12,6 +12,9 @@ q: Where is the problem?
   A channel has nothing on -> 4
   A broadcast pack was not used -> 6
   There are no promos -> 7
+  The schedule grid does not open -> 8
+  Jellyfin's Live TV has no programmes -> 9
+  The holding slide or music was refused -> 10
 q2: What happens?
   Jellyfin says no tuner is free -> 3
   It starts, then stops -> 5
@@ -22,6 +25,9 @@ q2: What happens?
 5: Check the stream #check-the-stream
 6: Fix the pack and upload it again #fix-the-pack-and-upload-it-again
 7: Give promos what they need #give-promos-what-they-need
+8: Open the schedule grid #open-the-schedule-grid
+9: Check Jellyfin has the guide #check-jellyfin-has-the-guide
+10: Choose a file it can use #choose-a-file-it-can-use
 ```
 
 ## Start it again
@@ -73,10 +79,33 @@ The pack is checked before anything in it is used, and the pack in use stays whe
 
 ## Give promos what they need
 
-1. Check the channel's broadcast pack has a promo: **Broadcast pack**, **Each channel's pack**, then its summary under **Station's pack** says "a promo". The example pack has one.
+1. Check the channel has something to make promos with: its **Holding slide and promos** card says how its promos are made. A broadcast pack with a promo works, and so does music: upload some in **Idents, clips and music**, under **Music for promos**, or on the channel's card, and it gets plain promos on its colour.
 2. Check **Make promos in quiet hours** is activated, in the plug-in's settings under **Promos**.
 3. Promos are made in Starboard's quiet hours while nobody is watching anything in Jellyfin. To make them now, select **Make promos now** on the plug-in's tab, with nothing playing.
 4. A channel needs programmes in the next 6 days that start at least 2 hours from now.
+
+## Open the schedule grid
+
+The grid is on the plug-in's own page on your home network, not inside Starboard, so it opens in a new tab.
+
+1. In **Schedule grid**, select **Open the schedule grid** under the channel. Use a desktop browser: on a phone or tablet the page says to use a computer.
+2. Check Starboard is 0.23.0 or later, in **Settings**, **Updates**: the link then uses the address you opened Starboard with. With an older Starboard it uses the server's home network address, which a browser that reaches Starboard another way, such as by a name or from outside your home, may not reach.
+3. If the grid says to add a channel first, add one in **Channels**.
+4. Still nothing: on the plug-in's tab, under **Its web page**, select **Open**. If that page does not open either, the browser cannot reach the plug-in's port: open Starboard from a computer on your home network.
+
+## Check Jellyfin has the guide
+
+1. Open **Guide**: it starts by saying when Jellyfin last read the guide and how many programmes it had.
+2. If Jellyfin has not read it, or not lately, select **Refresh Jellyfin's guide** in **Actions**, wait a minute, and open **Guide** again.
+3. In Jellyfin, the channels are under **Live TV**, then **Channels** or **Guide**. Some Jellyfin apps keep the guide for a while; close the app and open it again.
+4. Still nothing: [Give Jellyfin its address](#give-jellyfin-its-address).
+
+## Choose a file it can use
+
+Every file is checked with FFmpeg before it is used, and the message says what was wrong.
+
+- **A holding slide:** a PNG or JPEG picture, or a video (MP4, MOV, WEBM or MKV) of 1 to 60 seconds, up to 60 MB and 4096 pixels across.
+- **Music for promos:** an MP3, M4A, OGG or FLAC file with sound, of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks for the station and 20 for each channel. Remove one first when there are 20.
 
 ## Find out more
 

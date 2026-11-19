@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.0 (19 November 2026)
+
+Parts marked Starboard 0.23.0 need Starboard 0.23.0 (plug-in API 1.16); with an older Starboard those pages are as in 0.1.1.
+
+### Added
+- Choose from your library (Starboard 0.23.0): a slide-out on a channel's What it shows card lists every series, film, collection, playlist, genre and decade in Jellyfin, a page at a time, with search and a filter for each kind; tick several and add them at once. Those already on the channel show as added.
+- A holding slide: upload a picture, or a video of up to 60 seconds, for the station or for one channel, with a countdown to the next programme and its name, Back soon, or no words. It loops at the end of each break, after the promos, until the next programme starts, drawn with FFmpeg like the cards and timed to the second.
+- Music for promos: upload MP3, M4A, OGG or FLAC music for the station or for one channel, checked with FFmpeg and levelled to -23 LUFS, listed and removed. Promos use it with the pack's music, or in its place, as Music the promos use says. A channel with music but no pack promo gets plain promos on its colour.
+- Jellyfin's guide: the Guide page says when Jellyfin last read the guide and how many programmes it had, and Refresh Jellyfin's guide in Actions asks it to read it again.
+- Suggest a schedule asks what to make the week from: Watch history, General watch history, All TV, All films or TV and Films, remembered for each channel. suggest.py takes --from too.
+- A logo shows on its row as a small picture, with words, once uploaded; so does the station pack's on-screen logo.
+
+### Changed
+- Channels in cards (Starboard 0.23.0): each channel is a card in the list, and an opened channel has a card each for its name and number, what it shows, its breaks, its on-screen logo and branding, its holding slide and promos, and today and tomorrow, each saying what it is for.
+- Changes save in place (Starboard 0.23.0): a change answers with that channel only, so the page keeps the open channel, where you were and focus, and says what was saved beside it, such as Corner: Bottom left.
+- Renaming the station renames its tuner in Jellyfin's Live TV.
+- Idents and clips is now Idents, clips and music, with the station's holding slide and music for promos.
+
+### Fixed
+- The schedule grid opens (Starboard 0.23.0): Open the schedule grid uses the address Starboard was opened with, at the plug-in's port, so it opens from a server name or another address, not only the home network address the plug-in knows. With no channels, the grid page says to add one in place of failing to draw.
+
 ## 0.1.1 (19 November 2026)
 
 ### Changed

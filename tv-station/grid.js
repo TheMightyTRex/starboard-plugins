@@ -78,6 +78,8 @@
       ch.dataset.n = String(st.channels.length);
     }
     ch.value = st.cid;
+    // No channels yet: the page says to add one, and nothing can be placed (0.2.0).
+    ["add", "copy", "suggest"].forEach((id) => { $(id).disabled = !st.channels.length; });
     if (!$("day").options.length) fillDays($("day"), st.today);
     $("undo").disabled = !st.can_undo;
     $("draft").hidden = !st.draft;
@@ -411,13 +413,20 @@
   });
 
   // Suggest, save, discard, undo.
-  $("suggest").addEventListener("click", async (e) => {
-    const b = e.currentTarget;
+  // Suggest asks first what to make the week from (owner, 19 November 2026), starting on the channel's last choice.
+  $("suggest").addEventListener("click", (e) => {
+    const want = document.getElementById(`from-${st.suggest_from || "history"}`) || $("from-history");
+    want.checked = true;
+    open($("suggest-dialog"), e.currentTarget);
+  });
+  $("suggest-go").addEventListener("click", async () => {
+    const from = document.querySelector("input[name=suggest-from]:checked").value;
+    const b = $("suggest-go");
     b.disabled = true;
-    say("Reading watch history and suggesting a week. This takes a moment");
-    const got = await op({ op: "suggest" });
+    say("Suggesting a week. This takes a moment");
+    const got = await op({ op: "suggest", from });
     b.disabled = false;
-    if (got && got.draft) $("draft-title").focus();
+    if (got) { returnTo = got.draft ? $("draft-title") : $("suggest"); $("suggest-dialog").close(); }
   });
   $("save-draft").addEventListener("click", async () => { const got = await op({ op: "save_draft" }); if (got) $("grid").querySelector("tbody button[tabindex='0']")?.focus(); });
   $("discard-draft").addEventListener("click", async () => { const got = await op({ op: "discard_draft" }); if (got) $("suggest").focus(); });

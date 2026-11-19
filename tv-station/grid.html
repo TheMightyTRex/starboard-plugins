@@ -50,7 +50,7 @@
     </div>
   </section>
   <div id="draft" class="banner" hidden>
-    <h2 id="draft-title" tabindex="-1">A suggestion from watch history</h2>
+    <h2 id="draft-title" tabindex="-1">A suggested week</h2>
     <p>Nothing is saved yet. Change it on the grid, then save it to use it, or discard it to keep the grid as it was.</p>
     <ul id="draft-notes"></ul>
     <div class="buttons">
@@ -163,6 +163,30 @@
     <div class="choice"><input type="checkbox" id="stripe-weekends"><label for="stripe-weekends">Saturday and Sunday too</label></div>
     <div class="buttons">
       <button type="button" id="stripe-go" class="primary">Stripe</button>
+      <button value="close">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="suggest-dialog" aria-labelledby="suggest-title">
+  <form method="dialog">
+    <h2 id="suggest-title" tabindex="-1">Suggest a schedule</h2>
+    <p>A week for this channel, to change, then save or discard. Nothing is saved until you choose Save the suggestion.</p>
+    <fieldset>
+      <legend>Make it from</legend>
+      <div class="choice"><input type="radio" name="suggest-from" id="from-history" value="history" aria-describedby="from-history-h"><label for="from-history">Watch history</label>
+        <p class="hint" id="from-history-h">What has been watched of this channel's own series and films, as its settings say.</p></div>
+      <div class="choice"><input type="radio" name="suggest-from" id="from-everyone" value="everyone" aria-describedby="from-everyone-h"><label for="from-everyone">General watch history</label>
+        <p class="hint" id="from-everyone-h">Everything anyone has watched, whatever this channel shows.</p></div>
+      <div class="choice"><input type="radio" name="suggest-from" id="from-tv" value="tv" aria-describedby="from-tv-h"><label for="from-tv">All TV</label>
+        <p class="hint" id="from-tv-h">Series from the whole library, every day, the most watched first.</p></div>
+      <div class="choice"><input type="radio" name="suggest-from" id="from-films" value="films" aria-describedby="from-films-h"><label for="from-films">All films</label>
+        <p class="hint" id="from-films-h">A film from the whole library every evening, the most watched first.</p></div>
+      <div class="choice"><input type="radio" name="suggest-from" id="from-both" value="both" aria-describedby="from-both-h"><label for="from-both">TV and Films</label>
+        <p class="hint" id="from-both-h">Series on weekdays and films at the weekend, from the whole library.</p></div>
+    </fieldset>
+    <div class="buttons">
+      <button type="button" id="suggest-go" class="primary">Suggest a week</button>
       <button value="close">Cancel</button>
     </div>
   </form>

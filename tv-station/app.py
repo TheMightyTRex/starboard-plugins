@@ -6,6 +6,7 @@ Answers Starboard (cards, its pages, buttons and jobs) and Jellyfin (the channel
 port 8080, which Starboard puts on the home network. What Jellyfin reads is under /t/<token>/, a random word kept in
 this plug-in's folder, so nobody else on the network can guess the addresses.
 """
+import base64
 import contextlib
 import hashlib
 import html
@@ -32,16 +33,24 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
 PROMOS = "promos"
 GRIDS = "grid"  # the schedule grid: <channel>.json, and .draft.json for a suggestion, .prev.json for Undo
+MUSIC = "music"  # music for promos the owner uploads (0.2.0): station/ for every channel, ch-<channel>/ for one
+HOLDING = "holding"  # holding slides (0.2.0): station.<ending> and ch-<channel>.<ending>
 NAME = "Create your own TV channel"
 MAX_UPLOAD = 60 * 1024 * 1024
 CLIP_TYPES = (".mp4", ".mkv", ".mov", ".ts", ".webm", ".m4v")
 LOGO_TYPES = (".png", ".svg")
+MUSIC_TYPES = (".mp3", ".m4a", ".ogg", ".flac")
+HOLDING_TYPES = (".png", ".jpg", ".jpeg", ".mp4", ".mov", ".webm", ".mkv")
+MUSIC_MOST = 20  # tracks for the station, and for each channel
+HOLDING_LONGEST = 60  # seconds: a holding slide's video loops, so a short one is enough
+MUSIC_USE = {"both": "Your music and the pack's", "mine": "Only your music", "pack": "Only the pack's music"}
+HOLDING_MODES = {"": "The station's holding slide", "own": "Its own holding slide", "none": "No holding slide"}
 COLOURS = {"0x1f5f99": "Blue", "0x2e7d32": "Green", "0xb3261e": "Red", "0x6a3d9a": "Purple", "0xb35c00": "Orange",
            "0x00695c": "Teal", "0xad1457": "Pink", "0x455a64": "Grey", "0x8d6e00": "Gold", "0x1a237e": "Navy"}
 START_ON = {"0": "Back to back", "15": "On the quarter hour", "30": "On the half hour", "60": "On the hour"}
@@ -226,7 +235,14 @@ def connect_jellyfin():
                                                           "EnableStreamLooping": False, "IgnoreDts": True})
             added += 1
             options = jf("/System/Configuration/livetv") or {}
-        tuner = next((t.get("Id") for t in options.get("TunerHosts") or [] if t.get("Url") == m3u_url), None)
+        host = next((t for t in options.get("TunerHosts") or [] if t.get("Url") == m3u_url), None)
+        tuner = (host or {}).get("Id")
+        if host and host.get("FriendlyName") != station_name():
+            # The station was renamed (0.2.0): the tuner in Jellyfin's Live TV takes the new name. The same tuner,
+            # changed in place, so its channels and guide stay as they are.
+            jf("/LiveTv/TunerHosts", method="POST", data={**host, "FriendlyName": station_name()})
+            added += 1
+        sbplugin.keep("tuner_name", {"name": station_name()})
         if not any(g.get("Path") == xml_url for g in options.get("ListingProviders") or []):
             want = {"EnableAllTuners": False, "EnabledTuners": [tuner]} if tuner else {"EnableAllTuners": True}
             jf("/LiveTv/ListingProviders?validateListings=false&validateLogin=false", method="POST",
@@ -238,6 +254,25 @@ def connect_jellyfin():
         return ""
     except (urllib.error.URLError, OSError, ValueError, LookupError) as e:
         return f"Jellyfin did not take the channels: {getattr(e, 'reason', e)}"[:160]
+
+
+def renamed():
+    """True when the station's name is not the one Jellyfin's tuner was last given: Jellyfin is then told again."""
+    return address() and (sbplugin.remember("tuner_name", {}) or {}).get("name") not in (None, station_name())
+
+
+def guide_status(now=None):
+    """When Jellyfin last read the guide, and how many programmes it had, in words (0.2.0)."""
+    now = time.time() if now is None else now
+    got = sbplugin.remember("guide_read", None) or {}
+    if not got.get("at"):
+        return ("Jellyfin has not read the guide yet. Select Refresh Jellyfin's guide in Actions, or wait: Jellyfin reads it about once a day."
+                if address() else "Jellyfin has not read the guide yet: " + NO_ADDRESS[0].lower() + NO_ADDRESS[1:])
+    when = dog.when_words(got["at"], now)
+    when = when[0].lower() + when[1:] if when.startswith(("Today", "Tomorrow")) else f"on {when}"
+    return (f"Jellyfin last read the guide {when}: "
+            f"{sbplugin.plural(int(got.get('programmes') or 0), 'programme')} on {sbplugin.plural(int(got.get('channels') or 0), 'channel')}, "
+            f"for {sbplugin.plural(int(got.get('days') or 0), 'day')}.")
 
 
 def refresh_jellyfin_guide():
@@ -357,7 +392,7 @@ def clips_for(s, ch, p=None, cfg=None):
     if ch.get("clips") in ("shared", "both"):
         fillers += shared.get("clips") or []
     fillers += promo_clips(s, ch, cfg)
-    out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False}
+    out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False, "holding": holding_for(s, ch)}
     if p:
         name = pack_name(p)
         if ch.get("idents") != "none" and p.get("idents"):
@@ -372,6 +407,126 @@ def clips_for(s, ch, p=None, cfg=None):
     return out
 
 
+def holding_for(s, ch):
+    """The holding slide a channel's breaks end on (0.2.0): its own when it uses its own and has one, else the
+    station's, else none; with the words over it. None when there is no slide, so the breaks end on cards as before."""
+    mode = ch.get("holding_mode") or ""
+    if mode == "none":
+        return None
+    h = (ch.get("holding") if mode == "own" else None) or s.get("holding")
+    if not h:
+        return None
+    path = os.path.join(sbplugin.DATA, HOLDING, os.path.basename(h.get("file") or ""))
+    if not os.path.isfile(path):
+        return None
+    words = ch.get("holding_words") or s.get("holding_words") or "countdown"
+    return {"file": path, "still": bool(h.get("still")), "has_audio": bool(h.get("has_audio")), "gain": float(h.get("gain") or 0),
+            "words": words if words in dog.HOLDING_WORDS else "countdown"}
+
+
+def holding_words(h):
+    if not h:
+        return ""
+    return f"{h.get('title') or 'A slide'}, " + ("a picture" if h.get("still") else f"a {round(h.get('dur') or 0)} second video")
+
+
+def add_holding(key, name, length, rfile):
+    """A holding slide's picture or short video, checked with ffprobe like a pack's files: key is station or
+    ch-<channel>. The one before it is replaced. Returns what is kept about it."""
+    folder = os.path.join(sbplugin.DATA, HOLDING)
+    path, base = save_upload(name, length, rfile, os.path.join(folder, ".new"), HOLDING_TYPES)
+    try:
+        info = pack.probe(path)
+        v = info["video"]
+        if not info["ok"] or not v:
+            raise ValueError(f"{base} has no picture FFmpeg can read")
+        still = v.get("codec_name") in ("png", "mjpeg")
+        if not still and not 1 <= info["duration"] <= HOLDING_LONGEST:
+            raise ValueError(f"{base} is {round(info['duration'])} seconds long. Choose a picture, or a video of up to {HOLDING_LONGEST} seconds")
+        if int(v.get("width") or 0) > 4096 or int(v.get("height") or 0) > 4096:
+            raise ValueError(f"{base} is {v.get('width')} by {v.get('height')} pixels. Choose one of up to 1920 by 1080")
+        ending = os.path.splitext(base)[1].lower()
+        for f in os.listdir(folder):
+            if f.startswith(key + "."):
+                with contextlib.suppress(OSError):
+                    os.remove(os.path.join(folder, f))
+        final = os.path.join(folder, key + ending)
+        os.replace(path, final)
+    finally:
+        with contextlib.suppress(OSError):
+            os.remove(path)
+    sound = bool(info["audio"]) and not still
+    return {"file": key + ending, "title": base, "still": still, "dur": round(info["duration"], 2), "has_audio": sound,
+            "gain": pack.gain_for(pack.loudness(final)) if sound else 0.0}
+
+
+def drop_holding(h):
+    if h:
+        with contextlib.suppress(OSError):
+            os.remove(os.path.join(sbplugin.DATA, HOLDING, os.path.basename(h.get("file") or "")))
+
+
+def music_files(tracks):
+    """Uploaded music that is still there, as promo.py takes it: [{"file", "gain"}]."""
+    out = []
+    for m in tracks or []:
+        path = os.path.join(sbplugin.DATA, MUSIC, m.get("file") or "")
+        if os.path.realpath(path).startswith(os.path.realpath(os.path.join(sbplugin.DATA, MUSIC)) + os.sep) and os.path.isfile(path):
+            out.append({"file": path, "gain": float(m.get("gain") or 0)})
+    return out
+
+
+def add_music(tracks, key, name, length, rfile):
+    """One music track for promos (mp3, m4a, ogg or flac, up to 60 MB), checked with ffprobe: it must have sound and
+    last 5 seconds to 10 minutes. Its loudness is measured, so it plays at -23 LUFS like a pack's music. key is station
+    or ch-<channel>. Returns (the tracks with it added, the words said)."""
+    if len(tracks or []) >= MUSIC_MOST:
+        raise ValueError(f"There are {MUSIC_MOST} tracks already, the most. Remove one first")
+    folder = os.path.join(sbplugin.DATA, MUSIC, key)
+    path, base = save_upload(name, length, rfile, folder, MUSIC_TYPES)
+    info = pack.probe(path)
+    if not info["ok"] or not info["audio"]:
+        os.remove(path)
+        raise ValueError(f"{base} has no sound FFmpeg can read")
+    if not 5 <= info["duration"] <= 600:
+        os.remove(path)
+        raise ValueError(f"{base} is {round(info['duration'])} seconds long. Choose music of 5 seconds to 10 minutes")
+    mid = hashlib.sha256(f"{key}/{base}".encode()).hexdigest()[:10]
+    track = {"id": mid, "file": f"{key}/{base}", "title": base, "dur": round(info["duration"], 1), "gain": pack.gain_for(pack.loudness(path))}
+    return [m for m in tracks or [] if m["id"] != mid] + [track], f"Added {base}, {round(info['duration'])} seconds"
+
+
+def drop_music(tracks, mid):
+    """The tracks without one; its file goes from the plug-in's folder."""
+    keep = []
+    for m in tracks or []:
+        if m.get("id") == mid:
+            with contextlib.suppress(OSError):
+                path = os.path.join(sbplugin.DATA, MUSIC, m.get("file") or "")
+                if os.path.realpath(path).startswith(os.path.realpath(os.path.join(sbplugin.DATA, MUSIC)) + os.sep):
+                    os.remove(path)
+        else:
+            keep.append(m)
+    return keep
+
+
+def promo_design(s, ch):
+    """What a channel's promos are made with: its pack when the pack has a promo, else a plain design on its colour when
+    there is music uploaded for it or for the station (0.2.0), else nothing, so it has no promos."""
+    pk = channel_pack(s, ch)
+    if pk and pk.get("promo"):
+        return pk
+    if music_files(ch.get("music")) or music_files(s.get("music")):
+        return promo.plain_pack(ch.get("colour"))
+    return None
+
+
+def music_for(s, ch, design):
+    use = s.get("music_use") or "both"
+    return promo.music_pool((design or {}).get("music"), (design or {}).get("folder") or "", music_files(ch.get("music")),
+                            music_files(s.get("music")), use if use in MUSIC_USE else "both")
+
+
 def logo_file(cid, p=None):
     """The on-screen logo: the channel's own picture, else its broadcast pack's logo/dog.png."""
     own = os.path.join(sbplugin.DATA, LOGOS, f"{cid}.png")
@@ -381,6 +536,33 @@ def logo_file(cid, p=None):
         path = os.path.join(p["folder"], p["dog"])
         return path if os.path.isfile(path) else None
     return None
+
+
+def logo_thumb(path, alt):
+    """A small copy of a logo for the page (64 pixels tall), as a data address with its words, made once for each
+    version of the file and kept beside it (0.2.0, owner: "Once you upload a logo, I want you to show it")."""
+    if not path or not os.path.isfile(path):
+        return None
+    which = hashlib.sha256(path.encode()).hexdigest()[:8]
+    key = hashlib.sha256(f"{path}|{os.path.getmtime(path)}".encode()).hexdigest()[:8]
+    folder = os.path.join(sbplugin.DATA, LOGOS)
+    thumb = os.path.join(folder, f"thumb-{which}-{key}.png")
+    if not os.path.isfile(thumb):
+        os.makedirs(folder, exist_ok=True)
+        for f in os.listdir(folder):  # the copy of the logo before this one
+            if f.startswith(f"thumb-{which}-"):
+                with contextlib.suppress(OSError):
+                    os.remove(os.path.join(folder, f))
+        subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-i", path, "-vf", "scale=-1:64", "-frames:v", "1", "-y", thumb],
+                       capture_output=True, timeout=30, check=False)
+    try:
+        with open(thumb, "rb") as f:
+            data = f.read()
+    except OSError:
+        return None
+    if len(data) > 45000:
+        return None
+    return {"src": "data:image/png;base64," + base64.b64encode(data).decode(), "alt": alt[:120]}
 
 
 def own_logo(cid):
@@ -514,6 +696,12 @@ def preview(cid, kind="programme", at=None):
     elif kind == "card":
         nxt = sched_of(ch).airing(a["end"]) or a
         piece = {"kind": "card", "card": "next", "start": now, "end": now + 10, "airing": nxt}
+    elif kind == "holding":
+        h = holding_for(s, ch)
+        if not h:
+            raise LookupError("No holding slide yet")
+        nxt = sched_of(ch).airing(a["end"]) or a
+        piece = {"kind": "holding", "holding": h, "start": now, "end": now + 272, "airing": nxt}
     else:
         piece = {"kind": "programme", "start": a["start"], "end": a["content_end"], "airing": a}
         early = a["start"] + min(90.0, (a["content_end"] - a["start"]) / 2)
@@ -575,122 +763,268 @@ def _choice(label, value, options, default_words=None):
     return {"label": label, "value": "" if value in (None, "") else str(value), "options": opts[:12]}
 
 
-def channels_page(said=None, now=None):
+# What the Starboard drawing the page can do, from its X-Starboard-Can header (Starboard 0.23.0 and later): partial
+# (an answer for one channel only), picker (Choose from your library, a slide-out) and cards (each group on a card of
+# its own). An older Starboard sends none, and gets the pages as before.
+_req = threading.local()
+
+
+def can(what):
+    return what in getattr(_req, "can", frozenset())
+
+
+# Each card on an opened channel: its heading and one sentence on what it is for (owner, 19 November 2026: "Break the
+# channels section into smaller cards and look at making it easier to understand once you select the channel").
+CARDS = (("Name and number", "Its name and number in Jellyfin's Live TV, whether it is on air, and its colour."),
+         ("What it shows", "The series, films, collections, playlists, genres and decades it plays. Choose from your library to add several at once."),
+         ("Breaks", "What plays between programmes: when programmes start, how long the break is, idents, trailers and your clips."),
+         ("On-screen logo and branding", "The logo in the corner, the straps and cards, and the broadcast pack they come from. "
+                                         "Each one follows the station's setting until you choose another."),
+         ("Holding slide and promos", "The slide that loops at the end of a break until the next programme starts, and the music for its promos."),
+         ("Today and tomorrow", "What it shows in the next 24 hours, worked out from what it shows and its breaks."))
+PICK_KINDS = (("series", "Series"), ("film", "Films"), ("collection", "Collections"), ("playlist", "Playlists"), ("genre", "Genres"),
+              ("decade", "Decades"))
+
+
+def channel_rows(s, ch, cfg, base, now):
+    """One channel's menu row and its items, card by card."""
+    cid, n = ch["id"], ch["number"]
+    sched = sched_of(ch)
+    a = sched.airing(now)
+    on = bool(ch.get("on", True))
+    detail = (f"Now: {describe(a['entry'])}" if a else "Nothing to show yet: open it and choose what it shows")
+    if not on:
+        detail = "Off air. " + detail
+    menu = {"id": cid, "title": f"{n}  {ch['name']}", "group": "Channels", "detail": detail[:200], "active": on}
+    items = []
+
+    def row(key, title, group, **more):
+        # Each row's state in words (plug-in API 1.12), so no row reads "Not tested", which suits a list of sources.
+        more.setdefault("state", "ok")
+        more.setdefault("state_label", "Saved")
+        items.append({"id": f"{cid}:{key}", "title": title[:120], "group": group, "menu": cid, **more})
+
+    # Name and number
+    g = "Name and number"
+    row("on", "On air" if on else "Off air", g, on=on, state="ok" if on else "off", state_label="On air" if on else "Off air",
+        detail="Activate puts it in Jellyfin's Live TV. Move up and Move down change its place in the list, and so its number.",
+        actions=["toggle", "up", "down", "remove"])
+    row("name", f"Name: {ch['name']}", g, actions=["attach"], attach={"label": "Rename", "field": "Name", "hint": "Up to 40 characters", "value": ch["name"]})
+    row("number", f"Number: {n}", g, actions=["attach"],
+        detail="Its number in Jellyfin's Live TV. Numbers from 1 put the channels first, before the free channels from 101.",
+        attach={"label": "Change number", "field": "Number", "hint": "A whole number from 1 to 9999. Leave it empty to number by its place.",
+                "value": str(ch.get("number_set") or "")})
+    row("colour", "Colour", g, choice=_choice("Colour", ch.get("colour"), COLOURS),
+        detail="On its cards, its made logo and plain promos. Words always say what each thing is, so the colour is never the only sign.")
+
+    # What it shows
+    g = "What it shows"
+    if can("picker"):
+        row("pick", "Choose from your library", g, actions=["pick"], state="unknown", state_label="Add",
+            detail=("Nothing yet. " if not ch["sources"] else "") + "Every series, film, collection, playlist, genre and decade, with search. Tick several and add them at once.",
+            picker={"label": "Choose from your library", "title": f"Add to {ch['name']}"[:80], "search": "Search by name",
+                    "filters": [list(k) for k in PICK_KINDS], "submit": "Add the ticked ones"})
+    else:
+        for kind, label in (("series", "Add a series"), ("film", "Add a film"), ("collection", "Add a collection"),
+                            ("playlist", "Add a playlist"), ("genre", "Add a genre")):
+            hint = {"genre": "Such as Comedy"}.get(kind, "Its name, or the start of it")
+            row(f"add-{kind}", label, g, actions=["attach"], attach={"label": label, "field": "Name", "hint": hint}, state="unknown", state_label="Add one")
+    for i, src in enumerate(ch["sources"]):
+        row(f"src{i}", source_words(src), g, detail=src.get("detail", ""), actions=["remove", "up", "down"], state_label="In the line-up")
+    if not can("picker"):
+        row("add-decade", "Add a decade", g, actions=["attach"], attach={"label": "Add a decade", "field": "Decade", "hint": "Such as 1980s"},
+            state="unknown", state_label="Add one", detail="Every film and series from those 10 years.")
+    row("order", "Order", g, choice=_choice("Order", ch.get("order"), {"in_order": "In order", "shuffle": "Shuffled"}))
+    row("run", "Episodes of a series in a row", g, choice=_choice("In a row", ch.get("run"), {str(k): str(k) for k in (1, 2, 3, 4, 6)}))
+
+    # Breaks
+    g = "Breaks"
+    row("start_on", "Programmes start", g, choice=_choice("Start", ch.get("start_on"), START_ON),
+        detail="On the quarter, half or whole hour, the break fills the time to the next one.")
+    row("break_seconds", "Break between programmes", g, choice=_choice("Break", ch.get("break_seconds"), BREAKS),
+        detail="Added after each programme. With programmes on the half hour, the break also fills the rest of the slot.")
+    both = {"none": "None", "own": "This channel's", "shared": "The station's", "both": "This channel's and the station's"}
+    row("idents", "Idents", g, choice=_choice("Idents", ch.get("idents"), both))
+    row("ident_order", "Idents play", g, choice=_choice("Idents play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
+    row("trailers", "Trailers", g, choice=_choice("Trailers", "on" if ch.get("trailers") else "off", {"off": "None", "on": "Trailers of its films, from Jellyfin"}))
+    row("clips", "Your clips", g, choice=_choice("Clips", ch.get("clips"), both))
+    own = ch.get("own") or {}
+    for role in ("idents", "clips"):
+        for c in own.get(role) or []:
+            row(f"clip-{c['id']}", f"{ROLES[role]}: {c['title']}", g, detail=f"{round(c['dur'])} seconds", actions=["remove"], state_label="Ready")
+    row("add-ident", "Add an ident", g, actions=["attach"], state="unknown", state_label="Add one",
+        attach={"label": "Add an ident", "field": "Ident", "hint": "A short video, up to 60 MB, or the name of a Jellyfin collection of them",
+                "accept": ",".join(CLIP_TYPES)})
+    row("add-clip", "Add a clip", g, actions=["attach"], state="unknown", state_label="Add one",
+        attach={"label": "Add a clip", "field": "Clip", "hint": "A trailer or clip, up to 60 MB, or the name of a Jellyfin collection of them",
+                "accept": ",".join(CLIP_TYPES)})
+
+    # On-screen logo and branding
+    g = "On-screen logo and branding"
+    st = dog.resolve(cfg, None)
+    own_dog = ch.get("dog") or {}
+    yesno = {"true": "Yes", "false": "No"}
+    for key, label, options in (("kind", "On-screen logo", dog.KINDS), ("corner", "Corner", dog.CORNERS),
+                                ("size", "Size", {"small": "Small", "medium": "Medium", "large": "Large"}),
+                                ("margin", "Distance from the edge", {"small": "Close", "medium": "Inside the safe area", "large": "Further in"}),
+                                ("opacity", "Opacity", {str(p): f"{p}%" for p in (40, 50, 60, 70, 80, 90, 100)}),
+                                ("when", "When it shows", dog.WHEN),
+                                ("fade_in", "Fades in after the opening", {"0": "No, at once", "30": "After 30 seconds", "60": "After 1 minute", "120": "After 2 minutes"}),
+                                ("clock", "Clock", yesno), ("label", "Label", dog.LABELS), ("plate", "Backing plate", yesno),
+                                ("strap_start", "Programme name at the start", yesno), ("strap_end", "Up next during the end credits", yesno),
+                                ("cards", "Coming up next and Later cards", yesno)):
+        dv = st[key]
+        dw = (options.get(str(dv).lower()) if isinstance(dv, bool) else options.get(str(dv))) or str(dv)
+        v = own_dog.get(key, "")
+        row(f"dog-{key}", label, g, choice=_choice(label, str(v).lower() if isinstance(v, bool) else v, options, dw))
+    row("logo", "Logo: " + ("your picture" if own_logo(cid) else "the pack's" if logo_file(cid, channel_pack(s, ch)) else
+                            "made from its number and name"), g,
+        actions=["attach", "detach"] if own_logo(cid) else ["attach"],
+        **({"image": img} if (img := logo_thumb(logo_file(cid, channel_pack(s, ch)) or made_logo(ch), f"{ch['name']}'s logo")) else {}),
+        attach={"label": "Add logo", "field": "Logo", "detach_label": "Remove the logo", "hint": "A PNG with a clear background, at least 256 pixels tall", "accept": ".png"})
+    row("pack", "Broadcast pack", g, choice=_choice("Broadcast pack", ch.get("pack") or "", PACK_MODES),
+        detail=f"Now {pack_words(s, ch)}. A pack gives the on-screen logo, idents, transitions, the Coming up next card and promos.")
+    own_pk = load_pack(f"ch-{cid}")
+    row("pack-own", f"Its own pack: {own_pk['name']}" if own_pk else "Its own pack: none yet", g,
+        actions=["attach", "detach"] if own_pk else ["attach"], detail=pack.summary(own_pk) if own_pk else
+        "For branding of its own: a zip made from the template, in Broadcast pack. Then choose Its own pack.",
+        attach={"label": "Upload its own pack", "field": "Pack", "detach_label": "Remove its pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"})
+    prev = {"detail": "Opens a frame as it would be drawn now, with these settings."}
+    if base:
+        prev["link"] = {"url": f"{base}/t/{s['token']}/preview/{cid}.png", "label": f"Preview a frame of {ch['name']}"}
+        items.append({"id": f"{cid}:preview-card", "title": "Preview a Coming up next card", "group": g, "menu": cid, "state": "unknown",
+                      "state_label": "Preview", "link": {"url": f"{base}/t/{s['token']}/preview/{cid}.png?kind=card",
+                                                         "label": f"Preview a Coming up next card on {ch['name']}"}})
+    else:
+        prev["detail"] = NO_ADDRESS
+    row("preview", "Preview a frame", g, state="unknown", state_label="Preview", **prev)
+
+    # Holding slide and promos
+    g = "Holding slide and promos"
+    h = holding_for(s, ch)
+    mode = ch.get("holding_mode") or ""
+    row("holding_mode", "Holding slide", g, choice=_choice("Holding slide", mode, HOLDING_MODES),
+        detail=(f"Now {holding_words(ch.get('holding') if mode == 'own' and ch.get('holding') else s.get('holding'))}. " if h else
+                "None yet, so breaks end on Coming up next cards. ") + "It loops after the promos until the next programme starts.")
+    row("holding-own", "Its own holding slide: " + (holding_words(ch["holding"]) if ch.get("holding") else "none yet"), g,
+        actions=["attach", "detach"] if ch.get("holding") else ["attach"], state="ok" if ch.get("holding") else "unknown",
+        state_label="Ready" if ch.get("holding") else "Add one", detail="A picture, or a video of up to 60 seconds that loops. The station's is in Idents, clips and music.",
+        attach={"label": "Upload a holding slide", "field": "Holding slide", "detach_label": "Remove the slide", "hint": "A PNG or JPEG picture, or a video of up to 60 seconds and 60 MB",
+                "accept": ",".join(HOLDING_TYPES)})
+    st_words = dog.HOLDING_WORDS.get(s.get("holding_words") or "countdown")
+    row("holding_words", "Words on the slide", g, choice=_choice("Words", ch.get("holding_words") or "", dog.HOLDING_WORDS, st_words),
+        detail="A countdown says Next programme in 4:32 with the programme's name, and reaches 0:00 as it starts.")
+    if base and h:
+        row("preview-holding", "Preview the holding slide", g, state="unknown", state_label="Preview",
+            link={"url": f"{base}/t/{s['token']}/preview/{cid}.png?kind=holding", "label": f"Preview the holding slide on {ch['name']}"})
+    design = promo_design(s, ch)
+    kept = [p for p in s.get("promos") or [] if p.get("cid") == cid]
+    how = ("Made in quiet hours with its broadcast pack." if design and design.get("name") != "Plain" else
+           "Made in quiet hours on its colour, with your music." if design else
+           "To have promos, upload music for them here or in Idents, clips and music, or use a pack with a promo.")
+    row("promos", f"Promos: {len(kept)} kept" if design else "Promos: none yet", g, state="ok" if design else "off",
+        state_label="Made in quiet hours" if design else "None", detail=how)
+    for m in ch.get("music") or []:
+        row(f"music-{m['id']}", f"Music: {m['title']}", g, detail=f"{round(m.get('dur') or 0)} seconds. Used for this channel's promos.",
+            actions=["remove"], state_label="Ready")
+    row("add-music", "Add music for its promos", g, actions=["attach"], state="unknown", state_label="Add one",
+        detail="Its own music, used in place of the station's. " + MUSIC_USE.get(s.get("music_use") or "both", "") + " are used.",
+        attach={"label": "Upload music", "field": "Music", "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB",
+                "accept": ",".join(MUSIC_TYPES)})
+
+    # Today and tomorrow
+    g = "Today and tomorrow"
+    got = sched.airings(now, now + 86400, limit=60)
+    for k, a2 in enumerate(got):
+        e = a2["entry"]
+        new = guide.is_new(e, a2["start"])
+        row(f"today{k}", f"{day_hm(a2['start'], now)} to {hm(a2['end'])}  {e.get('title')}", g,
+            detail=(guide.episode_words(e) + ". " if guide.episode_words(e) else "") + (e.get("plot") or "")[:120],
+            state="ok" if new else "unknown", state_label="New" if new else "Repeat")
+    if not got:
+        row("today-none", "Nothing yet", g, state="unknown", state_label="Empty", detail="Choose what it shows, and its programmes are listed here.")
+    return menu, items
+
+
+NO_ADDRESS = ("It does not know its address yet. Update Starboard in Settings, Updates (0.23.0 and later give it), "
+              "or open this plug-in's web page once from its page in Settings, Plug-ins.")
+
+
+def channels_page(said=None, now=None, only=None):
+    """The Channels page. only: one channel's id, for an answer with that channel alone (partial, Starboard 0.23.0)."""
     now = time.time() if now is None else now
     s = state()
     cfg = settings()
     base = address()
     menus, items = [], []
     for ch in numbered(s):
-        cid, n = ch["id"], ch["number"]
-        sched = sched_of(ch)
-        a = sched.airing(now)
-        detail = (f"Now: {describe(a['entry'])}" if a else "Nothing to show yet: add a series, film, collection or playlist")
-        menus.append({"id": cid, "title": f"{n}  {ch['name']}", "group": "Channels", "detail": detail[:200], "active": bool(ch.get("on", True))})
-
-        def row(key, title, group, **more):
-            # Each row's state in words (plug-in API 1.12), so no row reads "Not tested", which suits a list of sources.
-            more.setdefault("state", "ok")
-            more.setdefault("state_label", "Saved")
-            items.append({"id": f"{cid}:{key}", "title": title[:120], "group": group, "menu": cid, **more})
-        row("on", "On air" if ch.get("on", True) else "Off air", "Channel", on=bool(ch.get("on", True)),
-            state="ok" if ch.get("on", True) else "off", state_label="On air" if ch.get("on", True) else "Off air",
-            detail="Activate to put it in Jellyfin's Live TV. Up and Down move it in the list, which sets its number.",
-            actions=["toggle", "up", "down", "remove"])
-        row("name", f"Name: {ch['name']}", "Channel", actions=["attach"],
-            attach={"label": "Rename", "field": "Name", "hint": "Up to 40 characters", "value": ch["name"]})
-        row("number", f"Number: {n}", "Channel", actions=["attach"],
-            detail="Its number in Jellyfin's Live TV. Numbers from 1 put the channels first, before the free channels from 101.",
-            attach={"label": "Change number", "field": "Number", "hint": "A whole number from 1 to 9999. Leave it empty to number by its place.",
-                    "value": str(ch.get("number_set") or "")})
-        row("colour", "Colour", "Channel", choice=_choice("Colour", ch.get("colour"), COLOURS),
-            detail="On its cards and its made logo. Words always say what each thing is, so the colour is never the only sign.")
-        row("pack", "Broadcast pack", "Channel", choice=_choice("Broadcast pack", ch.get("pack") or "", PACK_MODES),
-            detail=f"Now {pack_words(s, ch)}. A pack gives the on-screen logo, idents, transitions, the Coming up next card and promos.")
-        own_pk = load_pack(f"ch-{cid}")
-        row("pack-own", f"Its own pack: {own_pk['name']}" if own_pk else "Its own pack: none yet", "Channel",
-            actions=["attach", "detach"] if own_pk else ["attach"], detail=pack.summary(own_pk) if own_pk else
-            "For branding of its own: a zip made from the template, in Broadcast pack. Then choose Its own pack.",
-            attach={"label": "Upload its own pack", "field": "Pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"})
-        row("logo", "Logo: " + ("your picture" if own_logo(cid) else "the pack's" if logo_file(cid, channel_pack(s, ch)) else
-                                "made from its number and name"), "Channel",
-            actions=["attach", "detach"] if own_logo(cid) else ["attach"],
-            attach={"label": "Add logo", "field": "Logo", "hint": "A PNG with a clear background, at least 256 pixels tall", "accept": ".png"})
-        for i, src in enumerate(ch["sources"]):
-            row(f"src{i}", source_words(src), "What it shows", detail=src.get("detail", ""), actions=["remove", "up", "down"],
-                state_label="In the line-up")
-        for kind, label in (("series", "Add a series"), ("film", "Add a film"), ("collection", "Add a collection"),
-                            ("playlist", "Add a playlist"), ("genre", "Add a genre"), ("decade", "Add a decade")):
-            hint = {"decade": "Such as 1980s", "genre": "Such as Comedy"}.get(kind, "Its name, or the start of it")
-            row(f"add-{kind}", label, "What it shows", actions=["attach"], attach={"label": label, "field": "Name", "hint": hint},
-                state="unknown", state_label="Add one")
-        row("order", "Order", "Order and times", choice=_choice("Order", ch.get("order"), {"in_order": "In order", "shuffle": "Shuffled"}))
-        row("run", "Episodes of a series in a row", "Order and times",
-            choice=_choice("In a row", ch.get("run"), {str(k): str(k) for k in (1, 2, 3, 4, 6)}))
-        row("start_on", "Programmes start", "Order and times", choice=_choice("Start", ch.get("start_on"), START_ON),
-            detail="On the quarter, half or whole hour, the break fills the time to the next one.")
-        row("break_seconds", "Break between programmes", "Order and times", choice=_choice("Break", ch.get("break_seconds"), BREAKS),
-            detail="Added after each programme. With programmes on the half hour, the break also fills the rest of the slot.")
-        both = {"none": "None", "own": "This channel's", "shared": "The station's", "both": "This channel's and the station's"}
-        row("idents", "Idents", "Breaks", choice=_choice("Idents", ch.get("idents"), both))
-        row("ident_order", "Idents play", "Breaks", choice=_choice("Idents play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
-        row("trailers", "Trailers", "Breaks", choice=_choice("Trailers", "on" if ch.get("trailers") else "off",
-                                                              {"off": "None", "on": "Trailers of its films, from Jellyfin"}))
-        row("clips", "Your clips", "Breaks", choice=_choice("Clips", ch.get("clips"), both))
-        own = ch.get("own") or {}
-        for role in ("idents", "clips"):
-            for c in own.get(role) or []:
-                row(f"clip-{c['id']}", f"{ROLES[role]}: {c['title']}", "Breaks", detail=f"{round(c['dur'])} seconds", actions=["remove"],
-                    state_label="Ready")
-        row("add-ident", "Add an ident", "Breaks", actions=["attach"], state="unknown", state_label="Add one",
-            attach={"label": "Add an ident", "field": "Ident", "hint": "A short video, up to 60 MB, or the name of a Jellyfin collection of them",
-                    "accept": ",".join(CLIP_TYPES)})
-        row("add-clip", "Add a clip", "Breaks", actions=["attach"], state="unknown", state_label="Add one",
-            attach={"label": "Add a clip", "field": "Clip", "hint": "A trailer or clip, up to 60 MB, or the name of a Jellyfin collection of them",
-                    "accept": ",".join(CLIP_TYPES)})
-        st = dog.resolve(cfg, None)
-        own_dog = ch.get("dog") or {}
-        yesno = {"true": "Yes", "false": "No"}
-        for key, label, options in (("kind", "On-screen logo", dog.KINDS), ("corner", "Corner", dog.CORNERS),
-                                    ("size", "Size", {"small": "Small", "medium": "Medium", "large": "Large"}),
-                                    ("margin", "Distance from the edge", {"small": "Close", "medium": "Inside the safe area", "large": "Further in"}),
-                                    ("opacity", "Opacity", {str(p): f"{p}%" for p in (40, 50, 60, 70, 80, 90, 100)}),
-                                    ("when", "When it shows", dog.WHEN),
-                                    ("fade_in", "Fades in after the opening", {"0": "No, at once", "30": "After 30 seconds", "60": "After 1 minute", "120": "After 2 minutes"}),
-                                    ("clock", "Clock", yesno), ("label", "Label", dog.LABELS), ("plate", "Backing plate", yesno),
-                                    ("strap_start", "Programme name at the start", yesno), ("strap_end", "Up next during the end credits", yesno),
-                                    ("cards", "Coming up next and Later cards", yesno)):
-            dv = st[key]
-            dw = (options.get(str(dv).lower()) if isinstance(dv, bool) else options.get(str(dv))) or str(dv)
-            v = own_dog.get(key, "")
-            row(f"dog-{key}", label, "On-screen logo and straps", choice=_choice(label, str(v).lower() if isinstance(v, bool) else v, options, dw))
-        prev = {"title": "Preview a frame", "detail": "Opens a frame as it would be drawn now, with these settings. Nothing changes until you choose an option."}
-        if base:
-            prev["link"] = {"url": f"{base}/t/{s['token']}/preview/{cid}.png", "label": f"Preview a frame of {ch['name']}"}
-            items.append({"id": f"{cid}:preview-card", "title": "Preview a Coming up next card", "group": "On-screen logo and straps", "menu": cid,
-                          "state": "unknown", "state_label": "Preview",
-                          "link": {"url": f"{base}/t/{s['token']}/preview/{cid}.png?kind=card", "label": f"Preview a Coming up next card on {ch['name']}"}})
-        else:
-            prev["detail"] = ("It does not know its address yet. Update Starboard in Settings, Updates (0.23.0 and later give it), "
-                            "or open this plug-in's web page once from its page in Settings, Plug-ins.")
-        row("preview", prev.pop("title"), "On-screen logo and straps", state="unknown", state_label="Preview", **prev)
-        for k, a2 in enumerate(sched.airings(now, now + 86400, limit=60)):
-            e = a2["entry"]
-            new = guide.is_new(e, a2["start"])
-            row(f"today{k}", f"{day_hm(a2['start'], now)} to {hm(a2['end'])}  {e.get('title')}", "Today and tomorrow",
-                detail=(guide.episode_words(e) + ". " if guide.episode_words(e) else "") + (e.get("plot") or "")[:120],
-                state="ok" if new else "unknown", state_label="New" if new else "Repeat")
+        if only and ch["id"] != only:
+            continue
+        m, its = channel_rows(s, ch, cfg, base, now)
+        menus.append(m)
+        items += its
+    if only:
+        out = {"type": "list", "title": "Channels", "partial": {"menus": [only]}, "menus": menus, "items": items}
+        if said:
+            out["said"] = said[:200]
+        return out
     out = {"type": "list", "title": "Channels", "intro": (f"{station_name(cfg)}: {sbplugin.plural(len(s['channels']), 'channel')}. "
-                                                          "Each channel opens to its name, what it shows, its breaks, its on-screen logo "
-                                                          "and its programmes for today and tomorrow."),
+                                                          "Open a channel to change it. Each of its cards is one part of it: its name, what it shows, "
+                                                          "its breaks, its on-screen logo, its holding slide and promos, and its programmes."),
            "add": {"label": "Add a channel", "hint": "Its name, such as Comedy. Up to 40 characters", "placeholder": "Channel name"},
-           "menus": menus, "items": items}
+           "menus": menus, "items": items, "hints": dict(CARDS)}
+    if can("cards"):
+        out["layout"] = "cards"
     if said:
         out["said"] = said[:200]
     err = sbplugin.last_error()
     if err:
         out["notices"] = [{"id": "error", "tone": "warning", "title": "The last refresh did not finish", "text": err, "dismiss": True}]
     return out
+
+
+def browse(ch, words, kind, start):
+    """A page of the library for the slide-out (Choose from your library, Starboard 0.23.0): what is on the channel
+    already is ticked and cannot be ticked again."""
+    kind = kind if kind in dict(PICK_KINDS) else "series"
+    try:
+        start = max(0, min(100000, int(start or 0)))
+    except (TypeError, ValueError):
+        start = 0
+    got, total = library.browse(jf, kind, words, start)
+    have = {f"{src['kind']}:{src['id']}" for src in ch["sources"]}
+    items = [{"id": f"{kind}:{iid}", "title": title[:120], "detail": detail[:200], "on": f"{kind}:{iid}" in have} for iid, title, detail in got]
+    return {"type": "picker", "filter": kind, "start": start, "total": total, "more": start + len(items) < total, "items": items}
+
+
+def pick_sources(ch, ids):
+    """Adds every ticked series, film, collection, genre or playlist (up to 100 at once) to what the channel shows."""
+    wanted = []
+    for raw in [str(i) for i in ids][:100]:
+        kind, _, iid = raw.partition(":")
+        if kind not in dict(PICK_KINDS) or not iid or len(iid) > 80:
+            continue
+        if kind not in ("genre", "decade") and not library.ID.match(iid):
+            continue
+        if kind == "decade" and not re.fullmatch(r"(1[89]|20)[0-9]0", iid):
+            continue
+        if any(src["kind"] == kind and str(src["id"]) == iid for src in ch["sources"]) or (kind, iid) in wanted:
+            continue
+        wanted.append((kind, iid))
+    if not wanted:
+        raise ValueError("Tick at least one that is not on this channel already")
+    found = library.names(jf, [iid for kind, iid in wanted if kind not in ("genre", "decade")])
+    added = []
+    for kind, iid in wanted:
+        name = iid if kind == "genre" else f"The {iid}s" if kind == "decade" else found.get(iid)
+        if not name:
+            continue
+        ch["sources"].append({"kind": kind, "id": iid, "name": name})
+        added.append(name)
+    if not added:
+        raise ValueError("Jellyfin did not find the ones ticked. Search again")
+    words = ", ".join(added[:-1]) + f" and {added[-1]}" if len(added) > 1 else added[0]
+    return f"Added {len(added)} to {ch['name']}: {words}"[:160]
 
 
 def add_source(ch, kind, words):
@@ -724,7 +1058,9 @@ def channels_post(body, now=None):
         ch = find(s, cid)
         if not ch:
             raise ValueError("That channel has gone")
-        said, refresh = "Saved", False
+        if action == "browse" and key == "pick":
+            return browse(ch, str(value or ""), str(body.get("filter") or ""), body.get("start"))
+        said, refresh, whole = "Saved", False, False
         if key == "on" and action == "toggle":
             ch["on"] = not ch.get("on", True)
             said = f"{ch['name']} is {'on' if ch['on'] else 'off'} air"
@@ -735,11 +1071,13 @@ def channels_post(body, now=None):
             if 0 <= j < len(s["channels"]):
                 s["channels"][i], s["channels"][j] = s["channels"][j], s["channels"][i]
             said = f"{ch['name']} moved {action}"
+            whole = True  # every channel's number may change
             later_jellyfin()
         elif key == "on" and action == "remove":
             s["channels"].remove(ch)
             s["removed"] = (s["removed"] + [{**ch, "removed": int(time.time())}])[-10:]
             said = f"Removed {ch['name']}. Its settings are kept in the plug-in's folder"
+            whole = True
             later_jellyfin()
         elif key == "name" and action == "attach":
             name = str(value or "").strip()[:40]
@@ -768,6 +1106,17 @@ def channels_post(body, now=None):
         elif key.startswith("add-") and action == "attach" and key[4:] in library.KINDS:
             said = add_source(ch, key[4:], str(value or ""))
             refresh = True
+        elif key == "pick" and action == "pick":
+            said = pick_sources(ch, body.get("ids") or [])
+            refresh = True
+        elif key == "holding-own" and action == "detach":
+            drop_holding(ch.pop("holding", None))
+            if ch.get("holding_mode") == "own":
+                ch["holding_mode"] = ""
+            said = "Its own holding slide is removed: it uses the station's" + ("" if s.get("holding") else ", and there is none, so breaks end on cards")
+        elif key.startswith("music-") and action == "remove":
+            ch["music"] = drop_music(ch.get("music"), key[6:])
+            said = "Removed the music"
         elif key in ("add-ident", "add-clip") and action == "attach":
             role = "idents" if key == "add-ident" else "clips"
             said = add_jellyfin_clips(ch.setdefault("own", {"idents": [], "clips": [], "sources": []}), role, str(value or ""))
@@ -796,7 +1145,13 @@ def channels_post(body, now=None):
     if refresh:
         refresh_soon(cid)
         said += ". The new line-up starts after the programme on now"
-    return channels_page(said, now)
+    out = channels_page(said, now, only=None if whole or not can("partial") else cid)
+    if action == "choose" and said.startswith("Saved"):  # say what was saved in the row's own words: "Corner: Bottom left"
+        it = next((x for x in out["items"] if x["id"] == rid and x.get("choice")), None)
+        if it:
+            words = next((w for k, w in it["choice"]["options"] if k == it["choice"]["value"]), "")
+            out["said"] = f"{it['choice']['label']}: {words}. Saved for {ch['name']}{said[5:]}"[:200]
+    return out
 
 
 def choose(ch, key, value):
@@ -820,6 +1175,12 @@ def choose(ch, key, value):
     elif key == "pack" and v in PACK_MODES:
         ch["pack"] = v
         return f"{ch['name']} now uses {PACK_MODES[v].lower()}"
+    elif key == "holding_mode" and v in HOLDING_MODES:
+        ch["holding_mode"] = v
+        return f"{ch['name']} now uses {HOLDING_MODES[v].lower()}"
+    elif key == "holding_words" and (v == "" or v in dog.HOLDING_WORDS):
+        ch["holding_words"] = v
+        return "Saved: " + (dog.HOLDING_WORDS[v] if v else "the station's words") + " on the holding slide"
     elif key.startswith("dog-") and key[4:] in dog.DEFAULTS:
         k = key[4:]
         d = dog.DEFAULTS[k]
@@ -909,7 +1270,29 @@ def channels_file(name, item, length, rfile):
                 ch["pack"] = "own"
                 save(s)
         whose = f"{ch['name']}'s" if ch else "the channel's"
-        return channels_page(f"{got['pack']['name']} is now {whose} own pack: {pack.summary(got['pack']).lower()}")
+        return channels_page(f"{got['pack']['name']} is now {whose} own pack: {pack.summary(got['pack']).lower()}", only=cid if can("partial") and ch else None)
+    if key in ("holding-own", "add-music"):
+        # Checked outside the lock too: ffprobe, and FFmpeg measuring the loudness, take a moment.
+        ch = find(state(), cid)
+        if not ch:
+            raise ValueError("That channel has gone")
+        if key == "holding-own":
+            got = add_holding(f"ch-{cid}", name, length, rfile)
+        else:
+            tracks, said = add_music(ch.get("music"), f"ch-{cid}", name, length, rfile)
+        with _lock:
+            s = state()
+            ch = find(s, cid)
+            if not ch:
+                raise ValueError("That channel has gone")
+            if key == "holding-own":
+                ch["holding"], ch["holding_mode"] = got, "own"
+                said = f"{got['title']} is {ch['name']}'s holding slide. It loops after the promos until the next programme starts"
+            else:
+                ch["music"] = tracks
+                said += f". {ch['name']}'s promos use it from the next quiet hour"
+            save(s)
+        return channels_page(said, only=cid if can("partial") else None)
     with _lock:
         s = state()
         cid, _, key = item.partition(":")
@@ -932,7 +1315,7 @@ def channels_file(name, item, length, rfile):
         else:
             raise ValueError("That row takes no file")
         save(s)
-    return channels_page(said)
+    return channels_page(said, only=cid if can("partial") else None)
 
 
 def clips_page(said=None):
@@ -948,8 +1331,32 @@ def clips_page(said=None):
         items.append({"id": f"add:{role}", "title": label, "group": "Add", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
                       "attach": {"label": label, "field": "Name", "hint": "A video up to 60 MB, or the name of a Jellyfin collection or folder",
                                  "accept": ",".join(CLIP_TYPES)}})
-    out = {"type": "list", "title": "Idents and clips", "items": items,
-           "intro": "Idents and clips every channel can use in its breaks. Each channel chooses whether to use these, its own or both."}
+    # The holding slide (0.2.0): every channel's, unless it has its own.
+    h = s.get("holding")
+    items.append({"id": "holding", "title": "The station's holding slide: " + (holding_words(h) if h else "none yet"), "group": "Holding slide",
+                  "state": "ok" if h else "unknown", "state_label": "In use" if h else "None yet",
+                  "detail": ("Loops at the end of each break, after the promos, until the next programme starts, on every channel without its own. "
+                             if h else "Upload a picture or a short video, and it loops at the end of each break until the next programme starts. ")[:200],
+                  "actions": ["attach", "detach"] if h else ["attach"],
+                  "attach": {"label": "Upload a holding slide", "field": "Holding slide", "accept": ",".join(HOLDING_TYPES), "detach_label": "Remove the slide",
+                             "hint": "A PNG or JPEG picture, or a video of up to 60 seconds and 60 MB. Choose a file: names are not used here"}})
+    items.append({"id": "holding-words", "title": "Words on the slide", "group": "Holding slide", "state": "ok", "state_label": "Saved",
+                  "detail": "A countdown says Next programme in 4:32 with the programme's name, and reaches 0:00 as it starts. Each channel can choose its own.",
+                  "choice": _choice("Words", s.get("holding_words") or "countdown", dog.HOLDING_WORDS)})
+    # Music for promos (0.2.0)
+    items.append({"id": "music-use", "title": "Music the promos use", "group": "Music for promos", "state": "ok", "state_label": "Saved",
+                  "detail": "A channel's own music comes first, then this. Promos are made in quiet hours, so a change shows in the next ones.",
+                  "choice": _choice("Music", s.get("music_use") or "both", MUSIC_USE)})
+    for m in s.get("music") or []:
+        items.append({"id": f"music:{m['id']}", "title": m["title"][:120], "group": "Music for promos", "actions": ["remove"], "state": "ok",
+                      "state_label": "Ready", "detail": f"{round(m.get('dur') or 0)} seconds, played at the same loudness as the rest"})
+    items.append({"id": "add:music", "title": "Add music for promos", "group": "Music for promos", "actions": ["attach"], "state": "unknown",
+                  "state_label": "Add one", "detail": "With music here, a channel without a pack promo gets plain promos on its colour.",
+                  "attach": {"label": "Upload music", "field": "Music", "accept": ",".join(MUSIC_TYPES),
+                             "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB. Choose a file: names are not used here"}})
+    out = {"type": "list", "title": "Idents, clips and music", "items": items,
+           "intro": ("Idents, clips, the holding slide and music for promos that every channel can use. Each channel chooses whether "
+                     "to use these, its own or both.")}
     if said:
         out["said"] = said[:200]
     return out
@@ -963,8 +1370,22 @@ def clips_post(body):
         if action == "remove" and role in ("idents", "clips"):
             s["shared"][role] = [c for c in s["shared"].get(role) or [] if c["id"] != cid]
             said = "Removed"
+        elif action == "remove" and role == "music":
+            s["music"] = drop_music(s.get("music"), cid)
+            said = "Removed the music"
         elif action == "attach" and role == "add" and cid in ("idents", "clips"):
             said = add_jellyfin_clips(s["shared"], cid, str(value or ""))
+        elif action == "attach" and rid in ("add:music", "holding"):
+            raise ValueError("Choose a file, then Upload")
+        elif action == "detach" and rid == "holding":
+            drop_holding(s.pop("holding", None))
+            said = "The station's holding slide is removed. Breaks end on Coming up next cards, unless a channel has its own slide"
+        elif action == "choose" and rid == "holding-words" and str(value) in dog.HOLDING_WORDS:
+            s["holding_words"] = str(value)
+            said = f"Words on the slide: {dog.HOLDING_WORDS[str(value)]}. Saved"
+        elif action == "choose" and rid == "music-use" and str(value) in MUSIC_USE:
+            s["music_use"] = str(value)
+            said = f"Music the promos use: {MUSIC_USE[str(value)]}. Saved"
         else:
             raise ValueError("That cannot be changed here")
         save(s)
@@ -972,6 +1393,20 @@ def clips_post(body):
 
 
 def clips_file(name, item, length, rfile):
+    if item == "holding":
+        got = add_holding("station", name, length, rfile)
+        with _lock:
+            s = state()
+            s["holding"] = got
+            save(s)
+        return clips_page(f"{got['title']} is the station's holding slide. It loops at the end of each break until the next programme starts")
+    if item == "add:music":
+        tracks, said = add_music(state().get("music"), "station", name, length, rfile)
+        with _lock:
+            s = state()
+            s["music"] = tracks
+            save(s)
+        return clips_page(said + ". Promos use it from the next quiet hour")
     role = item.partition(":")[2]
     if role not in ("idents", "clips"):
         raise ValueError("That row takes no file")
@@ -999,6 +1434,8 @@ def guide_page(now=None):
                                     "synopsis": (e.get("plot") or "")[:80]}})
     return {"type": "list", "title": "Guide", "layout": "folds", "readonly": True,
             "intro": f"What is on {station_name()} in the next 24 hours. Jellyfin's guide has the next 7 days.",
+            "notices": [{"id": "read", "tone": "success" if (sbplugin.remember("guide_read", None) or {}).get("at") else "info",
+                         "title": "Jellyfin's guide", "text": guide_status(now)[:400]}],
             "columns": [{"key": "time", "label": "Time"}, {"key": "programme", "label": "Programme"},
                         {"key": "episode", "label": "Episode"}, {"key": "shown", "label": "New or repeat"},
                         {"key": "synopsis", "label": "About it"}],
@@ -1025,6 +1462,8 @@ def card(now=None):
         if nxt:
             item.update({"next": describe(nxt["entry"]), "next_start": int(nxt["start"])})
         items.append(item)
+    if renamed():
+        later_jellyfin()
     if not s["channels"]:
         return sbplugin.band({"items": [], "note": "No channels yet. Add one in Settings, Plug-ins, Create your own TV channel, Channels"}, "needs_setup")
     note = ""
@@ -1123,10 +1562,11 @@ def pack_page(said=None):
     title = f"Station's pack: {sp['name']}" + (" (the example pack)" if using_example else "") if sp else "Station's pack: none yet"
     detail = (pack.summary(sp) + (f". Made {sp['made']}" if sp.get("made") else "") + ". Used by every channel without its own."
               if sp else "Upload a zip made from the template: every channel uses it unless it has its own, or none.")
-    items.append({"id": "station", "title": title[:120], "detail": detail[:200], "group": "The station's pack",
+    pic = logo_thumb(os.path.join(sp["folder"], sp["dog"]), f"The on-screen logo in {sp['name']}") if sp and sp.get("dog") else None
+    items.append({"id": "station", "title": title[:120], "detail": detail[:200], "group": "The station's pack", **({"image": pic} if pic else {}),
                   "state": "ok" if sp else "unknown", "state_label": "In use" if sp else "None yet",
                   "actions": ["attach", "detach"] if sp and not using_example else ["attach"],
-                  "attach": {"label": "Upload a pack", "field": "Pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"}})
+                  "attach": {"label": "Upload a pack", "field": "Pack", "detach_label": "Stop using the pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"}})
     if _example["making"]:
         ex_state, ex_label, ex_detail = "unknown", "Being made", "Making the example pack at the lowest priority: about 2 minutes. Open this page again then."
     elif _example["error"]:
@@ -1301,7 +1741,7 @@ def promos_job(now=None, limit_seconds=40 * 60):
         keep, days = promo_settings(cfg)
         now = time.time() if now is None else now
         s = state()
-        chans = [{"id": ch["id"], "sched": sched_of(ch), "can": bool((channel_pack(s, ch) or {}).get("promo")) and ch.get("on", True)}
+        chans = [{"id": ch["id"], "sched": sched_of(ch), "can": bool(promo_design(s, ch)) and ch.get("on", True)}
                  for ch in s["channels"]]
         remove, make = promo.plan(chans, s.get("promos") or [], keep, days, now)
         gone = {p["id"] for p in remove}
@@ -1321,14 +1761,14 @@ def promos_job(now=None, limit_seconds=40 * 60):
                 break
             s = state()
             ch = find(s, job["cid"])
-            pk = channel_pack(s, ch) if ch else None
-            if not pk or not pk.get("promo"):
+            pk = promo_design(s, ch) if ch else None
+            if not pk:
                 continue
             pid = promo.new_id()
             a = job["airing"]
             out = clip_path(f"promo:{pid}")
             texts = dog.Texts(os.path.join("/tmp", "tv-station", f"promo-{pid}"))
-            argv, seconds = promo.command(pk, a, ch["name"], promo.pick_music(pk, schedule.seed_of(ch["seed"], "music", a["start"])), W, H,
+            argv, seconds = promo.command(pk, a, ch["name"], promo.pick_music(music_for(s, ch, pk), schedule.seed_of(ch["seed"], "music", a["start"])), W, H,
                                           c.get("url", ""), c.get("api_key", ""), texts, out + ".part")
             ok, why = promo.run(argv)
             shutil.rmtree(texts.folder, ignore_errors=True)
@@ -1373,14 +1813,18 @@ def grid_state(cid, said="", now=None):
     s = state()
     chans = numbered(s)
     if not chans:
-        return {"channels": [], "cid": "", "said": "Add a channel first, in Settings, Plug-ins, Create your own TV channel, Channels"}
+        # Every field the grid page reads, so it says what to do in place of failing to draw (0.2.0).
+        return {"channels": [], "cid": "", "monday": grid.week_start(now), "today": time.localtime(now).tm_wday, "days": list(grid.DAYS),
+                "draft": False, "can_undo": False, "slots": [], "series": {},
+                "said": "Add a channel first, in Starboard: Settings, Plug-ins, Create your own TV channel, Channels"}
     if not find(s, cid):
         cid = chans[0]["id"]
     doc, kind = grid_target(cid)
     monday = grid.week_start(now)
     out = {"channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans], "cid": cid, "monday": monday,
            "today": time.localtime(now).tm_wday, "days": list(grid.DAYS), "draft": kind == "draft",
-           "can_undo": kind == "" and grid_doc(cid, "prev") is not None, "said": said, **grid.view(doc, monday)}
+           "can_undo": kind == "" and grid_doc(cid, "prev") is not None, "said": said, **grid.view(doc, monday),
+           "suggest_from": find(s, cid).get("suggest_from") or "history"}
     if kind == "draft":
         out["note"] = doc.get("note") or []
     return out
@@ -1490,10 +1934,20 @@ def grid_op(body, now=None):
             grid.drop(grid_folder(), cid, "prev")
             return grid_state(cid, "Undone: the grid is as it was before the last change", now)
         elif op == "suggest":
-            doc, notes = suggest_for(s, ch, now)
+            import suggest  # only when asked
+            source = str(body.get("from") or ch.get("suggest_from") or "history")
+            if source not in suggest.SOURCES:
+                raise grid.GridError("Choose what to make the schedule from")
+            doc, notes = suggest_for(s, ch, now, source)
+            with _lock:  # the choice is remembered for the channel, for next time
+                s2 = state()
+                c2 = find(s2, cid)
+                if c2:
+                    c2["suggest_from"] = source
+                    save(s2)
             grid.store(grid_folder(), cid, doc, "draft")
             n = len(doc["slots"])
-            return grid_state(cid, (f"Suggested {n} slot{'s' if n != 1 else ''} from watch history. Change them, then save or discard the suggestion"
+            return grid_state(cid, (f"Suggested {n} slot{'s' if n != 1 else ''} from {suggest.SOURCES[source]}. Change them, then save or discard the suggestion"
                                     if n else notes[-1]), now)
         elif op == "save_draft":
             if kind != "draft":
@@ -1524,8 +1978,9 @@ def grid_op(body, now=None):
     return out
 
 
-def suggest_for(s, ch, now):
-    """A proposed week for one channel from watch history (suggest.py), not saved."""
+def suggest_for(s, ch, now, source="history"):
+    """A proposed week for one channel (suggest.py), not saved, from watch history, everyone's watch history, or the
+    whole library (All TV, All films, TV and Films)."""
     import suggest  # only when asked
     groups = {e.get("group") or e["id"] for era in ch.get("eras") or [] for e in era.get("lineup") or []} or None
     if groups is not None:
@@ -1546,7 +2001,8 @@ def suggest_for(s, ch, now):
     def film_info(fid):
         got = library.lineup(jf, [{"kind": "film", "id": fid}])
         return got[0] if got else None
-    return suggest.propose(groups, plays, now, series_info, film_info)
+    pool = suggest.library_pool(jf, source) if source in ("tv", "films", "both") else None
+    return suggest.propose(groups, plays, now, series_info, film_info, source=source, pool=pool)
 
 
 def refresh_grid(cid):
@@ -1595,8 +2051,9 @@ def schedule_page(said=None):
         items.append({"id": "none", "title": "No channels yet", "group": "Each channel's grid", "state": "unknown", "state_label": "None",
                       "detail": "Add a channel in Channels first."})
     out = {"type": "list", "title": "Schedule grid", "items": items,
-           "intro": ("Place films and series at set times on a week's grid, by dragging or with buttons and the keyboard. Copy a day, "
-                     "stripe a series across weekdays, or suggest a week from watch history. It opens in a new tab, in a desktop browser.")}
+           "intro": ("Select Open the schedule grid under a channel: its week opens in a new tab, on this plug-in's own page, in a desktop "
+                     "browser. Place films and series at set times by dragging or with buttons and the keyboard, copy a day, stripe a series "
+                     "across weekdays, or suggest a week from watch history.")}
     if said:
         out["said"] = said[:200]
     return out
@@ -1607,7 +2064,9 @@ HOME = """<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta na
 <title>{name}</title><style>body{{font:1.125rem/1.5 system-ui,sans-serif;margin:0;padding:24px 16px;background:#fff;color:#1a1a1a}}
 @media (prefers-color-scheme:dark){{body{{background:#121417;color:#f2f2f2}}}}main{{max-width:40rem;margin:auto}}</style></head>
 <body><main><h1>{name}</h1><p>{count}. They are in Jellyfin's Live TV, at the top of the channel list.</p>
-<p>Change the channels in Starboard: Settings, Plug-ins, Create your own TV channel.</p></main></body></html>"""
+<p>Change the channels in Starboard: Settings, Plug-ins, Create your own TV channel.</p>
+<p>The schedule grid opens from there too, in <strong>Schedule grid</strong>: each channel has an
+<strong>Open the schedule grid</strong> link, in a desktop browser.</p></main></body></html>"""
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -1650,7 +2109,11 @@ class Handler(BaseHTTPRequestHandler):
             return address() + f"/t/{token}"
         return f"http://{host}/t/{token}"
 
+    def _can(self):
+        _req.can = frozenset(w.strip() for w in (self.headers.get("X-Starboard-Can") or "").split(",") if w.strip())
+
     def do_GET(self):  # noqa: N802
+        self._can()
         url = urllib.parse.urlparse(self.path)
         p = url.path
         try:
@@ -1695,7 +2158,14 @@ class Handler(BaseHTTPRequestHandler):
             return self._bytes(200, guide.m3u(chans, base, station_name()).encode(), "audio/x-mpegurl; charset=utf-8")
         if rest == "guide.xml":
             days = max(1, min(14, int(settings().get("guide_days") or 7)))
-            return self._bytes(200, guide.xmltv(chans, base, station_name(), days=days).encode(), "application/xml; charset=utf-8")
+            xml = guide.xmltv(chans, base, station_name(), days=days)
+            # Kept for the pages (0.2.0): when Jellyfin last read it and how many programmes it held, so the owner can
+            # tell it worked. About once a day, so the small file is rarely written.
+            sbplugin.keep("guide_read", {"at": int(time.time()), "programmes": xml.count("<programme "), "days": days,
+                                         "channels": sum(1 for c in chans if c.get("on", True))})
+            if renamed():
+                later_jellyfin()
+            return self._bytes(200, xml.encode(), "application/xml; charset=utf-8")
         m = re.match(r"^logo/([0-9a-f]{8})\.png$", rest)
         if m:
             ch = find(s, m.group(1))
@@ -1713,7 +2183,7 @@ class Handler(BaseHTTPRequestHandler):
         m = re.match(r"^preview/([0-9a-f]{8})\.png$", rest)
         if m:
             kind = (query.get("kind") or [""])[0]
-            kind = kind if kind in ("card", "ident", "sting", "promo") else "programme"
+            kind = kind if kind in ("card", "ident", "sting", "promo", "holding") else "programme"
             return self._bytes(200, preview(m.group(1), kind), "image/png", "no-store")
         m = re.match(r"^stream/([0-9a-f]{8})\.ts$", rest)
         if m:
@@ -1797,6 +2267,7 @@ class Handler(BaseHTTPRequestHandler):
             hub.leave(q)
 
     def do_POST(self):  # noqa: N802
+        self._can()
         url = urllib.parse.urlparse(self.path)
         p = url.path
         try:
@@ -1850,6 +2321,13 @@ class Handler(BaseHTTPRequestHandler):
             if p == "/actions/refresh":
                 threading.Thread(target=lambda: _safe(refresh_all), daemon=True).start()
                 return self._json(200, {"said": "Reading every channel's programmes from Jellyfin again"})
+            if p == "/actions/guide":
+                def again():
+                    note = connect_jellyfin()
+                    if not note and address():
+                        refresh_jellyfin_guide()
+                threading.Thread(target=lambda: _safe(again), daemon=True).start()
+                return self._json(200, {"said": "Jellyfin is reading the guide again. The Guide page says when it has, and how many programmes it read"})
             if p == "/actions/stop":
                 n = _streams.stop_all()
                 return self._json(200, {"said": f"Stopped {sbplugin.plural(n, 'channel')}" if n else "Nothing was streaming"})

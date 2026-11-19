@@ -6,7 +6,11 @@ Starboard draws everything Create your own TV channel shows in Starboard: its se
 
 - **The plug-in tester:** accessibility passed, checking settings, cards and actions. Starboard runs it before the plug-in is added, every time.
 - **The guide** is a real table for each channel, with column headings and the time as each row's heading, so a screen reader names each programme by its time. Search, sorting and the New or repeat filter work by keyboard.
-- **Channels** opens each channel as its own page, with a back link and focus on its heading. Every choice is a list, so nothing needs a mouse.
+- **Channels** opens each channel as its own page, with a back link and focus on its heading. Each part of a channel is a card with its own heading, so a screen reader can move from card to card. Every choice is a list, so nothing needs a mouse.
+- **A change saves in place** (0.2.0): focus stays on what you changed, the page does not move, and what was saved, such as "Corner: Bottom left. Saved for Comedy", is shown beside it and read out once.
+- **Choose from your library** (0.2.0) is a slide-out: focus moves to its search box, each kind is a radio button, each item a tick box with its name as its label and what it is as its description, and how many are shown and ticked is read out as it changes. Escape or **Cancel** closes it, and focus goes back to **Choose from your library**.
+- **A logo shown on its row** (0.2.0) has words with it, such as "Comedy's logo".
+- **Suggest a schedule** (0.2.0) asks what to make the week from as radio buttons in a group, each with a sentence linked to it, and starts on the last choice for the channel.
 - **New or Repeat** is in words, in the guide, on the card and on the television, never by colour alone. Each channel's colour is decoration: its name and number always say which it is.
 - **Its logo**, a television with an aerial, has the text description "Create your own TV channel logo" where it is shown without its name.
 

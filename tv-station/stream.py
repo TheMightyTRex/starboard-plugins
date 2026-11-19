@@ -57,6 +57,7 @@ def _transition_input(tr, start, pace):
 def piece_command(piece, now, ctx):
     """The FFmpeg command for what is left of one piece at `now`.
 
+    A holding piece has "holding": {"file", "still", "words", "has_audio"} and "airing", the next programme.
     ctx: {"W", "H", "kbps", "opts", "names", "logo", "jf_url", "jf_key", "ts_offset", "texts", "clip_path", "art",
           "colour", "next_words", "start_words", "layout", "trans_in", "trans_out"}
     layout:    a broadcast pack's Coming up next layout, with "file" its background, for cards
@@ -105,6 +106,12 @@ def piece_command(piece, now, ctx):
         if c.get("has_audio", True):
             audio_from = f"0:{c['audio']}" if c.get("audio") is not None else "0:a:0"
             audio_gain = float(c.get("gain") or 0)
+    elif kind == "holding":
+        h = piece["holding"]
+        args += _pack_input(h["file"], h.get("still"), pace, most)
+        if h.get("has_audio") and not h.get("still"):
+            audio_from = "0:a:0"
+            audio_gain = float(h.get("gain") or 0)
     elif layout:
         args += _pack_input(layout["file"], layout.get("still"), pace, most)
     elif kind == "card" and ctx.get("art"):
@@ -149,6 +156,14 @@ def piece_command(piece, now, ctx):
                 "title": a.get("title") or "Programme", "episode": episode_words(a), "when": dog.when_words(piece["airing"]["start"], now),
                 "plot": a.get("plot") or "", "footer": f"{ctx['names']['station']}  ·  {ctx['names']['channel']}"}
         chain = dog.card_chain(W, H, ctx["texts"], card, ctx.get("colour") or "0x1f5f99")
+    elif kind == "holding":
+        # A holding slide (0.2.0): the picture or short video looped until the next programme, with Back soon or a
+        # countdown to it, worked out from what is left of the piece, so it reaches 0:00 as the programme starts.
+        base = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=black,"
+                f"setsar=1,fps={FPS},format=yuv420p")
+        nxt = (piece.get("airing") or {}).get("entry") or {}
+        title = (nxt.get("title") or "") + (f": {episode_words(nxt)}" if episode_words(nxt) else "")
+        chain = dog.holding_chain(W, H, ctx["texts"], piece["holding"].get("words") or "countdown", title, left)
     elif kind == "slate":
         base = "setsar=1,format=yuv420p"
         chain = dog.slate_chain(W, H, ctx["texts"], f"{ctx['names']['station']}  ·  {ctx['names']['channel']}")

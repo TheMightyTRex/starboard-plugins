@@ -245,12 +245,13 @@ def plan_break(airing, after, clips, options):
     Later and Coming up next cards. The same airing always gets the same break.
 
     after:   the next few airings (the first is the programme after this one), for the cards
-    clips:   {"idents": [...], "fillers": [...], "sting": {...} or None, "random_idents": False}, each clip
-             {"id", "dur", "title", "src"}; a promo filler also has "airs", when its programme starts
+    clips:   {"idents": [...], "fillers": [...], "sting": {...} or None, "random_idents": False, "holding": {...} or None},
+             each clip {"id", "dur", "title", "src"}; a promo filler also has "airs", when its programme starts
     options: {"ident_order": "in_order" | "random", "cards": True, "seed": ...}
 
     A broadcast pack's logo with music (the sting) opens the break when it fits; a pack's idents are always played
-    in a random order (random_idents); a promo is only shown before its programme has started.
+    in a random order (random_idents); a promo is only shown before its programme has started. With a holding slide
+    (holding), the slide fills the rest of the break, looping until the next programme starts, in place of the cards.
     """
     t, end = airing["content_end"], airing["end"]
     gap = end - t
@@ -259,7 +260,8 @@ def plan_break(airing, after, clips, options):
         return out
     slot_no = airing["slot_no"]
     rng = Rng(seed_of(options.get("seed", 0), "break", int(airing["start"]), slot_no))
-    cards = bool(options.get("cards", True)) and bool(after)
+    holding = clips.get("holding")
+    cards = bool(options.get("cards", True)) and bool(after) and not holding
     reserve = min(CARD_SECONDS, gap) if cards else 0.0
     idents = [c for c in clips.get("idents") or [] if c.get("dur", 0) > 0]
     fillers = [c for c in clips.get("fillers") or [] if c.get("dur", 0) > 0 and float(c.get("airs") or end + 1) > end]
@@ -290,6 +292,9 @@ def plan_break(airing, after, clips, options):
     if left < MIN_PIECE:
         if out:
             out[-1]["end"] = end
+        return out
+    if holding:
+        add("holding", left, holding=holding, airing=after[0] if after else None)
         return out
     if not cards:
         add("slate", left)
