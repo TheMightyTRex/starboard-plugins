@@ -207,6 +207,28 @@ class Adding(unittest.TestCase):
         drop(app, "Dune (2021).mp3")
         self.assertIn("added 1 track", app.look()["said"])
 
+    def test_a_film_in_a_collection_is_still_found(self):
+        """Jellyfin 12 answers a search with the collection in place of the film in it unless CollapseBoxSetItems=false
+        (DASH-478)."""
+        f = film(self.app, "Dune", 2021)
+        s = Stand(self.app, [f], {"Dune (2021).mp3": 9302.4, "Dune (2021).mkv": 9300.0})
+        searched = []
+
+        def jellyfin12(path, data=None, method=None):
+            if "searchTerm=" in path:
+                searched.append(path)
+                if "CollapseBoxSetItems=false" not in path:
+                    return {"Items": [{"Id": "c1", "Name": "Dune Collection", "Type": "BoxSet"}]}
+            return Stand.jellyfin(s, path, data, method)
+        self.app.jellyfin = jellyfin12
+        drop(self.app, "Dune (2021).mp3")
+        self.assertEqual(self.app.look()["said"], "Checked 1 new file, added 1 track")
+        self.assertTrue(os.path.isfile(os.path.join(self.app._media["movies"], "Dune (2021)", "Dune (2021).Audio Description.eng.mka")))
+        self.assertTrue(searched)
+        drop(self.app, "Slow Horses S01E09.mp3")
+        self.app.look()
+        self.assertTrue(all("CollapseBoxSetItems=false" in p for p in searched), searched)  # the series search too
+
     def test_a_film_with_a_described_track_or_one_added_already_is_left_alone(self):
         f = film(self.app, "Dune", 2021, streams=[{"Type": "Audio", "DisplayTitle": "English (Audio Description) - AAC"}])
         s = Stand(self.app, [f], {"Dune (2021).mp3": 9300.0, "Dune (2021).mkv": 9300.0})

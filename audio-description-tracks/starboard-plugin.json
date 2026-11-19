@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description-tracks",
  "name": "Audio description tracks",
- "version": "1.2.0",
+ "version": "1.2.1",
  "description": "Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -168,6 +168,13 @@
   "alt": "Audio description tracks logo"
  },
  "changes": [
+  {
+   "version": "1.2.1",
+   "date": "2026-11-19",
+   "fixed": [
+    "**Films in a collection:** on Jellyfin 12, a film in a collection was not found, because Jellyfin answered the search with the collection in its place. It now asks Jellyfin for the films themselves, so a track for a film in a collection is added. The same goes for series."
+   ]
+  },
   {
    "version": "1.2.0",
    "date": "2026-11-17",

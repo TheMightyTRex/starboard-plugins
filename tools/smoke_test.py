@@ -220,39 +220,46 @@ def tracks_check(run, image):
     return f"added with {got}; original kept; Brazil not added"
 
 
+# Direct play's stand-in media (DASH-483): a small folder of its own, a 64 MB tmpfs volume, so the free-space margin it
+# keeps (a tenth of the disk, up to 50 GB) is measured there and not on this computer's /tmp, which may be fuller.
+DP_VOLUME = f"smoke-direct-play-media-{os.getpid()}"
+
+
+def dp_docker(image, program, *args, write=False):
+    """Runs a program in Direct play's image with its stand-in media folder at /m, and no network."""
+    return subprocess.run(["docker", "run", "--rm", "--network", "none", "-v", f"{DP_VOLUME}:/m" + ("" if write else ":ro"),
+                           "--entrypoint", program, image, *args], capture_output=True, text=True, check=True).stdout
+
+
 def dp_media(run, image):
     """The stand-in media folder for Direct play (DASH-425): an AVI to repackage and an episode with FLAC 5.1 only,
-    each a second long, made by ffmpeg in the plug-in's own image."""
-    media = f"{run}/media"
-    for d in ("movies/Old (1999)", "tv/Show/Season 1"):
-        os.makedirs(f"{media}/{d}")
+    each a second long, made by ffmpeg in the plug-in's own image, in a 64 MB folder of its own (DASH-483)."""
+    subprocess.run(["docker", "volume", "rm", "-f", DP_VOLUME], capture_output=True)
+    subprocess.run(["docker", "volume", "create", "--driver", "local", "--opt", "type=tmpfs", "--opt", "device=tmpfs",
+                    "--opt", "o=size=64m,mode=1777", DP_VOLUME], check=True, capture_output=True)
+    dp_docker(image, "mkdir", "-p", "-m", "777", "/m/movies/Old (1999)", "/m/tv/Show/Season 1", write=True)
     for out, audio in (("movies/Old (1999)/Old (1999).avi", ["-c:a", "mp3"]), ("tv/Show/Season 1/Show S01E01.mkv", ["-ac", "6", "-c:a", "flac"])):
-        subprocess.run(["docker", "run", "--rm", "--network", "none", "-v", f"{media}:/m", "--user", f"{os.getuid()}:{os.getgid()}",
-                        "--entrypoint", "ffmpeg", image, "-v", "error", "-f", "lavfi", "-i", "testsrc=size=160x90:rate=10:duration=1",
-                        "-f", "lavfi", "-i", "sine=duration=1", "-c:v", "libx264", "-pix_fmt", "yuv420p", *audio, f"/m/{out}"],
-                       check=True, capture_output=True)
-    for root, dirs, _ in os.walk(media):
-        for d in dirs:
-            os.chmod(os.path.join(root, d), 0o777)
-    return ["-v", f"{media}/movies:/media/movies", "-v", f"{media}/tv:/media/tv"]
+        dp_docker(image, "ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc=size=160x90:rate=10:duration=1",
+                  "-f", "lavfi", "-i", "sine=duration=1", "-c:v", "libx264", "-pix_fmt", "yuv420p", *audio, f"/m/{out}", write=True)
+    return ["-v", f"{DP_VOLUME}:/media"]
 
 
 def dp_check(run, image):
     """What came of it: the AVI is an MKV, the episode has a Dolby Digital track first with its FLAC kept."""
-    media = f"{run}/media"
     for _ in range(60):
-        if os.path.isfile(f"{media}/movies/Old (1999)/Old (1999).mkv") and not os.path.exists(f"{media}/movies/Old (1999)/Old (1999).avi"):
+        try:
+            dp_docker(image, "sh", "-c", 'test -f "/m/movies/Old (1999)/Old (1999).mkv" && ! test -e "/m/movies/Old (1999)/Old (1999).avi"')
             break
-        time.sleep(1)
+        except subprocess.CalledProcessError:
+            time.sleep(1)
     else:
         raise ValueError("the AVI was not repackaged")
     for _ in range(60):
-        info = json.loads(subprocess.run(["docker", "run", "--rm", "--network", "none", "-v", f"{media}:/m:ro", "--entrypoint", "ffprobe", image,
-                                          "-v", "error", "-print_format", "json", "-show_streams", "/m/tv/Show/Season 1/Show S01E01.mkv"],
-                                         capture_output=True, text=True, check=True).stdout)
+        info = json.loads(dp_docker(image, "ffprobe", "-v", "error", "-print_format", "json", "-show_streams",
+                                    "/m/tv/Show/Season 1/Show S01E01.mkv"))
         audio = [x["codec_name"] for x in info["streams"] if x["codec_type"] == "audio"]
         if audio == ["ac3", "flac"]:
-            return "AVI repackaged as MKV; Dolby Digital added before the FLAC, which was kept"
+            return "AVI repackaged as MKV; Dolby Digital added before the FLAC, which was kept (in a 64 MB folder of its own)"
         time.sleep(1)
     raise ValueError(f"the episode's sound is {audio}")
 
@@ -621,6 +628,8 @@ def main():
         stats = subprocess.run(["docker", "stats", "--no-stream", "--format", "{{.MemUsage}}", name], capture_output=True, text=True).stdout.strip()
         print(f"{pid}: memory {stats}")
         subprocess.run(["docker", "rm", "-f", name], capture_output=True)
+        if pid == "direct-play":
+            subprocess.run(["docker", "volume", "rm", "-f", DP_VOLUME], capture_output=True)
     failed += app_helpers(port + 30, only)
     if os.environ.get("SMOKE_UPDATE", "1") != "0":
         failed += update_pass(port + 50, only)
