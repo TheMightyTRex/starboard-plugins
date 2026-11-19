@@ -107,8 +107,8 @@ class Schedule(unittest.TestCase):
             for x, y in zip(pieces, pieces[1:]):
                 self.assertAlmostEqual(x["end"], y["start"])
             self.assertAlmostEqual(pieces[-1]["end"], a["end"])
-            self.assertEqual(pieces[1]["role"], "ident")
-            self.assertEqual(pieces[-1]["card"], "next")
+            self.assertEqual(pieces[-1]["role"], "ident", "0.4.0: the ident plays immediately before the next programme")
+            self.assertEqual(pieces[-2]["card"], "next")
             self.assertEqual(schedule.pieces_at(c, t, clips, {"seed": 1})[1], pieces)
 
     def test_a_break_with_no_clips_is_cards(self):

@@ -4,6 +4,7 @@
     logo/dog.png                        the on-screen logo (DOG), a PNG with a transparent background
     logo/logo-with-music.mp4 or .mov    the logo with its music baked in, played as a sting in the breaks
     idents/identNN.mp4 (.mov .mkv .webm) as many as you like, numbered, played in a random order
+    bumpers/bumperNN.mp4 (.mov .mkv .webm) short and silent (0.4.0): open and close each break, chosen at random
     coming-next/background.mp4 (or .mov, .png, .jpg)  the Coming up next card, with a clip area and text fields
     promo/background.mp4 (or .mov, .png, .jpg)        the promo, with a clip area and text fields
     promo/music/*.m4a (.mp3 .wav .flac .ogg .opus)     music beds; each promo has one, chosen at random
@@ -53,6 +54,7 @@ NAMES = [
     (r"logo/dog\.png", "dog"),
     (r"logo/logo-with-music\.(mp4|mov)", "sting"),
     (r"idents/ident[0-9]{2,3}\." + VIDEO, "ident"),
+    (r"bumpers/bumper[0-9]{2,3}\." + VIDEO, "bumper"),
     (r"coming-next/background\." + STILL_OR_VIDEO, "coming_next"),
     (r"promo/background\." + STILL_OR_VIDEO, "promo"),
     (r"promo/music/[A-Za-z0-9 _.-]{1,60}\." + AUDIO, "music"),
@@ -63,8 +65,9 @@ IGNORED = [r"(README|readme|LICENCE|LICENSE)(\.(txt|md))?", r"pack\.schema\.json
            r"([a-z-]+/){0,2}what-goes-here\.txt", r"examples/[^/]{1,80}"]
 JUNK = re.compile(r"(^|/)(__MACOSX|\.DS_Store|Thumbs\.db|desktop\.ini|\._[^/]*)(/|$)")
 # Lengths in seconds: (shortest, longest).
-LENGTHS = {"sting": (1, 20), "ident": (2, 60), "coming_next": (2, 60), "promo": (2, 60), "music": (5, 300), "transition": (0.2, 5)}
-MOST = {"ident": 99, "music": 20, "transition": 20}
+LENGTHS = {"sting": (1, 20), "ident": (2, 60), "coming_next": (2, 60), "promo": (2, 60), "music": (5, 300), "transition": (0.2, 5),
+           "bumper": (0.5, 10)}
+MOST = {"ident": 99, "music": 20, "transition": 20, "bumper": 20}
 DEFAULT_LAYOUT = {
     "coming_next": {"background": "coming-next/background.mp4", "clip": [980, 210, 1780, 660],
                     "fields": {"Heading": [140, 200, 940, 280], "Title": [140, 330, 940, 470], "Episode": [140, 500, 940, 560],
@@ -416,10 +419,11 @@ def check(folder):
     if "dog" not in by_role:
         problems.append("logo/dog.png is missing: every pack has the on-screen logo")
     out = {"name": str(doc.get("name") or "Broadcast pack")[:40], "made": str(doc.get("made") or "")[:40],
-           "colours": doc.get("colours") or {}, "dog": None, "sting": None, "idents": [], "coming_next": None, "promo": None,
+           "colours": doc.get("colours") or {}, "dog": None, "sting": None, "idents": [], "bumpers": [], "coming_next": None, "promo": None,
            "music": [], "transitions": [], "checked": int(time.time())}
     # Listed in pack.json but not in the folder: a name changed on one and not the other.
     listed = [f"idents/{n}" for n in doc.get("idents") or [] if isinstance(n, str)]
+    listed += [f"bumpers/{n}" for n in doc.get("bumpers") or [] if isinstance(n, str)]
     listed += [f"transitions/{n}" for n in doc.get("transitions") or [] if isinstance(n, str)]
     listed += [n for n in ((doc.get("logo") or {}).get("dog"), (doc.get("logo") or {}).get("with_music")) if isinstance(n, str)]
     listed += [n for n in (doc.get("promo") or {}).get("music") or [] if isinstance(n, str)]
@@ -481,6 +485,12 @@ def check(folder):
             problems.append(f"{rel}: a still picture. An ident is a video")
         elif item:
             out["idents"].append(item)
+    for rel in by_role.get("bumper", []):  # 0.4.0: short and silent; any sound in one is never played
+        item = media(rel, "bumper")
+        if item and item["still"]:
+            problems.append(f"{rel}: a still picture. A bumper is a short video")
+        elif item:
+            out["bumpers"].append({**item, "has_audio": False})
     for rel in by_role.get("music", []):
         item = media(rel, "music")
         if item:
@@ -588,6 +598,7 @@ def summary(p):
     bits = ["the on-screen logo" if p.get("dog") else "",
             "the logo with music" if p.get("sting") else "",
             f"{len(p['idents'])} ident{'s' if len(p['idents']) != 1 else ''}" if p.get("idents") else "",
+            f"{len(p['bumpers'])} bumper{'s' if len(p['bumpers']) != 1 else ''}" if p.get("bumpers") else "",
             "a Coming up next card" if p.get("coming_next") else "",
             ("a promo" + (f" with {len(p['music'])} music bed{'s' if len(p['music']) != 1 else ''}" if p.get("music") else "")) if p.get("promo") else "",
             f"{len(p['transitions'])} transition{'s' if len(p['transitions']) != 1 else ''}" if p.get("transitions") else ""]
@@ -698,9 +709,13 @@ pack.json                         Required. The pack's name, and where the clip 
 logo/dog.png                      Required. The on-screen logo: a PNG with a transparent background, at least
                                   256 pixels tall. Drawn in a corner of every programme.
 logo/logo-with-music.mp4 (.mov)   The logo animated, with its music baked in: 1 to 20 seconds, with sound.
-                                  Played as a sting at the start of a break.
+                                  Played immediately before a programme when the pack has no idents.
 idents/ident01.mp4, ident02.mp4   As many as you like (up to 99), each named ident and a number of 2 or 3 digits.
-                                  2 to 60 seconds each. Played in a random order. Also .mov, .mkv or .webm.
+                                  2 to 60 seconds each, with sound. One plays immediately before each programme, in a
+                                  random order. Also .mov, .mkv or .webm.
+bumpers/bumper01.mp4              Optional. Short versions of the ident with no music, 0.5 to 10 seconds (2 is
+                                  plenty), up to 20. One opens and one closes every break. Sound in them is not
+                                  played. Also .mov, .mkv or .webm.
 coming-next/background.mp4        The Coming up next card: a video of 2 to 60 seconds that loops, or a .png or
                                   .jpg still. Leave the clip area and the text fields clear: the plug-in draws
                                   them. coming-next/placement.png shows where they go.
@@ -750,6 +765,7 @@ The full specification is in the plug-in's help: Make a broadcast pack.
 WHAT_GOES_HERE = {
     "logo": "dog.png: the on-screen logo, a PNG with a transparent background.\nlogo-with-music.mp4: the logo with its music baked in, 1 to 20 seconds.\n",
     "idents": "ident01.mp4, ident02.mp4 and so on: as many as you like, 2 to 60 seconds each, played in a random order.\n",
+    "bumpers": "bumper01.mp4 and so on: short and silent, 0.5 to 10 seconds, opening and closing each break.\n",
     "coming-next": "background.mp4 (or .png, .jpg): the Coming up next card. placement.png shows where the clip and the words go.\n",
     "promo": "background.mp4 (or .png, .jpg): the promo. placement.png shows where the clips and the words go.\n",
     "promo/music": "music01.m4a and so on: music beds for the promos, 5 to 300 seconds each.\n",

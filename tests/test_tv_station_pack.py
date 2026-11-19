@@ -305,11 +305,15 @@ class Breaks(unittest.TestCase):
         self.assertTrue(all(c > 20 for c in (got.count(k) for k in ("i1", "i2", "i3"))), "each about a third of the time")
         self.assertEqual(got, self.picks({"idents": self.idents, "fillers": [], "random_idents": True}), "the same break each time it is asked")
 
-    def test_the_logo_with_music_opens_the_break(self):
+    def test_the_logo_with_music_plays_before_the_programme_when_there_are_no_idents(self):
+        # 0.4.0: one ident immediately before the programme; the logo with music only stands in for idents.
         sting = {"id": "pk-sting", "dur": 5, "title": "The logo with music", "src": "pack:station/logo/logo-with-music.mp4"}
         a, pieces = schedule.pieces_at(self.sched, NOW, {"idents": self.idents, "fillers": [], "sting": sting}, {"seed": 7})
-        roles = [p.get("role") or p["kind"] for p in pieces]
-        self.assertEqual(roles[:3], ["programme", "sting", "ident"])
+        self.assertEqual(pieces[-1]["role"], "ident")
+        self.assertTrue(pieces[-1]["clip"]["id"].startswith("i"))
+        self.assertNotIn("pk-sting", [p.get("clip", {}).get("id") for p in pieces])
+        a, pieces = schedule.pieces_at(self.sched, NOW, {"idents": [], "fillers": [], "sting": sting}, {"seed": 7})
+        self.assertEqual(pieces[-1]["clip"]["id"], "pk-sting")
         self.assertAlmostEqual(pieces[-1]["end"], a["end"])
 
     def test_a_promo_is_shown_only_before_its_programme(self):

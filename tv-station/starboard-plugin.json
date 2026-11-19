@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.3.2",
+ "version": "0.4.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -627,6 +627,14 @@
    "every_hours": 1,
    "quiet_hours": true,
    "time_limit_minutes": 50
+  },
+  {
+   "id": "breaks",
+   "label": "Find breaks inside programmes",
+   "path": "/jobs/breaks",
+   "every_hours": 1,
+   "quiet_hours": true,
+   "time_limit_minutes": 45
   }
  ],
  "update": {
@@ -644,6 +652,17 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.4.0",
+   "date": "2026-11-19",
+   "added": [
+    "**Bumpers:** a broadcast pack may have short, silent bumpers in bumpers/. One opens and one closes every break.",
+    "**Breaks inside programmes:** where a programme fades to black for its adverts (found in quiet hours), a bumper, trailers or promos and a bumper play. Up to 1, 2 or 3 minutes, taken from the break after it."
+   ],
+   "changed": [
+    "**A break's order:** a bumper, trailers and promos, the holding slide or cards, a bumper, then one ident with its music immediately before the next programme."
+   ]
+  },
   {
    "version": "0.3.2",
    "date": "2026-11-19",
