@@ -191,6 +191,19 @@ LOGO_DATA_MAX = 24 * 1024  # Starboard's limit for a catalogue's data address (p
 PREVIOUS = json.load(open(os.path.join(ROOT, "tools", "previous-versions.json"), encoding="utf-8"))
 
 
+def whole(text, limit):
+    """Text cut to at most `limit` characters at its last whole sentence, or else its last whole word with an
+    ellipsis, never mid-word (Starboard issue #169: a summary ended "a described track an")."""
+    text = " ".join(str(text).split())
+    if len(text) <= limit:
+        return text
+    cut = text[:limit]
+    end = max(cut.rfind(". "), cut.rfind("! "), cut.rfind("? "))
+    if end >= limit // 2:
+        return cut[:end + 1]
+    return cut[:limit - 1].rsplit(" ", 1)[0].rstrip(",;:") + "…"
+
+
 def versions(pid, m):
     """A plug-in whose new version needs a newer plug-in API keeps its last version in the catalogue (15 November
     2026), pinned to the commit it was published at with its SHA-256, so a Starboard with an older plug-in API (such as
@@ -203,7 +216,7 @@ def versions(pid, m):
     return {"versions": [
         {"version": m["version"], "starboard_api": m["starboard_api"], "released": first.get("date", ""),
          "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
-         "changelog": words[:600]},
+         "changelog": whole(words, 600)},
         # Later versions kept the same way (19 November 2026): each pinned to its own commit, newest first, so a
         # Starboard on plug-in API 1.14 or 1.15 keeps Notifications 1.1.3 when 1.2.0 needs 1.16.
         *[{"version": x["version"], "starboard_api": x["starboard_api"],
