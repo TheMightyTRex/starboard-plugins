@@ -48,9 +48,8 @@ class BreakOrder(unittest.TestCase):
         r = roles(pieces)
         self.assertEqual(r[0], "programme")
         self.assertEqual(r[1], "bumper")
-        self.assertEqual(r[-3:], ["holding", "bumper", "ident"])
-        self.assertTrue(set(r[2:-3]) <= {"filler"})
-        self.assertNotEqual(pieces[1]["clip"]["id"], pieces[-2]["clip"]["id"], "two different bumpers when there are two")
+        self.assertEqual(r[-2:], ["holding", "ident"], "0.5.0: no closing bumper between programmes")
+        self.assertTrue(set(r[2:-2]) <= {"filler"})
         joined_up(self, a, pieces)
         self.assertEqual(schedule.pieces_at(self.sched, NOW, clips, {"seed": 3})[1], pieces, "the same every time")
 
@@ -59,18 +58,15 @@ class BreakOrder(unittest.TestCase):
         a, pieces = schedule.pieces_at(self.sched, NOW, clips, {"seed": 3})
         r = roles(pieces)
         self.assertEqual(r[1], "bumper")
-        self.assertEqual(r[-2:], ["bumper", "ident"])
-        self.assertTrue(all(x == "card" for x in r[2:-2]))
+        self.assertEqual(r[-1], "ident")
+        self.assertTrue(all(x == "card" for x in r[2:-1]))
         joined_up(self, a, pieces)
 
     def test_a_short_break_keeps_the_ident_first_then_the_bumpers(self):
-        for gap, want in ((7, ["ident"]), (10, ["bumper", "bumper", "ident"]), (3, ["bumper"])):
+        for gap, want in ((7, ["ident"]), (10, ["bumper", "slate", "ident"]), (3, ["bumper", "slate"]), (8, ["slate", "ident"])):
             a = {"start": NOW, "content_end": NOW + 600, "end": NOW + 600 + gap, "slot_no": 1, "entry": {"id": "x"}}
             got = schedule.plan_break(a, [], {"idents": [{"id": "i", "dur": 7}], "bumpers": [{"id": "b", "dur": 1.5}]}, {"seed": 1})
-            if gap == 3:  # the ident does not fit; the two bumpers do
-                self.assertEqual(roles(got), ["bumper", "slate", "bumper"] if len(got) == 3 else ["bumper", "bumper"])
-            else:
-                self.assertEqual(roles(got), want)
+            self.assertEqual(roles(got), want, gap)
             self.assertAlmostEqual(got[-1]["end"], a["end"])
 
     def test_without_bumpers_it_is_as_before_but_the_ident_comes_last(self):
@@ -101,9 +97,11 @@ class InsideProgrammes(unittest.TestCase):
         self.assertEqual(roles(mid)[0], "bumper")
         self.assertEqual(roles(mid)[-1], "bumper")
         self.assertTrue(all(p.get("mid") for p in mid))
-        self.assertNotIn("holding", roles(mid))
-        self.assertLessEqual(mid[-1]["end"] - mid[0]["start"], 120)
-        self.assertEqual(roles(pieces)[-3:], ["holding", "bumper", "ident"], "the end break as before")
+        self.assertEqual(roles(mid)[-2:], ["holding", "bumper"], "0.5.0: the holding slide fills the break inside")
+        self.assertEqual(mid[-2]["holding"]["words"], "back_soon")
+        self.assertNotIn("ident", roles(mid))
+        self.assertAlmostEqual(mid[-1]["end"] - mid[0]["start"], 120)
+        self.assertEqual(roles(pieces)[-2:], ["holding", "ident"], "the end break")
         joined_up(self, a, pieces)
         self.assertEqual(a["end"], self.sched.airing(NOW)["end"], "the schedule never moves")
 
@@ -126,7 +124,7 @@ class InsideProgrammes(unittest.TestCase):
         self.assertEqual(sum(p["kind"] == "programme" for p in pieces), 3)
         joined_up(self, a, pieces)
         end_break = pieces[[i for i, p in enumerate(pieces) if p["kind"] == "programme"][-1] + 1:]
-        self.assertGreaterEqual(end_break[-1]["end"] - end_break[0]["start"], 2 * 2 + 8 + schedule.END_ROOM - 0.01)
+        self.assertGreaterEqual(end_break[-1]["end"] - end_break[0]["start"], 2 + 8 + schedule.END_ROOM - 0.01)
 
     def test_the_stream_seeks_each_part(self):
         a, pieces = schedule.pieces_at(self.sched, NOW, self.clips, self.options([700.0]))

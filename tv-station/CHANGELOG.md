@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 (19 November 2026)
+
+### Added
+- Promos and clips in each break (owner, 19 November 2026: "up to 2, 3, 4 or 6 promos and clips per break; the holding slide fills the rest"): a choice on each channel's Breaks card, Up to 3 unless changed. Each promo, trailer and clip plays once at most in a break, in a random order, where a long break repeated the same few until it was full.
+- Extra videos (owner: "an additional space to upload custom video to fit in after the promos ... as many additional videos as I want and it plays at random"): upload videos of up to 10 minutes and 90 MB for the station (Idents, clips and music) or for one channel (its Breaks card), as many as you like. One plays at random after the promos in each break when it fits. Extra videos on each channel chooses this channel's, the station's, both or none.
+
+### Changed
+- A break between programmes (owner: "New program would play bumper, promos, holding slide, ident"): a bumper, the promos and clips, an extra video, the holding slide (or cards, or a slate), and the ident with its music immediately before the new programme. The closing bumper of 0.4.0 is gone.
+- A break inside a programme (owner: "Breaks should play bumper, promos, holding slide, bumper. Not an ident"): a bumper, the promos and clips, an extra video, the holding slide with Back soon for the rest of its time (No words when the slide has none), and a bumper. Without a holding slide it is as long as what plays.
+
 ## 0.4.0 (19 November 2026)
 
 ### Added

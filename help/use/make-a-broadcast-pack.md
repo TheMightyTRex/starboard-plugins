@@ -27,7 +27,7 @@ In Starboard, go to **Settings**, then **Plug-ins**, then **Create your own TV c
 | `logo/dog.png` | Yes | The on-screen logo (the DOG, or bug): a PNG with a transparent background, 256 pixels tall or more (under 64 is refused) and at most 1920 by 1080 |
 | `logo/logo-with-music.mp4` or `.mov` | No | The logo animated, with its music baked into the file: 1 to 20 seconds, with sound. It plays immediately before a programme when the pack has no idents |
 | `idents/ident01.mp4`, `ident02.mp4` and on | No | As many idents as you like, up to 99: `ident` and a number of 2 or 3 digits. 2 to 60 seconds each, with sound, also `.mov`, `.mkv` or `.webm`. One plays immediately before each programme, in a random order |
-| `bumpers/bumper01.mp4`, `bumper02.mp4` and on | No | Short versions of the ident with no music (0.4.0), up to 20: `bumper` and a number of 2 or 3 digits, 0.5 to 10 seconds (2 is plenty), also `.mov`, `.mkv` or `.webm`. One opens and one closes every break. Any sound in them is not played |
+| `bumpers/bumper01.mp4`, `bumper02.mp4` and on | No | Short versions of the ident with no music (0.4.0), up to 20: `bumper` and a number of 2 or 3 digits, 0.5 to 10 seconds (2 is plenty), also `.mov`, `.mkv` or `.webm`. One opens every break, and one closes each break inside a programme. Any sound in them is not played |
 | `coming-next/background.mp4` | No | The Coming up next card: a video of 2 to 60 seconds that loops, or a `.png` or `.jpg` still |
 | `promo/background.mp4` | No | The promo, in the same way as the Coming up next card |
 | `promo/music/music01.m4a` and on | No | Music beds for the promos, 5 to 300 seconds each, up to 20. Also `.mp3`, `.wav`, `.flac`, `.ogg` or `.opus`. Each promo has one, chosen at random |
@@ -129,7 +129,7 @@ Timing stays exact: a thing comes on from its start and is gone by its end, so a
 
 - **The on-screen logo** is `logo/dog.png`, at the size and in the corner the on-screen logo settings say. A channel's own logo, added on its page, is used in its place.
 - **Animation**, when `pack.json` has it, is used for every thing the settings leave at **The broadcast pack's, or none**.
-- **Each break** (0.4.0) opens with a bumper, then trailers, clips and promos, then the holding slide (or Later and Coming up next cards drawn on your background), then a bumper, and one ident with its music immediately before the next programme. A break inside a programme is a bumper, trailers or promos, and a bumper.
+- **Each break** between programmes (0.5.0) opens with a bumper, then promos, trailers and clips (up to the number chosen), then one of your extra videos, then the holding slide (or Later and Coming up next cards drawn on your background), and ends with one ident with its music immediately before the new programme. A break inside a programme is a bumper, promos and clips, an extra video, the holding slide with Back soon, and a bumper.
 - **Transitions** play at each cut between a programme and a break, chosen at random, the same one on both sides of the cut.
 - **Promos** are made in quiet hours, one at a time at the lowest priority and never while anyone is watching: a few short clips of a programme coming up in the clip area, a music bed from `promo/music`, and its title, day and time and channel. Each channel keeps the number the settings say; old ones are replaced. They play on their own channel and, unless you deactivate it, on your other channels.
 
