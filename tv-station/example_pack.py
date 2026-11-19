@@ -206,7 +206,7 @@ class Maker:
 
     def describe(self):
         doc = pack.template_pack_json("Example TV")
-        doc.update({"made": "Made in code by the plug-in", "author": "Create your own TV channel",
+        doc.update({"made": "by the plug-in, in code", "author": "Create your own TV channel",
                     "colours": {"text": "#FFFFFF", "accent": "#FFD54F"},
                     "idents": ["ident01.mp4", "ident02.mp4", "ident03.mp4"],
                     "transitions": ["sting01.webm", "wipe01.webm", "wipe02.webm"]})

@@ -69,7 +69,9 @@ def piece_command(piece, now, ctx):
     into = max(0.0, now - piece["start"])
     left = piece["end"] - now
     kind = piece["kind"]
-    pace = [] if still else ["-re", "-readrate_initial_burst", "2"]
+    # Two decoder threads for each input: FFmpeg left to choose starts one for each processor it can find, and the
+    # container has a limit on threads (a programme, a background, a picture and a transition at once).
+    pace = ([] if still else ["-re", "-readrate_initial_burst", "2"]) + ["-threads", "2"]
     # Few threads: Starboard's containers have a limit on processes and threads, and the plug-in has 2 cores.
     args = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-filter_threads", "2", "-filter_complex_threads", "2"]
     audio_from = None

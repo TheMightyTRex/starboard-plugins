@@ -84,13 +84,16 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     x0, y0, x1, y1 = lay["clip"]
     cx, cy, cw, ch = int(x0 * sx), int(y0 * sy), int((x1 - x0) * sx) // 2 * 2, int((y1 - y0) * sy) // 2 * 2
     bg = os.path.join(p["folder"], lay["background"])
-    args = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-y", "-threads", "1", "-filter_threads", "1"]
-    args += (["-loop", "1", "-framerate", str(pack.FPS)] if lay.get("still") else ["-stream_loop", "-1"]) + ["-t", str(seconds), "-i", bg]
+    # One thread everywhere, for each input's decoder and for the encoder: lowest priority, and well inside the
+    # container's limit on threads (an FFmpeg left to choose starts a dozen or more for each input).
+    one = ["-threads", "1"]
+    args = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-y", "-filter_threads", "1", "-filter_complex_threads", "1"]
+    args += one + (["-loop", "1", "-framerate", str(pack.FPS)] if lay.get("still") else ["-stream_loop", "-1"]) + ["-t", str(seconds), "-i", bg]
     e = airing["entry"]
     dur = float(e.get("dur") or 1800)
     each = (seconds - 2.0) / len(FRACTIONS)
     for f in FRACTIONS:
-        args += ["-ss", f"{dur * f:.2f}", "-t", f"{each + 0.5:.2f}", "-headers", f'Authorization: MediaBrowser Token="{jf_key}"\r\n',
+        args += one + ["-ss", f"{dur * f:.2f}", "-t", f"{each + 0.5:.2f}", "-headers", f'Authorization: MediaBrowser Token="{jf_key}"\r\n',
                  "-i", f"{jf_url.rstrip('/')}/Videos/{e['id']}/stream?static=true"]
     n = 1 + len(FRACTIONS)
     if music:
@@ -111,7 +114,7 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     parts.append(f"[bg][clips]overlay=x={cx}:y={cy}:eof_action=pass," + ",".join(chain) + "[v]")
     gain = float((music or {}).get("gain") or 0)
     parts.append(f"[{n}:a]volume={gain:+.1f}dB,afade=t=in:st=0:d=0.5,afade=t=out:st={seconds - 1.5}:d=1.5,aresample=48000[a]")
-    args += ["-filter_complex", ";".join(parts), "-map", "[v]", "-map", "[a]", "-t", str(seconds),
+    args += ["-filter_complex", ";".join(parts), "-map", "[v]", "-map", "[a]", "-t", str(seconds), "-threads", "1",
              "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", "-g", str(pack.FPS * 2),
              "-c:a", "aac", "-b:a", "160k", "-ar", "48000", "-ac", "2", "-movflags", "+faststart", "-f", "mp4", out]
     return args, seconds

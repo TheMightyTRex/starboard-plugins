@@ -358,7 +358,7 @@ class Transitions(unittest.TestCase):
             argv = stream.piece_command(piece, a["content_end"] - 0.5, ctx)
         i = argv.index(tr["file"])
         self.assertEqual(argv[i - 3:i], ["-c:v", "libvpx-vp9", "-i"], "VP9 is decoded with libvpx, which keeps its alpha")
-        self.assertIn("-re", argv[i - 7:i], "paced like the piece, so no frames wait")
+        self.assertIn("-re", argv[i - 9:i], "paced like the piece, so no frames wait")
         graph = argv[argv.index("-filter_complex") + 1]
         self.assertIn("trim=duration=0.500", graph)
         self.assertIn("overlay=eof_action=pass", graph)
