@@ -57,6 +57,9 @@ LOGOS = {
                          f'<path d="M24 9v18M16 20l8 8 8-8" {S}/><path d="M11 29v7h26v-7" {S}/>'),
     "home-assistant": ("#0f6857", "A house with lines of writing",
                        f'<path d="M9 24L24 11l15 13" {S}/><path d="M14 21v16h20V21" {S}/><path d="M19 28h10M19 32.5h7" {s(3)}/>'),
+    "tv-station": ("#6a3d9a", "A television with an aerial and a logo in its corner",
+                   f'<path d="M18 9l6 6 6-6" {s(3)}/><rect x="7" y="15" width="34" height="23" rx="3" {S}/>'
+                   f'<rect x="30" y="19" width="7" height="4" rx="1" fill="{W}"/>'),
     "jellystat": ("#8a3b12", "A pie chart",
                   f'<circle cx="24" cy="24" r="13" {S}/><path d="M24 24V11a13 13 0 0 1 12.4 16.9z" fill="{W}"/>'),
     "kavita": ("#1d6363", "An open book",

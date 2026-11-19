@@ -32,6 +32,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 
 | Plug-in | What it does |
 |---|---|
+| [Create your own TV channel](https://themightytrex.github.io/starboard-plugins/help/plugins/tv-station/index.html) | Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos. Nothing streams until a channel is chosen. |
 | [Direct play](https://themightytrex.github.io/starboard-plugins/help/plugins/direct-play/index.html) | Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose. |
 | [Library clean-up](library-cleanup/) | Moves films and series everyone has watched, or nobody watches, to the holding folder after a Preview. It never deletes, and each can be put back. Needs Starboard 0.19.0. |
 | [Library health](https://themightytrex.github.io/starboard-plugins/help/plugins/library-health/index.html) | Films and series in Jellyfin with no poster, no description or no year, so you can fix them. |

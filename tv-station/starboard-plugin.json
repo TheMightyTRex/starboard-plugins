@@ -1,0 +1,545 @@
+{
+ "manifest_version": 1,
+ "id": "tv-station",
+ "name": "Create your own TV channel",
+ "version": "0.1.0",
+ "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/tv-station",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.15 <2.0",
+ "permissions": [
+  "jellyfin:key",
+  "network:lan",
+  "network:port"
+ ],
+ "needs": [
+  "jellyfin"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-tv-station:0.1.0",
+   "port": 8080,
+   "network": "lan",
+   "publish": true,
+   "host_port": 8790,
+   "volumes": [
+    "data"
+   ],
+   "start": "always"
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 768,
+   "cpus": 2.0,
+   "pids": 128
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "channels",
+   "label": "Channels",
+   "type": "custom",
+   "choices": "/channels",
+   "hint": "Add a channel, name it, choose what it shows, its breaks and its on-screen logo, with today's programmes."
+  },
+  {
+   "key": "guide",
+   "label": "Guide",
+   "type": "custom",
+   "choices": "/guide",
+   "hint": "What is on each channel in the next 24 hours, as a table for each channel."
+  },
+  {
+   "key": "schedule",
+   "label": "Schedule grid",
+   "type": "custom",
+   "choices": "/schedule",
+   "hint": "Place films and series at set times on a week's grid for each channel, copy a day, stripe a series, or suggest a week from watch history."
+  },
+  {
+   "key": "clips",
+   "label": "Idents and clips",
+   "type": "custom",
+   "choices": "/clips",
+   "hint": "The station's own idents and clips, for every channel's breaks."
+  },
+  {
+   "key": "pack",
+   "label": "Broadcast pack",
+   "type": "custom",
+   "choices": "/pack",
+   "hint": "Your own branding for the channels: upload a pack made from the template, try the example pack, and download the template and placement guides."
+  },
+  {
+   "key": "station_name",
+   "label": "Station name",
+   "type": "text",
+   "default": "Home TV",
+   "hint": "Shown in Jellyfin's Live TV and on screen. Up to 40 characters.",
+   "group": "Station"
+  },
+  {
+   "key": "first_number",
+   "label": "First channel number",
+   "type": "number",
+   "default": 1,
+   "min": 1,
+   "max": 9000,
+   "hint": "1 puts your channels first in Jellyfin's Live TV, before the free channels from 101.",
+   "group": "Station"
+  },
+  {
+   "key": "address",
+   "label": "Address Jellyfin uses to reach this plug-in",
+   "type": "text",
+   "hint": "Filled in by itself when you open the plug-in's web page from its page here. Such as http://192.168.1.20:8790.",
+   "group": "Station"
+  },
+  {
+   "key": "guide_days",
+   "label": "Days in Jellyfin's guide",
+   "type": "number",
+   "default": 7,
+   "min": 1,
+   "max": 14,
+   "group": "Station",
+   "hint": "Worked out when Jellyfin asks for it, about once a day."
+  },
+  {
+   "key": "picture",
+   "label": "Picture size",
+   "type": "choice",
+   "default": "720",
+   "choices": [
+    {
+     "value": "720",
+     "label": "720p, lighter on the processor"
+    },
+    {
+     "value": "1080",
+     "label": "1080p, sharper"
+    }
+   ],
+   "hint": "The size of the stream while a channel is watched.",
+   "group": "Streaming"
+  },
+  {
+   "key": "most_at_once",
+   "label": "Most channels at once",
+   "type": "number",
+   "default": 2,
+   "min": 1,
+   "max": 6,
+   "group": "Streaming",
+   "hint": "Each channel being watched is one conversion. People watching the same channel share it."
+  },
+  {
+   "key": "stop_after",
+   "label": "Stop a channel after the last viewer leaves",
+   "type": "number",
+   "unit": "seconds",
+   "default": 30,
+   "min": 5,
+   "max": 300,
+   "group": "Streaming",
+   "hint": "Nothing runs while nobody watches."
+  },
+  {
+   "key": "copy_plain",
+   "label": "Copy programmes when nothing is drawn on them",
+   "type": "switch",
+   "default": true,
+   "hint": "A channel with no on-screen logo and no straps plays its programmes as they are, with no converting.",
+   "group": "Streaming"
+  },
+  {
+   "key": "promos",
+   "label": "Make promos in quiet hours",
+   "type": "switch",
+   "default": true,
+   "group": "Promos",
+   "hint": "For channels whose broadcast pack has a promo: short clips of a programme coming up, a music bed and its day and time. One at a time, at the lowest priority, never while anyone is watching."
+  },
+  {
+   "key": "promo_keep",
+   "label": "Promos kept for each channel",
+   "type": "number",
+   "default": 3,
+   "min": 1,
+   "max": 6,
+   "group": "Promos",
+   "hint": "Old ones are replaced, so they never pile up."
+  },
+  {
+   "key": "promo_replace_days",
+   "label": "Replace each promo after",
+   "type": "choice",
+   "default": "2",
+   "group": "Promos",
+   "choices": [
+    {
+     "value": "1",
+     "label": "1 day"
+    },
+    {
+     "value": "2",
+     "label": "2 days"
+    },
+    {
+     "value": "3",
+     "label": "3 days"
+    },
+    {
+     "value": "7",
+     "label": "7 days"
+    }
+   ],
+   "hint": "A promo is also replaced once its programme has started."
+  },
+  {
+   "key": "promo_other",
+   "label": "Show promos for your other channels",
+   "type": "switch",
+   "default": true,
+   "group": "Promos",
+   "hint": "Each channel's breaks show promos for programmes on your other channels too."
+  },
+  {
+   "key": "dog_kind",
+   "label": "On-screen logo",
+   "type": "choice",
+   "default": "channel_logo",
+   "choices": [
+    {
+     "value": "channel_logo",
+     "label": "The channel's logo"
+    },
+    {
+     "value": "channel_name",
+     "label": "The channel's name"
+    },
+    {
+     "value": "station_name",
+     "label": "The station's name"
+    },
+    {
+     "value": "none",
+     "label": "No on-screen logo"
+    }
+   ],
+   "hint": "Every channel uses these unless it has its own, in Channels.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_corner",
+   "label": "Corner",
+   "type": "choice",
+   "default": "top_right",
+   "choices": [
+    {
+     "value": "top_right",
+     "label": "Top right"
+    },
+    {
+     "value": "top_left",
+     "label": "Top left"
+    },
+    {
+     "value": "bottom_right",
+     "label": "Bottom right"
+    },
+    {
+     "value": "bottom_left",
+     "label": "Bottom left"
+    }
+   ],
+   "hint": "Where it sits.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_size",
+   "label": "Size",
+   "type": "choice",
+   "default": "medium",
+   "choices": [
+    {
+     "value": "small",
+     "label": "Small"
+    },
+    {
+     "value": "medium",
+     "label": "Medium"
+    },
+    {
+     "value": "large",
+     "label": "Large"
+    }
+   ],
+   "hint": "Small is 6% of the picture's height, medium 8.5% and large 12%.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_margin",
+   "label": "Distance from the edge",
+   "type": "choice",
+   "default": "medium",
+   "choices": [
+    {
+     "value": "small",
+     "label": "Close"
+    },
+    {
+     "value": "medium",
+     "label": "Inside the safe area"
+    },
+    {
+     "value": "large",
+     "label": "Further in"
+    }
+   ],
+   "hint": "Inside the safe area keeps it on screen on every television.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_opacity",
+   "label": "Opacity",
+   "type": "number",
+   "unit": "%",
+   "default": 80,
+   "min": 30,
+   "max": 100,
+   "group": "On-screen logo",
+   "hint": "100% is solid."
+  },
+  {
+   "key": "dog_when",
+   "label": "When it shows",
+   "type": "choice",
+   "default": "always",
+   "choices": [
+    {
+     "value": "always",
+     "label": "Always"
+    },
+    {
+     "value": "programmes",
+     "label": "Only during programmes"
+    },
+    {
+     "value": "programmes_cards",
+     "label": "Programmes and cards, not clips"
+    }
+   ],
+   "hint": "Clips are idents, trailers and your own clips.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_fade_in",
+   "label": "Fades in after the opening",
+   "type": "choice",
+   "default": "0",
+   "choices": [
+    {
+     "value": "0",
+     "label": "No, at once"
+    },
+    {
+     "value": "30",
+     "label": "After 30 seconds"
+    },
+    {
+     "value": "60",
+     "label": "After 1 minute"
+    },
+    {
+     "value": "120",
+     "label": "After 2 minutes"
+    }
+   ],
+   "hint": "Keeps the opening titles clear.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_clock",
+   "label": "Clock",
+   "type": "switch",
+   "default": false,
+   "hint": "The time beside the on-screen logo.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_label",
+   "label": "Label",
+   "type": "choice",
+   "default": "none",
+   "choices": [
+    {
+     "value": "none",
+     "label": "No label"
+    },
+    {
+     "value": "new_repeat",
+     "label": "New or Repeat"
+    },
+    {
+     "value": "live",
+     "label": "Live"
+    }
+   ],
+   "hint": "In words, for the first 2 minutes of each programme.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_plate",
+   "label": "Backing plate",
+   "type": "switch",
+   "default": true,
+   "hint": "A dark, partly transparent box behind the logo, the clock and the label, so they are clear on any picture.",
+   "group": "On-screen logo"
+  },
+  {
+   "key": "dog_strap_start",
+   "label": "Programme name at the start",
+   "type": "switch",
+   "default": true,
+   "hint": "For 8 seconds as each programme starts.",
+   "group": "Straps and cards"
+  },
+  {
+   "key": "dog_strap_end",
+   "label": "Up next during the end credits",
+   "type": "switch",
+   "default": true,
+   "hint": "The next programme and its time, at the end of each programme.",
+   "group": "Straps and cards"
+  },
+  {
+   "key": "dog_strap_seconds",
+   "label": "Up next shows for",
+   "type": "number",
+   "unit": "seconds",
+   "default": 30,
+   "min": 5,
+   "max": 120,
+   "group": "Straps and cards"
+  },
+  {
+   "key": "dog_cards",
+   "label": "Coming up next and Later cards",
+   "type": "switch",
+   "default": true,
+   "hint": "In the breaks: the programme's picture, title, the date and time it is shown and a short synopsis.",
+   "group": "Straps and cards"
+  }
+ ],
+ "actions": [
+  {
+   "id": "example",
+   "label": "Try the example pack",
+   "path": "/actions/example"
+  },
+  {
+   "id": "promos",
+   "label": "Make promos now",
+   "path": "/actions/promos"
+  },
+  {
+   "id": "refresh",
+   "label": "Read the channels from Jellyfin again",
+   "path": "/actions/refresh"
+  },
+  {
+   "id": "stop",
+   "label": "Stop every channel playing",
+   "path": "/actions/stop",
+   "confirm": "Stop every channel being watched now? The stream ends for anyone watching, and they can choose the channel again."
+  }
+ ],
+ "cards": [
+  {
+   "id": "now",
+   "title": "What is on now",
+   "type": "guide",
+   "path": "/card",
+   "refresh_seconds": 60,
+   "titles": {
+    "small": "On now",
+    "medium": "What is on now",
+    "half": "What is on now",
+    "wide": "What is on your channels now",
+    "full": "What is on your own TV channels now"
+   },
+   "example": {
+    "items": [
+     {
+      "channel": "Comedy (1 viewer)",
+      "number": "1",
+      "now": "Show A, Series 1, episode 4: The Lift",
+      "start": 1794600000,
+      "stop": 1794601800,
+      "next": "Show B, Series 2, episode 1",
+      "next_start": 1794601800
+     }
+    ],
+    "note": "",
+    "status": "running",
+    "status_label": "1 channel playing",
+    "updated": 1794600100,
+    "refresh_seconds": 60
+   }
+  }
+ ],
+ "jobs": [
+  {
+   "id": "refresh",
+   "label": "Read the channels from Jellyfin again",
+   "path": "/jobs/refresh",
+   "daily": "04:40",
+   "time_limit_minutes": 20
+  },
+  {
+   "id": "promos",
+   "label": "Make promos",
+   "path": "/jobs/promos",
+   "every_hours": 1,
+   "quiet_hours": true,
+   "time_limit_minutes": 50
+  }
+ ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "Create your own TV channel logo"
+ },
+ "changes": [
+  {
+   "version": "0.1.0",
+   "date": "2026-11-17",
+   "added": [
+    "**Your own channels:** name the station and each channel, with its number, logo and colour, and fill it from series, films, collections, playlists, genres or decades, in order or shuffled, with episodes of a series in a row.",
+    "**Schedule grid:** place films and series at set times on a week's grid, by dragging or with buttons and the keyboard; copy a day; stripe a series across weekdays; choose where a series starts; suggest a week from watch history.",
+    "**In Jellyfin's Live TV, first:** numbered from 1 in your order, with a 7-day guide of titles, episode names, synopses, pictures and New or Repeat. Tuning in joins part way through, as on television.",
+    "**Breaks:** idents, Jellyfin's trailers, your own clips, and Coming up next and Later cards with the programme's picture, title, date and time and a short synopsis.",
+    "**Broadcast pack:** your own branding from a zip made from the template: the on-screen logo, the logo with its music, idents in a random order, transitions, and Coming up next and promo backgrounds. Every file is checked first. Or try the example pack.",
+    "**Promos:** made in quiet hours from short clips of a programme coming up, a music bed from the pack and its day and time from the schedule, kept and replaced as the settings say, and shown on your other channels too.",
+    "**Downloads:** the template, with pack.json, its schema and a README, and placement guides for the Coming up next card, the promo and the on-screen logo.",
+    "**On-screen logo:** the channel's logo or name in a corner you choose, with its size, opacity, a clock, a New, Repeat or Live label and a backing plate, for the station or each channel, with a preview.",
+    "**Light:** nothing runs until someone chooses a channel, viewers of a channel share one stream, and it stops 30 seconds after the last one leaves."
+   ]
+  }
+ ]
+}

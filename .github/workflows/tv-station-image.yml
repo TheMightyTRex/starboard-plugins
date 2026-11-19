@@ -1,0 +1,48 @@
+# Builds and publishes the Create your own TV channel (tv-station) plug-in's image when it changes, for amd64, arm64 and arm/v7:
+#   ghcr.io/<owner>/starboard-plugin-tv-station:<version> and :latest
+# The digest is printed in the run's summary; put it in tv-station/starboard-plugin.json in place of the tag.
+name: TV station image
+on:
+  push:
+    branches: [main]
+    paths: ["tv-station/Dockerfile", "tv-station/*.py", "tv-station/pack.schema.json", "tv-station/grid.*", "tv-station/ds-tokens.css", "tv-station/*.woff2", ".github/workflows/tv-station-image.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: FFmpeg for the tests, which tune in to made-up clips
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+      - name: The plug-in compiles and its tests pass
+        run: python3 -m py_compile tv-station/*.py && python3 -m unittest tests.test_tv_station tests.test_tv_station_pack
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: version
+        run: echo "v=$(python3 -c "import json;print(json.load(open('tv-station/starboard-plugin.json'))['version'])")" >> "$GITHUB_OUTPUT"
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: tv-station
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: |
+            ghcr.io/themightytrex/starboard-plugin-tv-station:${{ steps.version.outputs.v }}
+            ghcr.io/themightytrex/starboard-plugin-tv-station:latest
+          labels: |
+            org.opencontainers.image.title=Starboard Create your own TV channel plug-in
+            org.opencontainers.image.description=Your own TV channels in Jellyfin's Live TV, with FFmpeg
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+      - name: Digest
+        run: |
+          echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"
