@@ -1073,6 +1073,9 @@ def make_example(use=True):
         if _example["making"]:
             _example["use"] = _example["use"] or use
             return False
+        if _streams.playing():  # it takes up to about 500 MB for a minute or so: never beside a channel playing
+            _example.update({"error": "A channel is playing. Try the example pack again when nothing is", "making": False})
+            return False
         _example.update({"making": True, "error": "", "use": use, "since": time.time()})
 
     def run():
@@ -1121,7 +1124,7 @@ def pack_page(said=None):
                   "actions": ["attach", "detach"] if sp and not using_example else ["attach"],
                   "attach": {"label": "Upload a pack", "field": "Pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"}})
     if _example["making"]:
-        ex_state, ex_label, ex_detail = "unknown", "Being made", "Making the example pack at the lowest priority: about 3 minutes. Open this page again then."
+        ex_state, ex_label, ex_detail = "unknown", "Being made", "Making the example pack at the lowest priority: about 2 minutes. Open this page again then."
     elif _example["error"]:
         ex_state, ex_label, ex_detail = "problem", "Not made", f"The example pack was not made: {_example['error']}"
     else:
@@ -1198,8 +1201,9 @@ def pack_post(body):
             make_example(use=True)
             time.sleep(0.2)
             return pack_page("Every channel without a pack of its own now uses the example pack")
-        make_example(use=True)
-        return pack_page("Making the example pack at the lowest priority: about 3 minutes. It is used as soon as it is ready")
+        if not make_example(use=True) and _example["error"]:
+            return pack_page(_example["error"])
+        return pack_page("Making the example pack at the lowest priority: about 2 minutes. It is used as soon as it is ready")
     if rid == "station" and action == "detach":
         with _lock:
             s = state()
@@ -1760,6 +1764,8 @@ class Handler(BaseHTTPRequestHandler):
         cfg = settings()
         most = max(1, min(6, int(cfg.get("most_at_once") or 2)))
         grace = max(5, min(300, int(cfg.get("stop_after") or 30)))
+        if _example["making"]:
+            return self._json(503, {"error": "The example pack is being made, which takes a minute or two. Choose the channel again then"})
         promo.stop()  # a promo being made gives way at once: nothing is made while anyone watches
         try:
             hub = _streams.get(cid, plan_for(cid), most, grace)

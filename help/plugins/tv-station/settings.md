@@ -73,7 +73,7 @@ Your own branding for every channel: the on-screen logo, the logo with its music
 | Row | What it does |
 |---|---|
 | **Station's pack** | Select **Upload a pack** and choose a zip of up to 60 MB made from the template. It is checked first; when it passes, every channel without a pack of its own uses it. **Remove** stops using it |
-| **Try the example pack** | Activate to use Example TV, a made-up channel drawn in code, for every channel without a pack of its own. The first time, it takes about 3 minutes to make. Deactivate to go back to your own pack, or none |
+| **Try the example pack** | Activate to use Example TV, a made-up channel drawn in code, for every channel without a pack of its own. The first time, it takes about 2 minutes to make, while no channel is playing. Deactivate to go back to your own pack, or none |
 | **The last pack checked** | What the check found: each problem with a pack that was not used, or notes on one that was, such as a picture scaled to fit |
 | **Downloads** | The template (folders, `pack.json`, its schema and a README), the placement guides for the Coming up next card, the promo and the on-screen logo, and the example pack as a zip |
 | **Promos kept** | Each promo, with its programme, its day and time and its channel |

@@ -114,7 +114,7 @@ The checks: the zip is at most 60 MB, the most Starboard takes, and at most 400 
 
 ## Things to note
 
-- Making the example pack takes about 3 minutes, at the lowest priority. It is made once and kept.
+- Making the example pack takes about 2 minutes, at the lowest priority, and up to about 500 MB of memory for that time. It is made once and kept, and only while no channel is playing; a channel chosen meanwhile is asked to wait.
 - A pack's files stay in the plug-in's folder, in `packs`. Removing the station's pack keeps one copy until the next is removed.
 - A promo is made at the picture size of the stream, 720p unless you change it.
 

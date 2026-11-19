@@ -183,8 +183,10 @@ class Maker:
     def transitions(self):
         W, H = self.W, self.H
         size = f"{W}x{H}"
-        vp9 = ["-threads", "2", "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "32", "-deadline", "good", "-cpu-used", "5",
-               "-auto-alt-ref", "0", "-an"]
+        # One thread and no look-ahead: VP9 with alpha is two encoders, about 200 MB each at 1080p with these; with
+        # the defaults it reached 680 MB of the container's 768 MB (measured 19 November 2026).
+        vp9 = ["-threads", "1", "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "32", "-deadline", "good", "-cpu-used", "5",
+               "-auto-alt-ref", "0", "-lag-in-frames", "0", "-an"]
         # wipe01: a teal panel with an amber edge sweeps across, covering the whole picture at its middle.
         bw = int(W * 1.4)
         ff("-f", "lavfi", "-i", f"color=c=black@0.0:s={size}:r={FPS}:d=1,format=rgba",
