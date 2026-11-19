@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.3.0",
+ "version": "0.3.1",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -644,6 +644,13 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.3.1",
+   "date": "2026-11-19",
+   "changed": [
+    "**Preview a frame** of a Coming up next card or a promo is taken 1.5 seconds into the pack's background video, so a background that opens with a movement, such as bands sweeping off, shows as it rests."
+   ]
+  },
   {
    "version": "0.3.0",
    "date": "2026-11-19",

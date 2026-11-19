@@ -263,6 +263,23 @@ class ExamplePack(unittest.TestCase):
         self.assertIn("Coming up next", words)
         self.assertIn("Show a", words)
         self.assertTrue(any(w.startswith(("Today at", "Tomorrow at")) for w in words), words)
+        # 0.3.1: the preview frame is taken 1.5 seconds into the background video, past an opening movement.
+        bg = os.path.join(self.folder, lay["background"])
+        i = argv.index(bg)
+        self.assertEqual(argv[i - 5:i - 3], ["-ss", f"{stream.PREVIEW_INTO:.3f}"])
+
+    def test_a_card_on_air_starts_its_background_at_the_beginning(self):
+        p = pack.load(self.folder) or {**self.got["pack"], "folder": self.folder}
+        lay = p["coming_next"]
+        a = schedule.Channel(channel(episodes("a", 2, 1500))).airing(NOW)
+        piece = {"kind": "card", "card": "next", "start": NOW, "end": NOW + 10, "airing": a}
+        with tempfile.TemporaryDirectory() as d:
+            ctx = {"W": 640, "H": 360, "kbps": 800, "opts": dog.resolve({"dog_kind": "none"}, None), "names": {"channel": "Comedy", "station": "S"},
+                   "logo": None, "jf_url": "", "jf_key": "", "ts_offset": 0, "texts": dog.Texts(d), "clip_path": str,
+                   "layout": {**lay, "file": os.path.join(self.folder, lay["background"])}}
+            argv = stream.piece_command(piece, NOW, ctx)
+        bg = os.path.join(self.folder, lay["background"])
+        self.assertNotIn("-ss", argv[argv.index(bg) - 6:argv.index(bg)], "a stream plays the background from its start")
 
 
 class Breaks(unittest.TestCase):

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1 (19 November 2026)
+
+### Changed
+- Preview a frame of a Coming up next card or a promo is taken 1.5 seconds into the pack's background video, where it took the first frame, so a background that opens with a movement (such as the T-Rex TV pack's bands sweeping off) shows as it rests. Streams are unchanged.
+
 ## 0.3.0 (19 November 2026)
 
 ### Added
