@@ -387,10 +387,15 @@ class SuggestFrom(unittest.TestCase):
 class SuggestRemembered(App):
     def test_the_choice_is_kept_for_the_channel(self):
         cid = self.channel()
-        self.app.suggest_for = lambda s, ch, now, source: (grid.empty(), [f"made from {source}"])
-        got = self.app.grid_op({"cid": cid, "op": "suggest", "from": "films"}, now=NOW)
+        self.app.suggest_for = lambda s, ch, now, source, hours=None: (grid.empty(), [f"made from {source}"])
+        self.assertEqual(self.app.grid_state(cid)["suggest_hours"], {"weekdays": ["18:00", "23:00"], "weekends": ["12:00", "23:00"]})
+        got = self.app.grid_op({"cid": cid, "op": "suggest", "from": "films",
+                                "hours": {"weekdays": ["19:00", "24:00"], "weekends": None}}, now=NOW)
         self.assertEqual(got["suggest_from"], "films")
         self.assertEqual(self.app.grid_state(cid)["suggest_from"], "films")
+        self.assertEqual(self.app.grid_state(cid)["suggest_hours"], {"weekdays": ["19:00", "24:00"], "weekends": None})
+        with self.assertRaises(grid.GridError):
+            self.app.grid_op({"cid": cid, "op": "suggest", "from": "films", "hours": {"weekdays": ["20:00", "19:00"]}}, now=NOW)
         with self.assertRaises(grid.GridError):
             self.app.grid_op({"cid": cid, "op": "suggest", "from": "anything"}, now=NOW)
 

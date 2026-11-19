@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 (19 November 2026)
+
+### Added
+- Choose the hours a suggestion fills: Suggest a schedule asks for the hours to fill on weekdays and at the weekend, such as 18:00 to 23:00, and fills them one programme after another, leaving out one that would run past the end. The hours are remembered for each channel.
+
 ## 0.2.0 (19 November 2026)
 
 Parts marked Starboard 0.23.0 need Starboard 0.23.0 (plug-in API 1.16); with an older Starboard those pages are as in 0.1.1.

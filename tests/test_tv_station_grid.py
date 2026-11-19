@@ -237,6 +237,43 @@ class Suggester(unittest.TestCase):
 
 
 # The page's answers, through the plug-in's own server, with a stand-in Jellyfin. -------------------------------------
+class SuggestHours(Suggester):
+    """The hours a suggestion fills (owner, 19 November 2026: "can you put times in"; he chose "Choose the hours it
+    fills"): one programme after another from the start, nothing past the end, nothing outside the hours."""
+
+    def view(self, hours, source="history"):
+        doc, notes = suggest.propose(None, self.plays(), NOW, self.info, lambda fid: FILM if fid == FID else None,
+                                     source=source, hours=suggest.parse_hours(hours))
+        return grid.view(doc, grid.week_start(NOW)), notes
+
+    def test_weekdays_filled_one_after_another_inside_the_hours(self):
+        v, notes = self.view({"weekdays": ["18:00", "20:00"], "weekends": None})
+        monday = [(grid.hm(s["start"]), s["title"]) for s in v["slots"] if s["day"] == 0]
+        # 25-minute episodes take 30-minute slots: four from 18:00, the most watched first, in turn
+        self.assertEqual([t for t, _ in monday], ["18:00", "18:30", "19:00", "19:30"])
+        self.assertEqual(monday[0][1], "Show A")
+        for s in v["slots"]:
+            self.assertTrue(s["day"] < 5 and 18 * 60 <= s["start"] and s["start"] + 30 <= 20 * 60, s)
+        self.assertEqual({s["day"] for s in v["slots"]}, {0, 1, 2, 3, 4}, "repeated Monday to Friday")
+        self.assertIn("Weekdays 18:00 to 20:00", notes[0])
+
+    def test_weekend_films_and_nothing_running_past_the_end(self):
+        v, _ = self.view({"weekdays": None, "weekends": ["19:00", "22:00"]})
+        films = [s for s in v["slots"] if s["kind"] == "film"]
+        # one film of 100 minutes (6000 s, so 105) fits from 19:00; a second would end at 22:30, so it is left out
+        self.assertEqual(sorted((s["day"], grid.hm(s["start"])) for s in films), [(5, "19:00"), (6, "19:00")])
+        self.assertFalse([s for s in v["slots"] if s["day"] < 5])
+
+    def test_hours_are_checked_in_words(self):
+        with self.assertRaises(ValueError) as e:
+            suggest.parse_hours({"weekdays": ["20:00", "18:00"], "weekends": None})
+        self.assertIn("end time after the start time", str(e.exception))
+        with self.assertRaises(ValueError):
+            suggest.parse_hours({"weekdays": None, "weekends": None})
+        self.assertEqual(suggest.parse_hours({"weekdays": ["23:00", "24:00"], "weekends": None})["weekdays"], (23 * 60, 24 * 60))
+        self.assertEqual(suggest.hm24(24 * 60), "24:00")
+
+
 class FakeLibrary(http.server.BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass

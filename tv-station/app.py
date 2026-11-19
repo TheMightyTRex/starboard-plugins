@@ -763,7 +763,7 @@ def _choice(label, value, options, default_words=None):
     return {"label": label, "value": "" if value in (None, "") else str(value), "options": opts[:12]}
 
 
-# What the Starboard drawing the page can do, from its X-Starboard-Can header (Starboard 0.23.0 and later): partial
+# What the Starboard drawing the page can do, from its X-Starboard-Can header (Starboard 0.24.0 and later): partial
 # (an answer for one channel only), picker (Choose from your library, a slide-out) and cards (each group on a card of
 # its own). An older Starboard sends none, and gets the pages as before.
 _req = threading.local()
@@ -951,7 +951,7 @@ NO_ADDRESS = ("It does not know its address yet. Update Starboard in Settings, U
 
 
 def channels_page(said=None, now=None, only=None):
-    """The Channels page. only: one channel's id, for an answer with that channel alone (partial, Starboard 0.23.0)."""
+    """The Channels page. only: one channel's id, for an answer with that channel alone (partial, Starboard 0.24.0)."""
     now = time.time() if now is None else now
     s = state()
     cfg = settings()
@@ -1824,7 +1824,8 @@ def grid_state(cid, said="", now=None):
     out = {"channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans], "cid": cid, "monday": monday,
            "today": time.localtime(now).tm_wday, "days": list(grid.DAYS), "draft": kind == "draft",
            "can_undo": kind == "" and grid_doc(cid, "prev") is not None, "said": said, **grid.view(doc, monday),
-           "suggest_from": find(s, cid).get("suggest_from") or "history"}
+           "suggest_from": find(s, cid).get("suggest_from") or "history",
+           "suggest_hours": find(s, cid).get("suggest_hours") or suggest_defaults()}
     if kind == "draft":
         out["note"] = doc.get("note") or []
     return out
@@ -1938,12 +1939,19 @@ def grid_op(body, now=None):
             source = str(body.get("from") or ch.get("suggest_from") or "history")
             if source not in suggest.SOURCES:
                 raise grid.GridError("Choose what to make the schedule from")
-            doc, notes = suggest_for(s, ch, now, source)
-            with _lock:  # the choice is remembered for the channel, for next time
+            raw_hours = body.get("hours")
+            try:
+                hours = suggest.parse_hours(raw_hours) if raw_hours else None
+            except ValueError as e:
+                raise grid.GridError(str(e)) from None
+            doc, notes = suggest_for(s, ch, now, source, hours)
+            with _lock:  # the choice and the hours are remembered for the channel, for next time
                 s2 = state()
                 c2 = find(s2, cid)
                 if c2:
                     c2["suggest_from"] = source
+                    if hours:
+                        c2["suggest_hours"] = {k: ([suggest.hm24(v[0]), suggest.hm24(v[1])] if v else None) for k, v in hours.items()}
                     save(s2)
             grid.store(grid_folder(), cid, doc, "draft")
             n = len(doc["slots"])
@@ -1978,7 +1986,13 @@ def grid_op(body, now=None):
     return out
 
 
-def suggest_for(s, ch, now, source="history"):
+def suggest_defaults():
+    """The hours a suggestion fills until the owner chooses others, as the page shows them."""
+    import suggest  # only when asked
+    return {k: [suggest.hm24(a), suggest.hm24(b)] for k, (a, b) in suggest.DEFAULT_HOURS.items()}
+
+
+def suggest_for(s, ch, now, source="history", hours=None):
     """A proposed week for one channel (suggest.py), not saved, from watch history, everyone's watch history, or the
     whole library (All TV, All films, TV and Films)."""
     import suggest  # only when asked
@@ -2002,7 +2016,7 @@ def suggest_for(s, ch, now, source="history"):
         got = library.lineup(jf, [{"kind": "film", "id": fid}])
         return got[0] if got else None
     pool = suggest.library_pool(jf, source) if source in ("tv", "films", "both") else None
-    return suggest.propose(groups, plays, now, series_info, film_info, source=source, pool=pool)
+    return suggest.propose(groups, plays, now, series_info, film_info, source=source, pool=pool, hours=hours)
 
 
 def refresh_grid(cid):
