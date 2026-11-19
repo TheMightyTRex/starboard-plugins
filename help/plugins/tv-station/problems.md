@@ -104,7 +104,7 @@ The grid is on the plug-in's own page on your home network, not inside Starboard
 
 Every file is checked with FFmpeg before it is used, and the message says what was wrong.
 
-- **A holding slide:** a PNG or JPEG picture, or a video (MP4, MOV, WEBM or MKV) of 1 to 60 seconds, up to 60 MB and 4096 pixels across.
+- **A holding slide:** a PNG or JPEG picture, or a video (MP4, MOV, WEBM or MKV) of 1 to 120 seconds, up to 90 MB (with Starboard 0.24.1 or later; 60 MB before) and 4096 pixels across.
 - **Music for promos:** an MP3, M4A, OGG or FLAC file with sound, of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks for the station and 20 for each channel. Remove one first when there are 20.
 
 ## Find out more
