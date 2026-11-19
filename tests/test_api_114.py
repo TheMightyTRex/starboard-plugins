@@ -56,7 +56,8 @@ class Collection(unittest.TestCase):
     def test_every_plugin_needs_api_114_and_says_what_is_new(self):
         sb = starboard()
         newer = {"library-cleanup": ">=1.15 <2.0",  # DASH-406: needs library:holding, new in plug-in API 1.15
-                 "tv-station": ">=1.15 <2.0"}  # DASH-477: a title for each card size, new in plug-in API 1.15
+                 "tv-station": ">=1.15 <2.0",  # DASH-477: a title for each card size, new in plug-in API 1.15
+                 "notifications": ">=1.16 <2.0"}  # Notifications 1.2.0: the disk.changed event, new in plug-in API 1.16
         for pid in IDS:
             m = manifest(pid)
             self.assertEqual(m["starboard_api"], newer.get(pid, ">=1.14 <2.0"), pid)
@@ -95,10 +96,14 @@ class Collection(unittest.TestCase):
             self.assertEqual(base64.b64decode(e["logo"].split(",", 1)[1]), open(os.path.join(ROOT, pid, "logo.svg"), "rb").read())
             old = PREVIOUS["plugins"].get(pid)
             if old:
-                newest, kept = e["versions"]
+                # Newest first, then any later kept versions (PREVIOUS "more", each at its own commit), then the oldest.
+                newest, *more, kept = e["versions"]
                 self.assertEqual(newest["version"], manifest(pid)["version"])
                 self.assertEqual((kept["version"], kept["manifest_sha256"]), (old["version"], old["sha256"]))
                 self.assertIn(PREVIOUS["commit"], kept["manifest"])
+                for want, got in zip((PREVIOUS.get("more") or {}).get(pid) or [], more, strict=True):
+                    self.assertEqual((got["version"], got["manifest_sha256"]), (want["version"], want["sha256"]))
+                    self.assertIn(want["commit"], got["manifest"])
             else:
                 self.assertNotIn("versions", e)
         self.assertFalse(rows["picture-shrinker"]["recommended"])

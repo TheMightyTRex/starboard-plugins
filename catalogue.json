@@ -47,7 +47,7 @@
     "jellyfin:key",
     "network:lan"
    ],
-   "version": "1.2.0",
+   "version": "1.2.1",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
    "published": true,
@@ -56,11 +56,11 @@
    "logo_alt": "Audio description tracks logo",
    "versions": [
     {
-     "version": "1.2.0",
+     "version": "1.2.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-19",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json",
-     "changelog": "Rules 1.0: the track words, how a file name is read, how close the lengths must be (5 seconds by default), the languages and the new track's name and title come from the same rules file as Jellyfin's own Audio description plug-in, so the two add tracks in the same way. Idle beside the Jellyfin version: when Jellyfin's own Audio description plug-in is installed, this one adds nothing and its card says Idle, so the two never add the same track. Add tracks in Jellyfin instead."
+     "changelog": "Films in a collection: on Jellyfin 12, a film in a collection was not found, because Jellyfin answered the search with the collection in its place. It now asks Jellyfin for the films themselves, so a track for a film in a collection is added. The same goes for series."
     },
     {
      "version": "1.0.0",
