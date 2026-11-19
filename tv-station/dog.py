@@ -165,7 +165,7 @@ def _pad_for(size, plate):
     return (max(4, int(size / 3)) if plate else 0) + max(1, int(size / 16)) + 4
 
 
-def text_layer(f, size, x, y, W, H, length, plate, draw, static=True):
+def text_layer(f, size, x, y, W, H, length, plate, draw, static=True, rest=None):
     """A layer for words with an animation `f` (animate.fit): its size from the words' length, and the words drawn on
     it where they sit against the same edge, so at rest it is exactly where the words were.
 
@@ -185,7 +185,8 @@ def text_layer(f, size, x, y, W, H, length, plate, draw, static=True):
         iy, oy = f"h-th-{p}", f"H-h-{int(ys[5:]) - p}"
     else:
         iy, oy = str(p), str(int(float(ys)) - p)
-    return {"src": animate.canvas(lw, lh), "draw": [draw(ix, iy)], "static": static, "f": f, "x": ox, "y": oy, "w": lw, "h": lh}
+    return {"src": animate.canvas(lw, lh), "draw": [draw(ix, iy)], "static": static, "f": f, "x": ox, "y": oy, "w": lw, "h": lh,
+            "rest": [draw(x, y)] if rest is None else rest}
 
 
 def overlay_chain(opts, W, H, kind, texts, names, logo=None, rel=0.0, programme=None, layers=None):
@@ -318,6 +319,10 @@ def logo_position(opts, W, H):
     return x, y
 
 
+# A third of the brightness, as colorchannelmixer rr=gg=bb=0.33 gives, for YUV (limited range): the same sum.
+DARKEN_YUV = "lutyuv=y='16+(val-16)*0.33':u='128+(val-128)*0.33':v='128+(val-128)*0.33'"
+
+
 def card_chain(W, H, texts, card, colour="0x1f5f99", layers=None, f=None):
     """A Coming up next or Later card: the programme's picture darkened, its title, when it is shown and a short
     synopsis. card: {"kicker", "title", "episode", "when", "plot", "footer"}.
@@ -347,8 +352,11 @@ def card_chain(W, H, texts, card, colour="0x1f5f99", layers=None, f=None):
         out.append(_text(texts.file(card["footer"]), H * 0.032, left + pad, f"h-th-{int(H * 0.08)}"))
     if f and layers is not None:
         # replace=1: on a transparent layer the bar is solid, not mixed with the nothing under it
-        layers.append({"src": animate.canvas(W, H), "draw": [out[1] + ":replace=1"] + out[2:], "static": True, "f": f, "x": 0, "y": 0, "w": W, "h": H})
-        return out[:1]
+        layers.append({"src": animate.canvas(W, H), "draw": [out[1] + ":replace=1"] + out[2:], "rest": out[1:], "static": True, "f": f,
+                       "x": 0, "y": 0, "w": W, "h": H})
+        # The same darkening worked out in YUV: in RGB the picture is converted for every frame, and so is the layer,
+        # which measured a quarter more processor; in YUV the whole card costs less than a card did before.
+        return [DARKEN_YUV]
     return out
 
 
@@ -381,7 +389,7 @@ def holding_chain(W, H, texts, words, next_title="", seconds=0.0, layers=None, f
         longest = max(len("Next programme in 00:00") if words == "countdown" else len("Back soon"), int(len(next_title[:60]) * 0.042 / 0.06))
         lw = min(int(W), int(longest * size * 0.7) + 2 * p) // 2 * 2
         moved = [d.replace(f":y={y}:", f":y={p}:").replace(f":y={int(y + size * 1.9)}:", f":y={p + int(size * 1.9)}:") for d in drawn]
-        layers.append({"src": animate.canvas(lw, lh), "draw": moved, "static": words == "back_soon", "f": f,
+        layers.append({"src": animate.canvas(lw, lh), "draw": moved, "rest": drawn, "static": words == "back_soon", "f": f,
                        "x": "(W-w)/2", "y": str(y - p), "w": lw, "h": lh})
         return []
     if words == "back_soon":

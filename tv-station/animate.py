@@ -133,9 +133,38 @@ def enable(f):
 
 
 def overlay(f, x, y):
-    """The overlay filter that lays an animated layer on the picture."""
+    """The overlay filter that lays an animated layer on the picture (the on-screen logo, which is always laid over)."""
     ox, oy = position(f, x, y)
     return f"overlay=x='{ox}':y='{oy}':format=auto:enable='{enable(f)}'"
+
+
+def windows(f):
+    """When it moves: (start, end) of the way on and of the way off, each only when it has one."""
+    out = []
+    if f["din"]:
+        out.append((f["t0"], f["t0"] + f["din"]))
+    if f["dout"]:
+        out.append((f["t1"] - f["dout"], f["t1"]))
+    return out
+
+
+def at_rest(f):
+    """While it stands still, between its two animations: then it is drawn straight on the picture, as with None,
+    so a thing that animates costs no more than one that does not, except for the moments it moves."""
+    a = f["t0"] + f["din"]
+    b = f["t1"] - f["dout"]
+    return f"between(t,{_n(a)},{_n(b)})"
+
+
+def moving_overlay(f, x, y, a, b):
+    """The overlay for one animation, from a to b only: its layer is trimmed to that time, so outside it nothing is
+    laid over at all."""
+    ox, oy = position(f, x, y)
+    return f"overlay=x='{ox}':y='{oy}':format=auto:eof_action=pass:enable='between(t,{_n(a)},{_n(b)})'"
+
+
+def trim(a, b):
+    return f"trim=start={_n(max(0.0, a))}:end={_n(b)}"
 
 
 def canvas(w, h):

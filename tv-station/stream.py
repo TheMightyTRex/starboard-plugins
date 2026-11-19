@@ -151,9 +151,13 @@ def piece_command(piece, now, ctx):
         if ctx.get("art"):
             args += pace + ["-loop", "1", "-framerate", str(FPS), "-t", f"{most:.3f}", "-headers",
                             f'Authorization: MediaBrowser Token="{ctx["jf_key"]}"\r\n', "-i", ctx["art"]]
-            if whole:  # the programme's picture moves with the words, on their layer
-                pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuva420p[art]")
-                group += f"[cv];[cv][art]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat:format=auto"
+            if whole:  # the programme's picture moves with the words while they move, and rests on the background between
+                moves = len(animate.windows(whole))
+                pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuva420p,"
+                           f"split={moves + 1}[artr]" + "".join(f"[art0_{j}]" for j in range(moves)))
+                group += f"[cv@J@];[cv@J@][art@J@]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat:format=auto"
+                base += (f"[bgc];[bgc][artr]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat:format=auto"
+                         f":enable='{animate.at_rest(whole)}'")
             else:
                 pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuv420p[art]")
                 base += f"[bgc];[bgc][art]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat"
@@ -167,7 +171,7 @@ def piece_command(piece, now, ctx):
             if said.get(name):
                 chain += dog.box_text(ctx["texts"], said[name], style, sx, sy)
         if whole:
-            layers.append({"src": group, "draw": chain, "static": True, "f": whole, "x": 0, "y": 0, "w": W, "h": H})
+            layers.append({"src": group, "draw": chain, "rest": chain, "static": True, "f": whole, "x": 0, "y": 0, "w": W, "h": H})
             chain = []
     elif kind == "card":
         base = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={FPS},format=yuv420p"
@@ -194,13 +198,24 @@ def piece_command(piece, now, ctx):
     extra, logo_f = dog.overlay_chain(opts, W, H, kind, ctx["texts"], ctx["names"], logo=ctx.get("logo"), rel=rel, programme=programme,
                                       layers=layers)
     chain = chain + extra
+    for ly in layers:
+        if not ly.get("logo"):
+            chain += [r + f":enable='{animate.at_rest(ly['f'])}'" for r in ly.get("rest") or []]
     graph = ";".join(pre + [f"[0:v]{base}" + ("," + ",".join(chain) if chain else "")])
     logo_anim = next((ly["f"] for ly in layers if ly.get("logo")), None)
     drawn = [ly for ly in layers if not ly.get("logo")]
     for k, ly in enumerate(drawn):
-        # Each animated thing: its own small layer, drawn once when its words never change, moved by the overlay.
-        steps = ly["draw"] + ([animate.HOLD] if ly["static"] else []) + animate.layer_filters(ly["f"], ly["w"], ly["h"])
-        graph += (f"[a{k}];{ly['src']}" + "".join("," + x for x in steps) + f"[l{k}];[a{k}][l{k}]" + animate.overlay(ly["f"], ly["x"], ly["y"]))
+        # Each animated thing moves on a layer of its own, only while it moves: the layer is trimmed to each animation,
+        # and between them the thing is drawn straight on the picture (its "rest" filters), as with None.
+        for j, (a, b) in enumerate(animate.windows(ly["f"])):
+            src = ly["src"].replace("@J@", f"{k}_{j}")
+            if ly["static"]:  # drawn once, repeated, then only the frames of this animation
+                steps = ly["draw"] + [animate.HOLD, animate.trim(a, b)]
+            else:  # words that change, such as the clock: drawn only for the frames of this animation
+                steps = [animate.trim(a, b)] + ly["draw"]
+            steps += animate.layer_filters(ly["f"], ly["w"], ly["h"])
+            graph += (f"[a{k}_{j}];{src}" + "".join("," + x for x in steps) + f"[l{k}_{j}];[a{k}_{j}][l{k}_{j}]"
+                      + animate.moving_overlay(ly["f"], ly["x"], ly["y"], a, b))
     if logo_f:
         args += ["-loop", "1", "-t", f"{most:.3f}", "-i", ctx["logo"]]
         x, y = dog.logo_position(opts, W, H)

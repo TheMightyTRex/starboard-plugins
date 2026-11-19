@@ -127,7 +127,7 @@ Your own branding for every channel: the on-screen logo, the logo with its music
 | **Speed** | **The broadcast pack's, or normal**, **Quick, 0.3 seconds**, **Normal, 0.6 seconds** or **Slow, 1 second** |
 | **Preview** | On each thing's **Coming on** row: opens a few seconds of it coming on and going off, in a new tab, drawn over a made-up picture with the choices saved |
 
-Timing stays exact: each thing comes on from its start and has gone by its end, so an animation never makes a break or a strap longer. Something shown for less time than two animations has both made shorter to fit. Measured at 720p, an animated programme used no more processor than one without, within what can be measured; a card with its words animating used a little more, while it played. A **Preview a frame** picture shows each thing where it rests.
+Timing stays exact: each thing comes on from its start and has gone by its end, so an animation never makes a break or a strap longer. Something shown for less time than two animations has both made shorter to fit. Each thing is drawn on its own layer only while it moves, and straight on the picture the rest of the time, so it costs little: measured at 720p, a programme with everything animating used no more processor than one without, and a card with animation used about half the processor of a plain one. A **Preview a frame** picture shows each thing where it rests.
 
 ## Station
 

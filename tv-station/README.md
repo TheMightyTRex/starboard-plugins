@@ -64,6 +64,10 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   unless you change it. A channel with no on-screen logo and no straps copies its programmes with no converting.
 - **Measured** (17 November 2026, as Starboard runs it): 16.4 MiB of memory and no measurable processor (0.00%) at rest;
   while one channel played at 720p with the on-screen logo, about 140 MiB and 0.9 of a processor core.
+  With animation (0.3.0, 19 November 2026, the plug-in's image with 2 cores and 768 MB, one 720p piece at real time,
+  two runs each): a programme with the logo, clock, label and straps animating used 0.92 to 0.97 of a core against
+  1.03 to 1.09 with none, so no measurable increase, and about 4 MiB more memory; a card animating used 0.43 of a
+  core against 0.79 to 0.82, as its darkening is worked out in YUV, with about 25 MiB more memory while it plays.
 
 ## What it may do
 
