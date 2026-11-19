@@ -21,6 +21,7 @@ Added:
 
 Changed:
 
+- **Mica first:** Mica, now Starboard's own design, is the first style, with the same colours as the design system's default.
 - Every style keeps its own design on top of the new Mica design system: cards lift only in styles with elevated cards, and the hover on menus has a clear edge.
 
 ## What is new in 1.4.1
