@@ -56,6 +56,10 @@ Plug-in API 1.15 came with Starboard 0.19.0. Nothing was taken away: a plug-in m
 - **Pinned images.** Every image is pinned by digest (`@sha256:`) before it is published.
 - **Small and quiet.** The smallest memory limit that works (48 to 128 MB for a card plug-in), `when_needed` when
   Starboard is the only way it is reached, and cards that read a small file rather than doing work when asked.
+- **Starboard's API through `starboard()`.** The helper `_shared/sbplugin.py` sends each call to the socket
+  `STARBOARD_API_SOCKET` when Starboard gives one, and to `STARBOARD_API` otherwise. A plug-in on its own network,
+  such as Disk forecast, can reach Starboard only through that socket, because Starboard runs on the server's own
+  network.
 - **Safe updates.** A plug-in that works in the background answers `/update/before` by starting nothing new and
   finishing or stopping its work, and `/update/after` by carrying on.
 - **Accessible words.** Labels under 60 characters in sentence case, a hint on every switch and choice, a title on
