@@ -26,6 +26,7 @@ FRACTIONS = (0.2, 0.42, 0.64)  # where the clips were taken from before 0.3.0
 SPREAD = (0.12, 0.78)  # clips come from this part of a programme, clear of the opening titles and the end credits
 SHORTEST, LONGEST = 10, 60  # seconds a promo may be (0.3.0: the setting Promo length; 10 to 30 before)
 LEAD_IN = 1.0  # seconds of background and music before the first clip, and after the last
+STATION_LOGO_SHARE = 0.12  # the station's logo on a promo: this share of the picture's width (0.5.2)
 RAMP = 0.4  # seconds the music takes to fall under the programme's sound, and to rise again
 _proc = {"p": None}
 _stop = threading.Event()
@@ -101,6 +102,18 @@ def words(airing, channel_name):
             "Day and time": dog.day_time_words(airing["start"]), "Synopsis": (e.get("plot") or "")[:240], "Channel name": channel_name}
 
 
+def png_size(path):
+    """A PNG's width and height from its header, or None: no picture library is needed for it."""
+    try:
+        with open(path, "rb") as f:
+            head = f.read(24)
+    except OSError:
+        return None
+    if head[:8] != b"\x89PNG\r\n\x1a\n" or head[12:16] != b"IHDR":
+        return None
+    return int.from_bytes(head[16:20], "big"), int.from_bytes(head[20:24], "big")
+
+
 def clip_count(seconds, wanted=None):
     """How many clips a promo shows: the setting when given (2 to 6), else about one for every 5 seconds."""
     if wanted:
@@ -134,7 +147,7 @@ def duck(level, start, end):
 
 
 def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, seed=0, seconds=None, background=None,
-            level=0.2, clips=None, clip_sound=True):
+            level=0.2, clips=None, clip_sound=True, station_logo=None):
     """The FFmpeg command for one promo, written to `out` (an MP4).
 
     seconds:    the setting Promo length (0.3.0), else the pack's own, else 15; 10 to 60
@@ -142,6 +155,8 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     level:      the music's share of full while the programme's sound plays (0.3.0)
     clips:      how many clips, else one for about every 5 seconds
     clip_sound: the programme's sound under its clips (0.3.0); False for a programme with none
+    station_logo: a PNG of the station's logo, drawn small in the top right corner (0.5.2, owner, 19 November 2026:
+                "I want the T-Rex TV logo to also show somewhere in the promos"), for a channel with a pack of its own
     """
     lay = p["promo"]
     seconds = max(SHORTEST, min(LONGEST, int(seconds or lay.get("seconds") or 15)))
@@ -172,6 +187,10 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
         args += ["-stream_loop", "-1", "-t", str(seconds), "-i", music["file"]]
     else:
         args += ["-f", "lavfi", "-t", str(seconds), "-i", "anullsrc=r=48000:cl=stereo"]
+    logo_in = None
+    if station_logo:
+        logo_in = n + 1
+        args += ["-loop", "1", "-framerate", str(pack.FPS), "-t", str(seconds), "-i", station_logo]
     parts = [f"[0:v]scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={pack.FPS},format=yuv420p[bg]"]
     for i in range(n_clips):
         parts.append(f"[{i + 1}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,fps={pack.FPS},"
@@ -183,7 +202,24 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
         if said.get(name):
             chain += dog.box_text(texts, said[name], style, sx, sy)
     chain += [f"fade=t=in:st=0:d=0.4", f"fade=t=out:st={seconds - 0.5}:d=0.5"]
-    parts.append(f"[bg][clips]overlay=x={cx}:y={cy}:eof_action=pass," + ",".join(chain) + "[v]")
+    if logo_in is None:
+        parts.append(f"[bg][clips]overlay=x={cx}:y={cy}:eof_action=pass," + ",".join(chain) + "[v]")
+    else:
+        # The station's logo, about an eighth of the width, in the top right corner inside the title safe area, above
+        # the clip area; it fades in with the clips and out with the rest.
+        # It sits on a dark plate, so it reads over any design (such as a pack's own splash of colour in that corner).
+        lw = int(W * STATION_LOGO_SHARE) // 2 * 2
+        iw, ih = png_size(station_logo) or (2, 1)
+        lh = max(2, round(lw * ih / iw) // 2 * 2)
+        pad = max(4, round(lw * 0.06)) // 2 * 2
+        pw, ph = lw + 2 * pad, lh + 2 * pad
+        lx, ly = W - pw - int(pack.TITLE_SAFE[0] * sx), int(pack.TITLE_SAFE[1] * sy)
+        parts.append(f"color=c=0x0e0e14@0.72:s={pw}x{ph}:r={pack.FPS}:d={seconds},format=rgba[pl]")
+        parts.append(f"[{logo_in}:v]format=rgba,scale={lw}:{lh}[lg]")
+        parts.append(f"[pl][lg]overlay=x={pad}:y={pad}:format=auto:shortest=1,format=rgba,"
+                     f"fade=t=in:st={LEAD_IN * 0.6:.2f}:d=0.5:alpha=1[sl]")
+        parts.append(f"[bg][clips]overlay=x={cx}:y={cy}:eof_action=pass[b1]")
+        parts.append(f"[b1][sl]overlay=x={lx}:y={ly}:format=auto:shortest=1," + ",".join(chain) + "[v]")
     gain = float((music or {}).get("gain") or 0)
     stereo = "aresample=48000,aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo"
     bed = f"[{n}:a]{stereo},volume={gain:+.1f}dB"
