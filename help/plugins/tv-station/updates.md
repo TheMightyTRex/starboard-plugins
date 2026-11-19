@@ -14,6 +14,12 @@ Create your own TV channel 0.3.0 is the latest version. It needs Starboard with 
 
 The catalogue offers each Starboard the newest version it can run.
 
+## What is new in 0.5.2
+
+Added:
+
+- **The station's logo on promos:** promos for a channel with its own pack show the station's logo, small, in a corner. To leave it out, deactivate **Show the station's logo on promos**.
+
 ## What is new in 0.3.2
 
 Added:

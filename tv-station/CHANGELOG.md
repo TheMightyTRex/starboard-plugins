@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2 (19 November 2026)
+
+### Added
+- The station's logo on promos (owner, 19 November 2026: "I want the T-Rex TV logo to also show somewhere in the promos"): a promo made with a channel's own pack, or a plain design, shows the station pack's logo/dog.png small in the top right corner (an eighth of the width, inside the title safe area, above the clip area), fading in with the clips. Promos made with the station's own pack carry it already, so they are unchanged. Show the station's logo on promos (Yes unless changed) turns it off. Promos already made keep their look until they are replaced.
+
 ## 0.5.1 (19 November 2026)
 
 ### Fixed

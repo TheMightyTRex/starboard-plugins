@@ -36,7 +36,7 @@ import sbplugin
 import schedule
 import stream
 
-VERSION = "0.5.1"
+VERSION = "0.5.2"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -365,6 +365,21 @@ def load_pack(name):
 
 def station_pack(s):
     return load_pack(s.get("station_pack") or "")
+
+
+def station_logo_for(s, design, cfg=None):
+    """The station's logo for a promo (0.5.2): its pack's logo/dog.png, for a promo made with any other design (a
+    channel's own pack, or a plain promo), unless Show the station's logo on promos is deactivated. None for promos
+    made with the station's own pack, whose design carries it already."""
+    if not truthy((cfg or {}).get("promo_station_logo"), True):
+        return None
+    sp = station_pack(s)
+    if not sp or not sp.get("dog"):
+        return None
+    if design and design.get("folder") and os.path.realpath(design["folder"]) == os.path.realpath(sp["folder"]):
+        return None
+    path = os.path.join(sp["folder"], sp["dog"])
+    return path if os.path.isfile(path) else None
 
 
 def channel_pack(s, ch):
@@ -2298,7 +2313,8 @@ def promos_job(now=None, limit_seconds=40 * 60):
             seed = schedule.seed_of(ch["seed"], "promo", a["start"])
             how = dict(seed=seed, seconds=promo_seconds(cfg), level=promo.music_level(cfg.get("promo_music_level") or 20),
                        clips=int(cfg.get("promo_clips") or 0) or None,
-                       background=promo.pick_background(backgrounds_for(s, ch, pk), schedule.seed_of(ch["seed"], "back", a["start"])))
+                       background=promo.pick_background(backgrounds_for(s, ch, pk), schedule.seed_of(ch["seed"], "back", a["start"])),
+                       station_logo=station_logo_for(s, pk, cfg))
             music = promo.pick_music(music_for(s, ch, pk), schedule.seed_of(ch["seed"], "music", a["start"]))
             sound = truthy(cfg.get("promo_sound"), True)
             argv, seconds = promo.command(pk, a, ch["name"], music, W, H, c.get("url", ""), c.get("api_key", ""), texts, out + ".part",

@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.5.1",
+ "version": "0.5.2",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -313,6 +313,14 @@
     }
    ],
    "hint": "How loud the music is while a clip's sound plays. It is at full before the first clip and after the last."
+  },
+  {
+   "key": "promo_station_logo",
+   "label": "Show the station's logo on promos",
+   "type": "switch",
+   "default": true,
+   "group": "Promos",
+   "hint": "The station pack's logo, small, in a corner of promos made with a channel's own pack or a plain design. Promos made with the station's pack carry it already."
   },
   {
    "key": "promo_other",
@@ -652,6 +660,13 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.5.2",
+   "date": "2026-11-19",
+   "added": [
+    "**The station's logo on promos:** promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner. To leave it out, deactivate Show the station's logo on promos."
+   ]
+  },
   {
    "version": "0.5.1",
    "date": "2026-11-19",
