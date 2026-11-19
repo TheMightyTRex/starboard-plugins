@@ -116,6 +116,12 @@ def search(jf, kind, words):
         y = y + 1900 if y < 100 else y
         y -= y % 10
         return [(str(y), f"The {y}s")]
+    if kind == "decade":
+        # Every decade the library has, from Jellyfin's list of years (one small answer), newest first.
+        got = jf(f"/Years?{_q(IncludeItemTypes='Movie,Series', Recursive='true', SortBy='SortName')}") or {}
+        decades = sorted({int(y["Name"]) // 10 * 10 for y in got.get("Items") or [] if str(y.get("Name") or "").isdigit()}, reverse=True)
+        rows = [(str(d), f"The {d}s", "Decade") for d in decades if not words or words.lower() in f"the {d}s"]
+        return rows[start:start + limit], len(rows)
     if kind == "genre":
         got = jf(f"/Genres?{_q(SearchTerm=words, Limit=8)}") or {}
         return [(g["Name"], g["Name"]) for g in got.get("Items") or []]
@@ -125,6 +131,47 @@ def search(jf, kind, words):
     for i in got.get("Items") or []:
         year = f" ({i['ProductionYear']})" if i.get("ProductionYear") and f"({i['ProductionYear']})" not in (i.get("Name") or "") else ""
         out.append((i["Id"], f"{i.get('Name') or 'Untitled'}{year}"))
+    return out
+
+
+BROWSE_TYPES = {"series": "Series", "film": "Movie", "collection": "BoxSet", "playlist": "Playlist"}
+
+
+def browse(jf, kind, words="", start=0, limit=100):
+    """A page of the library for Choose from your library (0.2.0): ([(id or name, title, detail)], how many in all).
+    Every series, film, collection, playlist, genre or decade, by name, a page at a time; only those matching the
+    words when there are any."""
+    words = (words or "").strip()[:80]
+    start = max(0, int(start or 0))
+    if kind == "decade":
+        # Every decade the library has, from Jellyfin's list of years (one small answer), newest first.
+        got = jf(f"/Years?{_q(IncludeItemTypes='Movie,Series', Recursive='true', SortBy='SortName')}") or {}
+        decades = sorted({int(y["Name"]) // 10 * 10 for y in got.get("Items") or [] if str(y.get("Name") or "").isdigit()}, reverse=True)
+        rows = [(str(d), f"The {d}s", "Decade") for d in decades if not words or words.lower() in f"the {d}s"]
+        return rows[start:start + limit], len(rows)
+    if kind == "genre":
+        got = jf(f"/Genres?{_q(SearchTerm=words, StartIndex=start, Limit=limit, SortBy='SortName', IncludeItemTypes='Movie,Series', Recursive='true')}") or {}
+        return [(g["Name"], g["Name"], "Genre") for g in got.get("Items") or [] if g.get("Name")], int(got.get("TotalRecordCount") or 0)
+    t = BROWSE_TYPES.get(kind, "Series")
+    got = jf(f"/Items?{_q(SearchTerm=words, IncludeItemTypes=t, Recursive='true', SortBy='SortName', StartIndex=start, Limit=limit, Fields='ProductionYear,ChildCount')}") or {}
+    out = []
+    for i in got.get("Items") or []:
+        year = i.get("ProductionYear")
+        detail = KINDS.get(kind, "Series") + (f", {year}" if year else "")
+        if kind in ("collection", "playlist") and i.get("ChildCount"):
+            detail += f", {i['ChildCount']} items"
+        out.append((i["Id"], i.get("Name") or "Untitled", detail))
+    return out, int(got.get("TotalRecordCount") or 0)
+
+
+def names(jf, ids):
+    """The names of Jellyfin items by id, with their year: {id: "Name (1999)"}."""
+    out = {}
+    for k in range(0, len(ids), 50):
+        got = jf(f"/Items?{_q(Ids=','.join(ids[k:k + 50]), Fields='ProductionYear')}") or {}
+        for i in got.get("Items") or []:
+            year = f" ({i['ProductionYear']})" if i.get("ProductionYear") and f"({i['ProductionYear']})" not in (i.get("Name") or "") else ""
+            out[i["Id"]] = f"{i.get('Name') or 'Untitled'}{year}"
     return out
 
 

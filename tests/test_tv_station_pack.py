@@ -534,7 +534,7 @@ class MakingAPromo(unittest.TestCase):
         out = os.path.join(self.tmp.name, "promo.mp4")
         with tempfile.TemporaryDirectory() as d:
             texts = dog.Texts(d)
-            argv, seconds = promo.command(self.pack, a, "Comedy", promo.pick_music(self.pack, 1), 480, 270, self.url, "k", texts, out)
+            argv, seconds = promo.command(self.pack, a, "Comedy", promo.pick_music(promo.music_pool(self.pack.get("music"), self.pack["folder"], [], []), 1), 480, 270, self.url, "k", texts, out)
             words = [open(os.path.join(d, f)).read() for f in sorted(os.listdir(d))]
             self.assertEqual(argv[argv.index("-threads") + 1], "1", "one thread")
             began = time.monotonic()

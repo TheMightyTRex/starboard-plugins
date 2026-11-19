@@ -1,7 +1,8 @@
 """Promos: short trailers for programmes coming up, made in quiet hours from the channel's broadcast pack.
 
-Each promo is the pack's promo background, a few short clips of the programme playing in its clip area, a music bed
-chosen at random from promo/music, and the words in its fields: Coming soon, the title, the episode, the day and time
+Each promo is the pack's promo background (or, from 0.2.0, the channel's colour when it has music but no pack promo),
+a few short clips of the programme playing in its clip area, a music bed chosen at random from the music uploaded on
+the plug-in's pages and the pack's promo/music, and the words in its fields: Coming soon, the title, the episode, the day and time
 from the schedule ("Sunday at 21:00", true all week) and the channel's name. They are made one at a time, by one
 FFmpeg at the lowest priority with one thread, and never while anyone is watching. Each channel keeps a set number;
 a promo is replaced when it is older than the setting says, and dropped before its programme starts, so they never
@@ -83,12 +84,15 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     sx, sy = W / pack.W, H / pack.H
     x0, y0, x1, y1 = lay["clip"]
     cx, cy, cw, ch = int(x0 * sx), int(y0 * sy), int((x1 - x0) * sx) // 2 * 2, int((y1 - y0) * sy) // 2 * 2
-    bg = os.path.join(p["folder"], lay["background"])
+    bg = os.path.join(p["folder"], lay["background"]) if lay.get("background") else None
     # One thread everywhere, for each input's decoder and for the encoder: lowest priority, and well inside the
     # container's limit on threads (an FFmpeg left to choose starts a dozen or more for each input).
     one = ["-threads", "1"]
     args = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-y", "-filter_threads", "1", "-filter_complex_threads", "1"]
-    args += one + (["-loop", "1", "-framerate", str(pack.FPS)] if lay.get("still") else ["-stream_loop", "-1"]) + ["-t", str(seconds), "-i", bg]
+    if bg:
+        args += one + (["-loop", "1", "-framerate", str(pack.FPS)] if lay.get("still") else ["-stream_loop", "-1"]) + ["-t", str(seconds), "-i", bg]
+    else:  # a plain promo (0.2.0): the channel's colour, drawn by FFmpeg, for a channel with music but no pack promo
+        args += ["-f", "lavfi", "-t", str(seconds), "-i", f"color=c={lay.get('colour') or '0x1f5f99'}:s={W}x{H}:r={pack.FPS}"]
     e = airing["entry"]
     dur = float(e.get("dur") or 1800)
     each = (seconds - 2.0) / len(FRACTIONS)
@@ -97,7 +101,7 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
                  "-i", f"{jf_url.rstrip('/')}/Videos/{e['id']}/stream?static=true"]
     n = 1 + len(FRACTIONS)
     if music:
-        args += ["-stream_loop", "-1", "-t", str(seconds), "-i", os.path.join(p["folder"], music["path"])]
+        args += ["-stream_loop", "-1", "-t", str(seconds), "-i", music["file"]]
     else:
         args += ["-f", "lavfi", "-t", str(seconds), "-i", "anullsrc=r=48000:cl=stereo"]
     parts = [f"[0:v]scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={pack.FPS},format=yuv420p[bg]"]
@@ -120,9 +124,31 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     return args, seconds
 
 
-def pick_music(p, seed):
-    music = p.get("music") or []
-    return music[schedule.Rng(seed).below(len(music))] if music else None
+def pick_music(pool, seed):
+    """One music bed from the pool, each {"file", "gain"}: the same one for the same promo."""
+    return pool[schedule.Rng(seed).below(len(pool))] if pool else None
+
+
+def music_pool(pack_music, folder, own, station, use="both"):
+    """The music a promo chooses from (0.2.0). pack_music: the pack's beds ({"path", "gain"} in `folder`); own and
+    station: music the owner uploaded for the channel and for every channel ({"file", "gain"}, files that exist).
+    use: both (the uploaded music and the pack's), mine (uploaded only, the pack's when there is none) or pack (the
+    pack's only, the uploaded when the pack has none). A channel's own music comes before the station's."""
+    from_pack = [{"file": os.path.join(folder, m["path"]), "gain": float(m.get("gain") or 0)} for m in pack_music or []]
+    mine = list(own or []) or list(station or [])
+    if use == "pack":
+        return from_pack or mine
+    if use == "mine":
+        return mine or from_pack
+    return mine + from_pack
+
+
+def plain_pack(colour):
+    """A promo design with no broadcast pack (0.2.0): the default layout on the channel's colour, its words in white."""
+    lay = pack.DEFAULT_LAYOUT["promo"]
+    fields = {name: {"box": box, "colour": "#FFFFFF", "lines": pack.LINES.get(name, 1)} for name, box in lay["fields"].items()}
+    return {"name": "Plain", "folder": "", "music": [],
+            "promo": {"background": None, "clip": lay["clip"], "seconds": lay["seconds"], "fields": fields, "colour": colour or "0x1f5f99"}}
 
 
 def _nice():

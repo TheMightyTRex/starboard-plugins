@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.1.1",
+ "version": "0.2.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -45,28 +45,28 @@
    "label": "Channels",
    "type": "custom",
    "choices": "/channels",
-   "hint": "Add a channel, name it, choose what it shows, its breaks and its on-screen logo, with today's programmes."
+   "hint": "Add a channel and open it: a card each for its name and number, what it shows, its breaks, its on-screen logo, its holding slide and promos, and its programmes."
   },
   {
    "key": "guide",
    "label": "Guide",
    "type": "custom",
    "choices": "/guide",
-   "hint": "What is on each channel in the next 24 hours, as a table for each channel."
+   "hint": "What is on each channel in the next 24 hours, as a table for each channel, and when Jellyfin last read the guide."
   },
   {
    "key": "schedule",
    "label": "Schedule grid",
    "type": "custom",
    "choices": "/schedule",
-   "hint": "Place films and series at set times on a week's grid for each channel, copy a day, stripe a series, or suggest a week from watch history."
+   "hint": "Open each channel's week on a grid, in a new tab in a desktop browser: place films and series at set times, copy a day, stripe a series, or suggest a week from watch history."
   },
   {
    "key": "clips",
-   "label": "Idents and clips",
+   "label": "Idents, clips and music",
    "type": "custom",
    "choices": "/clips",
-   "hint": "The station's own idents and clips, for every channel's breaks."
+   "hint": "The station's own idents and clips, its holding slide and its music for promos, for every channel's breaks."
   },
   {
    "key": "pack",
@@ -449,6 +449,11 @@
    "path": "/actions/promos"
   },
   {
+   "id": "guide",
+   "label": "Refresh Jellyfin's guide",
+   "path": "/actions/guide"
+  },
+  {
    "id": "refresh",
    "label": "Read the channels from Jellyfin again",
    "path": "/actions/refresh"
@@ -526,6 +531,26 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.2.0",
+   "date": "2026-11-19",
+   "added": [
+    "**Choose from your library:** with Starboard 0.23.0 and later, a slide-out lists every series, film, collection, playlist, genre and decade in Jellyfin, with search; tick several and add them to a channel at once. Those on the channel already show as added.",
+    "**A holding slide:** upload a picture or a short video, with Back soon or a countdown to the next programme and its name. It loops at the end of each break, after the promos, until the next programme starts, so the channel never shows black.",
+    "**Music for promos:** upload MP3, M4A, OGG or FLAC music for the station or for one channel, list it and remove it. Promos use it with, or in place of, the pack's music, and a channel with music but no pack promo gets plain promos on its colour.",
+    "**Jellyfin's guide:** the Guide page says when Jellyfin last read the guide and how many programmes it had, and Refresh Jellyfin's guide in Actions asks it to read it again.",
+    "**Suggest a schedule asks what to make it from:** Watch history, General watch history, All TV, All films or TV and Films, and remembers the choice for each channel.",
+    "**Logos show on their rows:** a channel's logo and the station pack's on-screen logo show as a small picture once uploaded."
+   ],
+   "changed": [
+    "**Channels in cards:** with Starboard 0.23.0 and later, each channel is a card in the list, and an opened channel has a card each for its name and number, what it shows, its breaks, its on-screen logo and branding, its holding slide and promos, and its programmes for today and tomorrow.",
+    "**Changes save in place:** with Starboard 0.23.0 and later, a change answers with that channel only, so the page keeps the open channel, where you were and focus, and says what was saved, such as Corner: Bottom left.",
+    "**Renaming the station renames its tuner in Jellyfin's Live TV.**"
+   ],
+   "fixed": [
+    "**The schedule grid opens:** with Starboard 0.23.0 and later, Open the schedule grid uses the address you opened Starboard with, so it opens from any address that reaches the server. With no channels, the grid page says what to do."
+   ]
+  },
   {
    "version": "0.1.1",
    "date": "2026-11-19",

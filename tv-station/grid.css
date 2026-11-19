@@ -35,6 +35,10 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; margin: var(--space-2) 0; }
 .choice { display: flex; gap: var(--space-2); align-items: center; min-height: 32px; }
 .choice input { width: 20px; height: 20px; accent-color: var(--color-accent); }
+/* A choice with a sentence under it (Suggest a schedule, 0.2.0): the sentence lines up with the label. */
+#suggest-dialog .choice { flex-wrap: wrap; row-gap: 0; }
+#suggest-dialog .choice label { font-weight: var(--weight-strong, 600); }
+#suggest-dialog .choice .hint { flex-basis: 100%; margin: 0 0 var(--space-2) calc(20px + var(--space-2)); }
 .checks { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); }
 fieldset { border: 1px solid var(--color-divider); border-radius: var(--radius); margin: var(--space-3) 0; padding: var(--space-2) var(--space-3); }
 .banner { margin: var(--space-3) 0; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-divider);

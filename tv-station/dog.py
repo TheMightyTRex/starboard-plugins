@@ -63,7 +63,7 @@ def shows_on(opts, kind):
     if opts["when"] == "always":
         return True
     if opts["when"] == "programmes_cards":
-        return kind in ("programme", "card", "slate")
+        return kind in ("programme", "card", "slate", "holding")
     return kind == "programme"
 
 
@@ -232,6 +232,34 @@ def card_chain(W, H, texts, card, colour="0x1f5f99"):
 
 def slate_chain(W, H, texts, words):
     return [_text(texts.file(words), H * 0.06, "(w-tw)/2", "(h-th)/2")]
+
+
+HOLDING_WORDS = {"countdown": "A countdown to the next programme", "back_soon": "Back soon", "none": "No words"}
+
+
+def countdown_text(seconds):
+    """The words of a countdown for drawtext with expansion: "Next programme in 4:32", counting down from `seconds`
+    as the piece plays (t is the time into this FFmpeg run), rounded up, so it reads 0:01 in its last second."""
+    left = f"max(0,{float(seconds):.3f}-t)"
+    return f"Next programme in %{{eif:trunc(({left}+0.999)/60):d}}:%{{eif:mod(trunc({left}+0.999),60):d:2}}"
+
+
+def holding_chain(W, H, texts, words, next_title="", seconds=0.0):
+    """The words on a holding slide, low in the middle on a plate so they read on any picture: Back soon, or a
+    countdown to the next programme with its name under it. words: countdown, back_soon or none."""
+    if words not in ("countdown", "back_soon"):
+        return []
+    size = H * 0.06
+    y = int(H * 0.72)
+    if words == "back_soon":
+        return [_text(texts.file("Back soon"), size, "(w-tw)/2", y, plate=True)]
+    parts = [f"fontfile={FONT}", f"textfile={texts.file(countdown_text(seconds))}", "expansion=normal", f"fontsize={int(size)}",
+             "fontcolor=white@1.00", "x=(w-tw)/2", f"y={y}", f"borderw={max(1, int(size / 16))}", f"bordercolor={OUTLINE}",
+             "box=1", f"boxcolor={PLATE}", f"boxborderw={max(4, int(size / 3))}"]
+    out = ["drawtext=" + ":".join(parts)]
+    if next_title:
+        out.append(_text(texts.file(next_title[:60]), H * 0.042, "(w-tw)/2", int(y + size * 1.9), plate=True))
+    return out
 
 
 # Broadcast packs: words drawn into the boxes pack.json gives ---------------------------------------------------------

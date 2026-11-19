@@ -15,8 +15,8 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
 ## What it does
 
 - **A station and its channels.** You name the station, and each channel: its name, number, logo and colour.
-- **What each channel shows.** Series, films, collections, playlists, genres or decades from Jellyfin, in order or
-  shuffled, with up to 6 episodes of a series in a row. Programmes run back to back, or start on the quarter, half or
+- **What each channel shows.** Series, films, collections, playlists, genres or decades from Jellyfin, ticked in a
+  slide-out that lists every one (Choose from your library, Starboard 0.23.0 and later), in order or shuffled, with up to 6 episodes of a series in a row. Programmes run back to back, or start on the quarter, half or
   whole hour with a break filling the time to it. New episodes join the line-up at the end of the programme on air.
 - **Breaks.** Idents for each channel or for the whole station, in order or in a random order; Jellyfin's own
   trailers of the films on the channel; your own clips; and Coming up next and Later cards with the programme's
@@ -33,12 +33,14 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   `transitions`. The station has one, and each channel can have its own. Every file is checked before it is used. The
   plug-in's page offers the template, placement guides that mark where the clip, each text field and the safe areas
   go, and the example pack. [Make a broadcast pack](../help/use/make-a-broadcast-pack.md) is the specification.
-- **Promos.** Made in quiet hours from a few short clips of a programme coming up, a music bed from the pack, and its
+- **Promos.** Made in quiet hours from a few short clips of a programme coming up, a music bed you upload or from the pack, and its
   title, channel and day and time from the schedule. Each channel keeps 3 unless you change it, and old ones are
   replaced after 2 days. They play on their own channel and on your other channels.
+- **A holding slide.** A picture or short video, with a countdown to the next programme or Back soon, that loops at
+  the end of each break until the next programme starts, so the channel never shows black.
 - **A schedule grid.** A week for each channel in 15 minute steps: drag films and series onto it, or use buttons and
   the keyboard; copy a day; stripe a series across weekdays with a number of episodes a day; choose where a series
-  starts; or suggest a week from watch history (`suggest.py`, also a script). Empty times keep the automatic line-up.
+  starts; or suggest a week from watch history, everyone's history, all TV, all films or both (`suggest.py`, also a script). Empty times keep the automatic line-up.
 - **In Jellyfin's Live TV, first.** Its channels are numbered from 1 in your order, before the free channels from
   101, with a 7-day guide: titles, episode names, synopses, pictures, and New or Repeat.
 
