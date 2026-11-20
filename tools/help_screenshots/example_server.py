@@ -4,7 +4,7 @@ the plug-ins' real manifests, for the plug-ins help pictures (tools/help-screens
 
     python3 tools/help_screenshots/example_server.py <starboard checkout> <data folder> <port> [absent|present] [plug-in]
 
-The plug-in is library-cleanup unless named, and the Catalogue lists it as published even before it is. With
+The plug-in is library-cleanup unless named, and must be published, with its image pinned by digest. With
 "absent", it is not added, so the Catalogue offers it and Install...
 shows what it may do. Otherwise it is added and active. Library clean-up has made-up Preview, Holding folder, Libraries
 and card answers; any other plug-in is only added (enough for Add a card), and its container is never started.
@@ -25,11 +25,11 @@ from starboard import plugin_cards, plugin_custom, plugin_logo, plugin_watch, pl
 
 CATALOGUE = json.loads((HERE / "catalogue.json").read_text())
 MANIFEST = json.loads((HERE / PLUGIN / "starboard-plugin.json").read_text())
-# As published: an image pinned by digest. One GitHub has not built yet gets a made-up digest (e…e) here.
-PINNED = json.loads(json.dumps(MANIFEST))
-for _c in PINNED.get("containers", []):
-    if _c.get("image") and "@sha256:" not in _c["image"]:
-        _c["image"] = _c["image"].split(":")[0] + "@sha256:" + "e" * 64
+# As published: the catalogue entry and the image pinned by digest are the real ones, nothing is made up.
+if not next((e for e in CATALOGUE["plugins"] if e["id"] == PLUGIN), {}).get("published"):
+    sys.exit(f"{PLUGIN} is not published in catalogue.json yet: publish it before taking its help pictures")
+if any(c.get("image") and "@sha256:" not in c["image"] for c in MANIFEST.get("containers", [])):
+    sys.exit(f"{PLUGIN}/starboard-plugin.json has an image not pinned by digest")
 _real_catalogue, _real_manifest = plugins_admin.fetch_catalogue, plugins_admin.fetch_manifest
 
 
@@ -37,14 +37,13 @@ def catalogue(address, opener=None):
     """The collection's own catalogue, as Starboard reads it from GitHub."""
     if address == plugins_admin.CATALOGUE_URL:
         return {"name": CATALOGUE.get("name") or "Starboard plug-ins",
-                "items": [x for x in map(plugins_admin._clean_entry, [{**e, "published": True} if e["id"] == PLUGIN else e
-                                                                      for e in CATALOGUE["plugins"]]) if x]}
+                "items": [x for x in map(plugins_admin._clean_entry, CATALOGUE["plugins"]) if x]}
     return _real_catalogue(address, opener)
 
 
 def manifest(address, opener=None, sha256=""):
     if f"/{PLUGIN}/" in str(address):
-        return json.loads(json.dumps(PINNED))
+        return json.loads(json.dumps(MANIFEST))
     return _real_manifest(address, opener) if not sha256 else _real_manifest(address, opener, sha256)
 
 
@@ -93,7 +92,7 @@ def cleanup(data_dir):
     if absent:
         return
     if not any(p["id"] == PLUGIN for p in plugins_admin.listing(data_dir)):
-        plugins_admin.install(data_dir, json.loads(json.dumps(PINNED)), "/nonexistent-media")
+        plugins_admin.install(data_dir, json.loads(json.dumps(MANIFEST)), "/nonexistent-media")
         plugins_admin.keep_logo(data_dir, PLUGIN, plugin_logo.clean((HERE / PLUGIN / "logo.svg").read_bytes(), "logo.svg"))
         plugins_admin.set_state(data_dir, PLUGIN, "enabled")
     if PLUGIN != "library-cleanup":
