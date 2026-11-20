@@ -5,19 +5,19 @@
 | Style | What it is like |
 |---|---|
 | Mica | Starboard's own design since 18 November 2026: calm greys, small corners, drop shadows and frosted menus |
-| Midnight | Dark first and dense, with calm blue accents |
-| Frost | Soft frosted tints and gentle shadows, with solid panels for reading |
-| Bold | Neo-brutalist: hard edges, thick shadows and a yellow highlight |
-| Bento | Rounded boxes in soft pastels |
-| Paper | Calm and minimal, on warm paper with a serif |
-| Forest | Earthy greens and natural tones |
-| Retro | Square corners, a monospace font and amber, like old terminals |
-| Vivid | Bright pink and purple |
+| Dusk | Periwinkle on blue slate, smoked-glass panels and floating menus |
+| Liquid glass | Clear glass panels over soft colour, rounded and bright |
+| Brutal | Neo-brutalist poster: thick black rules, hard shadows, square corners and acid yellow |
+| Bento | A grid of rounded tonal boxes in soft pastels, pill tabs and a floating side menu |
+| Almanac | A printed sheet on cool slate: serif reading text, square corners and two rule weights |
+| Garden | Warm oat paper and deep green ink, serif headings, hairlines and pill buttons |
+| Terminal | Phosphor green on near-black, every word in monospace, scan lines and boxed tabs |
+| Riso | Risograph print: blue ink on warm paper, fluorescent pink fills and grain |
 | Aurora | Deep night blue with violet and teal glows, rounded and calm |
-| Nordic | Scandinavian calm: soft greys, birch white and fjord blue |
+| Piste | Snow white and cold black, capital labels, 2px rules and one cobalt |
 | Sunset | Warm coral and plum on soft peach |
-| Graphite | Precise monochrome greys with one electric lime accent |
-| Editorial | Magazine style: serif headings and a deep red rule |
+| Vantage | Lime on blue-black, hairline frames, pill buttons and a faint grid |
+| Newsprint | Pale newsprint, warm black serif type, column rules and one dried-brick red |
 | Winter | Pine and berry over a frosty page, with snow dots, glows and glass |
 | Large and clear | Strong contrast, heavy headings and wide focus rings, for reading with low vision |
 | Studio | A quiet product style: hairline borders, one indigo accent, outlined buttons |
@@ -27,7 +27,7 @@
 | Clay | Puffy, matte soft-3D panels in calm pastels |
 | Classic | Starboard's design before Mica: teal on cool blue-grey, square corners and flat cards |
 
-Mica is Starboard's own style since 18 November 2026, so Classic keeps the design from before it. Mica and the five from Studio to Clay change every part of Starboard: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
+Mica is Starboard's own style since 18 November 2026, so Classic keeps the design from before it. Mica, the eleven redesigned on 20 November 2026 (Dusk to Piste) and the five from Studio to Clay change every part of Starboard: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
 API 1.2).
 
 ## Install
@@ -55,3 +55,5 @@ Edit `starboard-plugin.json`, then test it: `python3 -m starboard.plugin_tester 
 folder, or Settings, Plug-ins, **Test a plug-in**. A style that fails contrast cannot be added.
 
 Licence: MIT. Author: TheMightyTRexUK.
+
+Dusk, Vantage, Riso, Garden, Almanac, Terminal, Newsprint, Piste and Brutal are after themes in [Hallmark](https://github.com/Nutlope/hallmark) by the Hallmark contributors (MIT): colours and ideas only.

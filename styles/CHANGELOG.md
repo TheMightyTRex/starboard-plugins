@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.0 (20 November 2026)
+
+### Changed
+- Eleven styles redesigned in full: Dusk, Liquid glass, Brutal, Bento, Almanac, Garden, Terminal, Riso, Vantage, Newsprint and Piste now change cards, buttons, tabs, the header, the side menu and chips as well as colours, after the Hallmark themes and this year's interface trends. They replace Midnight, Frost, Bold, Bento, Paper, Forest, Retro, Vivid, Graphite, Editorial and Nordic; anyone using one of those moves to its new design.
+
 ## 1.5.0 (18 November 2026)
 
 ### Added
