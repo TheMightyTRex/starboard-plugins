@@ -30,7 +30,7 @@ can do only what is listed here, and only after you agree.
 | [Remote access](../plugins/remote-access/install.md) | Your apps, Home network and internet | Only its own folder |
 | [Ad blocking](../plugins/dns-blocking/install.md) | Home network and internet | Only its own folder |
 | [Line speed](../plugins/line-speed/install.md) | Home network and internet | Only its own folder |
-| [Outside services](../plugins/outside-services/install.md) | Home network and internet | Only its own folder |
+| [Uptime and status](../plugins/outside-services/install.md) | Home network and internet; its own page on your home network; sends alerts through Starboard | Only its own folder |
 | [Home Assistant](../plugins/home-assistant/install.md) | Home network and internet | Only its own folder |
 | [Styles](../plugins/styles/install.md) | Styles | Only its own folder |
 | [Jellystat](../plugins/jellystat/install.md) | Jellyfin's key, Home network and internet, Its own web page | Only its own folder |

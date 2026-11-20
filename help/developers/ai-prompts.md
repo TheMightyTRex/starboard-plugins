@@ -3,7 +3,7 @@
 
 # Make a plug-in with an AI assistant
 
-An AI assistant can write a plug-in for plug-in API 1.16 if you give it the rules. Starboard's help has a prompt for
+An AI assistant can write a plug-in for plug-in API 1.17 if you give it the rules. Starboard's help has a prompt for
 each kind of plug-in in the collection.
 
 ## Before you begin

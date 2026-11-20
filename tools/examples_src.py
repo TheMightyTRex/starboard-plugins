@@ -415,69 +415,7 @@ def card():
 serve({"/card": card})
 ''')
 
-# 8. Outside services -----------------------------------------------------------------------------------------------
-EXAMPLES["outside-services"] = ({
-    "name": "Outside services", "description": "Up or down for things that are not on this server: your router, a NAS (network storage device), a website.",
-    "permissions": ["network:lan"],
-    "containers": [{"name": "main", "image": image("outside-services"), "port": 8080, "network": "lan", "volumes": ["data"]}],
-    "resources": {"main": {"memory": 48, "cpus": 0.1}}, "health": "/health",
-    "settings": [{"key": "addresses", "label": "Addresses to check", "type": "list",
-                  "hint": "One each, such as http://192.0.2.1 or https://example.org. Give a name first if you like: Router http://192.0.2.1"},
-                 {"key": "minutes", "label": "Check every", "type": "number", "unit": "minutes", "default": 5, "min": 1, "max": 60}],
-    "cards": [{"id": "summary", "title": "Outside services", "type": "status", "path": "/status", "example": {"state": "ok", "text": "All 4 answer", "status": "ok", "updated": 1794694110}},
-              {"id": "list", "title": "Outside services", "type": "list", "path": "/card", "example": {"items": [{"title": "Router", "detail": "Up, 4 ms"}], "status": "ok", "updated": 1794694110}}],
-}, '''import time
-import urllib.error
-from sbplugin import band, changed, every, fetch, keep, remember, serve, setting
-
-
-def targets():
-    out = []
-    for line in setting("addresses", []) or []:
-        parts = str(line).split()
-        if parts:
-            out.append((" ".join(parts[:-1]) or parts[-1], parts[-1]))
-    return out[:20]
-
-
-def check():
-    rows = []
-    for name, url in targets():
-        started = time.monotonic()
-        try:
-            fetch(url, timeout=8, raw=True, limit=1024)
-            up = True
-        except urllib.error.HTTPError as e:
-            up = e.code < 500  # it answered: a sign-in page or 404 still means it is up
-        except Exception:  # noqa: BLE001
-            up = False
-        rows.append({"name": name, "url": url, "up": up, "ms": round((time.monotonic() - started) * 1000)})
-    keep("rows", rows)
-
-
-def status():
-    rows = remember("rows", [])
-    if not rows:
-        return band({"state": "warning", "text": "Add addresses in the plug-in's settings" if not targets() else "Not checked yet"},
-                    "needs_setup" if not targets() else "waiting")
-    down = [r["name"] for r in rows if not r["up"]]
-    return band({"state": "problem" if down else "ok", "text": f"Not answering: {', '.join(down)}" if down else f"All {len(rows)} answer"},
-                "problem" if down else "ok", changed("rows"), "Not answering" if down else None)
-
-
-def card():
-    rows = remember("rows", [])
-    down = sum(1 for r in rows if not r["up"])
-    out = {"items": [{"title": r["name"], "detail": f"Up, {r['ms']} ms" if r["up"] else "Not answering", "link": r["url"]} for r in rows][:10]}
-    if not rows:
-        return band(out, "needs_setup" if not targets() else "waiting")
-    return band(out, "problem" if down else "ok", changed("rows"), "Not answering" if down else None)
-
-
-every(60 * float(setting("minutes", 5)), check, first=2)
-serve({"/status": status, "/card": card})
-''')
-
+# 8. Outside services: hand-made since 2.0.0 (Uptime and status, 20 November 2026), in its own folder with its own image.
 # 9. Download summary -----------------------------------------------------------------------------------------------
 EXAMPLES["download-summary"] = ({
     "name": "Download summary", "description": "How much has downloaded today and this week, from the download queue in Starboard.",

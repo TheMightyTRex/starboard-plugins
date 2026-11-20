@@ -1,10 +1,10 @@
-# Outside services: Install
+# Uptime and status: Install
 
-Add Outside services from Starboard's **Catalogue**, where it is listed under **Network**. Starboard shows what it may do and tests it before anything is added. At the end, Outside services is active and its card is ready for your dashboard.
+Add Uptime and status from Starboard's **Catalogue**, where it is listed under **Network**. Version 2.0.0 takes over Outside services: if you have Outside services, update it instead, and your addresses are kept. Read [Updates](updates.md).
 
 ## Before you begin
 
-- Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
+- Starboard with plug-in API 1.17 or later. An older Starboard is offered Outside services 1.1.4: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -14,10 +14,12 @@ Starboard lists these before you add it, each with its risk.
 | Permission | Risk |
 |---|---|
 | Reach other computers on your home network, and the internet (`network:lan`) | Medium |
+| Open its own web page on your home network, at a port Starboard chooses (`network:port`) | Medium |
+| Send alerts through Starboard, to where it sends its own (`alerts:send`) | Low |
 
 What it runs:
 
-- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/outside-services`).
+- **main:** reaches your home network and the internet, to run the checks, and answers on a port of this computer for the status page and heartbeat addresses. It can use its own folder in Starboard's data (`data/plugins/outside-services`).
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 
@@ -25,15 +27,13 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 - **main:** 48 MB of memory and 0.1 of a processor core at most.
 
-These figures are the most it may use.
-
 ## Add it
 
 1. Go to **Settings**, then **Plug-ins**, then **Catalogue**.
-2. Under **Network**, find **Outside services** and select **Install…**.
+2. Under **Network**, find **Uptime and status** and select **Install…**.
 3. A slide-out opens with what it can read, change and reach. Read it all.
-4. Enter your Starboard password and select **Install Outside services**. To stop, select **Cancel**: nothing is installed.
-5. Outside services' own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Activate**.
+4. Enter your Starboard password and select **Install Uptime and status**. To stop, select **Cancel**: nothing is installed.
+5. Its own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it.
 
 ### Add it by its address
 
@@ -47,27 +47,23 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 ## Set it up
 
-1. Go to **Settings**, then **Plug-ins**, then **Outside services**.
-2. In **Addresses to check**, enter each address to check, one each, with a name first if you like, such as `Router http://192.0.2.1`.
-3. Select **Save**.
-4. In **Check every**, enter how many minutes between checks, from 1 to 60. The default is 5.
-5. Select **Deactivate**, then **Activate**, if you changed **Check every**.
-6. Add its cards to your dashboard. Read [Dashboard card](dashboard-card.md).
+1. Go to **Settings**, then **Plug-ins**, then **Uptime and status**, then **Checks**.
+2. In **Add a check**, enter one line, such as `Router: ping 192.168.1.1 in Home`, and select **Add**. Read [Settings](settings.md) for every kind.
+3. Add more, then put its cards on your dashboard. Read [Dashboard card](dashboard-card.md).
+4. Open the status page from the plug-in's tab with **Open**.
 
 ## Remove it
 
-1. Go to **Settings**, then **Plug-ins**, then **Outside services**.
-2. Under **Remove**, select **Remove Outside services**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+1. Go to **Settings**, then **Plug-ins**, then **Uptime and status**.
+2. Under **Remove**, select **Remove Uptime and status**.
+3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**.
 4. Enter your Starboard password and select **Remove**.
 
-Its containers stop and go, and its API key stops working. Nothing is deleted.
-
-To stop it for a while instead, select **Deactivate** on its tab: its settings and folder are kept.
+Its container stops, its API key stops working and its alerts are cleared. Nothing is deleted. To stop it for a while instead, select **Deactivate** on its tab.
 
 ## Find out more
 
-- [What Outside services does](../../../outside-services/README.md)
+- [What Uptime and status does](../../../outside-services/README.md)
 - [Settings](settings.md)
 - [Problems](problems.md)
 - [Add a plug-in, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/add-a-plugin.html)

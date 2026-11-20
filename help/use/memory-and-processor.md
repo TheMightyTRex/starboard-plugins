@@ -33,7 +33,7 @@ nobody has measured that plug-in: the limit is the most it may use.
 | [Remote access](../plugins/remote-access/install.md) | 128 MB, 0.5 core | Always | About 20 to 32 MB (13 November 2026) |
 | [Ad blocking](../plugins/dns-blocking/install.md) | 48 MB, 0.1 core | Always | Not measured yet |
 | [Line speed](../plugins/line-speed/install.md) | 64 MB, 0.25 core | Always | Not measured yet |
-| [Outside services](../plugins/outside-services/install.md) | 48 MB, 0.1 core | Always | Not measured yet |
+| [Uptime and status](../plugins/outside-services/install.md) | 48 MB, 0.1 core | Always | About 17 MB and under 0.1% of a core with 7 checks (20 November 2026) |
 | [Home Assistant](../plugins/home-assistant/install.md) | 48 MB, 0.1 core | Always | Not measured yet |
 | [Styles](../plugins/styles/install.md) | None | Runs nothing | None: it runs nothing |
 | [Jellystat](../plugins/jellystat/install.md) | 640 MB, 1.25 cores, in three containers | Always | 126.4 MiB (13 November 2026) |

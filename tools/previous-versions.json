@@ -137,6 +137,15 @@
     "sha256": "a5233a2186177acb4455fd40827662267325e38619b0b69d68fa45cfca6d5b74",
     "note": "The last version for plug-in API 1.14 and 1.15 (Starboard 0.18.0 to 0.22.0), kept when 1.2.0 needs 1.16 (19 November 2026)."
    }
+  ],
+  "outside-services": [
+   {
+    "version": "1.1.4",
+    "starboard_api": ">=1.14 <2.0",
+    "commit": "e108f08b44beb899496d9aa0e104f5aad56bc22a",
+    "sha256": "9d26b1978f087fc2048ef8fd59d4a04bfb4d366066497f7a71aaa226c1c071c7",
+    "note": "The last Outside services, for plug-in API 1.14 to 1.16, kept when 2.0.0 (Uptime and status) needs 1.17 (20 November 2026)."
+   }
   ]
  }
 }

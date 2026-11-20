@@ -1,0 +1,18 @@
+/* The status page's own layout, with the design system's tokens only (ds.css holds the library itself). */
+body { background: var(--color-bg); color: var(--color-text); font-family: var(--font); line-height: 1.5; }
+.status-head, .status-main, .status-foot { max-width: 72rem; margin-inline: auto; padding-inline: 16px; }
+.status-head { padding-block: 24px 8px; }
+.status-head h1 { margin: 0 0 4px; }
+.status-summary { font-size: 1.125rem; margin: 0; }
+.status-when, .status-kind, .status-count, .status-foot { color: var(--color-text-muted); }
+.status-when { margin: 4px 0 0; }
+.status-main { display: grid; gap: 16px; padding-block: 16px; }
+.status-group { padding: 16px; }
+.status-group__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-block-end: 8px; }
+.status-group__head h2 { margin: 0; }
+.status-count { margin: 0; margin-inline-start: auto; }
+.status-note { margin: 0 0 8px; }
+.status-kind { display: block; font-weight: normal; font-size: 0.875rem; }
+.status-foot { padding-block: 8px 32px; font-size: 0.875rem; }
+.table-wrap:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.status-main:focus { outline: none; }

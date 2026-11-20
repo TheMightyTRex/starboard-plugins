@@ -1,24 +1,57 @@
-# Outside services: Settings
+# Uptime and status: Settings
 
-Outside services' settings are on its own tab: go to **Settings**, then **Plug-ins**, then **Outside services**. Starboard draws them and keeps them; secrets are never shown again once saved.
+Uptime and status' settings are on its own tab: go to **Settings**, then **Plug-ins**, then **Uptime and status**. It has five sections: **Checks**, **Groups and maintenance**, **Settings**, **Alerts** and **Status page**.
 
-## Settings
+## Checks
+
+Each check is one line: a name, a colon, then what to check. Enter it in **Add a check** and select **Add**. Each row has **Test**, **Change** (the same line, to change), **Activate** or **Deactivate**, and **Remove**, which removes its history too.
+
+| Kind | Example | Up when |
+|---|---|---|
+| `http` | `Website: http https://example.org` | It answers with anything under error 500, even a sign-in page or "not found" |
+| `keyword` | `Shop: keyword https://example.org/shop "In stock"` | It answers under 400 and the words are on the page, in any case. With `without` before the words, they must not be there |
+| `tcp` | `NAS files: tcp 192.168.1.5:445` | The port takes a connection. Add `tls` to read the port's certificate |
+| `ping` | `Router: ping 192.168.1.1` | It answers ping within 8 seconds. Where the container may not send ping, it knocks on ports 443, 80, 22 and 53, and any answer counts |
+| `dns` | `Home name: dns example.org A is 192.0.2.10 at 192.168.1.1` | The name has a record of that type (`A`, `AAAA`, `CNAME`, `MX`, `NS` or `TXT`), with the value after `is` when you give one, asked of the server after `at` when you give one |
+| `push` | `Backup: push grace 25h` | Something calls its secret address within the grace time. Its row shows the address |
+
+After any check:
+
+- `in Home` puts it in the group Home. Use quote marks for a name with spaces: `in "Home office"`.
+- `#network` adds the tag network. Tags show on its row.
+- `every 1m` checks it every minute (`30s`, `5m`, `2h` or `1d`; 20 seconds at the most often). Without it, the check runs every **Check every** minutes.
+
+A web address or a name with a port can stand alone: `https://example.org` is an `http` check and `nas.home:22` a `tcp` check. Up to 100 checks.
+
+### Heartbeats
+
+A `push` check is for something that runs by itself, such as a backup. At its end, the job calls the check's address, such as `http://192.0.2.20:8788/push/...`, with any web request (`curl` or `wget` will do). With no call for longer than its grace time (1 hour when left out), the check is down. To say the job failed, call the address with `?status=down&msg=Disk%20full`.
+
+## Groups and maintenance
+
+Each group made by `in` has a row with how many of its checks are up.
+
+- **Deactivate** a group to pause its alerts. Its checks still run.
+- **Maintenance** takes one or more windows, split by `;`: `Sunday 02:00 to 04:00`, `weekdays 01:00 to 02:00`, `every day 03:00 to 03:30`, `2026-11-21 02:00 to 06:00` or `now for 2 hours`. A window that ends before it starts ends the next day. Times are the server's own.
+- In a window, its checks still run and are kept, no alert is sent, and the status page says **Maintenance**. A check still down when the window ends is sent then.
+
+## Settings, Alerts and Status page
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Addresses to check** | One each, such as http://192.0.2.1 or https://example.org. Give a name first if you like: Router http://192.0.2.1 One a line. | Empty |
-| **Check every** | A number from 1 to 60 minutes. | 5 minutes |
-
-Outside services has no buttons. Select **Save** to keep **Addresses to check**. **Check every** is saved when you leave the box.
+| **Addresses to check** | Web addresses, one a line, with a name first if you like: `Router http://192.0.2.1`. Kept from Outside services; they show in **Checks** in the group Outside services | Empty |
+| **Check every** | Minutes between checks, from 1 to 60, for these addresses and for checks without `every` | 5 minutes |
+| **Send alerts through Starboard** | Sends an alert when a check is down and when it is up again, to where Starboard sends its own (**Settings**, **Alerts**) | Active |
+| **Failed checks in a row before an alert** | 1 to 10. Until then the check says **Trying again** | 2 |
+| **Warn when a certificate has this long left** | 1 to 90 days | 14 days |
+| **Status page on your home network** | The read-only page on the plug-in's address | Active |
+| **Status page title** | Its heading | Home services |
 
 ## Things to note
 
-- **Addresses to check:** the last word on each line is the address, and any words before it are its name on the cards, such as `Router http://192.0.2.1`. Without a name, the address is shown.
-- It checks the first 20 addresses. The list card shows up to 10.
-- **What counts as answering:** it opens each address and waits up to 8 seconds. Any answer counts, even a sign-in page or "not found", unless it is a server error (500 or higher).
-- A change to **Addresses to check** is used at the next check.
-- A change to **Check every** is used the next time Outside services starts. To use it now, select **Deactivate**, then **Activate**.
-- Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
+- **Certificates** are read for every `https` address and every `tcp` check with `tls`, every 6 hours. A home device with its own certificate is still up; the certificate says **Not trusted** and why.
+- **History:** 90 days of response times and uptime for each check, about 43 KB each.
+- A change is used at the next round, within a minute. Settings are kept when you update or deactivate it.
 
 ## Find out more
 

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.0 (20 November 2026)
+
+### Added
+- More kinds of check: a port (tcp), ping (with a knock on common ports where ping is not allowed), a DNS record, and words on a web page (keyword), beside web addresses.
+- Heartbeats: a push check gives an address for a backup or a script to call; no call within its grace time means down.
+- 90 days of history: response times and uptime an hour and a day, about 43 KB a check, with no database.
+- Certificates for every https address and every port checked with tls: the days left and the names it was issued for.
+- Groups, tags and maintenance windows: write in Home after a check; a group's alerts pause in its maintenance windows.
+- Alerts through Starboard, to where it sends its own, once when a check is down and once when it is up again.
+- A status page on your home network, which only shows names, up or down, response times and uptime.
+- Three more cards: Groups, Response times (a small line for each check) and Certificates.
+
+### Changed
+- Outside services is now Uptime and status. Your Addresses to check and Check every stay as they were and are checked as before, in the group Outside services.
+- Needs Starboard with plug-in API 1.17 or later, for the Response times card and the alerts. A Starboard with an older plug-in API keeps version 1.1.4.
+- Its own image, with the status page's files, in place of the image the examples share.
+
 ## 1.1.4 (19 November 2026)
 
 ### Changed
