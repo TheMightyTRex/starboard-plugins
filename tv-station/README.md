@@ -12,6 +12,18 @@ Its id and folder stay `tv-station`, so nothing that already uses it changes.
 
 Starboard never adds it by itself: you choose to add it from the catalogue.
 
+## What it needs, and what it leaves alone
+
+- **It needs [Starboard](https://github.com/TheMightyTRex/starboard).** It is a Starboard plug-in, added from Starboard's plug-in catalogue, with Jellyfin added in Starboard in **Settings**, then **Apps**. It does not run on its own.
+- **It works alongside the \*arr stack.** Sonarr, Radarr and the rest go on adding films and series as they do; the plug-in reads films and series from Jellyfin only, so whatever reaches Jellyfin can be on a channel.
+- **It never changes other apps or your library.** Your films, series, their files and Jellyfin's library, watched marks and **Continue watching** stay as they are. Its only change to Jellyfin is adding its channels and their guide to Live TV.
+
+## Help
+
+- [Its pages in the help centre](https://themightytrex.github.io/starboard/help/plugins/tv-station/index.html): install, every setting with an example of its result, the dashboard card and problems.
+- [Use a broadcast pack](../help/use/use-a-broadcast-pack.md): add a pack to the station or a channel, replace or remove it, and try the example pack.
+- [Make a broadcast pack](../help/use/make-a-broadcast-pack.md): step by step, with the template, the placement guides, every file, `pack.json` and what each problem means.
+
 ## What it does
 
 - **A station and its channels.** You name the station, and each channel: its name, number, logo and colour.
@@ -36,7 +48,7 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   a clip area and text fields placed in `pack.json`, music beds in `promo/music`, and transitions with transparency in
   `transitions`. The station has one, and each channel can have its own. Every file is checked before it is used. The
   plug-in's page offers the template, placement guides that mark where the clip, each text field and the safe areas
-  go, and the example pack. [Make a broadcast pack](../help/use/make-a-broadcast-pack.md) is the specification.
+  go, and the example pack. [Use a broadcast pack](../help/use/use-a-broadcast-pack.md) says how to add one, and [Make a broadcast pack](../help/use/make-a-broadcast-pack.md) how to make one.
 - **Promos.** Made in quiet hours from a few short clips of a programme coming up, a music bed you upload or from the pack, and its
   title, channel and day and time from the schedule. Each channel keeps 3 unless you change it, and old ones are
   replaced after 2 days. They play on their own channel and on your other channels.
