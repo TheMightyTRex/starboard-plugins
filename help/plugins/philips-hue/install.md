@@ -36,8 +36,17 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 1. Go to **Settings**, then **Plug-ins**, then **Catalogue**.
 2. Under **Home**, find **Philips Hue** and select **Install…**.
+
+   ![The Catalogue under Home, with Install… beside Philips Hue (step 2) outlined](../../images/philips-hue/add-1-catalogue.png)
+
 3. A slide-out opens with what it can read, change and reach. Read it all.
+
+   ![The Install Philips Hue? slide-out, with what it can read and change, and It can reach (step 3) outlined](../../images/philips-hue/add-2-what-it-may-do.png)
+
 4. Enter your Starboard password and select **Install Philips Hue**. To stop, select **Cancel**: nothing is installed.
+
+   ![The foot of the install slide-out, with Your Starboard password filled in and Install Philips Hue (step 4) outlined](../../images/philips-hue/add-3-password.png)
+
 5. Philips Hue's own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**.
 
 ### Add it by its address

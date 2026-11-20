@@ -40,6 +40,8 @@ Plug-in cards cannot hold buttons, so the quick switch is in **Actions** on the 
 2. In **Add a card**, choose **Rooms** or **Lights on**, each with (Philips Hue) after it.
 3. Select **Save**.
 
+![Edit dashboard, with Rooms (Philips Hue) chosen in Add a card (step 2) and Save (step 3) outlined](../../images/philips-hue/dashboard-card-4-add.png)
+
 ## Find out more
 
 - [Use and change the dashboard, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/use-the-dashboard.html)
