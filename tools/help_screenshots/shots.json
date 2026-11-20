@@ -1,5 +1,5 @@
 {
-  "about": "Library clean-up's help pictures, taken by tools/help-screenshots.sh with Starboard's help_shoot.mjs. phase: absent (not added yet) or present (added and active). Files go to help/images/library-cleanup.",
+  "about": "The plug-ins' help pictures, taken by tools/help-screenshots.sh with Starboard's help_shoot.mjs. plugin: whose pictures (library-cleanup when none). phase: absent (not added yet) or present (added and active). Files go to help/images/<plugin>.",
   "shots": [
     {
       "phase": "absent",
@@ -173,7 +173,7 @@
       "phase": "present",
       "file": "dashboard-card-3-dark.png",
       "scheme": "dark",
-      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(2000); const card = document.querySelector('[data-card=\"plugin:library-cleanup:held\"]'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); try { const k = 'starboard.display'; localStorage.setItem(k, JSON.stringify({ ...JSON.parse(localStorage.getItem(k) || '{}'), theme: 'dark' })); } catch {} if (typeof applyPrefs === 'function') applyPrefs(); else document.documentElement.setAttribute('data-theme', 'dark'); await w(2000); const card = document.querySelector('[data-card=\"plugin:library-cleanup:held\"]'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
       "marks": [
         {
           "t": "$[data-shot=card]",
@@ -188,23 +188,112 @@
     },
     {
       "phase": "present",
-      "file": "install-4-activate.png",
-      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Deactivate')).click(); await w(2500); const a = [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Activate')); a.dataset.shot = 'activate'; [...document.querySelectorAll('main p, main div')].filter((x) => x.children.length === 0 && x.textContent.includes('Example data: Docker')).forEach((x) => { x.hidden = true; });",
-      "after": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const b = [...document.querySelectorAll('main button')].find((x) => x.textContent.trim().startsWith('Activate')); if (b) { b.click(); await w(2500); }",
+      "file": "install-4-active.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); [...document.querySelectorAll('main p, main div')].filter((x) => x.children.length === 0 && x.textContent.includes('Example data: Docker')).forEach((x) => { x.hidden = true; }); const st = document.getElementById('pl-library-cleanup-state-h').closest('section'); st.dataset.shot = 'state'; window.scrollTo(0, 0); await w(300);",
       "marks": [
         {
-          "t": "$[data-shot=activate]",
+          "t": "$[data-shot=state]",
           "step": 5,
-          "side": "left",
-          "tail": 90
+          "side": "bottom",
+          "tail": 60
         }
       ],
       "steps": [
         5
       ],
-      "alt": "Library clean-up's own tab on State, with Activate (step 5) outlined",
+      "alt": "Library clean-up's own tab, General, with its State, Active, (step 5) outlined",
       "topic": "install",
       "page": "settings-plugin.html?id=library-cleanup"
+    },
+    {
+      "plugin": "philips-hue",
+      "phase": "absent",
+      "file": "add-1-catalogue.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Philips Hue')); row.dataset.shot = 'hue'; row.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$li.row[data-shot=hue] button",
+          "step": 2,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "The Catalogue under Home, with Install… beside Philips Hue (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "plugin": "philips-hue",
+      "phase": "absent",
+      "file": "add-2-what-it-may-do.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Philips Hue')); row.dataset.shot = 'hue'; row.querySelector('button').click(); await w(2500); const ul = document.querySelector('#side-panel section[aria-label=\"It can reach\"]'); ul.dataset.shot = 'may'; ul.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "$#side-panel section[data-shot=may]",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        3
+      ],
+      "alt": "The Install Philips Hue? slide-out, with what it can read and change, and It can reach (step 3) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "plugin": "philips-hue",
+      "phase": "absent",
+      "file": "add-3-password.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Philips Hue')); row.dataset.shot = 'hue'; row.querySelector('button').click(); await w(2500); const pw = document.querySelector('#side-panel input[type=password]'); pw.value = 'example-password'; pw.closest('.field')?.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "Install Philips Hue",
+          "step": 4,
+          "side": "top",
+          "tail": 70
+        }
+      ],
+      "steps": [
+        4
+      ],
+      "alt": "The foot of the install slide-out, with Your Starboard password filled in and Install Philips Hue (step 4) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "plugin": "philips-hue",
+      "phase": "present",
+      "file": "dashboard-card-4-add.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(Philips Hue)'))); s.value = [...s.options].find((o) => o.textContent.startsWith('Rooms') && o.textContent.includes('(Philips Hue)')).value; s.dataset.shot = 'add'; window.scrollTo(0, 0); await w(300);",
+      "after": "const b = [...document.querySelectorAll('button')].find((x) => x.textContent.trim() === 'Cancel'); if (b) b.click();",
+      "marks": [
+        {
+          "t": "$[data-shot=add]",
+          "step": 2,
+          "side": "bottom",
+          "tail": 60
+        },
+        {
+          "t": "Save",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        2,
+        3
+      ],
+      "alt": "Edit dashboard, with Rooms (Philips Hue) chosen in Add a card (step 2) and Save (step 3) outlined",
+      "topic": "dashboard-card",
+      "page": "dashboard.html"
     }
   ]
 }

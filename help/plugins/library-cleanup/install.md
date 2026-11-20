@@ -55,7 +55,7 @@ Measured:
 
 5. Library clean-up's own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Activate**.
 
-   ![Library clean-up's own tab on State, with Activate (step 5) outlined](../../images/library-cleanup/install-4-activate.png)
+   ![Library clean-up's own tab, General, with its State, Active, (step 5) outlined](../../images/library-cleanup/install-4-active.png)
 
 6. Check the rules, **Libraries** and **Always keep**. If someone never watches, such as a guest account, add their Jellyfin user name to **People to leave out**. Read [Settings](settings.md).
 7. Open **Preview**. It lists what the rules would move now, and the space each frees. Nothing moves from **Preview**.

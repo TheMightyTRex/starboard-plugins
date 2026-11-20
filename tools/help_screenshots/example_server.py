@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Starboard's example server (made-up data, nothing real is read) with this collection's own catalogue.json and
-Library clean-up's real manifest, for the plug-ins help pictures (tools/help-screenshots.sh).
+the plug-ins' real manifests, for the plug-ins help pictures (tools/help-screenshots.sh).
 
-    python3 tools/help_screenshots/example_server.py <starboard checkout> <data folder> <port> [absent]
+    python3 tools/help_screenshots/example_server.py <starboard checkout> <data folder> <port> [absent|present] [plug-in]
 
-With "absent", Library clean-up is not added, so the Catalogue offers it and Install... shows what it may do. Without
-it, Library clean-up is added and active, with made-up Preview, Holding folder, Libraries and card answers.
-Nothing is read, moved or put back: Put back takes the row off the list here. 15 November 2026."""
+The plug-in is library-cleanup unless named, and the Catalogue lists it as published even before it is. With
+"absent", it is not added, so the Catalogue offers it and Install...
+shows what it may do. Otherwise it is added and active. Library clean-up has made-up Preview, Holding folder, Libraries
+and card answers; any other plug-in is only added (enough for Add a card), and its container is never started.
+Nothing is read, moved or put back: Put back takes the row off the list here. 15 and 20 November 2026."""
 import json
 import pathlib
 import sys
@@ -15,13 +17,19 @@ import time
 HERE = pathlib.Path(__file__).resolve().parent.parent.parent
 starboard, data, port = sys.argv[1], sys.argv[2], sys.argv[3]
 absent = len(sys.argv) > 4 and sys.argv[4] == "absent"
+PLUGIN = sys.argv[5] if len(sys.argv) > 5 else "library-cleanup"
 sys.path.insert(0, str(pathlib.Path(starboard) / "tools" / "screenshots"))
 sys.argv = ["example_server.py", data, port]
 import example_server as ex  # noqa: E402  (Starboard's example server: its set-up runs on import, main() below)
 from starboard import plugin_cards, plugin_custom, plugin_logo, plugin_watch, plugins_admin  # noqa: E402
 
 CATALOGUE = json.loads((HERE / "catalogue.json").read_text())
-MANIFEST = json.loads((HERE / "library-cleanup" / "starboard-plugin.json").read_text())
+MANIFEST = json.loads((HERE / PLUGIN / "starboard-plugin.json").read_text())
+# As published: an image pinned by digest. One GitHub has not built yet gets a made-up digest (e…e) here.
+PINNED = json.loads(json.dumps(MANIFEST))
+for _c in PINNED.get("containers", []):
+    if _c.get("image") and "@sha256:" not in _c["image"]:
+        _c["image"] = _c["image"].split(":")[0] + "@sha256:" + "e" * 64
 _real_catalogue, _real_manifest = plugins_admin.fetch_catalogue, plugins_admin.fetch_manifest
 
 
@@ -29,13 +37,14 @@ def catalogue(address, opener=None):
     """The collection's own catalogue, as Starboard reads it from GitHub."""
     if address == plugins_admin.CATALOGUE_URL:
         return {"name": CATALOGUE.get("name") or "Starboard plug-ins",
-                "items": [x for x in map(plugins_admin._clean_entry, CATALOGUE["plugins"]) if x]}
+                "items": [x for x in map(plugins_admin._clean_entry, [{**e, "published": True} if e["id"] == PLUGIN else e
+                                                                      for e in CATALOGUE["plugins"]]) if x]}
     return _real_catalogue(address, opener)
 
 
 def manifest(address, opener=None, sha256=""):
-    if "library-cleanup" in str(address):
-        return json.loads(json.dumps(MANIFEST))
+    if f"/{PLUGIN}/" in str(address):
+        return json.loads(json.dumps(PINNED))
     return _real_manifest(address, opener) if not sha256 else _real_manifest(address, opener, sha256)
 
 
@@ -83,10 +92,14 @@ def screen(key, held, off):
 def cleanup(data_dir):
     if absent:
         return
-    if not any(p["id"] == "library-cleanup" for p in plugins_admin.listing(data_dir)):
-        plugins_admin.install(data_dir, json.loads(json.dumps(MANIFEST)), "/nonexistent-media")
-        plugins_admin.keep_logo(data_dir, "library-cleanup", plugin_logo.clean((HERE / "library-cleanup" / "logo.svg").read_bytes(), "logo.svg"))
-        plugins_admin.set_state(data_dir, "library-cleanup", "enabled")
+    if not any(p["id"] == PLUGIN for p in plugins_admin.listing(data_dir)):
+        plugins_admin.install(data_dir, json.loads(json.dumps(PINNED)), "/nonexistent-media")
+        plugins_admin.keep_logo(data_dir, PLUGIN, plugin_logo.clean((HERE / PLUGIN / "logo.svg").read_bytes(), "logo.svg"))
+        plugins_admin.set_state(data_dir, PLUGIN, "enabled")
+    if PLUGIN != "library-cleanup":
+        real_ask = plugin_watch._ask
+        plugin_watch._ask = lambda pid, main, path: "ok" if pid == PLUGIN else real_ask(pid, main, path)
+        return
     real_call, real_ask, real_answer = plugin_custom.call, plugin_watch._ask, plugin_cards.answer
     held, off = list(HELD), {"children"}
 
