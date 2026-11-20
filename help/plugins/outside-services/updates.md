@@ -6,7 +6,7 @@ Uptime and status 2.0.0 is the latest version. It takes over Outside services an
 
 | Version | Name | Needs plug-in API | Released |
 |---|---|---|---|
-| 2.0.0 | Uptime and status | 1.17 or later | Not yet released |
+| 2.0.0 | Uptime and status | 1.17 or later | 20 November 2026 |
 | 1.1.4 | Outside services | 1.14 or later | 19 November 2026 |
 | 1.1.3 | Outside services | 1.14 or later | 17 November 2026 |
 | 1.1.2 | Outside services | 1.14 or later | 17 November 2026 |

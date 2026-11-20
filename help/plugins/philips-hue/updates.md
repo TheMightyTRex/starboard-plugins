@@ -6,7 +6,7 @@ Philips Hue 0.1.0 is the latest version, and the first. It needs Starboard with 
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 0.1.0 | 1.16 or later | Not yet released |
+| 0.1.0 | 1.16 or later | 20 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run. A Starboard with an older plug-in API is not offered Philips Hue.
 

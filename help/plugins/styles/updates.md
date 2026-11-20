@@ -6,7 +6,7 @@ Styles 1.6.0 is the latest version. It needs Starboard with plug-in API 1.14 or 
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 1.6.0 | 1.14 or later | Not yet released |
+| 1.6.0 | 1.14 or later | 20 November 2026 |
 | 1.5.0 | 1.14 or later | 18 November 2026 |
 | 1.4.1 | 1.14 or later | 17 November 2026 |
 | 1.4.0 | 1.14 or later | 15 November 2026 |

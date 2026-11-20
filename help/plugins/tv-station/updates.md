@@ -6,7 +6,7 @@ Create your own TV channel 0.5.6 is the latest version. It needs Starboard with 
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 0.5.6 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not yet released |
+| 0.5.6 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 20 November 2026 |
 | 0.5.5 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.5.4 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.5.3 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
