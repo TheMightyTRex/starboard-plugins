@@ -1,0 +1,46 @@
+# Builds and publishes the Uptime and status plug-in (outside-services)'s image when it changes, for amd64, arm64 and arm/v7:
+#   ghcr.io/<owner>/starboard-plugin-outside-services:<version> and :latest
+# The digest is printed in the run's summary; put it in outside-services/starboard-plugin.json in place of the tag.
+name: Uptime and status image
+on:
+  push:
+    branches: [main]
+    paths: ["outside-services/Dockerfile", "outside-services/app.py", "outside-services/sbplugin.py", "outside-services/checks.py", "outside-services/history.py", "outside-services/windows.py", "outside-services/page.py", "outside-services/ds.css", "outside-services/status.css", "outside-services/theme.js", "outside-services/font.woff2", ".github/workflows/outside-services-image.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The plug-in compiles and its tests pass
+        run: python3 -m py_compile outside-services/*.py && python3 -m unittest tests.test_uptime_status
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: version
+        run: echo "v=$(python3 -c "import json;print(json.load(open('outside-services/starboard-plugin.json'))['version'])")" >> "$GITHUB_OUTPUT"
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: outside-services
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: |
+            ghcr.io/themightytrex/starboard-plugin-outside-services:${{ steps.version.outputs.v }}
+            ghcr.io/themightytrex/starboard-plugin-outside-services:latest
+          labels: |
+            org.opencontainers.image.title=Starboard uptime and status plug-in
+            org.opencontainers.image.description=Checks, 90 days of response times, certificates, maintenance windows and a status page
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+      - name: Digest
+        run: |
+          echo "Digest: ${{ steps.build.outputs.digest }}" | tee -a "$GITHUB_STEP_SUMMARY"

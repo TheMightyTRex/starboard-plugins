@@ -84,8 +84,8 @@ LOGOS = {
     "notifications": ("#a33c17", "A bell",
                       f'<path d="M24 10.5a8.5 8.5 0 0 0-8.5 8.5v6.5l-3.5 5.5h24l-3.5-5.5V19a8.5 8.5 0 0 0-8.5-8.5z" fill="{W}"/>'
                       f'<circle cx="24" cy="35" r="3.2" fill="{W}"/>'),
-    "outside-services": ("#33449e", "A globe",
-                         f'<circle cx="24" cy="24" r="13" {S}/><ellipse cx="24" cy="24" rx="6" ry="13" {s(3)}/><path d="M11 24h26" {s(3)}/>'),
+    "outside-services": ("#33449e", "A heartbeat line across a circle",
+                         f'<circle cx="24" cy="24" r="15" {s(3)}/><path d="M7 25h8l3.5-7 5 14 4-10 2.5 3h11" {S}/>'),
     "picture-shrinker": ("#8a4a0b", "A picture with an arrow pointing into its corner",
                          f'<rect x="8" y="16" width="24" height="22" rx="3" fill="{W}"/>'
                          f'<path d="M11.5 34.5l6.5-8 4.5 5 2.5-3 4 6z" fill="#8a4a0b"/><circle cx="25" cy="22" r="2.5" fill="#8a4a0b"/>'

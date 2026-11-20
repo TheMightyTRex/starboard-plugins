@@ -1,29 +1,30 @@
 {
  "manifest_version": 1,
  "id": "outside-services",
- "name": "Outside services",
- "version": "1.1.4",
- "description": "Up or down for things that are not on this server: your router, a NAS (network storage device), a website.",
+ "name": "Uptime and status",
+ "version": "2.0.0",
+ "description": "Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat, with 90 days of response times, certificates, maintenance windows and a status page.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/outside-services",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.14 <2.0",
+ "starboard_api": ">=1.17 <2.0",
  "permissions": [
-  "network:lan"
+  "network:lan",
+  "network:port",
+  "alerts:send"
  ],
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:cb73190ff13c0eb46ff0d60cacb9d37e003118c97daac06f15131ec6d0baa1cd",
+   "image": "ghcr.io/themightytrex/starboard-plugin-outside-services:2.0.0",
    "port": 8080,
    "network": "lan",
+   "publish": true,
+   "host_port": 8788,
    "volumes": [
     "data"
-   ],
-   "env": {
-    "EXAMPLE": "outside-services"
-   }
+   ]
   }
  ],
  "resources": {
@@ -35,10 +36,25 @@
  "health": "/health",
  "settings": [
   {
+   "key": "checks",
+   "label": "Checks",
+   "type": "custom",
+   "choices": "/manage/checks",
+   "group": "Checks"
+  },
+  {
+   "key": "groups",
+   "label": "Groups and maintenance",
+   "type": "custom",
+   "choices": "/manage/groups",
+   "group": "Groups and maintenance"
+  },
+  {
    "key": "addresses",
    "label": "Addresses to check",
    "type": "list",
-   "hint": "One each, such as http://192.0.2.1 or https://example.org. Give a name first if you like: Router http://192.0.2.1"
+   "group": "Settings",
+   "hint": "Web addresses only, one a line, such as Router http://192.0.2.1. Add other kinds of check in Checks."
   },
   {
    "key": "minutes",
@@ -47,32 +63,140 @@
    "unit": "minutes",
    "default": 5,
    "min": 1,
-   "max": 60
+   "max": 60,
+   "group": "Settings",
+   "hint": "For the addresses here, and for new checks unless the check says every and a time."
+  },
+  {
+   "key": "alerts",
+   "label": "Send alerts through Starboard",
+   "type": "switch",
+   "default": true,
+   "group": "Alerts",
+   "hint": "Once when a check is down and once when it is up again, to where Starboard sends its own alerts."
+  },
+  {
+   "key": "down_after",
+   "label": "Failed checks in a row before an alert",
+   "type": "number",
+   "default": 2,
+   "min": 1,
+   "max": 10,
+   "group": "Alerts"
+  },
+  {
+   "key": "cert_days",
+   "label": "Warn when a certificate has this long left",
+   "type": "number",
+   "unit": "days",
+   "default": 14,
+   "min": 1,
+   "max": 90,
+   "group": "Alerts"
+  },
+  {
+   "key": "status_page",
+   "label": "Status page on your home network",
+   "type": "switch",
+   "default": true,
+   "group": "Status page",
+   "hint": "A page that only shows: names, up or down, response times and uptime. Never addresses."
+  },
+  {
+   "key": "status_title",
+   "label": "Status page title",
+   "type": "text",
+   "default": "Home services",
+   "group": "Status page"
+  }
+ ],
+ "actions": [
+  {
+   "id": "check-now",
+   "label": "Check everything now",
+   "path": "/run"
   }
  ],
  "cards": [
   {
    "id": "summary",
-   "title": "Outside services",
+   "title": "All checks",
    "type": "status",
    "path": "/status",
    "example": {
     "state": "ok",
-    "text": "All 4 answer",
+    "text": "All 6 checks are up",
     "status": "ok",
     "updated": 1794694110
    }
   },
   {
    "id": "list",
-   "title": "Outside services",
+   "title": "Checks",
    "type": "list",
    "path": "/card",
    "example": {
     "items": [
      {
       "title": "Router",
-      "detail": "Up, 4 ms"
+      "detail": "Up, 4 ms, 99.98% this week"
+     }
+    ],
+    "status": "ok",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "groups",
+   "title": "Groups",
+   "type": "list",
+   "path": "/groups",
+   "example": {
+    "items": [
+     {
+      "title": "Home: Up",
+      "detail": "3 of 3 up, 100% this week"
+     }
+    ],
+    "status": "ok",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "times",
+   "title": "Response times",
+   "type": "sparkline",
+   "path": "/trend",
+   "example": {
+    "series": [
+     {
+      "title": "Router",
+      "points": [
+       4,
+       5,
+       4,
+       null,
+       6
+      ],
+      "unit": "ms",
+      "detail": "Up 99.98% of the last 24 hours"
+     }
+    ],
+    "note": "Average each hour, the last 24 hours. A gap is an hour with no answer.",
+    "status": "ok",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "certs",
+   "title": "Certificates",
+   "type": "list",
+   "path": "/certs",
+   "example": {
+    "items": [
+     {
+      "title": "Website",
+      "detail": "41 days left, for example.org"
      }
     ],
     "status": "ok",
@@ -80,11 +204,41 @@
    }
   }
  ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  },
+  "health_wait_seconds": 30
+ },
  "logo": {
   "file": "logo.svg",
-  "alt": "Outside services logo"
+  "alt": "Uptime and status logo"
  },
  "changes": [
+  {
+   "version": "2.0.0",
+   "date": "2026-11-20",
+   "added": [
+    "**More kinds of check:** a port (tcp), ping (with a knock on common ports where ping is not allowed), a DNS record, and words on a web page (keyword), beside web addresses.",
+    "**Heartbeats:** a push check gives an address for a backup or a script to call; no call within its grace time means down.",
+    "**90 days of history:** response times and uptime an hour and a day, about 43 KB a check, with no database.",
+    "**Certificates** for every https address and every port checked with tls: the days left and the names it was issued for.",
+    "**Groups, tags and maintenance windows:** write in Home after a check; a group's alerts pause in its maintenance windows.",
+    "**Alerts through Starboard,** to where it sends its own, once when a check is down and once when it is up again.",
+    "**A status page** on your home network, which only shows names, up or down, response times and uptime.",
+    "**Three more cards:** Groups, Response times (a small line for each check) and Certificates."
+   ],
+   "changed": [
+    "**Outside services is now Uptime and status.** Your **Addresses to check** and **Check every** stay as they were and are checked as before, in the group Outside services.",
+    "Needs Starboard with plug-in API 1.17 or later, for the Response times card and the alerts. A Starboard with an older plug-in API keeps version 1.1.4.",
+    "**Its own image,** with the status page's files, in place of the image the examples share."
+   ]
+  },
   {
    "version": "1.1.4",
    "date": "2026-11-19",

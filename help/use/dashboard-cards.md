@@ -38,8 +38,11 @@ the plug-in's logo and name, its status in words, and when it last changed.
 | [Ad blocking](../plugins/dns-blocking/dashboard-card.md) | Blocked today | Stat | Once a minute |
 | [Line speed](../plugins/line-speed/dashboard-card.md) | Line speed | Stat | Once a minute |
 | [Line speed](../plugins/line-speed/dashboard-card.md) | Line speed this week | List | Once a minute |
-| [Outside services](../plugins/outside-services/dashboard-card.md) | Outside services | Status | Once a minute |
-| [Outside services](../plugins/outside-services/dashboard-card.md) | Outside services | List | Once a minute |
+| [Uptime and status](../plugins/outside-services/dashboard-card.md) | All checks | Status | Once a minute |
+| [Uptime and status](../plugins/outside-services/dashboard-card.md) | Checks | List | Once a minute |
+| [Uptime and status](../plugins/outside-services/dashboard-card.md) | Groups | List | Once a minute |
+| [Uptime and status](../plugins/outside-services/dashboard-card.md) | Response times | Sparkline | Once a minute |
+| [Uptime and status](../plugins/outside-services/dashboard-card.md) | Certificates | List | Once a minute |
 | [Home Assistant](../plugins/home-assistant/dashboard-card.md) | Home | Status | Once a minute |
 | [Jellystat](../plugins/jellystat/dashboard-card.md) | Jellystat | Status | Every 10 minutes |
 

@@ -587,27 +587,35 @@
   },
   {
    "id": "outside-services",
-   "name": "Outside services",
-   "description": "Up or down for things that are not on this server: your router, a NAS (network storage device), a website.",
+   "name": "Uptime and status",
+   "description": "Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat, with 90 days of response times, certificates, maintenance windows and a status page.",
    "kind": "Network",
    "author": "TheMightyTRexUK",
    "permissions": [
-    "network:lan"
+    "network:lan",
+    "network:port",
+    "alerts:send"
    ],
-   "version": "1.1.4",
-   "starboard_api": ">=1.14 <2.0",
+   "version": "2.0.0",
+   "starboard_api": ">=1.17 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
-   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5PdXRzaWRlIHNlcnZpY2VzIGxvZ288L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjMzM0NDllIi8+PGNpcmNsZSBjeD0iMjQiIGN5PSIyNCIgcj0iMTMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxlbGxpcHNlIGN4PSIyNCIgY3k9IjI0IiByeD0iNiIgcnk9IjEzIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTExIDI0aDI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
-   "logo_alt": "Outside services logo",
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5VcHRpbWUgYW5kIHN0YXR1cyBsb2dvPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzMzNDQ5ZSIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjE1IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTcgMjVoOGwzLjUtNyA1IDE0IDQtMTAgMi41IDNoMTEiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
+   "logo_alt": "Uptime and status logo",
    "versions": [
+    {
+     "version": "2.0.0",
+     "starboard_api": ">=1.17 <2.0",
+     "released": "2026-11-20",
+     "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
+     "changelog": "More kinds of check: a port (tcp), ping (with a knock on common ports where ping is not allowed), a DNS record, and words on a web page (keyword), beside web addresses. Heartbeats: a push check gives an address for a backup or a script to call; no call within its grace time means down. 90 days of history: response times and uptime an hour and a day, about 43 KB a check, with no database. Certificates for every https address and every port checked with tls: the days left and the names it was issued for."
+    },
     {
      "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-19",
-     "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
-     "changelog": "Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
+     "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/e108f08b44beb899496d9aa0e104f5aad56bc22a/outside-services/starboard-plugin.json",
+     "manifest_sha256": "9d26b1978f087fc2048ef8fd59d4a04bfb4d366066497f7a71aaa226c1c071c7"
     },
     {
      "version": "1.0.0",

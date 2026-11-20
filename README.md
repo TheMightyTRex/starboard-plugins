@@ -61,7 +61,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 |---|---|
 | [Ad blocking](https://themightytrex.github.io/starboard-plugins/help/plugins/dns-blocking/index.html) | How many adverts and trackers Pi-hole or AdGuard Home blocked today. |
 | [Line speed](https://themightytrex.github.io/starboard-plugins/help/plugins/line-speed/index.html) | Tests your internet download speed once a night, outside download hours, and keeps a week of results. |
-| [Outside services](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Up or down for things that are not on this server: your router, a NAS, a website. |
+| [Uptime and status](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat, with 90 days of response times, certificates, maintenance windows and a status page. Takes over Outside services. |
 | [Remote access](https://themightytrex.github.io/starboard-plugins/help/plugins/remote-access/index.html) | Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router. |
 
 ### Home

@@ -1,40 +1,54 @@
-# Outside services: Dashboard card
+# Uptime and status: Dashboard card
 
-Outside services adds 2 cards you can put on your dashboard, both called **Outside services**: one line for everything, or a list with each address. Each starts with a band: Outside services' logo and name and a status in words. A footer says when it last changed.
+Uptime and status adds 5 cards you can put on your dashboard. Each starts with a band: its logo and name and a status in words. A footer says when it last changed. Each is asked again once a minute while the dashboard is open, never while the browser tab is hidden.
 
-## Outside services, one line
+## All checks
 
-Says whether everything answers. When something does not, it names what is not answering, such as "Not answering: Router, NAS".
+One line: whether every check is up, or which are down, such as "Down: Router, NAS". It also names any group in maintenance.
 
-- **How often it updates:** once a minute while the dashboard is open. The addresses themselves are checked at **Check every**, 5 minutes by default. Nothing is asked while the browser tab is hidden.
-- **Example:** All 4 answer
+- **Example:** All 6 checks are up
 
-## Outside services, the list
+## Checks
 
-Shows each address by its name, with "Up" and how long it took to answer, or "Not answering". Each line links to its address. It shows up to 10 lines.
+Each check by its name, the ones down first, with "Up" and its response time and uptime this week, or how long it has been down and why. Web addresses link to the address. Up to 10.
 
-- **How often it updates:** once a minute while the dashboard is open. The addresses themselves are checked at **Check every**. Nothing is asked while the browser tab is hidden.
-- **Example:**
-  - Router: Up, 4 ms
+- **Example:** Router: Up, 4 ms, 99.98% this week
+
+## Groups
+
+One row for each group: how many of its checks are up, its uptime this week, and its maintenance window when one is on.
+
+- **Example:** Home: Up. 3 of 3 up, 100% this week
+
+## Response times
+
+A small line for each check, the average each hour for the last 24 hours, up to 8, the ones down and the slowest first. Starboard writes the latest, lowest and highest in words beside each line, which is what a screen reader reads; the line is a picture of the same figures. A gap is an hour with no answer.
+
+- **Example:** Router: Now 5 ms, lowest 4 ms, highest 6 ms. Up 99.98% of the last 24 hours
+
+## Certificates
+
+Each certificate, the soonest to run out first: the days left, the names it was issued for, and **Not trusted** with why for one your devices made themselves.
+
+- **Example:** Website: 41 days left, for example.org
 
 ## What the status says
 
-Both cards say the same.
-
 | Status | Means |
 |---|---|
-| **OK** | Every address answered at the last check. The time in the band is when that check ended. |
-| **Waiting** | There are addresses, but the first check has not finished yet. The one-line card says "Not checked yet". |
-| **Needs setting up** | **Addresses to check** is empty. The one-line card says "Add addresses in the plug-in's settings". |
-| **Not answering** | Shown as **Problem**: at least one address did not answer at the last check. The card names each one. |
+| **OK** | Every check is up, or every certificate has more than **Warn when a certificate has this long left**. |
+| **Waiting** | Checks were added, but the first round has not finished. |
+| **Needs setting up** | There are no checks yet. |
+| **Down** | Shown as **Problem**: at least one check is down. |
+| **Runs out soon** | Shown as **Warning** on Certificates: one runs out within the days you chose. |
 
 ## Add it to your dashboard
 
 1. Select **Edit dashboard**.
-2. In **Add a card**, choose **Outside services (Outside services)**. There are two with this name, one for each card: add one, or both.
+2. In **Add a card**, choose one of **All checks**, **Checks**, **Groups**, **Response times** or **Certificates**, each with (Uptime and status) after it.
 3. Select **Save**.
 
-Outside services must be added and active first. Read [Install](install.md).
+A dashboard that had Outside services' cards keeps them: they are now **All checks** and **Checks**.
 
 ## Find out more
 

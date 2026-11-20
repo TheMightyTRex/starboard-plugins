@@ -1,6 +1,6 @@
 [Help centre](../README.md) · Developers · reference
 <!-- help: dev / build -->
-<!-- plugin-api: 1.16 -->
+<!-- plugin-api: 1.17 -->
 
 # Plug-in API 1.15 for the collection
 
@@ -11,7 +11,16 @@ Starboard's help has the full references.
 ## When would you use it
 
 - You want to change a plug-in here, or add one, and need to know what it must do.
-- You are bringing a plug-in of your own up to 1.14, 1.15 or 1.16.
+- You are bringing a plug-in of your own up to 1.14, 1.15, 1.16 or 1.17.
+
+## What plug-in API 1.17 added
+
+Plug-in API 1.17 comes with the Starboard release after 0.24. Nothing was taken away: a plug-in made for 1.16 works as before.
+
+| Part | What it is | Used here by |
+|---|---|---|
+| The `sparkline` card | `{"series": [{"title", "points", "unit", "detail"}], "note"}`: up to 8 series of up to 96 numbers (`null` for a gap). Starboard draws a small line for each, hidden from screen readers, and writes the latest, lowest and highest in words | Uptime and status's **Response times** |
+| `alerts:send` and `POST /api/v1/plugin/alerts` | A plug-in raises and clears alerts with its own key: `{"key", "state": "raised" or "cleared", "title", "message", "level"}`. Each key is sent once until it is cleared, through the same channel, events and log as Starboard's own, at most 30 new ones an hour. The permission is low risk | Uptime and status |
 
 ## What plug-in API 1.16 added
 

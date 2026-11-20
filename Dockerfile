@@ -15,7 +15,6 @@ COPY library-health/app.py /app/library-health/
 COPY line-speed/app.py /app/line-speed/
 COPY most-watched/app.py /app/most-watched/
 COPY notifications/app.py /app/notifications/
-COPY outside-services/app.py /app/outside-services/
 COPY vpn-check/app.py /app/vpn-check/
 COPY watch-stats/app.py /app/watch-stats/
 COPY watching-now/app.py /app/watching-now/

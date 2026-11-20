@@ -1,19 +1,46 @@
-# Outside services: Updates
+# Uptime and status: Updates
 
-Outside services 1.1.4 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Uptime and status 2.0.0 is the latest version. It takes over Outside services and needs Starboard with plug-in API 1.17 or later.
 
 ## Versions
 
-| Version | Needs plug-in API | Released |
-|---|---|---|
-| 1.1.4 | 1.14 or later | 19 November 2026 |
-| 1.1.3 | 1.14 or later | 17 November 2026 |
-| 1.1.2 | 1.14 or later | 17 November 2026 |
-| 1.1.1 | 1.14 or later | 16 November 2026 |
-| 1.1.0 | 1.14 or later | 15 November 2026 |
-| 1.0.0 | 1.1 or later | 12 November 2026 |
+| Version | Name | Needs plug-in API | Released |
+|---|---|---|---|
+| 2.0.0 | Uptime and status | 1.17 or later | 20 November 2026 |
+| 1.1.4 | Outside services | 1.14 or later | 19 November 2026 |
+| 1.1.3 | Outside services | 1.14 or later | 17 November 2026 |
+| 1.1.2 | Outside services | 1.14 or later | 17 November 2026 |
+| 1.1.1 | Outside services | 1.14 or later | 16 November 2026 |
+| 1.1.0 | Outside services | 1.14 or later | 15 November 2026 |
+| 1.0.0 | Outside services | 1.1 or later | 12 November 2026 |
 
-The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+The catalogue offers each Starboard the newest version it can run, so a Starboard with plug-in API 1.14 to 1.16 keeps Outside services 1.1.4.
+
+## From Outside services to Uptime and status
+
+- **Your settings stay:** **Addresses to check** and **Check every** keep their names and values, so no setting moves. Each address is a web address check, as before, in the group Outside services, and its history starts at the update.
+- **Your cards stay:** the one-line card is now **All checks** and the list is **Checks**.
+- **It asks for two more permissions**, marked as new before you update: its own page on your home network (`network:port`), and sending alerts through Starboard (`alerts:send`).
+- **Its own image:** the update downloads it once, about 25 MB.
+
+## What is new in 2.0.0
+
+Added:
+
+- **More kinds of check:** a port (tcp), ping (with a knock on common ports where ping is not allowed), a DNS record, and words on a web page (keyword), beside web addresses.
+- **Heartbeats:** a push check gives an address for a backup or a script to call; no call within its grace time means down.
+- **90 days of history:** response times and uptime an hour and a day, about 43 KB a check, with no database.
+- **Certificates** for every https address and every port checked with tls: the days left and the names it was issued for.
+- **Groups, tags and maintenance windows:** write in Home after a check; a group's alerts pause in its maintenance windows.
+- **Alerts through Starboard,** to where it sends its own, once when a check is down and once when it is up again.
+- **A status page** on your home network, which only shows names, up or down, response times and uptime.
+- **Three more cards:** Groups, Response times (a small line for each check) and Certificates.
+
+Changed:
+
+- **Outside services is now Uptime and status.** Your **Addresses to check** and **Check every** stay as they were and are checked as before, in the group Outside services.
+- Needs Starboard with plug-in API 1.17 or later, for the Response times card and the alerts. A Starboard with an older plug-in API keeps version 1.1.4.
+- **Its own image,** with the status page's files, in place of the image the examples share.
 
 ## What is new in 1.1.4
 
@@ -60,28 +87,28 @@ Added:
 
 ## How an update is kept safe
 
-- Outside services has no step before an update: Starboard stops it, installs the new version and starts it again.
-- Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
-- Your settings and its folder are kept.
+- Before an update, it writes its history and finishes the round it is part way through, and starts no new one.
+- Starboard waits up to 30 seconds for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
+- Your settings, checks, groups and history are kept.
 
 ## Update it
 
-1. Go to **Settings**, then **Plug-ins**. When a newer version is known, Outside services has an **Update** chip in **Manage**.
-2. Select **Outside services** to open its tab.
+1. Go to **Settings**, then **Plug-ins**. When a newer version is known, it has an **Update** chip in **Manage**.
+2. Select it to open its tab.
 3. In **Versions**, select **Update to** and the new version.
-4. Read **What is new since** your version and **How the update is kept safe**, enter your Starboard password, and select **Update Outside services**.
+4. Read **What is new since** your version, the new permissions and **How the update is kept safe**, enter your Starboard password, and select **Update**.
 5. When the dialog says it is updated, select **Done**.
 
 ## Roll it back
 
-1. On Outside services' tab, in **Versions**, select **Roll back to** and the version you had.
+1. On its tab, in **Versions**, select **Roll back to** and the version you had.
 2. Enter your Starboard password and select **Roll back**.
 3. When the dialog says it is back on that version, select **Done**.
 
-Rolling back needs no download, and only one earlier version is kept.
+Rolling back needs no download, and only one earlier version is kept. Back on Outside services, the checks you added stay in its folder, unused, until you update again.
 
 ## Find out more
 
 - [Update a plug-in and roll it back, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html)
-- [Outside services' changes, in full](../../../outside-services/CHANGELOG.md)
+- [The changes, in full](../../../outside-services/CHANGELOG.md)
 - [Problems](problems.md)
