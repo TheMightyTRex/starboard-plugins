@@ -35,6 +35,7 @@ nobody has measured that plug-in: the limit is the most it may use.
 | [Line speed](../plugins/line-speed/install.md) | 64 MB, 0.25 core | Always | Not measured yet |
 | [Uptime and status](../plugins/outside-services/install.md) | 48 MB, 0.1 core | Always | About 17 MB and under 0.1% of a core with 7 checks (20 November 2026) |
 | [Home Assistant](../plugins/home-assistant/install.md) | 48 MB, 0.1 core | Always | Not measured yet |
+| [Philips Hue](../plugins/philips-hue/install.md) | 48 MB, 0.25 core | Rests when idle | 15.4 MB at start, 16.6 MB after 160 changes, against a made-up bridge (20 November 2026) |
 | [Styles](../plugins/styles/install.md) | None | Runs nothing | None: it runs nothing |
 | [Jellystat](../plugins/jellystat/install.md) | 640 MB, 1.25 cores, in three containers | Always | 126.4 MiB (13 November 2026) |
 | [Navidrome](../plugins/navidrome/install.md) | 256 MB, 0.5 core | Always | 20.0 MiB (13 November 2026) |

@@ -44,6 +44,8 @@ the plug-in's logo and name, its status in words, and when it last changed.
 | [Uptime and status](../plugins/outside-services/dashboard-card.md) | Response times | Sparkline | Once a minute |
 | [Uptime and status](../plugins/outside-services/dashboard-card.md) | Certificates | List | Once a minute |
 | [Home Assistant](../plugins/home-assistant/dashboard-card.md) | Home | Status | Once a minute |
+| [Philips Hue](../plugins/philips-hue/dashboard-card.md) | Rooms | List | Once a minute |
+| [Philips Hue](../plugins/philips-hue/dashboard-card.md) | Lights on | Status | Once a minute |
 | [Jellystat](../plugins/jellystat/dashboard-card.md) | Jellystat | Status | Every 10 minutes |
 
 Styles and the apps you can add, apart from Jellystat, have no card.
