@@ -80,7 +80,7 @@ Added:
 
 ## Roll it back
 
-1. On Watch statistics's tab, in **Versions**, select **Roll back to** and the version you had.
+1. On Watch statistics' tab, in **Versions**, select **Roll back to** and the version you had.
 2. Enter your Starboard password and select **Roll back**.
 3. When the dialog says it is back on that version, select **Done**.
 
@@ -89,5 +89,5 @@ Rolling back needs no download, and only one earlier version is kept.
 ## Find out more
 
 - [Update a plug-in and roll it back, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/update-a-plugin.html)
-- [Watch statistics's changes, in full](../../../watch-stats/CHANGELOG.md)
+- [Watch statistics' changes, in full](../../../watch-stats/CHANGELOG.md)
 - [Problems](problems.md)

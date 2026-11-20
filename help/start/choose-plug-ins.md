@@ -22,7 +22,9 @@ Starboard adds none by itself, and each one you add uses a little memory and pro
 | [Audio description](../../audio-description/README.md) | Finds titles with a described sound track, and prefers them in Reelix | 64 MB, resting when idle |
 | [Audio description tracks](../../audio-description-tracks/README.md) | Adds a description track you already have to its film or episode | 96 MB, resting when idle |
 | [Direct play](../../direct-play/README.md) | Makes files play directly on your devices, so Jellyfin does not convert them as they play | 512 MB |
-| [Picture shrinker](../../picture-shrinker/README.md) | Shrinks the posters and photos Jellyfin keeps | 128 MB |
+| [Picture shrinker](../../picture-shrinker/README.md) | Shrinks the posters, backdrops, logos and other pictures Jellyfin keeps | 128 MB |
+| [Library clean-up](../../library-cleanup/README.md) | Moves films and series everyone has watched, or nobody watches, to the holding folder; never deletes | 128 MB, resting when idle |
+| [Create your own TV channel](../../tv-station/README.md) | Your own TV channels in Jellyfin's Live TV, made from your films and series | 768 MB, and nothing runs until a channel is chosen |
 
 ## Server and downloads
 
@@ -40,7 +42,7 @@ Starboard adds none by itself, and each one you add uses a little memory and pro
 | [Remote access](../../remote-access/README.md) | Starboard, Jellyfin and Audiobookshelf away from home, with no port opened on your router | 128 MB |
 | [Ad blocking](../../dns-blocking/README.md) | How many adverts and trackers Pi-hole or AdGuard Home blocked today | 48 MB |
 | [Line speed](../../line-speed/README.md) | Your internet download speed, tested once a night | 64 MB |
-| [Outside services](../../outside-services/README.md) | Up or down for things not on this server, such as your router | 48 MB |
+| [Uptime and status](../../outside-services/README.md) | Checks your router, NAS and websites by address, port, ping, DNS or heartbeat, with a status page | 48 MB |
 
 ## Home and appearance
 

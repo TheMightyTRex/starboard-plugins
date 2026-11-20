@@ -10,6 +10,7 @@ Picture shrinker 1.2.2 is the latest version. It needs Starboard with plug-in AP
 | 1.2.1 | 1.14 or later | 17 November 2026 |
 | 1.2.0 | 1.14 or later | 17 November 2026 |
 | 1.1.1 | 1.14 or later | 16 November 2026 |
+| 1.1.0 | 1.14 or later | 15 November 2026 |
 | 1.0.0 | 1.14 or later | 15 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
@@ -58,6 +59,19 @@ Changed:
 
 - **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second.
 - **Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
+
+## What is new in 1.1.0
+
+Added:
+
+- **Backup first:** each original is copied to the plug-in's own folder before its first shrink, and a picture whose original cannot be backed up is not shrunk.
+- **Restore original pictures** and **Delete backup** in its actions; **Space saved** shows the pictures now, the backup and the space saved.
+- **Quality**, posters and photos of people are settings, as in the Jellyfin version.
+- **Stays idle when Jellyfin's own Picture shrinker is installed,** so the two never shrink the same pictures. To find that out, it reads Jellyfin's list of plug-ins with Jellyfin's key.
+
+Changed:
+
+- **Quiet when it finishes:** a run changes only the figures on its card and page; the card no longer shows a problem status.
 
 ## What is new in 1.0.0
 

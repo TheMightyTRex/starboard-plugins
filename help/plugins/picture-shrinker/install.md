@@ -15,10 +15,14 @@ Starboard lists these before you add it, each with its risk.
 | Permission | Risk |
 |---|---|
 | Read and change Jellyfin's metadata folder: the posters, photos and details Jellyfin saved (`jellyfin:metadata`) | Medium |
+| Use Jellyfin's API key, kept by Starboard (`jellyfin:key`) | High |
+| Reach other computers on your home network, and the internet (`network:lan`) | Medium |
+
+It uses Jellyfin's key to read Jellyfin's libraries and list of plug-ins, so it stays idle when Jellyfin's own Picture shrinker is installed, and for **Start again**, to have Jellyfin download pictures again.
 
 What it runs:
 
-- **main:** reaches only Starboard, on its own network: it cannot reach your home network or the internet. It can use its own folder in Starboard's data (`data/plugins/picture-shrinker`), Jellyfin's metadata folder, to read and change.
+- **main:** reaches your home network, where Jellyfin answers. It runs all the time, at the lowest priority while it shrinks. It can use its own folder in Starboard's data (`data/plugins/picture-shrinker`), Jellyfin's metadata folder, to read and change.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 

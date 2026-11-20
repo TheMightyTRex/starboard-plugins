@@ -1,18 +1,34 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.3.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.5.6 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 0.3.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not yet released |
+| 0.5.6 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not yet released |
+| 0.5.5 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.5.4 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.5.3 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.5.2 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.5.1 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.5.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.4.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.3.2 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.3.1 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
+| 0.3.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.2.1 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.2.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.1.1 | 1.15 or later | 19 November 2026 |
 | 0.1.0 | 1.15 or later | 19 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.5.6
+
+Changed:
+
+- **Busy buttons on the schedule grid:** a button that asks the plug-in, such as **Suggest a week**, **Save the suggestion** or **Undo**, shows a turning ring before its words while it works. With less motion asked for in **Display**, the ring fades instead of turning.
 
 ## What is new in 0.5.5
 
@@ -24,11 +40,35 @@ Changed:
 
 - **Reading the channels again** updates each programme's details, such as which sound track it plays, even when the programmes are the same.
 
+## What is new in 0.5.4
+
+Fixed:
+
+- **A programme with a subtitle file beside it** played only the fallback card with the station's and channel's names. Its sound track is now found among the file's own sound tracks. A line-up read before 0.5.4 is put right when it is read again.
+
 ## What is new in 0.5.2
 
 Added:
 
 - **The station's logo on promos:** promos for a channel with its own pack show the station's logo, small, in a corner. To leave it out, deactivate **Show the station's logo on promos**.
+
+## What is new in 0.5.0
+
+Added:
+
+- **Promos and clips in each break:** **Up to 2**, **Up to 3**, **Up to 4** or **Up to 6** on each channel's **Breaks** card. Each plays once at most in a break, in a random order.
+- **Extra videos:** upload videos of up to 10 minutes for the station or for one channel. One plays at random after the promos in each break, when it fits.
+
+Changed:
+
+- **A break between programmes** is a bumper, the promos and clips, an extra video, the holding slide, and the ident with its music immediately before the next programme.
+
+## What is new in 0.4.0
+
+Added:
+
+- **Bumpers:** a broadcast pack may have short bumpers, with no sound, to open and close a break.
+- **Breaks inside programmes:** **Off** unless chosen on a channel's **Breaks** card. In quiet hours, **Find breaks inside programmes** finds where a programme fades to black for its adverts, and a short break plays there. The schedule never moves.
 
 ## What is new in 0.3.2
 

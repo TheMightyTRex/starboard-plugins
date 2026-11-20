@@ -1,17 +1,25 @@
 # Styles: Updates
 
-Styles 1.5.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Styles 1.6.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.6.0 | 1.14 or later | Not yet released |
 | 1.5.0 | 1.14 or later | 18 November 2026 |
 | 1.4.1 | 1.14 or later | 17 November 2026 |
 | 1.4.0 | 1.14 or later | 15 November 2026 |
 | 1.3.0 | 1.2 or later | 12 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.6.0
+
+Changed:
+
+- **Eleven styles redesigned in full:** Dusk, Liquid glass, Brutal, Bento, Almanac, Garden, Terminal, Riso, Vantage, Newsprint and Piste now change cards, buttons, tabs, the header, the side menu and chips, not only colours.
+- **They replace the old eleven:** Midnight is now Dusk, Frost is Liquid glass, Bold is Brutal, Bento keeps its name, Paper is Almanac, Forest is Garden, Retro is Terminal, Vivid is Riso, Graphite is Vantage, Editorial is Newsprint and Nordic is Piste. Anyone using one of the old ones moves to its new design, with nothing to choose again.
 
 ## What is new in 1.5.0
 

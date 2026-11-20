@@ -5,7 +5,7 @@ Styles has no dashboard card. It changes the colours and shapes of the dashboard
 ## Choose a style
 
 1. Select **Display** in the header.
-2. Under **Style**, choose a style, such as **Midnight**. **Starboard's own style** is the standard style.
+2. Under **Style**, choose a style, such as **Dusk**. **Starboard's own style** is the standard style.
 3. Select **Done**.
 
 Styles must be added and active first. Read [Install](install.md).

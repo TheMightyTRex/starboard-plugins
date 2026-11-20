@@ -4,7 +4,7 @@ Add Uptime and status from Starboard's **Catalogue**, where it is listed under *
 
 ## Before you begin
 
-- Starboard with plug-in API 1.17 or later. An older Starboard is offered Outside services 1.1.4: read [Updates](updates.md).
+- Starboard with plug-in API 1.17 or later, for its **Response times** card and its alerts. An older Starboard is offered Outside services 1.1.4: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
 
 ## What it may do
@@ -26,6 +26,8 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 ## Memory and processor
 
 - **main:** 48 MB of memory and 0.1 of a processor core at most.
+
+Measured on 20 November 2026 with 7 checks: about 17 MB of memory and under 0.1% of a processor core.
 
 ## Add it
 

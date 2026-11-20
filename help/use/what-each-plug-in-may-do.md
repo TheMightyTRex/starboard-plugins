@@ -22,7 +22,9 @@ can do only what is listed here, and only after you agree.
 | [Audio description](../plugins/audio-description/install.md) | Jellyfin's key, Reelix's key, Home network and internet | Only its own folder |
 | [Audio description tracks](../plugins/audio-description-tracks/install.md) | Jellyfin's key, Home network and internet | `media/movies`, `media/tv`, `media/audio-description` |
 | [Direct play](../plugins/direct-play/install.md) | Jellyfin's key, Reelix's key, Home network and internet | `media/movies`, `media/tv` |
-| [Picture shrinker](../plugins/picture-shrinker/install.md) | Jellyfin's pictures and details | Jellyfin's metadata folder |
+| [Picture shrinker](../plugins/picture-shrinker/install.md) | Jellyfin's pictures and details, Jellyfin's key, Home network and internet | Jellyfin's metadata folder |
+| [Library clean-up](../plugins/library-cleanup/install.md) | Jellyfin's key, Reelix's key, Home network and internet | Your media folder: moves films and series to `media/.holding/library-cleanup` and back, never deletes |
+| [Create your own TV channel](../plugins/tv-station/install.md) | Jellyfin's key, Home network and internet, Its own web page | Only its own folder |
 | [Disk forecast](../plugins/disk-forecast/install.md) | Processor, memory and disks | Only its own folder |
 | [Notifications](../plugins/notifications/install.md) | Your apps, Downloads, Your media, Processor, memory and disks, Home network and internet | Only its own folder |
 | [Download summary](../plugins/download-summary/install.md) | Downloads | Only its own folder |

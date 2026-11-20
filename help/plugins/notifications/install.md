@@ -4,7 +4,7 @@ Add Notifications from Starboard's **Catalogue**, where it is listed under **Sys
 
 ## Before you begin
 
-- Starboard with plug-in API 1.14 or later. An older Starboard is offered an earlier version: read [Updates](updates.md).
+- Starboard with plug-in API 1.16 or later (Starboard 0.23.0). An older Starboard is offered version 1.1.3: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
 - The details for at least one way to send: an email account that can send by SMTP, a Telegram bot, a Discord webhook, a Pushover account, an ntfy topic, a webhook address, or signal-cli-rest-api you already run.
 

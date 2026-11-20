@@ -1,6 +1,6 @@
 # Watch statistics: Settings
 
-Watch statistics's settings are on its own tab: go to **Settings**, then **Plug-ins**, then **Watch statistics**. Starboard draws them and keeps them; secrets are never shown again once saved.
+Watch statistics' settings are on its own tab: go to **Settings**, then **Plug-ins**, then **Watch statistics**. Starboard draws them and keeps them; secrets are never shown again once saved.
 
 ## Settings
 
@@ -14,7 +14,7 @@ Watch statistics's settings are on its own tab: go to **Settings**, then **Plug-
 
 ## Buttons
 
-These are on Watch statistics's tab.
+These are on Watch statistics' tab.
 
 - **Check now** reads the plays from Jellyfin straight away, without waiting for the 15 minutes the last answer is kept. It says how many plays it read, such as "Read 23 plays over the last 30 days".
 

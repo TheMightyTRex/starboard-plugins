@@ -1,6 +1,6 @@
 # Watch statistics: Dashboard card
 
-Watch statistics adds 4 cards you can put on your dashboard. Each starts with a band: Watch statistics's logo and name and a status in words. A footer says when it last changed.
+Watch statistics adds 4 cards you can put on your dashboard. Each starts with a band: Watch statistics' logo and name and a status in words. A footer says when it last changed.
 
 ## Plays this week
 

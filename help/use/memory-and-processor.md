@@ -26,6 +26,8 @@ nobody has measured that plug-in: the limit is the most it may use.
 | [Audio description tracks](../plugins/audio-description-tracks/install.md) | 96 MB, 0.5 core | Rests when idle | Not measured yet |
 | [Direct play](../plugins/direct-play/install.md) | 512 MB, 1 core | Always | Not measured yet |
 | [Picture shrinker](../plugins/picture-shrinker/install.md) | 128 MB, 0.5 core | Always | 12.1 MiB at rest, 28.0 MiB at its busiest (14 November 2026) |
+| [Library clean-up](../plugins/library-cleanup/install.md) | 128 MB, 0.5 core | Rests when idle | About 14 MB at rest and 31 MB at its busiest, with 3,000 made-up films (15 November 2026) |
+| [Create your own TV channel](../plugins/tv-station/install.md) | 768 MB, 2 cores | Always | 16.4 MiB at rest, about 140 MiB and 0.9 of a core while one channel plays (17 November 2026) |
 | [Disk forecast](../plugins/disk-forecast/install.md) | 48 MB, 0.1 core | Always | Not measured yet |
 | [Notifications](../plugins/notifications/install.md) | 48 MB, 0.1 core | Rests when idle | About 14 MB for about a second while it sends |
 | [Download summary](../plugins/download-summary/install.md) | 48 MB, 0.1 core | Always | Not measured yet |

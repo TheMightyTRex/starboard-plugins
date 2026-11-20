@@ -24,7 +24,7 @@ q2: What does it say?
 
 ## Start it again
 
-1. On Watch statistics's tab, read the message under its state: it says why it stopped.
+1. On Watch statistics' tab, read the message under its state: it says why it stopped.
 2. Select **Try again**.
 3. If it stopped soon after an update, select **Roll back to** and the version you had. Read [Updates](updates.md).
 4. Still failing: go to **System**, then **Logs**, and find its name.
@@ -42,7 +42,7 @@ The source card says "Needs Playback Reporting", the other cards say "Last plays
 
 1. Add Playback Reporting in Starboard's **Settings**, then **Jellyfin**, or in Jellyfin's **Dashboard**, then **Plugins**, then **Catalogue**.
 2. Restart Jellyfin.
-3. On Watch statistics's tab, select **Check now**.
+3. On Watch statistics' tab, select **Check now**.
 
 Playback Reporting counts from the day it is added, so older plays stay as last plays only.
 
@@ -52,7 +52,7 @@ A card says "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings
 
 1. Go to **Settings**, then **Apps**.
 2. Add Jellyfin, with its address and API key.
-3. On Watch statistics's tab, select **Check now**.
+3. On Watch statistics' tab, select **Check now**.
 
 ## Check the figures again
 

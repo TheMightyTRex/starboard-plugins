@@ -34,10 +34,10 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 |---|---|
 | [Create your own TV channel](https://themightytrex.github.io/starboard-plugins/help/plugins/tv-station/index.html) | Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos. Nothing streams until a channel is chosen. |
 | [Direct play](https://themightytrex.github.io/starboard-plugins/help/plugins/direct-play/index.html) | Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose. |
-| [Library clean-up](library-cleanup/) | Moves films and series everyone has watched, or nobody watches, to the holding folder after a Preview. It never deletes, and each can be put back. Needs Starboard 0.19.0. |
+| [Library clean-up](https://themightytrex.github.io/starboard-plugins/help/plugins/library-cleanup/index.html) | Moves films and series everyone has watched, or nobody has watched for a long time, to the holding folder, so your disks do not fill up. It never deletes, and each can be put back. Needs Starboard 0.19.0. |
 | [Library health](https://themightytrex.github.io/starboard-plugins/help/plugins/library-health/index.html) | Films and series in Jellyfin with no poster, no description or no year, so you can fix them. |
 | [Most watched](https://themightytrex.github.io/starboard-plugins/help/plugins/most-watched/index.html) | The films and series most people watched in Jellyfin in the last week. |
-| [Picture shrinker](https://themightytrex.github.io/starboard-plugins/help/plugins/picture-shrinker/index.html) | Shrinks the posters and photos of people Jellyfin keeps, so they take less space. Each picture is checked before it replaces the one Jellyfin saved. |
+| [Picture shrinker](https://themightytrex.github.io/starboard-plugins/help/plugins/picture-shrinker/index.html) | Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or shrink without a backup. Each picture is checked before it replaces the one Jellyfin saved. |
 | [Watch statistics](https://themightytrex.github.io/starboard-plugins/help/plugins/watch-stats/index.html) | What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database. |
 | [Watching now](https://themightytrex.github.io/starboard-plugins/help/plugins/watching-now/index.html) | Who is watching what in Jellyfin right now, with how far through they are. |
 
@@ -61,7 +61,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 |---|---|
 | [Ad blocking](https://themightytrex.github.io/starboard-plugins/help/plugins/dns-blocking/index.html) | How many adverts and trackers Pi-hole or AdGuard Home blocked today. |
 | [Line speed](https://themightytrex.github.io/starboard-plugins/help/plugins/line-speed/index.html) | Tests your internet download speed once a night, outside download hours, and keeps a week of results. |
-| [Uptime and status](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat, with 90 days of response times, certificates, maintenance windows and a status page. Takes over Outside services. |
+| [Uptime and status](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat, with 90 days of response times, certificates, maintenance windows and a status page. Takes over Outside services, and needs Starboard with plug-in API 1.17. |
 | [Remote access](https://themightytrex.github.io/starboard-plugins/help/plugins/remote-access/index.html) | Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router. |
 
 ### Home
@@ -75,14 +75,14 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 
 | Plug-in | What it does |
 |---|---|
-| [Audio description](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description/index.html) | Finds films and series in Jellyfin with a described sound track for blind and partially sighted people, and prefers releases with one in Reelix. |
+| [Audio description](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description/index.html) | Finds and tags films and series in Jellyfin with a described sound track for blind and partially sighted people, plays it for the people who choose it, and prefers releases with one in Reelix. |
 | [Audio description tracks](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description-tracks/index.html) | Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match. |
 
 ### Appearance
 
 | Plug-in | What it does |
 |---|---|
-| [Styles](https://themightytrex.github.io/starboard-plugins/help/plugins/styles/index.html) | 22 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast. |
+| [Styles](https://themightytrex.github.io/starboard-plugins/help/plugins/styles/index.html) | 22 accessible styles for Display: 17 change every part of Starboard (cards, buttons, tabs, menus), checked for contrast. Dusk, Liquid glass, Brutal, Bento, Almanac, Garden, Terminal, Riso, Vantage, Newsprint and Piste are new designs in 1.6.0. |
 
 ## Apps you can add
 
@@ -94,15 +94,15 @@ their own folders. Removing one keeps its data.
 |---|---|---|---|
 | [Calibre-Web](https://themightytrex.github.io/starboard-plugins/help/plugins/calibre-web/index.html) | Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books folder and never changes it. | about 182 MB | `media/books`, read only |
 | [Checkrr](https://themightytrex.github.io/starboard-plugins/help/plugins/checkrr/index.html) | Checkrr checks your films and series for damaged files each Sunday night and lists them. It only reports: it never deletes, moves or replaces a file, and reads your media read only. | about 19 MB | `media/movies` and `media/tv`, read only |
-| [Jellystat](https://themightytrex.github.io/starboard-plugins/help/plugins/jellystat/index.html) | Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page. | about 117 MB | its own only |
-| [Kavita](https://themightytrex.github.io/starboard-plugins/help/plugins/kavita/index.html) | Kavita, a reader for comics, manga and books in the browser and in e-reader apps (OPDS). It reads your books and comics folders and never changes them. | about 337 MB | `media/books` and `media/comics`, read only |
-| [Maintainerr](https://themightytrex.github.io/starboard-plugins/help/plugins/maintainerr/index.html) | Maintainerr, clean-up rules for Jellyfin, such as films everyone has watched. It changes nothing until you give it keys and a rule that removes. | about 127 MB | its own only |
-| [Navidrome](https://themightytrex.github.io/starboard-plugins/help/plugins/navidrome/index.html) | Navidrome, a music server for Subsonic apps on phones and in the car. It reads your music folder and never changes it. | about 16 MB | `media/music`, read only |
-| [Seerr](https://themightytrex.github.io/starboard-plugins/help/plugins/seerr/index.html) | Seerr, a requests page for Jellyfin users. Reelix already has requests in Starboard, so most people do not need it. | about 127 MB | its own only |
+| [Jellystat](https://themightytrex.github.io/starboard-plugins/help/plugins/jellystat/index.html) | Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page. | about 126 MB | its own only |
+| [Kavita](https://themightytrex.github.io/starboard-plugins/help/plugins/kavita/index.html) | Kavita, a reader for comics, manga and books in the browser and in e-reader apps (OPDS). It reads your books and comics folders and never changes them. | about 339 MB | `media/books` and `media/comics`, read only |
+| [Maintainerr](https://themightytrex.github.io/starboard-plugins/help/plugins/maintainerr/index.html) | Maintainerr, clean-up rules for Jellyfin, such as films everyone has watched. It changes nothing until you give it keys and a rule that removes. | about 140 MB | its own only |
+| [Navidrome](https://themightytrex.github.io/starboard-plugins/help/plugins/navidrome/index.html) | Navidrome, a music server for Subsonic apps on phones and in the car. It reads your music folder and never changes it. | about 20 MB | `media/music`, read only |
+| [Seerr](https://themightytrex.github.io/starboard-plugins/help/plugins/seerr/index.html) | Seerr, a requests page for Jellyfin users. Reelix already has requests in Starboard, so most people do not need it. | about 183 MB | its own only |
 | [Tdarr](https://themightytrex.github.io/starboard-plugins/help/plugins/tdarr/index.html) | Tdarr converts films and series to save space, in Starboard's quiet hours. It can copy the Tdarr you already have, with its libraries and history. | about 59 MB | `media/movies` and `media/tv`, read and write |
 | [Themearr](https://themightytrex.github.io/starboard-plugins/help/plugins/themearr/index.html) | Themearr puts a theme tune, theme.mp3, in the folder of each film Reelix has, and Jellyfin plays it on the film's page. It needs a RapidAPI key to fetch the tunes. | about 48 MB | `media/movies`, adds `theme.mp3` |
 | [Uptime Kuma](https://themightytrex.github.io/starboard-plugins/help/plugins/uptime-kuma/index.html) | Uptime Kuma, status checks for websites and services, with alerts and status pages. Starboard already watches your apps; this is for more. | about 116 MB | its own only |
-| [Wizarr](https://themightytrex.github.io/starboard-plugins/help/plugins/wizarr/index.html) | Wizarr, invitation links for Jellyfin: send someone a link and they make their own Jellyfin account, with the libraries you choose. | about 124 MB | its own only |
+| [Wizarr](https://themightytrex.github.io/starboard-plugins/help/plugins/wizarr/index.html) | Wizarr, invitation links for Jellyfin: send someone a link and they make their own Jellyfin account, with the libraries you choose. | about 127 MB | its own only |
 
 ## Advanced
 
@@ -115,8 +115,10 @@ their own folders. Removing one keeps its data.
 
 ### Starboard versions
 
-Every plug-in here needs plug-in API 1.14 (Starboard 0.18.0 or newer). An older Starboard is offered the version
-before from the catalogue, and says so when a plug-in needs a newer one.
+Most plug-ins here need plug-in API 1.14 (Starboard 0.18.0 or newer). Some need newer: Library clean-up and Create
+your own TV channel need 1.15, Notifications and Philips Hue 1.16, and Uptime and status 1.17, for its sparkline card
+and alerts. An older Starboard is offered the version before from the catalogue, and says so when a plug-in needs a
+newer one.
 
 ### How plug-ins are published
 
