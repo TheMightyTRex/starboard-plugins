@@ -32,6 +32,7 @@ can do only what is listed here, and only after you agree.
 | [Line speed](../plugins/line-speed/install.md) | Home network and internet | Only its own folder |
 | [Uptime and status](../plugins/outside-services/install.md) | Home network and internet; its own page on your home network; sends alerts through Starboard | Only its own folder |
 | [Home Assistant](../plugins/home-assistant/install.md) | Home network and internet | Only its own folder |
+| [Philips Hue](../plugins/philips-hue/install.md) | Home network and internet, to reach the Hue bridge; Your media, only for the event when something starts playing | Only its own folder, and the lights, scenes and schedules on your Hue bridge |
 | [Styles](../plugins/styles/install.md) | Styles | Only its own folder |
 | [Jellystat](../plugins/jellystat/install.md) | Jellyfin's key, Home network and internet, Its own web page | Only its own folder |
 | [Navidrome](../plugins/navidrome/install.md) | Home network and internet, Its own web page | Only its own folder |
