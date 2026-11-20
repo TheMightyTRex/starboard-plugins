@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.5.5",
+ "version": "0.5.6",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -676,6 +676,13 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.5.6",
+   "date": "2026-11-20",
+   "changed": [
+    "**Busy buttons on the schedule grid** show a turning ring while Starboard works, such as Suggest a week, the same as the rest of Starboard."
+   ]
+  },
   {
    "version": "0.5.5",
    "date": "2026-11-19",

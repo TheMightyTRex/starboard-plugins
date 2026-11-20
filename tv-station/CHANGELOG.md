@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.6 (20 November 2026)
+
+### Changed
+- Busy buttons on the schedule grid (DASH-493, the waiting standard): a button that asks the plug-in, such as Suggest a week, Save the draft or Undo, shows a turning ring before its words while it works, after 150 ms so a quick answer never flashes it. With less motion asked for, the ring fades instead of turning.
+
 ## 0.5.5 (19 November 2026)
 
 ### Added

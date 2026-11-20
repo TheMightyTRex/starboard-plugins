@@ -37,7 +37,7 @@ import schedule
 import stream
 import three_d
 
-VERSION = "0.5.5"
+VERSION = "0.5.6"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own

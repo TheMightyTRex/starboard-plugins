@@ -45,7 +45,20 @@
     if (!r.ok) throw new Error(body.error || "The plug-in did not answer");
     return body;
   }
+  // Waiting standard (DASH-493): the button pressed shows the ring (aria-busy) while its request runs, after 150 ms.
+  let pressed = null;
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest?.("button");
+    if (!b) return;
+    pressed = b;
+    setTimeout(() => { if (pressed === b) pressed = null; }, 0);
+  }, true);
   async function op(body) {
+    const b = pressed;
+    const t = b ? setTimeout(() => b.setAttribute("aria-busy", "true"), 150) : 0;
+    try { return await opRun(body); } finally { clearTimeout(t); if (b) b.removeAttribute("aria-busy"); }
+  }
+  async function opRun(body) {
     problem("");
     const r = await fetch(base + "/api/op", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ cid: st.cid, ...body }) });
