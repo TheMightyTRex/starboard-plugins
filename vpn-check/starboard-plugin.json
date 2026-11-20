@@ -15,7 +15,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:cb73190ff13c0eb46ff0d60cacb9d37e003118c97daac06f15131ec6d0baa1cd",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:3b7aa896fac239c2599c92a49f9e63e1de5165a791c86778f2379b9624773a83",
    "port": 7791,
    "network": "vpn",
    "volumes": [
