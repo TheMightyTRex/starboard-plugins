@@ -15,7 +15,7 @@ description, and one with a style for reading with low vision.
 
 | Plug-in | What it does |
 |---|---|
-| [Audio description](../../audio-description/README.md) | Finds films and series in Jellyfin with a described sound track, lists them, and prefers releases with one in Reelix searches |
+| [Audio description](../../audio-description/README.md) | Finds and tags films and series in Jellyfin with a described sound track, plays it for the people who choose it, and prefers releases with one in Reelix searches |
 | [Audio description tracks](../../audio-description-tracks/README.md) | Adds a description track you already have, such as one from AudioVault, to its film or episode, after checking the lengths match |
 | [Styles](../../styles/README.md) | Its **Large and clear** style has strong contrast, heavy headings and wide focus rings |
 

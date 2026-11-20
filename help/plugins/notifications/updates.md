@@ -6,7 +6,8 @@ Notifications 1.2.0 is the latest version. It needs Starboard with plug-in API 1
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 1.2.0 | 1.16 or later | Not yet released |
+| 1.2.0 | 1.16 or later | 19 November 2026 |
+| 1.1.4 | 1.14 or later | Not released on its own: it came in 1.2.0 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
 | 1.1.2 | 1.14 or later | 17 November 2026 |
 | 1.1.1 | 1.14 or later | 16 November 2026 |
@@ -20,6 +21,12 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 Added:
 
 - **Disk changes:** a message whenever a disk is erased, added to the pool or taken out of it, however it was asked for, so an erase you did not start reaches you at once. Needs Starboard with plug-in API 1.16 or later; an older Starboard keeps 1.1.3.
+
+## What is new in 1.1.4
+
+Changed:
+
+- **Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
 
 ## What is new in 1.1.3
 

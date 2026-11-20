@@ -28,7 +28,10 @@ the plug-in's logo and name, its status in words, and when it last changed.
 | [Audio description tracks](../plugins/audio-description-tracks/dashboard-card.md) | Description tracks to check | Stat | Every 60 minutes |
 | [Direct play](../plugins/direct-play/dashboard-card.md) | Direct play | List | Every 30 seconds |
 | [Direct play](../plugins/direct-play/dashboard-card.md) | Space saved by Direct play | Stat | Every 10 minutes |
-| [Picture shrinker](../plugins/picture-shrinker/dashboard-card.md) | Space saved | Stat | Every 60 seconds |
+| [Picture shrinker](../plugins/picture-shrinker/dashboard-card.md) | Space saved | Stat | Every minute while it shrinks, every 10 minutes the rest of the time |
+| [Picture shrinker](../plugins/picture-shrinker/dashboard-card.md) | Space saved by type | List | Every minute while it shrinks, every 10 minutes the rest of the time |
+| [Library clean-up](../plugins/library-cleanup/dashboard-card.md) | Holding folder | Stat | Every 30 seconds while it works, every 10 minutes the rest of the time |
+| [Create your own TV channel](../plugins/tv-station/dashboard-card.md) | What is on now | Guide | Once a minute |
 | [Disk forecast](../plugins/disk-forecast/dashboard-card.md) | Disk forecast | Status | Once a minute |
 | [Notifications](../plugins/notifications/dashboard-card.md) | Notifications | Status | Every 60 minutes |
 | [Notifications](../plugins/notifications/dashboard-card.md) | Notifications sent | List | Every 60 minutes |
@@ -47,14 +50,16 @@ the plug-in's logo and name, its status in words, and when it last changed.
 | [Philips Hue](../plugins/philips-hue/dashboard-card.md) | Rooms | List | Once a minute |
 | [Philips Hue](../plugins/philips-hue/dashboard-card.md) | Lights on | Status | Once a minute |
 | [Jellystat](../plugins/jellystat/dashboard-card.md) | Jellystat | Status | Every 10 minutes |
+| [Checkrr](../plugins/checkrr/dashboard-card.md) | Damaged files | Stat | Every 10 minutes |
+| [Themearr](../plugins/themearr/dashboard-card.md) | Film theme tunes | Stat | Every 10 minutes |
 
-Styles and the apps you can add, apart from Jellystat, have no card.
+Styles and the apps you can add, apart from Jellystat, Checkrr and Themearr, have no card. Response times is a sparkline card, which needs Starboard with plug-in API 1.17.
 
 ## How a card is asked
 
 - A card is asked only while a dashboard with it is open. Nothing is asked while the browser tab is hidden.
 - No card is asked more often than every 10 seconds. A plug-in may set its own time in its answer: Direct play's card
-  follows its **Card updates every** setting, and Picture shrinker's card updates more often while it is shrinking.
+  follows its **Card updates every** setting, and Picture shrinker's and Library clean-up's cards update more often while they work.
 - Many people with the dashboard open at once still ask the plug-in once, because Starboard keeps the answer for that long.
 
 ## What the status says

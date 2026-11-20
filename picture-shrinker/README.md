@@ -91,9 +91,11 @@ A run stops itself after 115 minutes, and the next one carries on: pictures alre
 ## What it may do
 
 - It reads and changes Jellyfin's metadata folder: the posters, photos and details Jellyfin saved
-  (`jellyfin:metadata`, medium risk). It changes only posters and photos of people, as the owner of Jellyfin's files.
-- It uses Jellyfin's key (`jellyfin:key`, on the home network) for one thing: reading Jellyfin's list of plug-ins, at
-  most every 10 minutes, to stay idle when the Jellyfin version is installed. No media file is touched.
+  (`jellyfin:metadata`, medium risk). It changes only the picture types chosen in What to shrink (posters, backdrops,
+  thumbnails, logos, banners, disc art, clear art and photos of people), as the owner of Jellyfin's files.
+- It uses Jellyfin's key (`jellyfin:key`, on the home network) to read Jellyfin's libraries and its list of plug-ins,
+  at most every 10 minutes, to stay idle when the Jellyfin version is installed, and for Start again, to have Jellyfin
+  download pictures again. No media file is touched.
 - It runs one small container, with 128 MB of memory and half a processor at most; its work runs at nice 19 and in
   the idle disk class.
 
