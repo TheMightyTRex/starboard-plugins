@@ -709,7 +709,7 @@
   {
    "id": "styles",
    "name": "Styles",
-   "description": "22 accessible styles for Display: six change every part of Starboard (cards, buttons, tabs, menus), checked for contrast.",
+   "description": "22 accessible styles for Display: 17 change every part of Starboard (cards, buttons, tabs, menus), checked for contrast.",
    "kind": "Appearance",
    "author": "TheMightyTRexUK",
    "permissions": [
