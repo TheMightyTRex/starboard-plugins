@@ -19,6 +19,39 @@ In Starboard, go to **Settings**, then **Plug-ins**, then **Create your own TV c
 - **Placement guides** for the Coming up next card, the promo and the on-screen logo are 1920 by 1080 pictures that mark the clip area, each text field with its size and place, and the safe areas. With a pack in use, the guides are drawn on its own backgrounds.
 - **The example pack** is Example TV, a made-up channel drawn in code by the plug-in. Activate **Try the example pack** first, and it is made.
 
+## Step by step
+
+1. **Download the template.** In **Broadcast pack**, under **Downloads**, select **The template: folders, pack.json, its schema and a README**. It is a zip with one folder, `broadcast-pack`, holding `pack.json`, `pack.schema.json`, `README.txt`, a folder for each kind of file with a `what-goes-here.txt` in it, and a placement guide in `logo`, `coming-next` and `promo`.
+2. **Unzip it,** and rename the folder if you like: the name of the folder is not used.
+3. **Make the on-screen logo,** `logo/dog.png`, the one file every pack needs: a PNG with a transparent background, 256 pixels tall or more. Keep it simple and light, as it sits on every programme. The logo placement guide marks where it sits in each corner.
+4. **Make the backgrounds** for the Coming up next card and the promo, 1920 by 1080, a still or a loop of 2 to 60 seconds. Open the placement guide in each folder in your picture or video editor as a layer over your design, and leave the clip area and the text fields clear: the plug-in draws into them.
+5. **Add the moving pieces you want:** idents, bumpers, the logo with music, transitions and music beds for the promos, each named as [The folder](#the-folder) says. Leave out any you do not want.
+6. **Fill in `pack.json`:** the pack's name, its colours, and the list of each kind of file. Take out of `pack.json` any file you did not make: the template lists `logo/logo-with-music.mp4`, `ident01.mp4`, `ident02.mp4` and `wipe01.webm`, and a file named there that is not in the folder stops the pack being used. Move a box only when your design needs it.
+7. **Zip the folder** and upload it, as [Use a broadcast pack](use-a-broadcast-pack.md) says. When the check finds a problem, the pack in use stays, and **The last pack checked** lists each problem: [What each problem means](#what-each-problem-means) says how to put it right.
+8. **Check it on a channel:** on the channel's page, select **Preview a frame** and **Preview a Coming up next card**. Then watch the channel in Jellyfin's Live TV for a break.
+
+## The placement guides
+
+The guides are 1920 by 1080 pictures. The white line is the title safe area, 5% in from each edge, where every word goes. The pink line is the action safe area, 3.5% in, for anything that moves. With a pack in use, the guides on the **Broadcast pack** page are drawn on its own backgrounds, as these are on the example pack's.
+
+![The Coming up next placement guide on the Example TV background: green boxes for Heading, Title, Episode, Day and time and Synopsis, each with its size and place, and a yellow clip area of 800 by 450 at 980, 210](../images/tv-station/placement-coming-next.jpg)
+
+*The Coming up next card: the programme's picture plays in the clip area, and each field is where `pack.json` places it.*
+
+![The promo placement guide on the Example TV promo background: boxes for Heading, Title, Day and time and Channel name, and the clip area](../images/tv-station/placement-promo.jpg)
+
+*The promo: short clips of the programme play in the clip area.*
+
+![The on-screen logo placement guide: a box in each corner of the picture, top right marked as the default, with the logo's rules in the middle](../images/tv-station/placement-logo.jpg)
+
+*The on-screen logo: where it sits in each corner at the medium size, 92 pixels tall at 1080, inside the safe area.*
+
+What the plug-in draws from a pack, with the example pack:
+
+![A Coming up next card from the Example TV pack, with Kestrel Valley, its episode, Today at 21:00 and a synopsis drawn into the fields, and the programme's picture in the clip area](../images/tv-station/card-pack.jpg)
+
+![A promo from the Example TV pack: Coming soon, Kestrel Valley, Sunday at 21:00 and Comedy, with a clip in the clip area](../images/tv-station/promo-pack.jpg)
+
 ## The folder
 
 | File | Needed | What it is |
@@ -139,9 +172,58 @@ The station has one pack, which every channel uses, and each channel can have it
 
 1. Zip the pack's folder. A zip with its files inside one folder is read from inside that folder.
 2. In **Broadcast pack**, select **Upload a pack** and choose the zip. For one channel, open it in **Channels** and select **Upload its own pack**.
-3. The plug-in checks it before anything in it is used. When it passes, it is in use at once, and anything to change is listed under **The last pack checked**. When it does not, the pack in use stays, and each problem is listed there.
+3. The plug-in checks it before anything in it is used, as [What each problem means](#what-each-problem-means) says. When it passes, it is in use at once, and anything to change is listed under **The last pack checked**. When it does not, the pack in use stays, and each problem is listed there.
 
 The checks: the zip is at most 60 MB, the most Starboard takes, and at most 400 MB and 150 files unpacked; every name is one in the table; no file is a link or has a path outside the pack's folder; no file is packed far smaller than it is; `pack.json` passes `pack.schema.json`, and each box is inside the picture; every file is read with FFmpeg's `ffprobe` for its type, size, length and sound; the logo has transparent parts; each transition has transparency. Nothing in a pack is ever run.
+
+## What each problem means
+
+**The last pack checked** lists each problem in the words in this table, with the file's name first. A pack with a problem is not used; a note is only for you to know, and the pack is used.
+
+| Problem | What it means, and what to do |
+|---|---|
+| That file is not a zip. Choose the zip of the pack's folder | The file chosen is not a zip. Zip the pack's folder, and upload the zip |
+| The zip is over 60 MB, the most Starboard takes | Make the videos shorter or smaller, or use stills for the backgrounds |
+| The zip has more files than a pack may hold | A pack holds 150 files at most. Take out files the pack does not use |
+| The files come to more MB unpacked than a pack may be | 400 MB at most, unpacked. Make the videos smaller |
+| *file*: over 100 MB | One file is too big. Make it shorter or at a lower bit rate |
+| *file*: not a name a pack uses. The template's README lists every name | The name, or its folder, is not one in [The folder](#the-folder). Check the spelling, the folder and the number of digits, such as `ident01.mp4` |
+| *file*: a link, which a pack may not hold | The zip holds a shortcut or link. Put the file itself in its place |
+| *file*: has a password | Zip the folder again with no password |
+| *file*: a path outside the pack's folder, a path from the top of a disk, or a name with a backslash | The zip was made in a way that names files outside its folder. Zip the folder again with your computer's own Compress or Send to, Compressed folder |
+| *file*: packed far smaller than it is, which a real picture or sound never is | The file does not hold a real picture or sound. Save it again from your editor |
+| pack.json is missing from the top of the pack | Put `pack.json` in the pack's folder, beside `logo` and the rest |
+| pack.json is not JSON | A comma, quote or bracket is missing or extra. The message says where. Check it against the example in [pack.json](#packjson) |
+| pack.json is over 64 KB | `pack.json` holds only names and boxes. Take out anything else |
+| pack.json, *part*, should be, needs, or is not something a pack may set | `pack.json` does not match `pack.schema.json`: the message names the part, such as `pack.json, promo, seconds should be from 10 to 30` |
+| pack.json, *part*, *field*: the box should be inside 1920 by 1080, left before right and top before bottom | A box is `[left, top, right, bottom]` in pixels of 1920 by 1080. Check the order and that it is inside the picture |
+| pack.json, *part*, *field*: the box is too small to hold words or a picture | Make the box bigger |
+| pack.json names *file*, which is not in the pack | A file listed in `pack.json` is not in the folder. Add it, or take it out of `pack.json`. The template lists files you may not have made |
+| logo/dog.png is missing: every pack has the on-screen logo | Add the logo as `logo/dog.png` |
+| *file*: not a PNG | The logo must be a PNG. Save it again as PNG, not a JPEG renamed |
+| *file*: width by height pixels. Make it at least 64 pixels tall and at most 1920 by 1080 | The logo is too small or too big. 256 pixels tall or more is best |
+| *file*: has no transparent parts. Save it with a transparent background | The logo has a solid background, which would show as a box on every programme |
+| *file*: could not be read at the moment (the plug-in was busy). Upload the pack again in a minute | Nothing is wrong with the file. Upload it again |
+| *file*: FFmpeg cannot read a picture in it | The video is damaged or in a form FFmpeg cannot read. Export it again as H.264 MP4 |
+| *file*: has no sound | An ident and the logo with music need sound. The logo's music is baked into its file |
+| *file*: a still picture. An ident is a video, or A bumper is a short video | Idents and bumpers are videos, not stills |
+| *file*: seconds. It should be from one length to another | The file is too short or too long. [The folder](#the-folder) gives each length |
+| *file*: has no transparency. Save it as WebM VP9 with alpha, or ProRes 4444 with alpha | A transition without transparency would hide the picture. Export it again with its alpha channel |
+| *file*: width by height pixels. Make it 1920 by 1080 | The picture is under 320 by 180 or over 3840 by 2160 |
+| More files of one kind than a pack may have | Up to 99 idents, 20 bumpers, 20 transitions and 20 music beds |
+| *background* is in the pack, but pack.json has no part saying where the clip and the words go | Add a `coming_next` or `promo` part to `pack.json`, as in the template |
+
+These are notes, and the pack is still used:
+
+| Note | What it means |
+|---|---|
+| *file*: not 16:9, so it is fitted inside the picture with black bars | Make it 16:9, such as 1920 by 1080, to fill the picture |
+| *file*: so it is scaled to the picture | A 16:9 size other than 1920 by 1080 is scaled to fit |
+| *file*: frames a second, so it is played at 25 | It is played at 25 frames a second |
+| *file*: LUFS, so it is played louder or quieter | Its sound is brought to -23 LUFS, by up to 12 dB |
+| promo/music has no music, so promos have none | Add music beds in `promo/music`, or add music for promos in **Idents, clips and music** |
+| pack.json, *part*: no Title field, so the programme's title is not drawn | Add a **Title** field if you want the title |
+| pack.json, *part*: outside the title safe area, so some televisions cut it | Move the clip area or the field inside the white line of the placement guide |
 
 ## Things to note
 
@@ -150,6 +232,8 @@ The checks: the zip is at most 60 MB, the most Starboard takes, and at most 400 
 - A promo is made at the picture size of the stream, 720p unless you change it.
 
 ## Find out more
+
+- [Use a broadcast pack](use-a-broadcast-pack.md)
 
 - [Create your own TV channel: Settings](../plugins/tv-station/settings.md)
 - [Create your own TV channel: Problems](../plugins/tv-station/problems.md)
