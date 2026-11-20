@@ -618,6 +618,24 @@
    ]
   },
   {
+   "id": "philips-hue",
+   "name": "Philips Hue",
+   "description": "Your Hue lights by room, zone and type: on and off, brightness, colour, scenes and schedules, through the Hue bridge on your home network. Nothing goes to the Hue cloud.",
+   "kind": "Home",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "network:lan",
+    "media:read"
+   ],
+   "version": "0.1.0",
+   "starboard_api": ">=1.16 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/philips-hue/starboard-plugin.json",
+   "published": false,
+   "recommended": false,
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5QaGlsaXBzIEh1ZSBsb2dvPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzgwNTIwYSIvPjxwYXRoIGQ9Ik0xOCAzMC41Yy0yLjgtMi4yLTUtNS40LTUtOS41YTExIDExIDAgMCAxIDIyIDBjMCA0LjEtMi4yIDcuMy01IDkuNVYzM0gxOHoiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNMTkgMzcuNWgxME0yMSA0MWg2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
+   "logo_alt": "Philips Hue logo"
+  },
+  {
    "id": "picture-shrinker",
    "name": "Picture shrinker",
    "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or shrink without a backup.",

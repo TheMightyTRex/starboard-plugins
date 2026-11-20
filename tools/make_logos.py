@@ -55,6 +55,9 @@ LOGOS = {
                      f'<circle cx="24" cy="24" r="13" {s(4)}/><path d="M15 33l18-18" {s(4)}/>'),
     "download-summary": ("#2e6b30", "An arrow down into a tray",
                          f'<path d="M24 9v18M16 20l8 8 8-8" {S}/><path d="M11 29v7h26v-7" {S}/>'),
+    "philips-hue": ("#80520a", "A light bulb",
+                    f'<path d="M18 30.5c-2.8-2.2-5-5.4-5-9.5a11 11 0 0 1 22 0c0 4.1-2.2 7.3-5 9.5V33H18z" fill="{W}"/>'
+                    f'<path d="M19 37.5h10M21 41h6" {s(3)}/>'),
     "home-assistant": ("#0f6857", "A house with lines of writing",
                        f'<path d="M9 24L24 11l15 13" {S}/><path d="M14 21v16h20V21" {S}/><path d="M19 28h10M19 32.5h7" {s(3)}/>'),
     "tv-station": ("#6a3d9a", "A television with an aerial and a logo in its corner",

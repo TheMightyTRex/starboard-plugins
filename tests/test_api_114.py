@@ -57,7 +57,8 @@ class Collection(unittest.TestCase):
         sb = starboard()
         newer = {"library-cleanup": ">=1.15 <2.0",  # DASH-406: needs library:holding, new in plug-in API 1.15
                  "tv-station": ">=1.15 <2.0",  # DASH-477: a title for each card size, new in plug-in API 1.15
-                 "notifications": ">=1.16 <2.0"}  # Notifications 1.2.0: the disk.changed event, new in plug-in API 1.16
+                 "notifications": ">=1.16 <2.0",  # Notifications 1.2.0: the disk.changed event, new in plug-in API 1.16
+                 "philips-hue": ">=1.16 <2.0"}  # Philips Hue: schedules and the bridge's address in plain text boxes, new in plug-in API 1.16
         for pid in IDS:
             m = manifest(pid)
             self.assertEqual(m["starboard_api"], newer.get(pid, ">=1.14 <2.0"), pid)
