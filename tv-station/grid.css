@@ -28,6 +28,12 @@ button.primary:hover { background: var(--color-accent); filter: brightness(1.08)
 button.danger { color: var(--status-danger-fg); border-color: var(--status-danger-fg); }
 button.link { border: 0; background: none; text-decoration: underline; padding: 0 var(--space-1); min-height: 24px; color: var(--color-text); }
 button:disabled { opacity: .55; cursor: not-allowed; }
+/* Waiting standard (DASH-493): a busy button draws the ring before its words and keeps full colour. */
+button[aria-busy="true"] { display: inline-flex; align-items: center; gap: var(--space-2); opacity: 1; cursor: progress; }
+button[aria-busy="true"]::before { content: ""; width: 16px; height: 16px; box-sizing: border-box; border-radius: 50%; flex: none;
+  border: 2px solid color-mix(in srgb, currentColor 30%, transparent); border-top-color: currentColor; animation: wait-turn .8s linear infinite; }
+@keyframes wait-turn { to { transform: rotate(360deg); } }
+@keyframes wait-fade { 50% { opacity: .25; } }
 :focus-visible { outline: var(--focus-w) solid var(--color-focus); outline-offset: 2px; }
 .buttons { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
 .buttons.stack { flex-direction: column; align-items: stretch; }
@@ -79,7 +85,7 @@ dialog::backdrop { background: var(--color-backdrop); }
 #results .choice { border-bottom: 1px solid var(--color-surface-sunken); padding: var(--space-1) 0; }
 .desktop-only { max-width: 40rem; margin: var(--space-12) auto; padding: var(--space-6); background: var(--color-surface);
   border: 1px solid var(--color-divider); border-radius: var(--radius); box-shadow: var(--shadow-card); }
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } button[aria-busy="true"]::before { animation: wait-fade 2s ease-in-out infinite; } }
 /* The hours a suggestion fills: a tick box, then From and To, on one line where there is room. */
 #suggest-dialog .hours-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; align-items: center;
   gap: var(--space-2); margin-block: var(--space-2); }
