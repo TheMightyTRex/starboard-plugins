@@ -4,6 +4,7 @@ import re
 import urllib.parse
 
 import three_d
+import tv_words
 
 MAX_ENTRIES = 5000  # the most programmes in one channel's line-up
 PAGE = 200
@@ -41,6 +42,9 @@ def entry(item):
     # the file's own stream number; the default track's place among the file's own sound tracks is, as 0:a:N.
     inside = sorted((s for s in audio if not s.get("IsExternal")), key=lambda s: s.get("Index") or 0)
     default = next((s for s in inside if s.get("IsDefault")), inside[0] if inside else None)
+    # Each of those tracks' languages (0.6.0), kept only when there is a choice, so the station's language can pick
+    # its track as the programme plays (sound_for), and a change of language needs no new read of the line-up.
+    langs = [str(s.get("Language") or "").strip().lower() for s in inside] if len(inside) > 1 else []
     episode = item.get("Type") == "Episode"
     out = {"id": item["Id"], "dur": round(ticks / 1e7, 2), "kind": "Episode" if episode else "Movie",
            "title": (item.get("SeriesName") if episode else item.get("Name")) or item.get("Name") or "Programme",
@@ -50,9 +54,22 @@ def entry(item):
            "art": item["Id"], "backdrop": item.get("ParentBackdropItemId") or item.get("SeriesId") or item["Id"],
            "audio_n": inside.index(default) if default else None, "has_audio": bool(inside),
            "three_d": three_d.said(item)}  # 0.5.5: why Jellyfin or the file name says it is 3D, or ""
+    if any(langs):
+        out["audio_langs"] = langs
     if episode:
         out.update({"ep": item.get("Name") or "", "s": item.get("ParentIndexNumber"), "e": item.get("IndexNumber")})
     return out
+
+
+def sound_for(e, lang="en"):
+    """Which of the file's own sound tracks to play (0:a:N): the first in the station's language (0.6.0, owner,
+    21 November 2026), else the default track (audio_n, 0.5.4), else None. Jellyfin gives languages as ISO 639-2,
+    such as fre or fra, ger or deu (tv_words.SOUND_CODES)."""
+    codes = tv_words.sound_codes(lang)
+    for n, code in enumerate(e.get("audio_langs") or []):
+        if code in codes:
+            return n
+    return e.get("audio_n")
 
 
 def _episodes(jf, series_id):
@@ -198,7 +215,8 @@ def jellyfin_clips(jf, folder_id, role):
         e = entry(i)
         if e and e["dur"] <= 600:  # a clip longer than 10 minutes is not a break
             out.append({"id": f"jf-{i['Id']}", "src": f"jf:{i['Id']}", "dur": e["dur"], "title": i.get("Name") or "Clip",
-                        "role": role, "has_audio": e["has_audio"], "audio_n": e["audio_n"]})
+                        "role": role, "has_audio": e["has_audio"], "audio_n": e["audio_n"],
+                        **({"audio_langs": e["audio_langs"]} if e.get("audio_langs") else {})})
     return out
 
 

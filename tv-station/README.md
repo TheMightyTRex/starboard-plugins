@@ -60,6 +60,10 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
 - **It remembers what it has played.** Each channel keeps what it played to someone watching, so From the next
   episode not watched passes over an episode watched on the channel, 70% or more of it. Jellyfin's own watched marks
   are never changed.
+- **In your language.** English unless you change it, or French, German, Spanish, Italian, Portuguese, Dutch,
+  Swedish, Danish or Norwegian: the words drawn on the picture and in the guide, the sound track where a
+  programme has one in that language, and film and series titles and descriptions, read from the film database through
+  Jellyfin for programmes about to be shown, at most 60 an hour, and kept.
 - **In Jellyfin's Live TV, first.** Its channels are numbered from 1 in your order, before the free channels from
   101, with a 7-day guide: titles, episode names, synopses, pictures, and New or Repeat.
 
@@ -87,6 +91,8 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   guide to Jellyfin's Live TV.
 - It reaches your home network, and has its own web page on it, at a port Starboard chooses. Jellyfin reads the
   channel list, the guide and the streams there, at addresses with a random word in them that only Jellyfin is given.
+- With a language other than English, it asks Jellyfin's remote search (which asks the film database, TMDB) for the
+  titles of programmes about to be shown, and keeps them in its folder. Nothing in Jellyfin is changed.
 - It runs one container with 768 MB of memory and 2 processor cores at most.
 - It keeps its channels, idents, clips, logos, broadcast packs and promos in its own folder. Nothing in a pack is run:
   its pictures and sounds are only read by FFmpeg. It never changes your films, series or Jellyfin's

@@ -16,8 +16,10 @@ import threading
 import time
 
 import dog
+import library
 import pack
 import schedule
+import tv_words as said_in
 from guide import episode_words, is_new
 
 LEAD = 2 * 3600  # never for a programme starting in under 2 hours; dropped then
@@ -96,10 +98,11 @@ def plan(channels, existing, keep, replace_days, now):
     return remove, make
 
 
-def words(airing, channel_name):
+def words(airing, channel_name, lang="en"):
+    """The words in a promo's fields, in the station's language (`lang`, 0.6.0)."""
     e = airing["entry"]
-    return {"Heading": "Coming soon", "Title": e.get("title") or "Programme", "Episode": episode_words(e),
-            "Day and time": dog.day_time_words(airing["start"]), "Synopsis": (e.get("plot") or "")[:240], "Channel name": channel_name}
+    return {"Heading": said_in.word("coming_soon", lang), "Title": e.get("title") or "Programme", "Episode": episode_words(e, lang),
+            "Day and time": dog.day_time_words(airing["start"], lang), "Synopsis": (e.get("plot") or "")[:240], "Channel name": channel_name}
 
 
 def png_size(path):
@@ -147,7 +150,7 @@ def duck(level, start, end):
 
 
 def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, seed=0, seconds=None, background=None,
-            level=0.2, clips=None, clip_sound=True, station_logo=None):
+            level=0.2, clips=None, clip_sound=True, station_logo=None, lang="en"):
     """The FFmpeg command for one promo, written to `out` (an MP4).
 
     seconds:    the setting Promo length (0.3.0), else the pack's own, else 15; 10 to 60
@@ -157,6 +160,7 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     clip_sound: the programme's sound under its clips (0.3.0); False for a programme with none
     station_logo: a PNG of the station's logo, drawn small in the top right corner (0.5.2, owner, 19 November 2026:
                 "I want the T-Rex TV logo to also show somewhere in the promos"), for a channel with a pack of its own
+    lang:       the station's language for the words (0.6.0)
     """
     lay = p["promo"]
     seconds = max(SHORTEST, min(LONGEST, int(seconds or lay.get("seconds") or 15)))
@@ -196,7 +200,7 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
         parts.append(f"[{i + 1}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,fps={pack.FPS},"
                      f"format=yuv420p,trim=duration={each:.2f},setpts=PTS-STARTPTS[c{i}]")
     parts.append("".join(f"[c{i}]" for i in range(n_clips)) + f"concat=n={n_clips}:v=1:a=0,setpts=PTS-STARTPTS+{LEAD_IN}/TB[clips]")
-    said = words(airing, channel_name)
+    said = words(airing, channel_name, lang)
     chain = []
     for name, style in (lay.get("fields") or {}).items():
         if said.get(name):
@@ -226,8 +230,11 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     if clip_sound:
         # The programme's sound for each clip, faded in and out a little so the joins do not click, brought to -23 LUFS
         # like the music, and laid under the clips; the music falls to `level` while it plays (0.3.0).
+        # The sound track in the station's language when the file has one, else its default (0.6.0, library.sound_for).
+        track = library.sound_for(e, lang)
+        pick = f":{int(track)}" if isinstance(track, int) and track > 0 else ""
         for i in range(n_clips):
-            parts.append(f"[{i + 1}:a]{stereo},atrim=duration={each:.2f},asetpts=PTS-STARTPTS,"
+            parts.append(f"[{i + 1}:a{pick}]{stereo},atrim=duration={each:.2f},asetpts=PTS-STARTPTS,"
                          f"afade=t=in:st=0:d=0.12,afade=t=out:st={max(0.0, each - 0.15):.2f}:d=0.15[s{i}]")
         delay = int(LEAD_IN * 1000)
         parts.append("".join(f"[s{i}]" for i in range(n_clips)) + f"concat=n={n_clips}:v=0:a=1,loudnorm=I=-23:TP=-2:LRA=11,aresample=48000,adelay={delay}|{delay},apad[prog]")

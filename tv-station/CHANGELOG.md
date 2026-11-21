@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.0 (not released yet)
+
+### Added
+- Language (owner, 21 November 2026: "the create your own tv channel needs to have a language choice in the settings and it defaults to english"), a station setting, English unless changed, with English, Français (French), Deutsch (German), Español (Spanish), Italiano (Italian), Português (Portuguese), Nederlands (Dutch), Svenska (Swedish), Dansk (Danish) and Norsk bokmål (Norwegian). It changes three things:
+  - The words drawn on the picture and written in the guide: the programme's name strap with its series and episode, Up next at a time, the Coming up next and Later on cards, the day and time, the New, Repeat and Live label, Coming soon on promos, and Back soon and the countdown on the holding slide. Day and month names come from the plug-in's own tables, never from the server's locale, and the clock stays 24-hour. In English every word is exactly as before. The plug-in's own pages stay in English, as Starboard does.
+  - The sound track: a programme whose file has more than one sound track plays the first in the station's language (Jellyfin's ISO 639-2 codes, such as fre or fra, ger or deu), else its default track as before, on channels and in the clips of promos. A line-up read before 0.6.0 knows each track's language from its next read (the nightly refresh, or Read the channels from Jellyfin again).
+  - Titles and descriptions: Jellyfin keeps one language of titles for each library and cannot be asked for another, but its remote search can, from the film database (TMDB) by the item's own provider ids, without changing anything in Jellyfin. For a language other than English, the plug-in asks for a film's title and description, and a series' name, only for programmes about to be shown: the next 3 hours of a channel being watched, the guide's days in the nightly refresh, and a promo being made. At most 60 an hour, each once, kept in titles.json in the plug-in's folder per item and language; anything with no answer keeps Jellyfin's own text, and is asked for again after 7 days. Jellyfin has no remote search for episodes, so an episode's own name and plot stay as Jellyfin has them; setting the library's preferred download language in Jellyfin gives those too.
+- A change of language makes each channel's promos again in the next quiet hours, with the new words. English promos made before 0.6.0 are kept.
+
+### Fixed
+- The line the plug-in writes in its log as it starts said 0.5.6 in 0.5.7; it now gives the right version.
+
 ## 0.5.7 (21 November 2026)
 
 ### Fixed

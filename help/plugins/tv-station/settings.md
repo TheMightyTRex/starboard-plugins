@@ -18,7 +18,7 @@ Each section here says what each setting does, its choices and the one it starts
 | [Broadcast pack](#broadcast-pack) | **Broadcast pack** | Your own branding for every channel |
 | [Animation](#animation) | **Animation**, and each channel's **Animation** card | How things drawn over the picture come on and go off |
 | [Streaming](#streaming) | The station's settings | Picture size and how many channels play at once |
-| [Station](#station) | The station's settings | The station's name, numbers and the guide |
+| [Station](#station) | The station's settings | The station's name, its language, numbers and the guide |
 
 The station's settings are for every channel. A channel's own choice, on its page in **Channels**, comes first; **Station default** on a channel uses the station's choice, which the option names.
 
@@ -364,9 +364,22 @@ Timing stays exact: each thing comes on from its start and has gone by its end, 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
 | **Station name** | Shown in Jellyfin's Live TV, on the cards and as the on-screen logo when that is **The station's name**. A new name is given to its tuner in Jellyfin's Live TV too | Up to 40 characters. **Home TV** |
+| **Language** | The words drawn on the picture and in the guide, the sound track where a programme has one in this language, and film and series titles and descriptions. [Language](#language) says what changes | **English**, **Français (French)**, **Deutsch (German)**, **Español (Spanish)**, **Italiano (Italian)**, **Português (Portuguese)**, **Nederlands (Dutch)**, **Svenska (Swedish)**, **Dansk (Danish)** or **Norsk bokmål (Norwegian)**. **English** |
 | **First channel number** | 1 puts your channels first in Jellyfin's Live TV, before the free channels from 101 | 1 to 9000. **1** |
 | **Address Jellyfin uses to reach this plug-in** | Filled in by itself: Starboard 0.23.0 and later give the plug-in its address on your home network. Enter one only if Jellyfin runs on another computer that reaches this one by another address | Filled in by itself |
 | **Days in Jellyfin's guide** | Worked out when Jellyfin asks for it, about once a day | 1 to 14. **7** |
+
+### Language
+
+**Language** is for every channel. It changes three things, from the next piece that plays:
+
+- **Words on the picture and in the guide:** the programme's name strap with its series and episode, **Up next** at a time, the **Coming up next** and **Later on** cards with the day and time, the **New**, **Repeat** or **Live** label, **Coming soon** on promos, and **Back soon** or the countdown on the holding slide. In German, for example, a card says Als Nächstes and Morgen um 21:00. The clock stays 24-hour. The plug-in's own pages in Starboard stay in English.
+- **Sound track:** a programme with more than one sound track plays the one in this language, else its default track, as before. A line-up read before 0.6.0 knows each track's language after its next read, each night at 04:40 or with **Read the channels from Jellyfin again**.
+- **Titles and descriptions:** for a language other than English, the plug-in reads a film's title and description, and a series' name, in this language from the film database (TMDB) through Jellyfin, only for programmes about to be shown: the next 3 hours of a channel someone is watching, the guide's days each night, and each promo as it is made. It reads at most 60 an hour and keeps each one, so a new language takes a day or so to reach the whole guide. A programme the film database has nothing for keeps Jellyfin's own title. Nothing in Jellyfin is changed.
+
+Jellyfin cannot give an episode's own name and plot in another language this way, so they stay as Jellyfin has them. To have those in your language too, set the library's language in Jellyfin: in Jellyfin's **Dashboard**, select **Libraries**, then the library, and set **Preferred download language**; then refresh the library's metadata in Jellyfin.
+
+After a change of language, each channel's promos are made again in the next quiet hours, with the new words.
 
 ## Actions
 

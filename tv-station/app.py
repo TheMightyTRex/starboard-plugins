@@ -36,8 +36,10 @@ import sbplugin
 import schedule
 import stream
 import three_d
+import titles
+import tv_words
 
-VERSION = "0.5.6"
+VERSION = "0.6.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -70,6 +72,8 @@ BREAKS_FILE = "breaks.json"  # breaks inside programmes found in quiet hours (0.
 BREAKS_AHEAD = 48 * 3600  # programmes airing this soon are looked at
 THREE_D_FILE = "three_d.json"  # films looked at for 3D in quiet hours (0.5.5)
 THREE_D_MOST = 60  # films looked at in one quiet-hours run
+TITLES_FILE = "titles.json"  # titles and descriptions in the station's language, kept per item and language (0.6.0)
+TITLES_AHEAD = 3 * 3600  # programmes on a channel being watched airing this soon are asked for in that language
 ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer", "extras": "Extra video"}
 PER_BREAK = {"2": "Up to 2", "3": "Up to 3", "4": "Up to 4", "6": "Up to 6"}  # promos, trailers and clips in a break (0.5.0)
 EXTRA_MOST = 90 * 1024 * 1024  # bytes: an extra video for the breaks (0.5.0)
@@ -116,6 +120,40 @@ def settings():
 
 def station_name(cfg=None):
     return str((cfg or settings()).get("station_name") or "Home TV").strip()[:40] or "Home TV"
+
+
+def language(cfg=None):
+    """The station's language for the words drawn and the guide (0.6.0): its setting, English unless changed."""
+    return tv_words.code((settings() if cfg is None else cfg).get("language"))
+
+
+_titles = None
+
+
+def titles_kept():
+    """Titles in the station's language (titles.py), kept in the plug-in's folder."""
+    global _titles
+    path = os.path.join(sbplugin.DATA, TITLES_FILE)
+    if _titles is None or _titles.path != path:
+        _titles = titles.Titles(path, jf=lambda *a, **k: jf(*a, **k))  # jf looked up as it is used
+    return _titles
+
+
+def localiser(lang):
+    """A function giving a programme its title in `lang` where one is kept; for English, the programme as it is."""
+    if lang == tv_words.DEFAULT:
+        return None
+    kept = titles_kept()
+    return lambda e: kept.localise(e, lang)
+
+
+def ask_titles(entries, lang):
+    """Programmes about to be drawn, asked for in `lang` on a thread of their own, within titles.PER_HOUR."""
+    if lang == tv_words.DEFAULT:
+        return
+    kept = titles_kept()
+    kept.want(entries, lang)
+    kept.work_soon(stop=sbplugin.holding)  # nothing when none is waiting, or one is being asked for already
 
 
 def number(s, ch):
@@ -324,7 +362,27 @@ def refresh_all(body=None):
         refresh_grid(ch["id"])
     sbplugin.clear_error()
     note = connect_jellyfin()
+    got = guide_titles()
+    if got:
+        said.append(f"{sbplugin.plural(got, 'title')} read in the station's language")
     return {"said": ("; ".join(said) or "No channels yet") + (f". {note}" if note else "")[:160]}
+
+
+def guide_titles(now=None):
+    """In the nightly refresh (0.6.0): titles in the station's language for the programmes in the guide's days, so
+    Jellyfin has them when it next reads the guide. Within titles.PER_HOUR; the rest wait for the next night or for
+    the guide being read. Nothing for English. Returns how many were asked for."""
+    cfg = settings()
+    lang = language(cfg)
+    if lang == tv_words.DEFAULT:
+        return 0
+    now = time.time() if now is None else now
+    days = max(1, min(14, int(cfg.get("guide_days") or 7)))
+    kept = titles_kept()
+    for ch in state()["channels"]:
+        if ch.get("on", True):
+            kept.want([a["entry"] for a in sched_of(ch).airings(now, now + days * 86400, limit=600)], lang)
+    return kept.work(stop=sbplugin.holding)
 
 
 def address():
@@ -510,12 +568,20 @@ def truthy(v, default=True):
     return v if isinstance(v, bool) else str(v).lower() in ("1", "true", "yes", "on")
 
 
+def promo_design_key(s, ch, cfg=None):
+    """Which design a channel's promos are made with now: its pack (promo.design_of), and the station's language when
+    that is not English (0.6.0), so a change of language makes its promos again in the next quiet hours."""
+    d = promo.design_of(promo_design(s, ch))
+    lang = language(cfg)
+    return f"{d}|{lang}" if d and lang != tv_words.DEFAULT else d
+
+
 def promo_clips(s, ch, cfg=None):
     """The promos a channel shows in its breaks: its own, and the other channels' unless that is deactivated."""
     cfg = cfg or settings()
     others = truthy(cfg.get("promo_other"), True)
     on = {c["id"]: c for c in s["channels"] if c.get("on", True)}
-    designs = {cid: promo.design_of(promo_design(s, c)) for cid, c in on.items()}
+    designs = {cid: promo_design_key(s, c, cfg) for cid, c in on.items()}
     out = []
     for p in s.get("promos") or []:
         if p.get("cid") not in on or (p["cid"] != ch["id"] and not others):
@@ -942,9 +1008,14 @@ def plan_for(cid, still=False):
         texts = dog.Texts(folder)
         names = {"channel": ch["name"], "station": station_name(cfg)}
         c = jf_conf()
+        lang = language(cfg)
+        localise = localiser(lang)
         ctx = {"W": W, "H": H, "kbps": kbps, "opts": opts, "names": names, "logo": logo_file(cid, pk), "jf_url": c.get("url", ""),
                "jf_key": c.get("api_key", ""), "ts_offset": max(0.0, now - started) + 1.0, "texts": texts, "clip_path": clip_path,
-               "colour": ch.get("colour"), "copy_ok": bool(cfg.get("copy_plain", True)), "still": still}
+               "colour": ch.get("colour"), "copy_ok": bool(cfg.get("copy_plain", True)), "still": still, "lang": lang}
+        if localise:
+            ctx["localise"] = localise
+            ask_titles([x["entry"] for x in sched.airings(now, now + TITLES_AHEAD, limit=60)], lang)
         if pk and pk.get("coming_next") and piece["kind"] == "card":
             lay = pk["coming_next"]
             ctx["layout"] = {**lay, "file": os.path.join(pk["folder"], lay["background"])}
@@ -955,7 +1026,7 @@ def plan_for(cid, still=False):
         if a:
             nxt = sched.airing(a["end"])
             if nxt:
-                ctx["next_words"] = f"Up next at {time.strftime('%H:%M', time.localtime(nxt['start']))}: {nxt['entry'].get('title')}"
+                ctx["next_words"] = tv_words.up_next(nxt["start"], (localise(nxt["entry"]) if localise else nxt["entry"]).get("title"), lang)
         if piece["kind"] == "card":
             url = f"{c.get('url', '').rstrip('/')}/Items/{piece['airing']['entry'].get('backdrop')}/Images/Backdrop?maxWidth={W}&quality=85"
             if c.get("url") and _art_ok(url, c.get("api_key", "")):
@@ -1114,6 +1185,7 @@ def anim_preview(target, item):
     # Only the start strap for Straps, and none for the rest, so the one thing chosen is all that moves.
     opts.update({"strap_start": item == "straps", "strap_end": False})
     W, H, kbps = stream.SIZES.get(str(cfg.get("picture") or "720"), stream.SIZES["720"])
+    lang = language(cfg)
     secs = PREVIEW_SECONDS.get(item, 5.0)
     now = time.time()
     entry = {"id": "0" * 32, "title": "Your next programme", "kind": "Episode", "s": 1, "e": 2, "ep": "The middle",
@@ -1125,7 +1197,8 @@ def anim_preview(target, item):
     names = {"channel": ch["name"] if ch else "Your channel", "station": station_name(cfg)}
     ctx = {"W": W, "H": H, "kbps": kbps, "opts": opts, "names": names, "texts": texts, "ts_offset": 0.0, "to_file": out,
            "colour": (ch or {}).get("colour") or "0x1f5f99", "logo": logo_file(ch["id"], pk) if ch else logo_file("station", pk),
-           "start_words": "Your programme: Series 1, episode 2", "next_words": "Up next at 21:00: Your next programme"}
+           "start_words": "Your programme" + tv_words.sep(lang) + tv_words.episode(1, 2, lang),
+           "next_words": tv_words.up_next(time.mktime(time.localtime()[:3] + (21, 0, 0, 0, 0, -1)), "Your next programme", lang), "lang": lang}
     if item == "cards":
         piece = {"kind": "card", "card": "next", "start": now, "end": now + secs, "airing": {**airing, "start": now + 300}}
         if pk and pk.get("coming_next"):
@@ -2378,7 +2451,7 @@ def promos_job(now=None, limit_seconds=40 * 60):
         now = time.time() if now is None else now
         s = state()
         chans = [{"id": ch["id"], "sched": sched_of(ch), "can": bool(promo_design(s, ch)) and ch.get("on", True),
-                  "design": promo.design_of(promo_design(s, ch))}
+                  "design": promo_design_key(s, ch, cfg)}
                  for ch in s["channels"]]
         remove, make = promo.plan(chans, s.get("promos") or [], keep, days, now)
         gone = {p["id"] for p in remove}
@@ -2412,6 +2485,12 @@ def promos_job(now=None, limit_seconds=40 * 60):
                        station_logo=station_logo_for(s, pk, cfg))
             music = promo.pick_music(music_for(s, ch, pk), schedule.seed_of(ch["seed"], "music", a["start"]))
             sound = truthy(cfg.get("promo_sound"), True)
+            lang = language(cfg)
+            if lang != tv_words.DEFAULT:  # its title in the station's language, asked for now (0.6.0), within the hourly limit
+                titles_kept().want([a["entry"]], lang, first=True)
+                titles_kept().work(most=1, stop=sbplugin.holding)
+                a = {**a, "entry": localiser(lang)(a["entry"])}
+            how["lang"] = lang
             argv, seconds = promo.command(pk, a, ch["name"], music, W, H, c.get("url", ""), c.get("api_key", ""), texts, out + ".part",
                                           clip_sound=sound, **how)
             ok, why = promo.run(argv)
@@ -2434,7 +2513,7 @@ def promos_job(now=None, limit_seconds=40 * 60):
                 s = state()
                 s["promos"] = (s.get("promos") or []) + [{"id": pid, "cid": job["cid"], "group": promo.group_of(e), "entry": e["id"],
                                                           "title": e.get("title") or "Programme", "airs": int(a["start"]), "made": int(time.time()),
-                                                          "dur": seconds, "design": promo.design_of(pk)}]
+                                                          "dur": seconds, "design": promo_design_key(s, ch, cfg)}]
                 save(s)
             made += 1
         said = f"Made {sbplugin.plural(made, 'promo')}" + (f", removed {len(remove)}" if remove else "")
@@ -2858,8 +2937,11 @@ class Handler(BaseHTTPRequestHandler):
         if rest == "channels.m3u":
             return self._bytes(200, guide.m3u(chans, base, station_name()).encode(), "audio/x-mpegurl; charset=utf-8")
         if rest == "guide.xml":
-            days = max(1, min(14, int(settings().get("guide_days") or 7)))
-            xml = guide.xmltv(chans, base, station_name(), days=days)
+            cfg = settings()
+            days = max(1, min(14, int(cfg.get("guide_days") or 7)))
+            lang = language(cfg)
+            xml = guide.xmltv(chans, base, station_name(cfg), days=days, lang=lang, localise=localiser(lang))
+            ask_titles([], lang)  # programmes with no title in the language yet were put in the queue: asked for now
             # Kept for the pages (0.2.0): when Jellyfin last read it and how many programmes it held, so the owner can
             # tell it worked. About once a day, so the small file is rarely written.
             sbplugin.keep("guide_read", {"at": int(time.time()), "programmes": xml.count("<programme "), "days": days,

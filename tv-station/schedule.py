@@ -237,7 +237,7 @@ def new_era(spec, lineup, now, settings_changed=False):
 
 # What a refresh may change in a programme already in a line-up (0.5.5): its details, never what the timing rests on
 # (its id, length, series or kind), so the schedule stays exactly as it was.
-DETAIL_KEYS = ("audio_n", "has_audio", "title", "ep", "s", "e", "plot", "year", "premiere", "genres", "art", "backdrop")
+DETAIL_KEYS = ("audio_n", "audio_langs", "has_audio", "title", "ep", "s", "e", "plot", "year", "premiere", "genres", "art", "backdrop")
 
 
 def refresh_details(eras, entries):
@@ -251,9 +251,12 @@ def refresh_details(eras, entries):
             if not f:
                 continue
             new = {k: f[k] for k in DETAIL_KEYS if k in f}
-            if any(e.get(k) != v for k, v in new.items()) or "audio" in e:
+            gone = "audio_langs" in e and "audio_langs" not in f  # 0.6.0: kept only for a file with several sound tracks
+            if any(e.get(k) != v for k, v in new.items()) or "audio" in e or gone:
                 e.update(new)
                 e.pop("audio", None)
+                if gone:
+                    e.pop("audio_langs")
                 changed += 1
     return changed
 

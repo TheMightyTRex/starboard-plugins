@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.5.7",
+ "version": "0.6.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -88,6 +88,56 @@
    "type": "text",
    "default": "Home TV",
    "hint": "Shown in Jellyfin's Live TV and on screen. Up to 40 characters.",
+   "group": "Station"
+  },
+  {
+   "key": "language",
+   "label": "Language",
+   "type": "choice",
+   "default": "en",
+   "choices": [
+    {
+     "value": "en",
+     "label": "English"
+    },
+    {
+     "value": "fr",
+     "label": "Français (French)"
+    },
+    {
+     "value": "de",
+     "label": "Deutsch (German)"
+    },
+    {
+     "value": "es",
+     "label": "Español (Spanish)"
+    },
+    {
+     "value": "it",
+     "label": "Italiano (Italian)"
+    },
+    {
+     "value": "pt",
+     "label": "Português (Portuguese)"
+    },
+    {
+     "value": "nl",
+     "label": "Nederlands (Dutch)"
+    },
+    {
+     "value": "sv",
+     "label": "Svenska (Swedish)"
+    },
+    {
+     "value": "da",
+     "label": "Dansk (Danish)"
+    },
+    {
+     "value": "nb",
+     "label": "Norsk bokmål (Norwegian)"
+    }
+   ],
+   "hint": "The words drawn on the picture, such as Coming up next and the day and time, and in the guide; the sound track, where a programme has one in this language; and film and series titles and descriptions, read from the film database.",
    "group": "Station"
   },
   {
@@ -676,6 +726,15 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.6.0",
+   "date": "2026-11-21",
+   "added": [
+    "**Language** (English unless changed): the words drawn on the picture and in the guide, such as Coming up next, Series and episode and the day and time, in English, French, German, Spanish, Italian, Portuguese, Dutch, Swedish, Danish or Norwegian.",
+    "**Sound track in your language:** a programme with more than one sound track plays the one in the station's language, else its default track.",
+    "**Titles in your language:** film and series titles, and film descriptions, are read in the station's language from the film database for programmes about to be shown, a few each hour, and kept. Episode names stay as Jellyfin has them."
+   ]
+  },
   {
    "version": "0.5.7",
    "date": "2026-11-21",
