@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.7 (21 November 2026)
+
+### Fixed
+- Moving a programme on the schedule grid with the keyboard (owner, 21 November 2026: "Does focus stay on the show, and does the screen reader announce the new time?"): after Move 15 minutes earlier, Move 15 minutes later or Move to, focus went back to the programme at its old time for a moment before its new time, so a screen reader read out the old time first. The actions now stay open, the button busy, until the move is saved, then focus goes straight to the programme at its new time, and the new time is said. When a move cannot be made, such as one that would run into another programme, focus goes back to the programme where it was and the reason is said once the actions have closed.
+
 ## 0.5.6 (20 November 2026)
 
 ### Changed

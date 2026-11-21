@@ -264,12 +264,20 @@
     if (!act || !current) return;
     const s = current;
     const dlg = $("slot-dialog");
-    if (act === "earlier" || act === "later") {
+    if (act === "earlier" || act === "later" || act === "move") {
+      // The actions stay open, the button busy, until the move is saved; then focus goes straight to the show at its
+      // new time. Closing first sent focus to its old time for a moment, which a screen reader read out (0.5.7).
+      const body = act === "move" ? { op: "move", slot: s.id, day: Number($("move-day").value), start: Number($("move-time").value) }
+        : { op: "nudge", slot: s.id, minutes: act === "earlier" ? -STEP : STEP };
+      const got = await op(body);
+      if (got) returnTo = null;  // on a failure the actions close back to the show where it was
       dlg.close();
-      await op({ op: "nudge", slot: s.id, minutes: act === "earlier" ? -STEP : STEP });
-    } else if (act === "move") {
-      dlg.close();
-      await op({ op: "move", slot: s.id, day: Number($("move-day").value), start: Number($("move-time").value) });
+      if (got) focusSlot(got.focus || s.id);
+      else {  // written again now the actions are closed, so a screen reader hears why (it ignores a change behind a dialog)
+        const why = $("problem").textContent;
+        problem("");
+        setTimeout(() => problem(why), 30);
+      }
     } else if (act === "pick") {
       picked = s;
       $("picked-words").textContent = `${s.title} is picked up.`;

@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.5.6",
+ "version": "0.5.7",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -676,6 +676,13 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.5.7",
+   "date": "2026-11-21",
+   "fixed": [
+    "**Moving a programme with the keyboard** on the schedule grid: focus goes straight to the programme at its new time, so a screen reader no longer reads the old time first, and the reason a move cannot be made is said once the actions have closed."
+   ]
+  },
   {
    "version": "0.5.6",
    "date": "2026-11-20",

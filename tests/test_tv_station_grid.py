@@ -427,5 +427,18 @@ class Page(unittest.TestCase):
         self.assertTrue(self.app.grid_doc(self.cid)["slots"])
 
 
+class MoveFocus(unittest.TestCase):
+    """21 November 2026: a keyboard move closed the actions first, so focus stopped on the programme's old time and
+    a screen reader read it out before the new one. The actions now close only after the move is saved."""
+
+    def test_the_actions_close_after_the_move_is_saved_and_focus_goes_to_the_programme(self):
+        js = open(os.path.join(TV, "grid.js"), encoding="utf-8").read()
+        part = js[js.index('if (act === "earlier" || act === "later" || act === "move")'):js.index('} else if (act === "pick")')]
+        self.assertLess(part.index("await op(body)"), part.index("dlg.close()"))
+        self.assertIn("returnTo = null", part)
+        self.assertIn("focusSlot(got.focus || s.id)", part)
+        self.assertIn("setTimeout(() => problem(why), 30)", part)  # the reason said again once the actions have closed
+
+
 if __name__ == "__main__":
     unittest.main()
