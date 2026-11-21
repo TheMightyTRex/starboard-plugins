@@ -10,6 +10,7 @@ import textwrap
 import time
 
 import animate
+import tv_words as said_in
 
 FONT = os.environ.get("TV_FONT", os.path.join(os.path.dirname(os.path.abspath(__file__)), "atkinson-hyperlegible-next.woff2"))
 
@@ -102,18 +103,10 @@ def shows_on(opts, kind):
     return kind == "programme"
 
 
-def when_words(t, now=None):
+def when_words(t, now=None, lang="en"):
     """The date and time a programme is shown, in words: "Today at 18:30", "Tomorrow at 06:00",
-    "Saturday 22 November at 21:00"."""
-    now = time.time() if now is None else now
-    lt, ln = time.localtime(t), time.localtime(now)
-    day = (time.mktime((lt.tm_year, lt.tm_mon, lt.tm_mday, 0, 0, 0, 0, 0, -1)) - time.mktime((ln.tm_year, ln.tm_mon, ln.tm_mday, 0, 0, 0, 0, 0, -1))) / 86400
-    hm = time.strftime("%H:%M", lt)
-    if round(day) == 0:
-        return f"Today at {hm}"
-    if round(day) == 1:
-        return f"Tomorrow at {hm}"
-    return f"{time.strftime('%A', lt)} {lt.tm_mday} {time.strftime('%B', lt)} at {hm}"
+    "Saturday 22 November at 21:00"; in the station's language when `lang` is given (0.6.0)."""
+    return said_in.when(t, now, lang)
 
 
 class Texts:
@@ -367,14 +360,14 @@ def slate_chain(W, H, texts, words):
 HOLDING_WORDS = {"countdown": "A countdown to the next programme", "back_soon": "Back soon", "none": "No words"}
 
 
-def countdown_text(seconds):
+def countdown_text(seconds, lang="en"):
     """The words of a countdown for drawtext with expansion: "Next programme in 4:32", counting down from `seconds`
     as the piece plays (t is the time into this FFmpeg run), rounded up, so it reads 0:01 in its last second."""
     left = f"max(0,{float(seconds):.3f}-t)"
-    return f"Next programme in %{{eif:trunc(({left}+0.999)/60):d}}:%{{eif:mod(trunc({left}+0.999),60):d:2}}"
+    return said_in.word("next_in", lang) + f"%{{eif:trunc(({left}+0.999)/60):d}}:%{{eif:mod(trunc({left}+0.999),60):d:2}}"
 
 
-def holding_chain(W, H, texts, words, next_title="", seconds=0.0, layers=None, f=None):
+def holding_chain(W, H, texts, words, next_title="", seconds=0.0, layers=None, f=None, lang="en"):
     """The words on a holding slide, low in the middle on a plate so they read on any picture: Back soon, or a
     countdown to the next programme with its name under it. words: countdown, back_soon or none.
     With an animation `f` (animate.fit) and a list of layers, the words go on a layer of their own that animates."""
@@ -383,18 +376,19 @@ def holding_chain(W, H, texts, words, next_title="", seconds=0.0, layers=None, f
     size = H * 0.06
     y = int(H * 0.72)
     if f and layers is not None:
-        drawn = holding_chain(W, H, texts, words, next_title, seconds)
+        drawn = holding_chain(W, H, texts, words, next_title, seconds, lang=lang)
         p = _pad_for(size, True)
         lh = (int(size * 1.9 + H * 0.042 * 1.5) + 2 * p) // 2 * 2 if words == "countdown" and next_title else (int(size * 1.5) + 2 * p) // 2 * 2
-        longest = max(len("Next programme in 00:00") if words == "countdown" else len("Back soon"), int(len(next_title[:60]) * 0.042 / 0.06))
+        back, ahead = said_in.word("back_soon", lang), said_in.word("next_in", lang) + "00:00"
+        longest = max(len(ahead) if words == "countdown" else len(back), int(len(next_title[:60]) * 0.042 / 0.06))
         lw = min(int(W), int(longest * size * 0.7) + 2 * p) // 2 * 2
         moved = [d.replace(f":y={y}:", f":y={p}:").replace(f":y={int(y + size * 1.9)}:", f":y={p + int(size * 1.9)}:") for d in drawn]
         layers.append({"src": animate.canvas(lw, lh), "draw": moved, "rest": drawn, "static": words == "back_soon", "f": f,
                        "x": "(W-w)/2", "y": str(y - p), "w": lw, "h": lh})
         return []
     if words == "back_soon":
-        return [_text(texts.file("Back soon"), size, "(w-tw)/2", y, plate=True)]
-    parts = [f"fontfile={FONT}", f"textfile={texts.file(countdown_text(seconds))}", "expansion=normal", f"fontsize={int(size)}",
+        return [_text(texts.file(said_in.word("back_soon", lang)), size, "(w-tw)/2", y, plate=True)]
+    parts = [f"fontfile={FONT}", f"textfile={texts.file(countdown_text(seconds, lang))}", "expansion=normal", f"fontsize={int(size)}",
              "fontcolor=white@1.00", "x=(w-tw)/2", f"y={y}", f"borderw={max(1, int(size / 16))}", f"bordercolor={OUTLINE}",
              "box=1", f"boxcolor={PLATE}", f"boxborderw={max(4, int(size / 3))}"]
     out = ["drawtext=" + ":".join(parts)]
@@ -455,7 +449,6 @@ def box_text(texts, words, style, sx=1.0, sy=1.0):
     return out
 
 
-def day_time_words(t):
+def day_time_words(t, lang="en"):
     """The day and time in words that stay true all week: "Sunday at 21:00". For promos, made days before they play."""
-    lt = time.localtime(t)
-    return f"{time.strftime('%A', lt)} at {time.strftime('%H:%M', lt)}"
+    return said_in.day_time(t, lang)

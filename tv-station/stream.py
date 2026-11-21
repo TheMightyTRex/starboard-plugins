@@ -14,7 +14,9 @@ import time
 
 import animate
 import dog
+import library
 import played
+import tv_words as words
 from guide import episode_words, is_new
 
 CHUNK = 188 * 348  # whole MPEG-TS packets, about 64 KB
@@ -46,11 +48,12 @@ def output_args(W, H, kbps, ts_offset, duration, copy=False):
 PREVIEW_INTO = 1.5  # seconds into a card's background video that a preview frame is taken (0.3.1)
 
 
-def sound_map(item):
-    """The -map for a programme's or clip's sound: its default track among the file's own sound tracks (0:a:N, 0.5.4).
+def sound_map(item, lang="en"):
+    """The -map for a programme's or clip's sound: its default track among the file's own sound tracks (0:a:N, 0.5.4),
+    or the first in the station's language when the file has one (0.6.0, library.sound_for).
     A line-up read before 0.5.4 has only Jellyfin's Index ("audio"), which counts external subtitle files and so can
     name a subtitle stream; it gets the first sound track until the line-up is read again."""
-    n = item.get("audio_n")
+    n = library.sound_for(item, lang)
     return f"0:a:{int(n)}" if isinstance(n, int) and n >= 0 else "0:a:0"
 
 
@@ -74,7 +77,9 @@ def piece_command(piece, now, ctx):
 
     A holding piece has "holding": {"file", "still", "words", "has_audio"} and "airing", the next programme.
     ctx: {"W", "H", "kbps", "opts", "names", "logo", "jf_url", "jf_key", "ts_offset", "texts", "clip_path", "art",
-          "colour", "next_words", "start_words", "layout", "trans_in", "trans_out"}
+          "colour", "next_words", "start_words", "layout", "trans_in", "trans_out", "lang", "localise"}
+    lang:      the station's language for the words drawn (0.6.0), else English
+    localise:  gives a programme its title and description in that language where one is kept (titles.py, 0.6.0)
     layout:    a broadcast pack's Coming up next layout, with "file" its background, for cards
     trans_in:  a pack's transition, {"file", "dur", "codec"}: its second half plays over the start of this piece
     trans_out: the same, its first half over the end; the piece then has "tail_from", where its last half starts
@@ -82,6 +87,8 @@ def piece_command(piece, now, ctx):
     to_file:   an MP4 file to write, as fast as it can, in place of the stream (an animation's preview)
     """
     W, H = ctx["W"], ctx["H"]
+    lang = ctx.get("lang") or "en"
+    localise = ctx.get("localise") or (lambda e: e)
     still = bool(ctx.get("still"))
     opts = dog.still(ctx["opts"]) if still else ctx["opts"]  # a still frame shows each thing where it rests
     to_file = ctx.get("to_file")
@@ -100,21 +107,21 @@ def piece_command(piece, now, ctx):
     layout = ctx.get("layout") if kind == "card" else None
     most = max(0.5, left) + 1.0  # every looped or made-up input stops a second after the piece
     if kind == "programme":
-        e = piece["airing"]["entry"]
+        e = localise(piece["airing"]["entry"])
         rel = float(piece.get("offset") or 0) + into  # a part after a break inside the programme starts part way in (0.4.0)
         if ctx.get("stand_in"):
             args += pace + ctx["stand_in"]
         else:
             args += pace + ["-ss", f"{rel:.3f}"] + jellyfin_input(ctx["jf_url"], ctx["jf_key"], e["id"])
         if e.get("has_audio", True):
-            audio_from = sound_map(e)
+            audio_from = sound_map(e, lang)
         label = ""
         if opts["label"] == "live":
-            label = "Live"
+            label = words.word("live", lang)
         elif opts["label"] == "new_repeat":
-            label = "New" if is_new(e, piece["start"]) else "Repeat"
+            label = words.word("new" if is_new(e, piece["start"]) else "repeat", lang)
         programme = {"duration": float(piece.get("length") or piece["airing"]["content_end"] - piece["start"]), "label": label,
-                     "start_words": ctx.get("start_words") or f"{e.get('title')}" + (f": {episode_words(e)}" if episode_words(e) else ""),
+                     "start_words": ctx.get("start_words") or f"{e.get('title')}" + (words.sep(lang) + episode_words(e, lang) if episode_words(e, lang) else ""),
                      "next_words": ctx.get("next_words")}
     elif kind == "clip":
         c = piece["clip"]
@@ -125,7 +132,7 @@ def piece_command(piece, now, ctx):
         else:
             args += pace + seek + ["-i", ctx["clip_path"](src)]
         if c.get("has_audio", True):
-            audio_from = sound_map(c)
+            audio_from = sound_map(c, lang)
             audio_gain = float(c.get("gain") or 0)
     elif kind == "holding":
         h = piece["holding"]
@@ -175,9 +182,9 @@ def piece_command(piece, now, ctx):
                 pre.append(f"[{n_inputs}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,format=yuv420p[art]")
                 base += f"[bgc];[bgc][art]overlay=x={int(x0 * sx)}:y={int(y0 * sy)}:eof_action=repeat"
             n_inputs += 1
-        a = piece["airing"]["entry"]
-        said = {"Heading": "Coming up next" if piece.get("card") == "next" else f"Later on {ctx['names']['channel']}",
-                "Title": a.get("title") or "Programme", "Episode": episode_words(a), "Day and time": dog.when_words(piece["airing"]["start"], now),
+        a = localise(piece["airing"]["entry"])
+        said = {"Heading": words.heading(piece.get("card"), ctx["names"]["channel"], lang),
+                "Title": a.get("title") or "Programme", "Episode": episode_words(a, lang), "Day and time": dog.when_words(piece["airing"]["start"], now, lang),
                 "Synopsis": a.get("plot") or "", "Channel name": ctx["names"]["channel"]}
         chain = []
         for name, style in (layout.get("fields") or {}).items():
@@ -188,9 +195,9 @@ def piece_command(piece, now, ctx):
             chain = []
     elif kind == "card":
         base = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,fps={FPS},format=yuv420p"
-        a = piece["airing"]["entry"]
-        card = {"kicker": "Coming up next" if piece.get("card") == "next" else f"Later on {ctx['names']['channel']}",
-                "title": a.get("title") or "Programme", "episode": episode_words(a), "when": dog.when_words(piece["airing"]["start"], now),
+        a = localise(piece["airing"]["entry"])
+        card = {"kicker": words.heading(piece.get("card"), ctx["names"]["channel"], lang),
+                "title": a.get("title") or "Programme", "episode": episode_words(a, lang), "when": dog.when_words(piece["airing"]["start"], now, lang),
                 "plot": a.get("plot") or "", "footer": f"{ctx['names']['station']}  ·  {ctx['names']['channel']}"}
         chain = dog.card_chain(W, H, ctx["texts"], card, ctx.get("colour") or "0x1f5f99", layers, whole)
     elif kind == "holding":
@@ -198,9 +205,10 @@ def piece_command(piece, now, ctx):
         # countdown to it, worked out from what is left of the piece, so it reaches 0:00 as the programme starts.
         base = (f"scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=black,"
                 f"setsar=1,fps={FPS},format=yuv420p")
-        nxt = (piece.get("airing") or {}).get("entry") or {}
-        title = (nxt.get("title") or "") + (f": {episode_words(nxt)}" if episode_words(nxt) else "")
-        chain = dog.holding_chain(W, H, ctx["texts"], piece["holding"].get("words") or "countdown", title, left, layers, whole)
+        nxt = localise((piece.get("airing") or {}).get("entry") or {})
+        title = (nxt.get("title") or "") + (words.sep(lang) + episode_words(nxt, lang) if episode_words(nxt, lang) else "")
+        chain = dog.holding_chain(W, H, ctx["texts"], piece["holding"].get("words") or "countdown", title, left, layers, whole,
+                                  lang=lang)
     elif kind == "slate":
         base = "setsar=1,format=yuv420p"
         chain = dog.slate_chain(W, H, ctx["texts"], f"{ctx['names']['station']}  ·  {ctx['names']['channel']}")

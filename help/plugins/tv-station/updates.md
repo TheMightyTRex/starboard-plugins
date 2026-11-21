@@ -1,11 +1,12 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.5.6 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.5.7 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.6.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.5.7 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 21 November 2026 |
 | 0.5.6 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 20 November 2026 |
 | 0.5.5 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
@@ -24,6 +25,21 @@ Create your own TV channel 0.5.6 is the latest version. It needs Starboard with 
 | 0.1.0 | 1.15 or later | 19 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.6.0
+
+Not released yet.
+
+Added:
+
+- **Language:** a station setting, English unless changed, with French, German, Spanish, Italian, Portuguese, Dutch,
+  Swedish, Danish and Norwegian. The words drawn on the picture and in the guide, such as **Coming up next**, the series
+  and episode, and the day and time, are in that language.
+- **Sound track in your language:** a programme with more than one sound track plays the one in the station's
+  language, else its default track.
+- **Titles in your language:** film and series titles, and film descriptions, are read in the station's language from
+  the film database for programmes about to be shown, a few each hour, and kept. Episode names and plots stay as
+  Jellyfin has them; [Language](settings.md#language) says how to get those in your language too.
 
 ## What is new in 0.5.7
 

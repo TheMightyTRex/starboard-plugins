@@ -4,6 +4,7 @@ import datetime as dt
 import time
 from xml.sax.saxutils import escape, quoteattr
 
+import tv_words as words
 from grid import channel_of
 
 NEW_DAYS = 30  # an episode or film first shown in the last 30 days is New in the guide; anything older is a repeat
@@ -47,18 +48,21 @@ def programme_title(entry):
     return entry.get("title") or "Programme"
 
 
-def episode_words(entry):
-    """The episode's name, with its series and episode numbers, such as "Series 2, episode 4: The Lift"."""
+def episode_words(entry, lang="en"):
+    """The episode's name, with its series and episode numbers, such as "Series 2, episode 4: The Lift"; in the
+    station's language when `lang` is given (0.6.0), such as "Staffel 2, Folge 4: The Lift"."""
     bits = []
     if entry.get("s") is not None and entry.get("e") is not None:
-        bits.append(f"Series {entry['s']}, episode {entry['e']}")
+        bits.append(words.episode(entry["s"], entry["e"], lang))
     if entry.get("ep"):
         bits.append(entry["ep"])
-    return ": ".join(bits)
+    return words.sep(lang).join(bits)
 
 
-def xmltv(channels, base, station, start=None, days=7):
-    """The guide for every channel on air, from the start of the current hour for `days` days."""
+def xmltv(channels, base, station, start=None, days=7, lang="en", localise=None):
+    """The guide for every channel on air, from the start of the current hour for `days` days. The episode line is in
+    the station's language (`lang`, 0.6.0); `localise`, when given, gives each programme its title and description in
+    that language where one is kept (titles.py)."""
     now = time.time() if start is None else start
     since = now - now % 3600
     until = since + days * 86400
@@ -72,11 +76,11 @@ def xmltv(channels, base, station, start=None, days=7):
         out.append("  </channel>")
     for ch in live:
         for a in channel_of(ch).airings(since, until):
-            e = a["entry"]
+            e = localise(a["entry"]) if localise else a["entry"]
             out.append(f'  <programme start="{_xmltime(a["start"])}" stop="{_xmltime(a["end"])}" channel={quoteattr(channel_key(ch))}>')
             out.append(f"    <title>{escape(programme_title(e))}</title>")
-            if episode_words(e):
-                out.append(f"    <sub-title>{escape(episode_words(e))}</sub-title>")
+            if episode_words(e, lang):
+                out.append(f"    <sub-title>{escape(episode_words(e, lang))}</sub-title>")
             if e.get("plot"):
                 out.append(f"    <desc>{escape(e['plot'])}</desc>")
             for g in (e.get("genres") or [])[:3]:
