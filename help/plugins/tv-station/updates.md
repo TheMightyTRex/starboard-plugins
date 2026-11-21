@@ -6,6 +6,7 @@ Create your own TV channel 0.5.6 is the latest version. It needs Starboard with 
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.5.7 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not yet released |
 | 0.5.6 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 20 November 2026 |
 | 0.5.5 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
 | 0.5.4 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 19 November 2026 |
@@ -23,6 +24,15 @@ Create your own TV channel 0.5.6 is the latest version. It needs Starboard with 
 | 0.1.0 | 1.15 or later | 19 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.5.7
+
+Fixed:
+
+- **Moving a programme with the keyboard:** on the schedule grid, after **Move 15 minutes earlier**, **Move 15 minutes
+  later** or **Move to**, focus goes straight to the programme at its new time, and the new time is said. A screen
+  reader no longer reads the old time first. When a move cannot be made, focus goes back to the programme where it
+  was and the reason is said.
 
 ## What is new in 0.5.6
 
