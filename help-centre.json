@@ -10,6 +10,7 @@
   ],
   "search_example": "Enter a plug-in or what you want it to do, such as \"watching now\" or \"disk space\".",
   "front_door": true,
+  "discord": "https://discord.gg/xN9bf2H4vv",
   "home": {
     "title": "Welcome to the plug-ins help",
     "intro": "Every plug-in in the collection has the same eight pages, in the same order, so you always know where to find each answer."
