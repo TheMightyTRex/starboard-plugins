@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 (22 November 2026)
+
+### Added
+- New this week, by email: a weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only and no pictures. You choose the day and the hour, and it can go by email alone or by every way you activated.
+
+### Changed
+- Deactivated at first: New this week is now deactivated until you activate it under What to send. Send New this week on is replaced by When to send New this week, one setting for the day and the hour.
+
 ## 1.2.0 (19 November 2026)
 
 ### Added

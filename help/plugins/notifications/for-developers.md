@@ -38,20 +38,20 @@ Each image is pinned by digest in the manifest:
 | `POST /test/ntfy` | The Send a test by ntfy button |
 | `POST /test/webhook` | The Send a test to the webhooks button |
 | `POST /weekly-now` | The Send New this week now button |
-| `POST /jobs/weekly` | The job Send New this week on the chosen day |
+| `POST /jobs/weekly` | The job Send New this week, at the day and hour in When to send New this week |
 | `POST /events` | Events: `request.available`, `download.failed`, `app.down`, `app.up`, `disk.nearly_full`, `update.available`, `item.added` |
 | `POST /update/before` | The update's before step, 60 seconds at most |
 | `POST /update/after` | The update's after step, 10 seconds at most |
 
 ## Jobs
 
-- `weekly`: daily at 09:00, 2 minutes at most.
+- `weekly`: on the schedule in the setting `weekly_when` (Monday 09:00 until you change it), 2 minutes at most.
 
 ## How it works
 
-- Starboard runs it: each event is a `POST /events`, and New this week is a daily job at 09:00 that sends only on the chosen day, once a week. The container rests 5 minutes after the last one (`start: when_needed`).
+- Starboard runs it: each event is a `POST /events`, and New this week is a job on the schedule in `weekly_when` that sends only when `send_weekly` is activated, and not twice within 20 hours. The container rests 5 minutes after the last one (`start: when_needed`).
 - `POST /events` answers at once and sends in the background, because Starboard waits 3 seconds and tries again once. The same event sent twice within 10 minutes is sent once.
-- `item.added` is not sent: it is kept in `/data/week.json`, 8 days at most, for New this week. New this week also reads Starboard's `recent`, what the download apps imported.
+- `item.added` is not sent: it is kept in `/data/week.json`, 8 days at most, for New this week, with the title, series, type and year only. New this week also reads Starboard's `recent`, what the download apps imported. It lists films, episodes by series, albums and books, 40 of each at most, and leaves out series, pictures and everything else.
 - One message at a time. The last 20 results are kept in `/data/log.json`, cleaned of every secret first, for both cards.
 - Secrets are read from the settings each time and never written to the log, the cards or `/data`.
 - Words: meaning is always in the words, never in a symbol or colour, and a link has words before it, "Open Starboard:" and the address.

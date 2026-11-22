@@ -1,11 +1,12 @@
 # Notifications: Updates
 
-Notifications 1.2.0 is the latest version. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0); an older Starboard keeps 1.1.3.
+Notifications 1.3.0 is the latest version. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0); an older Starboard keeps 1.1.3.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.3.0 | 1.16 or later | 22 November 2026 |
 | 1.2.0 | 1.16 or later | 19 November 2026 |
 | 1.1.4 | 1.14 or later | Not released on its own: it came in 1.2.0 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
@@ -15,6 +16,16 @@ Notifications 1.2.0 is the latest version. It needs Starboard with plug-in API 1
 | 1.0.0 | 1.11 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.3.0
+
+Added:
+
+- **New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only and no pictures. You choose the day and the hour, and it can go by email alone or by every way you activated.
+
+Changed:
+
+- **Deactivated at first:** New this week is now deactivated until you activate it under What to send. Send New this week on is replaced by **When to send New this week**, one setting for the day and the hour.
 
 ## What is new in 1.2.0
 

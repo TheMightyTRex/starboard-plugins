@@ -13,9 +13,12 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 | **A disk is nearly full** | At the limit set for alerts in Settings, Alerts, or 90%. Activated or deactivated. | Activated |
 | **A disk is erased, added or taken out** | Every change Starboard's disk pool helper makes, however it was asked for, as a warning when a disk was erased. Needs Starboard 0.23.0 or later. Activated or deactivated. | Activated |
 | **An update is ready** | For Starboard, your apps and your plug-ins. Activated or deactivated. | Activated |
-| **New this week** | Films, series and more that arrived in the last 7 days, once a week at 09:00. Activated or deactivated. | Activated |
-| **Send New this week on** | The day New this week is sent, at 09:00. One of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday. | Monday |
+| **New this week** | A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Deactivated until you activate it. Activated or deactivated. | Deactivated |
+| **When to send New this week** | The day and the hour. It lists what arrived in the last 7 days. A schedule: every day, week or month, and a time. | Every week, Monday, 09:00 |
+| **Send New this week by** | Email uses the settings in Email. The other choice uses every way you activated. One of: Email only, Every way I activated. | Email only |
 | **Starboard's address, for links** | Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address. A web address. | Empty |
+
+![Notifications' What to send, with When to send New this week outlined](../../images/notifications/settings-1-new-this-week.png)
 
 ## Email
 
@@ -29,6 +32,8 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 | **Password** | An app password where your email service offers one. Kept secret by Starboard: it is never shown again. | Empty |
 | **Send from** | Such as starboard@example.com Words. | Empty |
 | **Send email to** | One address a line. One a line. | Empty |
+
+![Notifications' Email settings, with Email server outlined](../../images/notifications/settings-2-email.png)
 
 ## Telegram
 
@@ -89,7 +94,9 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 These are on Notifications' tab.
 
 - **Send a test email**, **Send a test to Telegram**, **Send a test to Discord**, **Send a test by Signal**, **Send a test by Pushover**, **Send a test by ntfy** and **Send a test to the webhooks** each send "A test from Starboard" by that one channel, with the details saved. They work even before you activate the channel. Starboard says "Test sent by" and the channel, or "Test not sent" and why.
-- **Send New this week now** sends New this week straight away, on any day, by every active channel. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
+- **Send New this week now** sends New this week straight away, at any time, the way **Send New this week by** says, even while **New this week** is deactivated. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
+
+![Notifications' Actions, with Send New this week now outlined](../../images/notifications/settings-3-send-now.png)
 
 ## Things to note
 
@@ -97,7 +104,7 @@ These are on Notifications' tab.
 - Fill in a channel's details, select its test button, and activate **Send by** that channel only once the test arrives.
 - Each message goes by every active channel. One channel failing never stops the others.
 - Under **People**, give one line for each person, such as `Sam, sam@example.com` or `Sam, telegram 123456`. The name must be the one they use in Reelix or Seerr. Only email and Telegram can tell a person.
-- New this week is sent at 09:00 on the day you choose, once a week. A week with nothing new sends nothing.
+- New this week is sent on the day and at the hour you choose in **When to send New this week**, once a week. A week with nothing new sends nothing.
 - Passwords, tokens, keys and webhook addresses are secret: Starboard never shows them again, and the plug-in never writes them to its log, its cards or its folder.
 - On ntfy.sh anyone who knows the topic can read it, so make the topic hard to guess.
 - Signal works only if you already run signal-cli-rest-api with a number registered. Otherwise leave **Send by Signal** deactivated.

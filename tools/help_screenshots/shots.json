@@ -296,6 +296,60 @@
       "page": "dashboard.html"
     },
     {
+      "plugin": "notifications",
+      "phase": "present",
+      "file": "settings-1-new-this-week.png",
+      "height": 1000,
+      "run": "const small = (txt, sel) => [...document.querySelectorAll(sel)].filter((x) => x.textContent.includes(txt)).sort((a, b) => a.textContent.length - b.textContent.length)[0]; const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; const rowOf = (txt) => { const el = [...document.querySelectorAll('main label, main .field, main li, main tr, main h3, main legend')].find((x) => x.textContent.includes(txt)); return el; }; await w(1500); await tab('What to send'); const r = small('When to send New this week', 'main div, main fieldset, main label, main li');  r.dataset.shot = 'when'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=when]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Notifications' What to send, with When to send New this week, Monday at 09:00, outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=notifications"
+    },
+    {
+      "plugin": "notifications",
+      "phase": "present",
+      "file": "settings-2-email.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; const rowOf = (txt) => { const el = [...document.querySelectorAll('main label, main .field, main li, main tr, main h3, main legend')].find((x) => x.textContent.includes(txt)); return el; }; await w(1500); await tab('Email'); const r = rowOf('Email server'); r.dataset.shot = 'host'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=host]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Notifications' Email settings, with Email server outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=notifications"
+    },
+    {
+      "plugin": "notifications",
+      "phase": "present",
+      "file": "settings-3-send-now.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; const rowOf = (txt) => { const el = [...document.querySelectorAll('main label, main .field, main li, main tr, main h3, main legend')].find((x) => x.textContent.includes(txt)); return el; }; await w(1500); await tab('Actions'); const r = [...document.querySelectorAll('main button')].find((b) => b.textContent.includes('Send New this week now')); r.dataset.shot = 'now'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=now]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Notifications' Actions, with Send New this week now outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=notifications"
+    },
+    {
       "phase": "absent",
       "file": "install-1-catalogue.png",
       "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const rows = [...document.querySelectorAll('li')].filter((x) => x.textContent.includes('Backups watch') && x.querySelector('button')).sort((a, b) => a.textContent.length - b.textContent.length); const row = rows[0]; row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
