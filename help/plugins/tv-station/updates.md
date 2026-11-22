@@ -1,11 +1,12 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.5.7 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.6.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.7.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.6.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 21 November 2026 |
 | 0.5.7 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 21 November 2026 |
 | 0.5.6 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 20 November 2026 |
@@ -25,6 +26,18 @@ Create your own TV channel 0.5.7 is the latest version. It needs Starboard with 
 | 0.1.0 | 1.15 or later | 19 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.7.0
+
+Not released yet.
+
+Added:
+
+- **Audio description on promos:** a setting in **Promos** that is not active unless you activate it. A voice says
+  each promo's words, so a blind viewer hears what is coming, on which channel, and when. The voice is made on your
+  server, in the station's language, and nothing is sent anywhere. A programme that has a described sound track plays
+  that track in its clips. [Audio description on promos](settings.md#audio-description-on-promos) says what is said
+  and what it costs.
 
 ## What is new in 0.6.0
 

@@ -32,6 +32,7 @@ import library
 import pack
 import played
 import promo
+import speak
 import sbplugin
 import schedule
 import stream
@@ -39,7 +40,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -573,7 +574,15 @@ def promo_design_key(s, ch, cfg=None):
     that is not English (0.6.0), so a change of language makes its promos again in the next quiet hours."""
     d = promo.design_of(promo_design(s, ch))
     lang = language(cfg)
-    return f"{d}|{lang}" if d and lang != tv_words.DEFAULT else d
+    d = f"{d}|{lang}" if d and lang != tv_words.DEFAULT else d
+    # 0.7.0: with Audio description on promos activated, promos made without the voice are made again, and the other
+    # way round. Deactivated (as it is unless changed), the key is as it was, so an update alone keeps every promo.
+    return f"{d}|ad" if d and promo_described(cfg) else d
+
+
+def promo_described(cfg=None):
+    """True when Audio description on promos is activated (0.7.0); it is not unless changed."""
+    return truthy((cfg if cfg is not None else settings()).get("promo_audio_description"), False)
 
 
 def promo_clips(s, ch, cfg=None):
@@ -2491,6 +2500,9 @@ def promos_job(now=None, limit_seconds=40 * 60):
                 titles_kept().work(most=1, stop=sbplugin.holding)
                 a = {**a, "entry": localiser(lang)(a["entry"])}
             how["lang"] = lang
+            if promo_described(cfg):  # 0.7.0: the promo's words spoken; with no speech program the promo is made without
+                length = max(promo.SHORTEST, min(promo.LONGEST, int(how["seconds"] or (pk.get("promo") or {}).get("seconds") or 15)))
+                how["voice"] = speak.fitting(promo.spoken(a, ch["name"], lang), lang, texts.folder, promo.voice_room(length))
             argv, seconds = promo.command(pk, a, ch["name"], music, W, H, c.get("url", ""), c.get("api_key", ""), texts, out + ".part",
                                           clip_sound=sound, **how)
             ok, why = promo.run(argv)

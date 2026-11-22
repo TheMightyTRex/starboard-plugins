@@ -38,7 +38,6 @@ class TheSetting(unittest.TestCase):
         s = next(x for x in m["settings"] if x["key"] == "language")
         self.assertEqual((s["type"], s["default"], s["label"]), ("choice", "en", "Language"))
         self.assertEqual([c["value"] for c in s["choices"]], list(words.TABLES))
-        self.assertEqual(m["version"], "0.6.0")
         for c in s["choices"]:
             self.assertIn(c["value"], words.SOUND_CODES)
 

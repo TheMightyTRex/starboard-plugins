@@ -64,6 +64,9 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
   Swedish, Danish or Norwegian: the words drawn on the picture and in the guide, the sound track where a
   programme has one in that language, and film and series titles and descriptions, read from the film database through
   Jellyfin for programmes about to be shown, at most 60 an hour, and kept.
+- **Audio description on promos**, when you activate it: a voice says each promo's words, the title, the channel, the
+  day and the time, so a blind viewer hears more than music. It is made on your server by a small speech program in the
+  image, and nothing is sent anywhere.
 - **In Jellyfin's Live TV, first.** Its channels are numbered from 1 in your order, before the free channels from
   101, with a 7-day guide: titles, episode names, synopses, pictures, and New or Repeat.
 

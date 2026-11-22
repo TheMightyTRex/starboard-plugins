@@ -116,6 +116,21 @@ TABLES = {
     },
 }
 
+# How a time is said aloud (0.7.0, audio description on promos): a speech program reads "21:00" as digits, so the hour
+# and the minutes are given as numbers with the language's own word. "say" replaces what is written short.
+SPOKEN = {
+    "en": {"hour": "{h} o'clock", "hour_min": "{h} {m}", "small": "{h} oh {m}"},
+    "fr": {"hour": "{h} heures", "hour_min": "{h} heures {m}"},
+    "de": {"hour": "{h} Uhr", "hour_min": "{h} Uhr {m}"},
+    "es": {"hour": "{h} horas", "hour_min": "{h} horas {m}"},
+    "it": {"hour": "{h}", "hour_min": "{h} e {m}"},
+    "pt": {"hour": "{h} horas", "hour_min": "{h} horas e {m}"},
+    "nl": {"hour": "{h} uur", "hour_min": "{h} uur {m}"},
+    "sv": {"hour": "{h}", "hour_min": "{h} och {m}", "say": {"kl.": "klockan"}},
+    "da": {"hour": "{h}", "hour_min": "{h} {m}", "say": {"kl.": "klokken"}},
+    "nb": {"hour": "{h}", "hour_min": "{h} {m}", "say": {"kl.": "klokken"}},
+}
+
 # Jellyfin gives a sound track's language as ISO 639-2, bibliographic (fre, ger, dut) or terminology (fra, deu, nld),
 # and some files carry the two-letter code. Norwegian may be nor, nob or nno.
 SOUND_CODES = {
@@ -167,6 +182,24 @@ def day_time(t, lang=DEFAULT):
     w = table(lang)
     lt = time.localtime(t)
     return _first_up(w["day_at"].format(wd=w["days"][lt.tm_wday], hm=time.strftime("%H:%M", lt)))
+
+
+def time_spoken(t, lang=DEFAULT):
+    """A time as a speech program should be given it: "21 o'clock", "21 30", "21 heures 30", "21 Uhr"."""
+    sp = SPOKEN[code(lang)]
+    lt = time.localtime(t)
+    if lt.tm_min == 0:
+        return sp["hour"].format(h=lt.tm_hour)
+    return (sp.get("small") if lt.tm_min < 10 and sp.get("small") else sp["hour_min"]).format(h=lt.tm_hour, m=lt.tm_min)
+
+
+def day_time_spoken(t, lang=DEFAULT):
+    """day_time for a voice (0.7.0): "Sunday at 21 o'clock", "Sonntag um 21 Uhr", "söndag klockan 21"."""
+    w, sp = table(lang), SPOKEN[code(lang)]
+    said = w["day_at"].format(wd=w["days"][time.localtime(t).tm_wday], hm=time_spoken(t, lang))
+    for short, full in (sp.get("say") or {}).items():
+        said = said.replace(short, full)
+    return _first_up(said)
 
 
 def episode(s, e, lang=DEFAULT):

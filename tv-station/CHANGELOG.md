@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.6.0 (not released yet)
+## 0.7.0 (not released yet)
+
+### Added
+- Audio description on promos (DASH-509, owner, 21 November 2026: "Can you add a task to add audio description to promos"), a setting in Promos that is not active unless you activate it. A promo is clips, music and words on screen, so a blind viewer heard only music. With it active, a voice says the promo's words in the order they are read: Coming soon, the title, the episode, the day and time, and the channel, then the first sentence of the programme's description when the promo is long enough. The time is said as a time ("21 o'clock"), in the station's language.
+  - The voice is mixed into the promo's one sound track, as a channel's stream carries one. It starts in the promo's first second and ends before the closing fade; the music and the programme's sound fall to about a third while it speaks and rise again after it.
+  - The voice is made on your server by eSpeak NG, in the image: nothing is sent anywhere, there is a voice for each of the ten languages, and it takes about 0.03 processor seconds and 13 MB of memory for each promo (measured in the image), in the quiet hours when the promo is made. The image is about 6 MB larger (68.9 MB to 74.9 MB unpacked on amd64).
+  - A programme that has an audio description sound track (named as the Audio description plug-ins read them, such as "English (Audio Description)" or "AD") plays that track in its clips, in the station's language when there is one. The line-up learns which programmes have one the next time it is read from Jellyfin, by itself each night.
+  - Activating or deactivating it makes each channel's promos again in the next quiet hours. Left as it is, every promo is kept and nothing changes.
+
+## 0.6.0 (21 November 2026)
 
 ### Added
 - Language (owner, 21 November 2026: "the create your own tv channel needs to have a language choice in the settings and it defaults to english"), a station setting, English unless changed, with English, Français (French), Deutsch (German), Español (Spanish), Italiano (Italian), Português (Portuguese), Nederlands (Dutch), Svenska (Swedish), Dansk (Danish) and Norsk bokmål (Norwegian). It changes three things:

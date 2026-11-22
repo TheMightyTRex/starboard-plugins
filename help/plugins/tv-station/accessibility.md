@@ -11,6 +11,7 @@ Starboard draws everything Create your own TV channel shows in Starboard: its se
 - **Choose from your library** (0.2.0) is a slide-out: focus moves to its search box, each kind is a radio button, each item a tick box with its name as its label and what it is as its description, and how many are shown and ticked is read out as it changes. Escape or **Cancel** closes it, and focus goes back to **Choose from your library**.
 - **A logo shown on its row** (0.2.0) has words with it, such as "Comedy's logo".
 - **Suggest a schedule** (0.2.0) asks what to make the week from as radio buttons in a group, each with a sentence linked to it, and starts on the last choice for the channel.
+- **Promos for viewers who cannot read the picture** (0.7.0): with **Audio description on promos** activated, a voice says each promo's words, the title, the channel, the day and the time. It is not active unless you activate it. [Audio description on promos](settings.md#audio-description-on-promos) says what is said.
 - **New or Repeat** is in words, in the guide, on the card and on the television, never by colour alone. Each channel's colour is decoration: its name and number always say which it is.
 - **Its logo**, a television with an aerial, has the text description "Create your own TV channel logo" where it is shown without its name.
 

@@ -30,6 +30,10 @@ SHORTEST, LONGEST = 10, 60  # seconds a promo may be (0.3.0: the setting Promo l
 LEAD_IN = 1.0  # seconds of background and music before the first clip, and after the last
 STATION_LOGO_SHARE = 0.12  # the station's logo on a promo: this share of the picture's width (0.5.2)
 RAMP = 0.4  # seconds the music takes to fall under the programme's sound, and to rise again
+VOICE_AT = 0.6  # audio description (0.7.0): seconds into the promo the voice starts
+VOICE_CLEAR = 1.5  # ... and it ends at least this long before the promo does, clear of the closing fade
+VOICE_UNDER = 0.3  # the music's and the programme's share of their level while the voice speaks
+VOICE_GAIN = 0.0  # dB on the voice before the mix; eSpeak NG's level is steady, -20.5 LUFS measured, a little over the programme's -23
 _proc = {"p": None}
 _stop = threading.Event()
 
@@ -105,6 +109,36 @@ def words(airing, channel_name, lang="en"):
             "Day and time": dog.day_time_words(airing["start"], lang), "Synopsis": (e.get("plot") or "")[:240], "Channel name": channel_name}
 
 
+def first_sentence(text, most=160):
+    """The first sentence of a description, when it is short enough to be said in a promo; else ""."""
+    text = " ".join(str(text or "").split())
+    for end in (". ", "! ", "? "):
+        cut = text.find(end)
+        if 0 < cut < most:
+            return text[:cut + 1]
+    return text if 0 < len(text) <= most and text[-1:] in ".!?" else ""
+
+
+def spoken(airing, channel_name, lang="en"):
+    """What the voice says for a promo (0.7.0), longest first, so the longest that fits its length is used: the words
+    on screen in the order they are read (Coming soon, the title, the episode, the day and time, the channel), with
+    the first sentence of the programme's description when there is room; then without it; then the title, the day
+    and time and the channel alone. The time is given as a voice says it ("21 o'clock", not "21:00")."""
+    e = airing["entry"]
+    w = words(airing, channel_name, lang)
+    when = said_in.day_time_spoken(airing["start"], lang)
+    line = lambda *bits: " ".join(b.rstrip(" .") + "." for b in bits if b and b.strip(" ."))  # noqa: E731
+    full = line(w["Heading"], w["Title"], w["Episode"], when, channel_name)
+    short = line(w["Title"], when, channel_name)
+    about = first_sentence(e.get("plot"))
+    return ([f"{full} {about}"] if about else []) + [full] + ([short] if short != full else [])
+
+
+def voice_room(seconds):
+    """How many seconds of speech fit in a promo of this length."""
+    return max(0.0, float(seconds) - VOICE_AT - VOICE_CLEAR)
+
+
 def png_size(path):
     """A PNG's width and height from its header, or None: no picture library is needed for it."""
     try:
@@ -150,7 +184,7 @@ def duck(level, start, end):
 
 
 def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, seed=0, seconds=None, background=None,
-            level=0.2, clips=None, clip_sound=True, station_logo=None, lang="en"):
+            level=0.2, clips=None, clip_sound=True, station_logo=None, lang="en", voice=None):
     """The FFmpeg command for one promo, written to `out` (an MP4).
 
     seconds:    the setting Promo length (0.3.0), else the pack's own, else 15; 10 to 60
@@ -161,6 +195,9 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     station_logo: a PNG of the station's logo, drawn small in the top right corner (0.5.2, owner, 19 November 2026:
                 "I want the T-Rex TV logo to also show somewhere in the promos"), for a channel with a pack of its own
     lang:       the station's language for the words (0.6.0)
+    voice:      audio description (0.7.0): {"file", "dur"}, the promo's words spoken (speak.py), mixed into the one
+                sound track from VOICE_AT, with the music and the programme's sound held under it while it speaks.
+                With a voice, a clip's sound is the programme's own described track when it has one.
     """
     lay = p["promo"]
     seconds = max(SHORTEST, min(LONGEST, int(seconds or lay.get("seconds") or 15)))
@@ -195,6 +232,10 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
     if station_logo:
         logo_in = n + 1
         args += ["-loop", "1", "-framerate", str(pack.FPS), "-t", str(seconds), "-i", station_logo]
+    voice_in = None
+    if voice and voice.get("file") and 0 < float(voice.get("dur") or 0) <= voice_room(seconds):
+        voice_in = n + 1 + (1 if station_logo else 0)
+        args += ["-i", voice["file"]]
     parts = [f"[0:v]scale={W}:{H}:force_original_aspect_ratio=decrease,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={pack.FPS},format=yuv420p[bg]"]
     for i in range(n_clips):
         parts.append(f"[{i + 1}:v]scale={cw}:{ch}:force_original_aspect_ratio=increase,crop={cw}:{ch},setsar=1,fps={pack.FPS},"
@@ -231,7 +272,7 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
         # The programme's sound for each clip, faded in and out a little so the joins do not click, brought to -23 LUFS
         # like the music, and laid under the clips; the music falls to `level` while it plays (0.3.0).
         # The sound track in the station's language when the file has one, else its default (0.6.0, library.sound_for).
-        track = library.sound_for(e, lang)
+        track = library.sound_for(e, lang, described=voice_in is not None)
         pick = f":{int(track)}" if isinstance(track, int) and track > 0 else ""
         for i in range(n_clips):
             parts.append(f"[{i + 1}:a{pick}]{stereo},atrim=duration={each:.2f},asetpts=PTS-STARTPTS,"
@@ -244,6 +285,14 @@ def command(p, airing, channel_name, music, W, H, jf_url, jf_key, texts, out, se
                      f"alimiter=limit=0.95,afade=t=in:st=0:d=0.5,afade=t=out:st={seconds - 1.5}:d=1.5[a]")
     else:
         parts.append(f"{bed},afade=t=in:st=0:d=0.5,afade=t=out:st={seconds - 1.5}:d=1.5[a]")
+    if voice_in is not None:
+        # Audio description (0.7.0): everything else falls to VOICE_UNDER while the voice speaks, and rises after it.
+        end = VOICE_AT + float(voice["dur"])
+        at = int(VOICE_AT * 1000)
+        parts[-1] = parts[-1][:-len("[a]")] + "[a0]"
+        parts.append(f"[a0]volume=eval=frame:volume='{duck(VOICE_UNDER, VOICE_AT, end)}'[under]")
+        parts.append(f"[{voice_in}:a]{stereo},volume={VOICE_GAIN:+.1f}dB,adelay={at}|{at},apad[voice]")
+        parts.append("[under][voice]amix=inputs=2:duration=first:dropout_transition=0:normalize=0,alimiter=limit=0.95[a]")
     args += ["-filter_complex", ";".join(parts), "-map", "[v]", "-map", "[a]", "-t", str(seconds), "-threads", "1",
              "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", "-g", str(pack.FPS * 2),
              "-c:a", "aac", "-b:a", "160k", "-ar", "48000", "-ac", "2", "-movflags", "+faststart", "-f", "mp4", out]
