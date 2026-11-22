@@ -21,7 +21,6 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 ## What wakes it
 
 Starboard sends it these events: `request.available`, `download.failed`, `app.down`, `app.up`, `disk.nearly_full`, `disk.changed`, `update.available`, `item.added`.
-Starboard runs its job **Send New this week on the chosen day** daily at 09:00.
 
 ## Settings
 
@@ -34,8 +33,9 @@ Starboard runs its job **Send New this week on the chosen day** daily at 09:00.
 - **A disk is nearly full**: At the limit set for alerts in Settings, Alerts, or 90%.
 - **A disk is erased, added or taken out**: Every change Starboard's disk pool helper makes, however it was asked for.
 - **An update is ready**: For Starboard, your apps and your plug-ins.
-- **New this week**: Films, series and more that arrived in the last 7 days, once a week at 09:00.
-- **Send New this week on**: The day New this week is sent, at 09:00.
+- **New this week**: A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Deactivated until you activate it.
+- **When to send New this week**: The day and the hour. It lists what arrived in the last 7 days.
+- **Send New this week by**: Email uses the settings in Email. The other choice uses every way you activated.
 - **Starboard's address, for links**: Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address.
 
 ### Email

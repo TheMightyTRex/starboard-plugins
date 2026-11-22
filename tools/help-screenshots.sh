@@ -4,7 +4,7 @@
 #   tools/help-screenshots.sh [starboard checkout]      (default: STARBOARD_DIR, then ../starboard)
 # Each shot names its plug-in (library-cleanup when it names none). The example server is Starboard's, with this
 # collection's catalogue.json and the plug-in's real manifest (tools/help_screenshots/example_server.py).
-# SHOTS_PORT picks the port (18810). Look at every picture before committing.
+# SHOTS_PORT picks the port (18810). ONLY="notifications" takes just those plug-ins' pictures. Look at every picture before committing.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 sb="$(cd "${1:-${STARBOARD_DIR:-../starboard}}" && pwd)"
@@ -16,7 +16,7 @@ work="$(mktemp -d)"
 server=""
 trap 'kill "$server" 2>/dev/null || true; rm -rf "$work"' EXIT
 status=0
-plugins="$(python3 -c "import json; print(' '.join(sorted({s.get('plugin', 'library-cleanup') for s in json.load(open('tools/help_screenshots/shots.json'))['shots']})))")"
+plugins="$(python3 -c "import json; import os; only = os.environ.get('ONLY', '').split(); print(' '.join(sorted(p for p in {s.get('plugin', 'library-cleanup') for s in json.load(open('tools/help_screenshots/shots.json'))['shots']} if not only or p in only)))")"
 for plugin in $plugins; do
 for phase in absent present; do
   python3 -c "import json,sys; d=json.load(open('tools/help_screenshots/shots.json')); d['shots']=[s for s in d['shots'] if s['phase']==sys.argv[1] and s.get('plugin', 'library-cleanup')==sys.argv[3]]; json.dump(d,open(sys.argv[2],'w')); sys.exit(0 if d['shots'] else 3)" \
