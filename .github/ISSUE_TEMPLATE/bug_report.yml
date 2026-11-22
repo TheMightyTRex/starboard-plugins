@@ -1,0 +1,124 @@
+name: A plug-in is not working
+description: Report a problem with a Starboard plug-in
+labels:
+- bug
+body:
+- type: markdown
+  attributes:
+    value: Before you report, ask on the [Discord support server](https://discord.gg/xN9bf2H4vv). A moderator can tell you
+      whether it is a bug, or help you fix it without one. Hide passwords, API keys, tokens and addresses in anything you
+      paste.
+- type: dropdown
+  id: plugin
+  attributes:
+    label: Plug-in
+    options:
+    - Ad blocking
+    - Audio description
+    - Audio description tracks
+    - Calibre-Web
+    - Checkrr
+    - Create your own TV channel
+    - Direct play
+    - Disk forecast
+    - Download summary
+    - Home Assistant
+    - Jellystat
+    - Kavita
+    - Library clean-up
+    - Library health
+    - Line speed
+    - Maintainerr
+    - Most watched
+    - Navidrome
+    - Notifications
+    - Philips Hue
+    - Picture shrinker
+    - Remote access
+    - Seerr
+    - Styles
+    - Tdarr
+    - Themearr
+    - Uptime and status
+    - Uptime Kuma
+    - VPN check
+    - Watch statistics
+    - Watching now
+    - Wizarr
+    - I am not sure which plug-in
+  validations:
+    required: true
+- type: input
+  id: version
+  attributes:
+    label: Plug-in version
+    description: Find it in Starboard, on Settings, then Plug-ins, on the plug-in's page.
+    placeholder: 1.1.0
+  validations:
+    required: true
+- type: input
+  id: starboard
+  attributes:
+    label: Starboard version
+    description: Find it on Settings, then About and updates.
+    placeholder: 0.26.0
+  validations:
+    required: true
+- type: dropdown
+  id: area
+  attributes:
+    label: Where it happens
+    options:
+    - Installing or updating the plug-in
+    - Its dashboard card
+    - Its settings
+    - Alerts or messages it sends
+    - Something is hard to use with my device or assistive technology
+    - Something else
+  validations:
+    required: true
+- type: textarea
+  id: happened
+  attributes:
+    label: What happened
+    description: Say what you did and what you got.
+  validations:
+    required: true
+- type: textarea
+  id: expected
+  attributes:
+    label: What you expected to happen
+  validations:
+    required: true
+- type: textarea
+  id: steps
+  attributes:
+    label: How to make it happen again
+    description: One step on each line.
+    placeholder: '1.
+
+      2.
+
+      3.'
+  validations:
+    required: true
+- type: textarea
+  id: details
+  attributes:
+    label: Details from Starboard
+    render: text
+    description: Go to System, then Logs, activate detailed logging, repeat the problem, then select Copy the details and
+      paste them here. Starboard removes passwords, API keys, addresses and names from the details it copies. Read them before
+      you post all the same.
+- type: textarea
+  id: more
+  attributes:
+    label: Anything else
+    description: Screenshots help. Add a description of each one, or say what it shows.
+- type: checkboxes
+  id: private
+  attributes:
+    label: Before you send
+    options:
+    - label: I have read what I pasted and removed anything private.
+      required: true
