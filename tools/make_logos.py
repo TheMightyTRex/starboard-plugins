@@ -111,6 +111,9 @@ LOGOS = {
     "vpn-check": ("#2c4f7c", "A shield with a tick",
                   f'<path d="M24 9.5l12.5 4.5v9.5c0 8-5.3 13.2-12.5 15.5-7.2-2.3-12.5-7.5-12.5-15.5V14z" fill="{W}"/>'
                   '<path d="M18.5 24.5l4 4 7.5-8.5" fill="none" stroke="#2c4f7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>'),
+    "backups-watch": ("#1f6b4a", "A stack of two discs with a tick",
+                      f'<ellipse cx="22" cy="14" rx="12" ry="5" {s(3)}/><path d="M10 14v9c0 2.8 5.4 5 12 5M10 23v9c0 2.8 5.4 5 12 5M34 14v6" {s(3)}/>'
+                      f'<circle cx="34" cy="33" r="8" fill="{W}"/><path d="M30 33l3 3 5-6" fill="none" stroke="#1f6b4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'),
     "watch-stats": ("#4a3a8c", "A bar chart",
                     f'<rect x="12.5" y="25" width="5.5" height="11" rx="1" fill="{W}"/><rect x="21.25" y="18" width="5.5" height="18" rx="1" fill="{W}"/>'
                     f'<rect x="30" y="12" width="5.5" height="24" rx="1" fill="{W}"/><path d="M10 39h28" {s(3)}/>'),

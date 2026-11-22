@@ -147,7 +147,7 @@ def main():
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
          "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Appearance", "styles": "Appearance",
-         "notifications": "System", "watch-stats": "Jellyfin"}
+         "notifications": "System", "watch-stats": "Jellyfin", "backups-watch": "System"}
 KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 KINDS["audio-description-tracks"] = "Accessibility"  # hand-made, its own image with ffmpeg (DASH-410)
 KINDS["direct-play"] = "Jellyfin"  # hand-made, its own image with ffmpeg (DASH-425)

@@ -207,6 +207,7 @@
         "label": "Server and downloads",
         "ids": [
           "disk-forecast",
+          "backups-watch",
           "notifications",
           "download-summary",
           "vpn-check"
@@ -303,6 +304,9 @@
       },
       "tv-station": {
         "icon": "tv"
+      },
+      "backups-watch": {
+        "icon": "hard-drive"
       }
     }
   },
