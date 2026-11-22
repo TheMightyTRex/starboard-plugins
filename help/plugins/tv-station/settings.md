@@ -302,6 +302,7 @@ A promo has a few short clips of the programme in its clip area, with its sound,
 | **Use the programme's sound in promos** | Each clip plays with its own sound, at the same loudness as the rest. A programme with no sound has the music alone | Activated |
 | **Music under the programme's sound** | How loud the music is while a clip's sound plays. It is at full before the first clip and after the last | **10%**, **20%**, **30%** or **50%**. **20%** |
 | **Show the station's logo on promos** | Promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner, clear of the clip and the words. Promos made with the station's pack carry it in their design already | Activated |
+| **Audio description on promos** | A voice says each promo's words, for viewers who cannot read them. [Audio description on promos](#audio-description-on-promos) says what is said | Not activated |
 | **Promos kept for each channel** | Old ones are replaced, so they never pile up | 1 to 6. **3** |
 | **Replace each promo after** | A promo is also replaced once its programme has started. When a channel's pack changes, its promos made with the old pack stop showing at once and are made again in the next quiet hour | **1 day**, **2 days**, **3 days** or **7 days**. **2 days** |
 | **Show promos for your other channels** | Each channel's breaks show the promos of your other channels too | Activated |
@@ -309,6 +310,28 @@ A promo has a few short clips of the programme in its clip area, with its sound,
 ![A plain promo on purple with the station's Example TV logo, small, on a dark plate in the corner](../../images/tv-station/promo-station-logo.jpg)
 
 *Show the station's logo on promos, on a plain promo for a channel with no pack of its own.*
+
+### Audio description on promos
+
+A promo is clips of a programme, music, and words on the picture: the title, the channel, the day and the time. A
+viewer who cannot read the picture hears only music. With **Audio description on promos** activated, a voice says the
+words.
+
+- **What is said**, in the order the words are read on the picture: **Coming soon**, the title, the series and
+  episode, the day and time, and the channel's name. When the promo is long enough, the first sentence of the
+  programme's description follows. A promo too short for all of it says the title, the day and time and the channel.
+- **How it sounds:** the voice starts in the promo's first second. The music and the programme's sound fall to about a
+  third while it speaks, and rise again after it. It is part of the promo's one sound track, so it plays in every
+  app, with nothing to choose.
+- **The voice** is eSpeak NG, a small speech program inside the plug-in. It is made on your server, and nothing is
+  sent anywhere. It speaks the station's [Language](#language), with a voice for each of the ten. It is clear but
+  plainly a machine's voice.
+- **A programme with a described sound track** plays that track in its clips, in the station's language when it has
+  one. The plug-in knows a described track by its name, such as **English (Audio Description)** or **AD**, the next
+  time it reads the channels from Jellyfin, which it does by itself each night.
+- **What it costs:** a few hundredths of a second of the processor for each promo, in the quiet hours when the promo
+  is made. Nothing runs for it at any other time. The plug-in's image is about 6 MB larger for the speech program.
+- **When it changes:** activating or deactivating it makes each channel's promos again in the next quiet hours.
 
 On a channel's **Holding slide and promos** card, **Promos** says how its promos are made. **Add music for its promos** takes music for this channel only, an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes. **Add a background loop for its promos** takes a loop or picture for this channel only, as many as 20.
 

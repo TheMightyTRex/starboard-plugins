@@ -56,16 +56,40 @@ def entry(item):
            "three_d": three_d.said(item)}  # 0.5.5: why Jellyfin or the file name says it is 3D, or ""
     if any(langs):
         out["audio_langs"] = langs
+    if described_tracks(inside):  # 0.7.0: kept only when the file has one, for audio description on promos
+        out["audio_ad"] = described_tracks(inside)
     if episode:
         out.update({"ep": item.get("Name") or "", "s": item.get("ParentIndexNumber"), "e": item.get("IndexNumber")})
     return out
 
 
-def sound_for(e, lang="en"):
+# A sound track that is audio description, by its name, as the Audio description plug-ins read it (their rules.json,
+# described_track): "English (Audio Description)", "AD", "Descriptive audio", "DVS". A commentary never counts.
+TRACK_AD = re.compile(r"(?i)(?:\baudio[ ._-]?descri(?:ption|bed)\b|\bdescriptive[ ._-]?(?:audio|video)\b|\bdescribed\b|\bDVS\b|(?:^|[\s\[(._-])AD(?:$|[\s\])._-]))")
+COMMENTARY = re.compile(r"(?i)comment(?:ary)?")
+
+
+def described_tracks(streams):
+    """Which of the file's own sound tracks are audio description: their places among them (0:a:N)."""
+    out = []
+    for n, s in enumerate(streams):
+        words = " ".join(str(s.get(k) or "") for k in ("Title", "DisplayTitle", "Comment"))
+        if TRACK_AD.search(words) and not COMMENTARY.search(words):
+            out.append(n)
+    return out
+
+
+def sound_for(e, lang="en", described=False):
     """Which of the file's own sound tracks to play (0:a:N): the first in the station's language (0.6.0, owner,
     21 November 2026), else the default track (audio_n, 0.5.4), else None. Jellyfin gives languages as ISO 639-2,
-    such as fre or fra, ger or deu (tv_words.SOUND_CODES)."""
+    such as fre or fra, ger or deu (tv_words.SOUND_CODES).
+
+    described (0.7.0, audio description on promos): a described track first, in the station's language when one is,
+    else any described track; a programme with none plays as before."""
     codes = tv_words.sound_codes(lang)
+    if described and e.get("audio_ad"):
+        langs = e.get("audio_langs") or []
+        return next((n for n in e["audio_ad"] if n < len(langs) and langs[n] in codes), e["audio_ad"][0])
     for n, code in enumerate(e.get("audio_langs") or []):
         if code in codes:
             return n

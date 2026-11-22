@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.6.0",
+ "version": "0.7.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -381,6 +381,14 @@
    "hint": "The station pack's logo, small, in a corner of promos made with a channel's own pack or a plain design. Promos made with the station's pack carry it already."
   },
   {
+   "key": "promo_audio_description",
+   "label": "Audio description on promos",
+   "type": "switch",
+   "default": false,
+   "group": "Promos",
+   "hint": "A voice says each promo's words: Coming soon, the title, the episode, the day and time and the channel, and the first sentence of the description when there is room. The music and the programme's sound fall under it. The voice is made on your server (eSpeak NG), in the station's language; nothing is sent anywhere. Promos are made again in the next quiet hours."
+  },
+  {
    "key": "promo_other",
    "label": "Show promos for your other channels",
    "type": "switch",
@@ -726,6 +734,13 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.7.0",
+   "date": "2026-11-22",
+   "added": [
+    "**Audio description on promos** (not active unless you activate it): a voice says each promo's words, so a blind viewer hears what is coming, on which channel, and when. It is made on your server, in the station's language. Nothing is sent anywhere."
+   ]
+  },
   {
    "version": "0.6.0",
    "date": "2026-11-21",
