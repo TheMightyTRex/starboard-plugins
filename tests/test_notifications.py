@@ -196,20 +196,68 @@ class Weekly(unittest.TestCase):
                   {"title": "Two", "series": "Slow Horses", "type": "Episode"}):
             self.app.on_event({"event": "item.added", "data": d}, wait=True)
 
-    def test_sent_once_on_the_chosen_day(self):
-        day = self.app.DAYS[dt.date.today().weekday()]
-        self.app._set(weekly_day="monday" if day != "monday" else "tuesday")
-        self.assertIn("Not the day", self.app.weekly()["said"])
-        self.app._set(weekly_day=day)
-        self.assertIn("sent by Webhooks", self.app.weekly()["said"])
-        self.assertIn("Not the day", self.app.weekly()["said"])  # once a week
-        self.assertEqual(len(self.calls), 1)
-        body = self.calls[0]["body"]
+    def test_off_until_switched_on(self):
+        self.assertIn("deactivated", self.app.weekly()["said"])
+        self.assertEqual(self.calls, [])
+        self.assertFalse(next(s for s in manifest("notifications")["settings"] if s["key"] == "send_weekly")["default"])
+
+    def test_sent_once_by_email_with_titles_and_years_only(self):
+        self.app._set(send_weekly=True, email_active=True, smtp_host="smtp.example.com", email_from="a@example.com", email_to=["b@example.com"],
+                      webhook_active=True)
+        mails = []
+        self.app.send_email = lambda title, body, tone, to=None: mails.append((title, body))
+        self.app.SENDERS["email"] = self.app.send_email
+        self.assertIn("sent by Email", self.app.weekly()["said"])
+        self.assertIn("Already sent", self.app.weekly()["said"])  # a retry sends nothing more
+        self.assertEqual(len(mails), 1)
+        self.assertEqual(self.calls, [])  # email only: the webhook was not used
+        title, body = mails[0]
+        self.assertEqual(title, "New on your server this week")
         self.assertIn("Films (1):\n- Dune (2021)", body)
-        self.assertIn("- Slow Horses, 2 new episodes", body)
+        self.assertIn("Episodes (2):\n- Slow Horses: Pilot, Two", body)
+
+    def test_every_active_way_when_chosen(self):
+        self.app._set(send_weekly=True, weekly_by="all")
+        self.assertIn("sent by Webhooks", self.app.weekly()["said"])
+
+    def test_email_only_says_so_when_email_is_off(self):
+        self.app._set(send_weekly=True)
+        self.assertIn("email is not activated", self.app.weekly()["said"])
+        self.assertEqual(self.calls, [])
+
+    def test_films_episodes_albums_and_books(self):
+        text = self.app.weekly_words([
+            {"title": "Dune", "type": "Movie", "year": 2021}, {"title": "Dune", "type": "Movie", "year": 2021},
+            {"title": "Pilot", "series": "Slow Horses", "type": "Episode", "year": 2022},
+            {"title": "Blue", "type": "MusicAlbum", "year": 1971}, {"title": "Emma", "type": "Book", "year": 1815},
+            {"title": "Dracula", "type": "AudioBook"}, {"title": "A series", "type": "Series"}])
+        self.assertEqual(text, "Films (1):\n- Dune (2021)\n\nAlbums (1):\n- Blue (1971)\n\nBooks (2):\n- Dracula\n- Emma (1815)\n\n"
+                               "Episodes (1):\n- Slow Horses: Pilot")
+
+    def test_a_long_week_stays_short(self):
+        items = [{"title": f"Film {i:03d}", "type": "Movie", "year": 2000} for i in range(55)]
+        text = self.app.weekly_words(items)
+        self.assertIn("Films (55):", text)
+        self.assertIn("- and 15 more", text)
+        self.assertEqual(text.count("\n- Film"), 40)
+
+    def test_nothing_new_sends_nothing(self):
+        self.app.keep("week", [])
+        self.app._set(send_weekly=True, weekly_by="all")
+        self.assertIn("Nothing new", self.app.weekly()["said"])
+        self.assertEqual(self.calls, [])
 
     def test_send_now_always_sends(self):
+        self.app._set(weekly_by="all")
         self.assertIn("sent by Webhooks", self.app.weekly(force=True)["said"])
+
+    def test_starboard_runs_it_at_the_chosen_day_and_hour(self):
+        m = manifest("notifications")
+        job = m["jobs"][0]
+        self.assertEqual((job["id"], job["schedule"]), ("weekly", "weekly_when"))
+        spec = next(s for s in m["settings"] if s["key"] == "weekly_when")
+        self.assertEqual((spec["type"], spec["default"]["every"], spec["default"]["time"]), ("schedule", "week", "09:00"))
+        self.assertNotIn("weekly_day", {s["key"] for s in m["settings"]})
 
 
 class Manifest(unittest.TestCase):

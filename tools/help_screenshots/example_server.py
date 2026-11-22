@@ -10,6 +10,7 @@ shows what it may do. Otherwise it is added and active. Library clean-up has mad
 and card answers; any other plug-in is only added (enough for Add a card), and its container is never started.
 Nothing is read, moved or put back: Put back takes the row off the list here. 15 and 20 November 2026."""
 import json
+import os
 import pathlib
 import sys
 import time
@@ -25,9 +26,17 @@ from starboard import plugin_cards, plugin_custom, plugin_logo, plugin_watch, pl
 
 CATALOGUE = json.loads((HERE / "catalogue.json").read_text())
 MANIFEST = json.loads((HERE / PLUGIN / "starboard-plugin.json").read_text())
-# As published: the catalogue entry and the image pinned by digest are the real ones, nothing is made up.
-if not next((e for e in CATALOGUE["plugins"] if e["id"] == PLUGIN), {}).get("published"):
-    sys.exit(f"{PLUGIN} is not published in catalogue.json yet: publish it before taking its help pictures")
+# As published: the catalogue entry and the image pinned by digest are the real ones, nothing is made up. A plug-in not
+# published yet (SHOTS_DRAFT=1, for the pictures its help needs before its image is built) is shown as published, with a
+# digest made up for the pictures only, and its cards answer with their own examples (22 November 2026, DASH-513).
+DRAFT = os.environ.get("SHOTS_DRAFT") == "1"
+_entry = next((e for e in CATALOGUE["plugins"] if e["id"] == PLUGIN), {})
+if DRAFT:
+    _entry["published"] = True
+    for c in MANIFEST.get("containers", []):
+        c["image"] = "ghcr.io/themightytrex/starboard-plugin-examples@sha256:" + "0" * 64
+elif not _entry.get("published"):
+    sys.exit(f"{PLUGIN} is not published in catalogue.json yet: publish it before taking its help pictures (or SHOTS_DRAFT=1)")
 if any(c.get("image") and "@sha256:" not in c["image"] for c in MANIFEST.get("containers", [])):
     sys.exit(f"{PLUGIN}/starboard-plugin.json has an image not pinned by digest")
 _real_catalogue, _real_manifest = plugins_admin.fetch_catalogue, plugins_admin.fetch_manifest
@@ -91,6 +100,9 @@ def screen(key, held, off):
 def cleanup(data_dir):
     if absent:
         return
+    if any(p["id"] == PLUGIN for p in plugins_admin.listing(data_dir)) and PLUGIN != "library-cleanup":
+        # Starboard's own example server adds its made-up Notifications and Watch statistics: show this collection's manifest
+        plugins_admin._write(os.path.join(plugins_admin.folder(data_dir, PLUGIN), "manifest.json"), json.loads(json.dumps(MANIFEST)))
     if not any(p["id"] == PLUGIN for p in plugins_admin.listing(data_dir)):
         plugins_admin.install(data_dir, json.loads(json.dumps(MANIFEST)), "/nonexistent-media")
         plugins_admin.keep_logo(data_dir, PLUGIN, plugin_logo.clean((HERE / PLUGIN / "logo.svg").read_bytes(), "logo.svg"))
@@ -98,6 +110,18 @@ def cleanup(data_dir):
     if PLUGIN != "library-cleanup":
         real_ask = plugin_watch._ask
         plugin_watch._ask = lambda pid, main, path: "ok" if pid == PLUGIN else real_ask(pid, main, path)
+        if DRAFT:
+            real_card = plugin_cards.answer
+            cards = {(c.get("id") or str(i)): c for i, c in enumerate(MANIFEST.get("cards") or [])}
+
+            def example_card(d, pid, cid, opener=None):
+                if pid != PLUGIN or cid not in cards:
+                    return real_card(d, pid, cid, opener)
+                c = cards[cid]
+                data = {**c["example"], "updated": int(time.time()) - 300}
+                return {"type": c["type"], "format": c.get("format", "number"), "asked": int(time.time()),
+                        "data": plugin_cards.clean(c["type"], data)}
+            plugin_cards.answer = example_card
         return
     real_call, real_ask, real_answer = plugin_custom.call, plugin_watch._ask, plugin_cards.answer
     held, off = list(HELD), {"children"}

@@ -1,9 +1,8 @@
 """Notifications: Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words.
 
-Starboard drives it: each event is a POST to /events and the weekly message is a daily job, so the container rests
+Starboard drives it: each event is a POST to /events and the weekly message is a job on the day and hour you choose, so the container rests
 between them (start: when_needed). Secrets come from settings.json each time and are never written to the log, the
 card or /data: every error is cleaned of them first (DASH-401)."""
-import datetime as dt
 import hashlib
 import json
 import os
@@ -21,7 +20,6 @@ CHANNELS = {"email": "Email", "telegram": "Telegram", "discord": "Discord", "sig
             "ntfy": "ntfy", "webhook": "Webhooks"}
 KINDS = {"request.available": "send_requests", "download.failed": "send_failed", "app.down": "send_apps", "app.up": "send_apps",
          "disk.nearly_full": "send_disk", "disk.changed": "send_disk_changes", "update.available": "send_updates", "weekly": "send_weekly"}
-DAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
 TIMEOUT = 8  # a Test button has 10 seconds
 
 
@@ -309,55 +307,77 @@ def _handle(body):
     return {"ok": True, "sent": sent, "failed": failed}
 
 
+LISTED = 40  # the most titles under one heading, so the email stays short
+EPISODES = 6  # the most episode titles after one series
+
+
+def _more(lines, rest):
+    return lines + ([f"- and {rest} more"] if rest > 0 else [])
+
+
 def weekly_words(items):
-    films = sorted({_named(x["title"], x.get("year")) for x in items if x.get("type") == "Movie" and x.get("title")})
-    series = {}
+    """The plain-text list for New this week: titles and years only, no pictures. Films, episodes (by series), albums
+    and books, each once however many times Jellyfin reported it."""
+    films, albums, books, series = {}, {}, {}, {}
     for x in items:
-        if x.get("type") == "Episode" and x.get("series"):
-            series[x["series"]] = series.get(x["series"], 0) + 1
-        elif x.get("type") == "Series" and x.get("title"):
-            series.setdefault(x["title"], 0)
-    other = sorted({x["title"] for x in items if x.get("type") not in ("Movie", "Episode", "Series") and x.get("title")})
+        kind, title = x.get("type"), str(x.get("title") or "").strip()
+        if not title:
+            continue
+        if kind == "Movie":
+            films[_named(title, x.get("year"))] = 1
+        elif kind == "Episode" and x.get("series"):
+            series.setdefault(x["series"], {})[title] = 1
+        elif kind == "MusicAlbum":
+            albums[_named(title, x.get("year"))] = 1
+        elif kind in ("Book", "AudioBook"):
+            books[_named(title, x.get("year"))] = 1
     lines = []
-    if films:
-        lines += [f"Films ({len(films)}):"] + [f"- {f}" for f in films[:30]]
+    for heading, found in (("Films", films), ("Albums", albums), ("Books", books)):
+        if found:
+            names = sorted(found)
+            lines += [f"{heading} ({len(names)}):"] + _more([f"- {n}" for n in names[:LISTED]], len(names) - LISTED) + [""]
     if series:
-        lines += [f"Series ({len(series)}):"] + [f"- {s}" + (f", {n} new episode{'s' if n != 1 else ''}" if n else "")
-                                                  for s, n in sorted(series.items())[:30]]
-    if other:
-        lines += [f"Music, books and more ({len(other)}):"] + [f"- {o}" for o in other[:30]]
-    return "\n".join(lines)
+        count = sum(len(v) for v in series.values())
+        lines += [f"Episodes ({count}):"]
+        shown = sorted(series.items())
+        for name, eps in shown[:LISTED]:
+            titles = sorted(eps)
+            lines.append(f"- {name}: " + ", ".join(titles[:EPISODES]) + (f" and {len(titles) - EPISODES} more" if len(titles) > EPISODES else ""))
+        lines += _more([], len(shown) - LISTED) + [""]
+    return "\n".join(lines).strip()
 
 
 def weekly(force=False):
-    """The daily job: on the chosen day, once a week, 'New this week' from what arrived in the last 7 days."""
+    """The job Starboard runs at the day and hour chosen under When to send New this week."""
     with _work:
         return _weekly(force)
 
 
 def _weekly(force):
-    today = dt.date.today()
-    week_id = today.strftime("%G-%V")
     if not force:
-        if setting("send_weekly", True) is not True:
+        if setting("send_weekly", False) is not True:
             return {"said": "The weekly message is deactivated"}
-        if DAYS[today.weekday()] != setting("weekly_day", "monday") or remember("weekly_sent") == week_id:
-            return {"said": "Not the day for the weekly message"}
+        if time.time() - float(remember("weekly_sent", 0) or 0) < 20 * 3600:  # Starboard's retry or a double start
+            return {"said": "Already sent today"}
     since = time.time() - 7 * 86400
     items = [x for x in remember("week", []) or [] if x.get("at", 0) >= since]
     try:  # what the download apps imported, as a second source; nothing is lost if it does not answer
         for r in (starboard("recent") or {}).get("items") or []:
-            items.append({"title": r.get("title"), "type": "Movie" if r.get("detail") == "Film" else "Other", "year": ""})
+            if r.get("detail") == "Film":
+                items.append({"title": r.get("title"), "type": "Movie", "year": ""})
     except Exception:  # noqa: BLE001
         pass
     text = weekly_words(items)
     if not text:
         if not force:
-            keep("weekly_sent", week_id)
+            keep("weekly_sent", time.time())
         return {"said": "Nothing new this week, so nothing was sent"}
-    sent, failed = deliver("New this week", f"New in your library in the last 7 days:\n{text}", "info", kind="weekly")
-    if not force:
-        keep("weekly_sent", week_id)
+    by = ["email"] if setting("weekly_by", "email") != "all" else None
+    if by and "email" not in active():
+        return {"said": "New this week: email is not activated. Activate it under Email, or send by every way you activated"}
+    sent, failed = deliver("New on your server this week", f"Added to Jellyfin in the last 7 days:\n\n{text}", "info", channels=by, kind="weekly")
+    if not force and sent:
+        keep("weekly_sent", time.time())
     return {"said": _said(sent, failed, "New this week")}
 
 
