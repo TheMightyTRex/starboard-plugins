@@ -8,6 +8,8 @@ locked-down container that can only reach what it says it needs.
 plug-in: what it does, what it may change, its settings, its dashboard card, updates, accessibility and fixes for
 problems.
 
+**Support:** ask on the [Starboard Discord support server](https://discord.gg/xN9bf2H4vv), which has a forum for plug-in support and one for plug-in ideas.
+
 ## Add a plug-in
 
 1. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**.
