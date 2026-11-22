@@ -122,6 +122,8 @@ def cleanup(data_dir):
                 return {"type": c["type"], "format": c.get("format", "number"), "asked": int(time.time()),
                         "data": plugin_cards.clean(c["type"], data)}
             plugin_cards.answer = example_card
+            from starboard import plugin_life
+            plugin_life.run_job = lambda *a, **k: None  # its container is never started, so a job must not run and raise an alert
         return
     real_call, real_ask, real_answer = plugin_custom.call, plugin_watch._ask, plugin_cards.answer
     held, off = list(HELD), {"children"}

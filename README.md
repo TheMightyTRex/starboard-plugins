@@ -55,6 +55,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 | Plug-in | What it does |
 |---|---|
 | [Disk forecast](https://themightytrex.github.io/starboard-plugins/help/plugins/disk-forecast/index.html) | When each disk fills at the rate it has been filling over the last month. |
+| [Backups watch](https://themightytrex.github.io/starboard-plugins/help/plugins/backups-watch/index.html) | The last run, size and failures of your Backrest or Kopia backups on a card, and an alert when one is overdue. Needs Starboard with plug-in API 1.17. |
 | [Notifications](https://themightytrex.github.io/starboard-plugins/help/plugins/notifications/index.html) | Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week. |
 
 ### Network

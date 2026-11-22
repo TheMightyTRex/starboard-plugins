@@ -1,0 +1,209 @@
+{
+ "manifest_version": 1,
+ "id": "backups-watch",
+ "name": "Backups watch",
+ "version": "0.1.0",
+ "description": "The last run, size and failures of your Backrest or Kopia backups on a card, and an alert when one is overdue.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/backups-watch",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.17 <2.0",
+ "permissions": [
+  "network:lan",
+  "alerts:send"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.4",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ],
+   "start": "when_needed",
+   "idle_stop_minutes": 5,
+   "env": {
+    "EXAMPLE": "backups-watch"
+   }
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "tool",
+   "label": "Backup tool",
+   "type": "choice",
+   "default": "backrest",
+   "group": "The backup tool",
+   "hint": "Backrest or Kopia. Duplicati is not offered yet: its server API could not be checked from its documentation.",
+   "choices": [
+    {
+     "value": "backrest",
+     "label": "Backrest"
+    },
+    {
+     "value": "kopia",
+     "label": "Kopia"
+    }
+   ]
+  },
+  {
+   "key": "address",
+   "label": "Its address",
+   "type": "address",
+   "group": "The backup tool",
+   "required": true,
+   "hint": "Such as http://192.0.2.10:9898 for Backrest, or https://192.0.2.10:51515 for the Kopia server."
+  },
+  {
+   "key": "user",
+   "label": "User name",
+   "type": "text",
+   "group": "The backup tool",
+   "hint": "Leave empty if the tool needs no sign-in. For Kopia, the server's user name."
+  },
+  {
+   "key": "password",
+   "label": "Password",
+   "type": "secret",
+   "group": "The backup tool",
+   "hint": "The tool's password. Starboard never shows it again."
+  },
+  {
+   "key": "self_signed",
+   "label": "Accept a self-signed certificate",
+   "type": "switch",
+   "default": false,
+   "hint": "For a Kopia server that makes its own certificate. Only on your own network.",
+   "group": "The backup tool"
+  },
+  {
+   "key": "overdue_hours",
+   "label": "Overdue after",
+   "type": "number",
+   "unit": "hours",
+   "default": 36,
+   "min": 1,
+   "max": 1440,
+   "group": "Alerts",
+   "hint": "How many hours without a good run count as overdue. 36 suits a nightly backup."
+  },
+  {
+   "key": "alerts",
+   "label": "Send alerts through Starboard",
+   "type": "switch",
+   "default": true,
+   "hint": "Once when a backup is overdue or failed, and once when it is fine again, to where Starboard sends its own alerts.",
+   "group": "Alerts"
+  }
+ ],
+ "actions": [
+  {
+   "id": "check",
+   "label": "Check now",
+   "path": "/check"
+  }
+ ],
+ "cards": [
+  {
+   "id": "status",
+   "title": "Backups",
+   "type": "status",
+   "path": "/card",
+   "refresh_minutes": 60,
+   "example": {
+    "state": "ok",
+    "text": "All 3 backed up. Last run 6 hours ago.",
+    "status": "ok",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "runs",
+   "title": "Backup runs",
+   "type": "list",
+   "path": "/runs",
+   "refresh_minutes": 60,
+   "example": {
+    "items": [
+     {
+      "title": "documents",
+      "detail": "Last run 6 hours ago, 41.2 GB, 0 failed in 30 days"
+     }
+    ],
+    "status": "ok",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "sizes",
+   "title": "Backup sizes",
+   "type": "sparkline",
+   "path": "/sizes",
+   "refresh_minutes": 60,
+   "example": {
+    "series": [
+     {
+      "title": "documents",
+      "points": [
+       120,
+       90,
+       4,
+       60,
+       null,
+       88
+      ],
+      "unit": "bytes",
+      "detail": "6 runs kept. Latest 88 bytes added."
+     }
+    ],
+    "note": "Data added by each run the plug-in has kept. A gap is a failed run.",
+    "status": "ok",
+    "updated": 1794694110
+   }
+  }
+ ],
+ "jobs": [
+  {
+   "id": "check",
+   "label": "Check the backups",
+   "path": "/jobs/check",
+   "every_hours": 1,
+   "time_limit_minutes": 2
+  }
+ ],
+ "update": {
+  "before": {
+   "path": "/update/before",
+   "time_limit_seconds": 60
+  },
+  "after": {
+   "path": "/update/after",
+   "time_limit_seconds": 10
+  }
+ },
+ "logo": {
+  "file": "logo.svg",
+  "alt": "Backups watch logo"
+ },
+ "changes": [
+  {
+   "version": "0.1.0",
+   "date": "2026-11-22",
+   "added": [
+    "**One card for your backups:** the last run, the size and the failures of each Backrest plan or Kopia source.",
+    "**Alerts:** once when a backup is overdue or its last run failed, and once when it is fine again, through Starboard.",
+    "**You choose** the tool, its address and password, and how many hours count as overdue.",
+    "**Light:** it wakes once an hour, asks the tool once and rests; its cards read what it kept."
+   ]
+  }
+ ]
+}

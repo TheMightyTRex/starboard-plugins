@@ -26,7 +26,7 @@ def image(pid):
 # Update steps for the examples that work in the background: sbplugin's /update/before holds new runs and waits for one
 # that is running to finish, and /update/after lets them run again. The others finish what they do in a second.
 _STEPS = {"before": {"path": "/update/before", "time_limit_seconds": 60}, "after": {"path": "/update/after", "time_limit_seconds": 10}}
-UPDATE_STEPS = {pid: _STEPS for pid in ("line-speed", "most-watched", "library-health", "notifications", "watch-stats")}
+UPDATE_STEPS = {pid: _STEPS for pid in ("line-speed", "most-watched", "library-health", "notifications", "watch-stats", "backups-watch")}
 RELEASED = "2026-11-15"
 RELEASED_111 = "2026-11-16"
 RELEASED_112 = "2026-11-17"
@@ -57,6 +57,8 @@ def changes_for(pid, m):
     newest = {"version": VERSION_113, "date": RELEASED_113, "changed": WORDS_113.get(pid, []) + [
         f"**Logo description:** where its logo stands on its own, a screen reader says \"{m['name']} logo\", the plug-in's name, "
         "instead of a description of the symbol."]}
+    if m.get("_own_changes"):  # a plug-in made after the shared helper's versions has only its own history (Backups watch 0.1.0)
+        return m["changes"]
     own = [m["_newest"]] + ([m["_before"]] if m.get("_before") else []) if m.get("_newest") else []  # a version of its own after the shared one (Notifications 1.3.0)
     return own + [v114, newest, v112, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
              "changed": ["Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."]}] + earlier
@@ -521,7 +523,8 @@ IMAGE_VERSION = "1.2.4"
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = {"notifications"}
+NEW_IN_IMAGE = {"notifications", "backups-watch"}
+# 1.2.4 also names Backups watch (DASH-513), new to the image.
 
 
 def _switch(key, label, hint, group, default=True):
@@ -641,6 +644,54 @@ then their email address, or `telegram` and their chat id. When their request is
 Signal has no official way for a server to send messages. If you already run
 [signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api) with a number registered, give its address
 and that number. Otherwise leave Signal deactivated.
+""",
+}, "file")
+
+# 13. Backups watch (DASH-513) --------------------------------------------------------------------------------------
+EXAMPLES["backups-watch"] = ({
+    "name": "Backups watch", "version": "0.1.0",
+    "description": "The last run, size and failures of your Backrest or Kopia backups on a card, and an alert when one is overdue.",
+    "starboard_api": ">=1.17 <2.0", "_own_changes": True,
+    "permissions": ["network:lan", "alerts:send"],
+    "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
+                    "idle_stop_minutes": 5}],
+    "resources": {"main": {"memory": 48, "cpus": 0.1}}, "health": "/health",
+    "settings": [
+        {"key": "tool", "label": "Backup tool", "type": "choice", "default": "backrest", "group": "The backup tool",
+         "hint": "Backrest or Kopia. Duplicati is not offered yet: its server API could not be checked from its documentation.",
+         "choices": [{"value": "backrest", "label": "Backrest"}, {"value": "kopia", "label": "Kopia"}]},
+        {"key": "address", "label": "Its address", "type": "address", "group": "The backup tool", "required": True,
+         "hint": "Such as http://192.0.2.10:9898 for Backrest, or https://192.0.2.10:51515 for the Kopia server."},
+        {"key": "user", "label": "User name", "type": "text", "group": "The backup tool",
+         "hint": "Leave empty if the tool needs no sign-in. For Kopia, the server's user name."},
+        {"key": "password", "label": "Password", "type": "secret", "group": "The backup tool",
+         "hint": "The tool's password. Starboard never shows it again."},
+        _switch("self_signed", "Accept a self-signed certificate", "For a Kopia server that makes its own certificate. Only on your own network.", "The backup tool", False),
+        {"key": "overdue_hours", "label": "Overdue after", "type": "number", "unit": "hours", "default": 36, "min": 1, "max": 1440,
+         "group": "Alerts", "hint": "How many hours without a good run count as overdue. 36 suits a nightly backup."},
+        _switch("alerts", "Send alerts through Starboard", "Once when a backup is overdue or failed, and once when it is fine again, to where Starboard sends its own alerts.", "Alerts"),
+    ],
+    "actions": [{"id": "check", "label": "Check now", "path": "/check"}],
+    "cards": [{"id": "status", "title": "Backups", "type": "status", "path": "/card", "refresh_minutes": 60,
+               "example": {"state": "ok", "text": "All 3 backed up. Last run 6 hours ago.", "status": "ok", "updated": 1794694110}},
+              {"id": "runs", "title": "Backup runs", "type": "list", "path": "/runs", "refresh_minutes": 60,
+               "example": {"items": [{"title": "documents", "detail": "Last run 6 hours ago, 41.2 GB, 0 failed in 30 days"}], "status": "ok", "updated": 1794694110}},
+              {"id": "sizes", "title": "Backup sizes", "type": "sparkline", "path": "/sizes", "refresh_minutes": 60,
+               "example": {"series": [{"title": "documents", "points": [120, 90, 4, 60, None, 88], "unit": "bytes", "detail": "6 runs kept. Latest 88 bytes added."}],
+                           "note": "Data added by each run the plug-in has kept. A gap is a failed run.", "status": "ok", "updated": 1794694110}}],
+    "jobs": [{"id": "check", "label": "Check the backups", "path": "/jobs/check", "every_hours": 1, "time_limit_minutes": 2}],
+    "changes": [{"version": "0.1.0", "date": "2026-11-22", "added": [
+        "**One card for your backups:** the last run, the size and the failures of each Backrest plan or Kopia source.",
+        "**Alerts:** once when a backup is overdue or its last run failed, and once when it is fine again, through Starboard.",
+        "**You choose** the tool, its address and password, and how many hours count as overdue.",
+        "**Light:** it wakes once an hour, asks the tool once and rests; its cards read what it kept."]}],
+    "_readme": """## What it reads
+
+- **Backrest:** its summary dashboard (`/v1.Backrest/GetSummaryDashboard`), one summary for each plan.
+- **Kopia:** the server control API (`/api/v1/control/sources`), the last snapshot of each source.
+
+Both are read only. Neither was tried against the real program when this version was written: read the help's
+Problems page before relying on it.
 """,
 }, "file")
 
