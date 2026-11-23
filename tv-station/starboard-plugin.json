@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.7.0",
+ "version": "0.8.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -60,6 +60,13 @@
    "type": "custom",
    "choices": "/schedule",
    "hint": "Open each channel's week on a grid, in a new tab in a desktop browser: place films and series at set times, copy a day, stripe a series, or suggest a week from watch history."
+  },
+  {
+   "key": "grids",
+   "label": "Break grids",
+   "type": "custom",
+   "choices": "/grids",
+   "hint": "What plays In between programmes and in Breaks inside programmes, as two grids for each channel, with drag and drop, buttons and the keyboard."
   },
   {
    "key": "clips",
@@ -734,6 +741,15 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.8.0",
+   "date": "2026-11-23",
+   "added": [
+    "**Break grids**: two grids for each channel, In between programmes and Breaks, with up to 7 columns. Choose Random, Sequence, Day of week, or Morning, afternoon and evening, then drag items into the columns, or use the buttons and the keyboard.",
+    "**Where breaks go inside a programme**: at silence, at set times or at the end of a scene, and how many in each 30 minutes and in a film. Found once for each programme in the quiet hours, never while a channel streams.",
+    "A channel that has not changed its grids plays exactly as before."
+   ]
+  },
   {
    "version": "0.7.0",
    "date": "2026-11-22",

@@ -15,6 +15,8 @@ import bisect
 import hashlib
 import math
 
+import breakgrid
+
 SCHEDULER_VERSION = 1
 MASK = (1 << 64) - 1
 CARD_SECONDS = 10  # one Coming up next or Later card
@@ -422,6 +424,165 @@ def plan_mid_break(t, most, clips, seed, fill_most=None):
     return out
 
 
+# Breaks from a grid (0.8.0, DASH-537) ----------------------------------------------------------------------------------
+PRIORITY = {"ident": 0, "bumper": 1, "adverts": 2, "promo": 3, "other_promo": 3, "coming_promo": 3}  # 0 is the last to go
+CLIP_ROLES = {"bumper": "bumper", "ident": "ident", "adverts": "extra"}
+
+
+def resolve_column(column, clips, options, rng, end, slot_no, longest):
+    """A grid column's items as what plays: [(kind, clip)], in order; a holding item gives (kind, None). Each promo,
+    clip or extra video plays once at most in a break, and a bumper or ident is not the same twice running when there
+    is another. An item with nothing to draw from is left out, and so is a clip longer than `longest`."""
+    cid = options.get("cid")
+    fillers = [c for c in clips.get("fillers") or [] if c.get("dur", 0) > 0 and float(c.get("airs") or end + 1) > end]
+    made = [c for c in fillers if c.get("role") == "promo"]
+    idents = [c for c in clips.get("idents") or [] if c.get("dur", 0) > 0]
+    sting = clips.get("sting") if clips.get("sting") and float(clips["sting"].get("dur") or 0) > 0 else None
+    pools = {"bumper": [c for c in clips.get("bumpers") or [] if c.get("dur", 0) > 0], "ident": idents or ([sting] if sting else []),
+             "adverts": [c for c in clips.get("extras") or [] if c.get("dur", 0) > 0], "promo": fillers,
+             "other_promo": [c for c in made if c.get("cid") != cid], "coming_promo": [c for c in made if c.get("cid") == cid]}
+    in_order = options.get("ident_order", "in_order") == "in_order" and not clips.get("random_idents") and bool(idents)
+    used, last, played, out = set(), {}, 0, []
+    for it in column:
+        kind = it["kind"]
+        if kind in breakgrid.ELASTIC:
+            out.append((kind, None))
+            continue
+        for _ in range(int(it.get("times") or 1)):
+            pool = [c for c in pools[kind] if float(c["dur"]) <= longest]
+            if kind in ("bumper", "ident"):
+                pool = [c for c in pool if c["id"] != last.get(kind)] or pool
+            else:
+                pool = [c for c in pool if c["id"] not in used]
+            if not pool:
+                break
+            if kind == "ident" and in_order:
+                c = idents[(slot_no + played) % len(idents)]
+                if float(c["dur"]) > longest:
+                    break
+            else:
+                c = pool[rng.below(len(pool))]
+            used.add(c["id"])
+            last[kind] = c["id"]
+            played += kind == "ident"
+            out.append((kind, c))
+    return out
+
+
+def trim(seq, room, soft=0.0):
+    """The sequence with its clips fitting in `room` seconds: while they do not, the last of the least wanted goes
+    (promos, then extra videos, then bumpers; an ident is the last to go). `soft` more seconds are kept free (for cards)
+    by taking away anything but an ident."""
+    seq = list(seq)
+    for limit, only in ((room, False), (room - soft, True)):
+        while sum(float(c["dur"]) for _, c in seq if c) > limit:
+            cands = [(PRIORITY.get(k, 3), j) for j, (k, c) in enumerate(seq) if c and not (only and k == "ident")]
+            if not cands:
+                break
+            seq.pop(max(cands)[1])
+    return seq
+
+
+def lay_out(start, seq, fill, left):
+    """Pieces from `start`: each clip for its own length and, where the sequence has (kind, None), whatever fill(t, left,
+    kind) gives for the `left` seconds, which the clips do not take."""
+    out, t = [], start
+    for kind, c in seq:
+        if c:
+            out.append({"kind": "clip", "start": t, "end": t + float(c["dur"]), "clip": c, "role": CLIP_ROLES.get(kind, "filler")})
+        elif left >= MIN_PIECE:
+            for piece in fill(t, left, kind) or []:
+                out.append(piece)
+            t = out[-1]["end"] if out else t
+            continue
+        t = out[-1]["end"] if out else t
+    return out
+
+
+def _cards_fill(after):
+    """Later and Coming up next cards for `left` seconds (the classic break's fill)."""
+    def fill(t, left, kind):
+        out, stop, k = [], t + left, 0
+        later = list(after[1:])
+        while stop - t > CARD_MAX and later:
+            d = min(CARD_MAX, stop - t - CARD_SECONDS)
+            out.append({"kind": "card", "start": t, "end": t + d, "card": "later", "airing": later[k % len(later)]})
+            t += d
+            k += 1
+        while stop - t > CARD_MAX * 2:
+            out.append({"kind": "card", "start": t, "end": t + CARD_MAX, "card": "next", "airing": after[0]})
+            t += CARD_MAX
+        out.append({"kind": "card", "start": t, "end": stop, "card": "next", "airing": after[0]})
+        return out
+    return fill
+
+
+def plan_break_grid(airing, after, clips, options, column):
+    """A break between programmes from a column of the grid (0.8.0): its items in the order given, each for its number
+    of times. A holding item takes the time the clips leave, with the countdown to the next programme's start (it
+    counts through anything that plays after it); with none in the column, or no holding slide, Later and Coming up
+    next cards or a slate fill the time just before the idents that end the break. The same airing always gets the
+    same break. A short gap is handled as the classic break does: the last piece is stretched to the start."""
+    t, end = airing["content_end"], airing["end"]
+    gap = end - t
+    if gap < MIN_PIECE:
+        return []
+    rng = Rng(seed_of(options.get("seed", 0), "break", int(airing["start"]), airing["slot_no"]))
+    holding = clips.get("holding")
+    cards = bool(options.get("cards", True)) and bool(after)
+    seq = resolve_column(column, clips, options, rng, end, airing["slot_no"], gap)
+    elastic = next((k for k, c in seq if c is None), None)
+    if elastic is None:
+        j = len(seq)
+        while j > 0 and seq[j - 1][0] == "ident":
+            j -= 1
+        seq.insert(j, ("fill", None))
+    seq = trim(seq, gap, min(CARD_SECONDS, gap) if cards and not (elastic and holding) else 0.0)
+    left = gap - sum(float(c["dur"]) for _, c in seq if c)
+    cards_fill = _cards_fill(after) if cards else None
+
+    def fill(at, room, kind):
+        if holding and kind in breakgrid.ELASTIC:
+            words = "back_soon" if kind == "back_soon" else "countdown"
+            return [{"kind": "holding", "start": at, "end": at + room, "holding": {**holding, "words": words},
+                     "airing": after[0] if after else None, "until": end}]
+        if cards_fill:
+            return cards_fill(at, room, kind)
+        return [{"kind": "slate", "start": at, "end": at + room}]
+    out = lay_out(t, seq, fill, left)
+    if out:
+        out[-1]["end"] = end
+    return out
+
+
+def plan_mid_grid(t, most, clips, seed, column, options, airing):
+    """A break inside a programme from a column of the grid (0.8.0), from t for at most `most` seconds: the items in
+    order, then a holding item taking what is left (the break is as long as what plays when it has none). Empty
+    when nothing plays, so the programme carries on. The countdown counts to the programme's return."""
+    rng = Rng(seed)
+    end = t + most
+    holding = clips.get("holding")
+    seq = resolve_column(column, clips, options, rng, end, 0, most)
+    seq = [(k, c) for k, c in seq if c or holding]
+    seq = trim(seq, most)
+    if not seq:
+        return []
+    left = most - sum(float(c["dur"]) for _, c in seq if c)
+
+    def fill(at, room, kind):
+        words = "back_soon" if kind == "back_soon" else "countdown"
+        return [{"kind": "holding", "start": at, "end": at + room, "holding": {**holding, "words": words}, "airing": airing, "until": end}]
+    out = lay_out(t, seq, fill, left)
+    if not out:
+        return []
+    stop = out[-1]["end"]
+    for x in out:
+        x["mid"] = True
+        if x["kind"] == "holding":
+            x["until"] = stop
+    return out
+
+
 def pieces_at(channel, t, clips, options, look=3):
     """Everything that plays in the slot on air at t: the programme, then its break pieces.
 
@@ -449,7 +610,12 @@ def pieces_at(channel, t, clips, options, look=3):
         pieces += mid
         if mid:
             t0 = mid[-1]["end"]
-    pieces += plan_break({**a, "content_end": t0}, after, clips, options)
+    between = (options.get("grids") or {}).get("between")
+    if between:
+        pick = Rng(seed_of(options.get("seed", 0), "column", int(a["start"]), a["slot_no"])).below(breakgrid.MOST_COLUMNS)
+        pieces += plan_break_grid({**a, "content_end": t0}, after, clips, options, breakgrid.column_for(between, t0, a["slot_no"], pick))
+    else:
+        pieces += plan_break({**a, "content_end": t0}, after, clips, options)
     return a, pieces
 
 
@@ -471,12 +637,18 @@ def split_programme(a, clips, options):
     ident = max([float(c.get("dur") or 0) for c in clips.get("idents") or []] or [float((clips.get("sting") or {}).get("dur") or 0)])
     spare = (a["end"] - a["content_end"]) - (bumper + ident + END_ROOM)
     parts, mids, at, taken = [], [], 0.0, 0.0
-    for p in points:
+    inside = (options.get("grids") or {}).get("inside")
+    for n, p in enumerate(points):
         give = min(most, spare)
         if give < MID_LEAST:
             break
-        mid = plan_mid_break(a["start"] + p + taken, give, clips, seed_of(options.get("seed", 0), "mid", int(a["start"]), int(p)),
-                             options.get("fill_most"))
+        when = a["start"] + p + taken
+        mid_seed = seed_of(options.get("seed", 0), "mid", int(a["start"]), int(p))
+        if inside:
+            pick = Rng(seed_of(mid_seed, "column")).below(breakgrid.MOST_COLUMNS)
+            mid = plan_mid_grid(when, give, clips, mid_seed, breakgrid.column_for(inside, when, a["slot_no"], pick, n), options, a)
+        else:
+            mid = plan_mid_break(when, give, clips, mid_seed, options.get("fill_most"))
         if not mid:
             continue
         parts.append((at, p))

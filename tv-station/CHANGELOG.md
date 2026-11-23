@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.0 (not released yet)
+
+### Added
+- Break grids (DASH-537, owner, 23 November 2026: "add two types of grid with a drag and drop (make sure its fully accessible). One for In between programs and one for Breaks; add 7 columns with a selection for Random, Sequence, Day of week, Morning, Afternoon, Evening and the columns change based on that setting; a list of items you drag into each column"). A new Break grids page in the settings lists each channel's two grids, which open on the plug-in's own page (also linked from each channel's Breaks card).
+  - Each grid has a mode: Random (1 to 7 columns, one picked at random), Sequence (1 to 7 columns in turn), Day of week (Monday to Sunday) or Morning, afternoon and evening (3 columns). Columns a mode does not use are kept, so changing the mode loses nothing.
+  - Items: Bumper, Promo (a promo, trailer or clip), Adverts (an extra video), Ident, Other channel promo, Coming soon promo, Holding countdown and Back soon. Each but the last two is shown 1 to 6 times; none repeats a clip within a break. Holding countdown counts to the next programme's start, through any promo or ident after it. A column has one holding item at most; without one, cards or a slate fill the time before the idents.
+  - Dragging is one of three ways. Space or Enter picks an item up, the arrows choose the column and place, Space or Enter drops it, Escape cancels, and a status line says each step. Buttons do the same: Add to, Move up, Move down, Move to and Remove. 44 pixel targets, visible focus, reduced motion, forced colours, phone width and 175% text.
+  - A channel that has not changed its grids plays exactly as before: its settings (Promos and clips in each break, Extra videos, Holding slide) are shown as the starting grid and nothing is saved until a change is made. Use the standard order again takes a grid back to that.
+- Where breaks go inside a programme (DASH-538, owner, 23 November 2026: "a few options on how it puts ads into programs ... when it detects silence. At a set time (try and detect the end of a scene). Number of breaks in a 30 min segment and number of breaks in a film"), on each channel's Breaks card: At silence (as before, Jellyfin's Commercial markers first, else quiet moments with a black picture preferred), At set times, or At the end of a scene (each set time snaps to the nearest change of scene), and Breaks in each 30 minutes and Breaks in a film (Automatic as before).
+  - The search is done once for each programme in the quiet hours and kept as a short list of candidate places in breaks.json (about 100 bytes). Choosing among them, and the number, is arithmetic at planning time, so changing a setting needs no new search and FFmpeg is never run while a channel streams. A break with no place found goes to its set time. A programme not searched yet has none until the next quiet hour, except At set times.
+  - Scene ends are found from the key frames only, which cost a thirtieth of decoding every frame. Measured on a made-up 30 minute 640 by 360 programme: At silence 7.7 processor seconds (10.6 seconds), the end of a scene 2.1 (3.0), once for each programme; a full decode for scenes took 68.7.
+  - Manual marks (DASH-539, later) have a place in breaks.json ("manual"): when a programme has any they are its breaks. There is no screen for them yet.
+
 ## 0.7.0 (not released yet)
 
 ### Added

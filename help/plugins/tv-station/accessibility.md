@@ -25,6 +25,16 @@ The grid is the plug-in's own page, built to the same rules as Starboard's, and 
 - **Works in a desktop browser.** On a phone or tablet, the grid shows one notice: to use a computer. It checks the device, not the width of the window, so a desktop browser zoomed to 400% keeps the whole page (WCAG 1.4.4 and 1.4.10).
 - **Messages** are read out: what changed, from a status region, and what could not be done, from an alert.
 
+## The break grids
+
+The grids are the plug-in's own page, checked with axe (WCAG 2.2 AA) in light, dark and high contrast, at desktop, phone and 175% text size, with the reading order, a Tab walk, where focus goes after each change and what is said after each.
+
+- **Nothing needs dragging** (WCAG 2.2, 2.5.7). Dragging is one of three ways: pick an item up with Space or Enter, move it with the arrow keys, drop it with Space or Enter, cancel with Escape; or use the buttons: **Add to** a column, **Move up**, **Move down**, **Move to** and **Remove**.
+- **Every step is said** in a status line: picked up, each column and place as it changes ("Column 2, position 1 of 3"), dropped, cancelled and removed. A refusal is an alert.
+- **Lists and groups,** not a grid role: each column is a group named by its heading with an ordered list of its items, and the items you can add are a list.
+- **Focus** stays on the control you used. After a move it is on the same button at the item's new place; after a drop it is on the item; after **Remove** it is on the next item or the column's heading.
+- **Targets** are at least 44 by 44 pixels, focus is a clear outline in every theme, nothing depends on colour, the columns stack on a phone, text size and zoom to 200% need no sideways scrolling, motion is left out when your device asks, and forced colours use the browser's own.
+
 ## On the television
 
 - **Contrast on any picture.** Words on the television have a dark outline, and the backing plate, activated unless you change it, puts a dark box behind the on-screen logo, the clock and the labels. Coming up next cards darken their picture to a third of its brightness, so white words on them have at least 7 to 1 contrast whatever the picture.

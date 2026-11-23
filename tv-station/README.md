@@ -30,6 +30,13 @@ Starboard never adds it by itself: you choose to add it from the catalogue.
 - **What each channel shows.** Series, films, collections, playlists, genres or decades from Jellyfin, ticked in a
   slide-out that lists every one (Choose from your library, Starboard 0.23.0 and later), in order or shuffled, with up to 6 episodes of a series in a row. Programmes run back to back, or start on the quarter, half or
   whole hour with a break filling the time to it. New episodes join the line-up at the end of the programme on air.
+- **Break grids** (0.8.0). Two grids for each channel, In between programmes and Breaks, with up to 7 columns each
+  (Random, Sequence, Day of week, or Morning, afternoon and evening). Drag Bumper, Promo, Adverts, Ident, Other
+  channel promo, Coming soon promo, Holding countdown and Back soon into the columns, with how many times each is
+  shown. They work from the keyboard and with buttons too. A channel that has not changed its grids plays as before.
+- **Where breaks go inside a programme** (0.8.0): at silence, at set times or at the end of a scene, with how many in
+  each 30 minutes and in a film. Found once for each programme in the quiet hours and kept in a small file; nothing
+  is searched for while a channel streams.
 - **Breaks.** Idents for each channel or for the whole station, in order or in a random order; Jellyfin's own
   trailers of the films on the channel; your own clips; and Coming up next and Later cards with the programme's
   picture, title, the date and time it is shown and a short synopsis. At the end of each programme, Up next shows
