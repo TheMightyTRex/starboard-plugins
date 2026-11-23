@@ -1,0 +1,81 @@
+/* The break grids' page (0.8.0), on the design system's tokens (ds-tokens.css, Mica) and nothing else: no new framework.
+   Built to be used by anyone: every control is at least 44 pixels high and wide, focus is a clear outline in every theme,
+   nothing depends on colour alone (each item says what it is in words), the text grows with the browser's text size and
+   the columns stack on a phone, motion is left out when the device asks, and in forced colours the browser's own
+   colours are used. A candidate for the design system: a "drag list" (columns of items, picked up by keyboard or pointer). */
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html { background: var(--color-bg); }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font: var(--text-md)/1.5 var(--font); }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: var(--space-4); top: var(--space-2); background: var(--color-surface-raised); padding: var(--space-3); z-index: 10;
+  border-radius: var(--radius); min-height: 44px; display: inline-flex; align-items: center; }
+.top, main { max-width: 90rem; margin: 0 auto; padding: 0 var(--space-4); }
+.top { padding-top: var(--space-6); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; align-items: flex-start; }
+.top > div:first-child { flex: 1 1 24rem; }
+h1 { font-size: var(--text-xl); margin: 0 0 var(--space-1); }
+h2 { font-size: var(--text-lg); margin: 0 0 var(--space-2); }
+h3 { font-size: var(--text-md); margin: 0 0 var(--space-1); }
+.lede { color: var(--color-text-muted); margin: 0 0 var(--space-4); max-width: 60rem; }
+.controls { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: flex-end; padding: var(--space-4);
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius); box-shadow: var(--shadow-card); }
+.field { display: flex; flex-direction: column; gap: var(--space-1); max-width: 100%; min-width: 0; }
+label, legend { font-weight: var(--weight-strong, 600); }
+select { font: inherit; max-width: 100%; min-height: 44px; min-width: 44px; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border);
+  background: var(--color-surface-raised); color: var(--color-text); border-radius: var(--radius); }
+button { font: inherit; min-height: 44px; min-width: 44px; padding: var(--space-1) var(--space-4); border: 1px solid var(--color-border);
+  background: var(--color-surface-raised); color: var(--color-text); cursor: pointer; border-radius: var(--radius); }
+button:hover { background: var(--color-hover); border-color: var(--color-hover-edge); }
+button.primary { background: var(--color-accent); color: var(--color-accent-text); border-color: var(--color-accent); font-weight: var(--weight-strong, 600); }
+button.danger { color: var(--status-danger-fg); border-color: var(--status-danger-fg); }
+button:disabled { opacity: .55; cursor: not-allowed; }
+:focus-visible { outline: var(--focus-w) solid var(--color-focus); outline-offset: 2px; }
+.said { min-height: 1.5em; margin: var(--space-3) 0 0; font-weight: var(--weight-strong, 600); }
+.problem { margin: 0; padding: var(--space-2) var(--space-3); background: var(--status-danger-bg); color: var(--status-danger-fg);
+  border-radius: var(--radius); font-weight: var(--weight-strong, 600); }
+.problem:empty { display: none; }
+.hint { color: var(--color-text-muted); margin: var(--space-1) 0 var(--space-2); max-width: 60rem; }
+.banner { margin: var(--space-2) 0; padding: var(--space-2) var(--space-4); border: 1px solid var(--color-divider);
+  border-left: 4px solid var(--color-accent); background: var(--color-surface); border-radius: var(--radius); max-width: 60rem; }
+.grid { margin: var(--space-6) 0; padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-divider);
+  border-radius: var(--radius); box-shadow: var(--shadow-card); }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: flex-end; margin: var(--space-2) 0; }
+.layout { display: grid; grid-template-columns: minmax(16rem, 22rem) 1fr; gap: var(--space-4); align-items: start; }
+@media (max-width: 52rem) { .layout { grid-template-columns: 1fr; } }
+.palette ul, .col ol { list-style: none; margin: 0; padding: 0; }
+.palette li { margin: 0 0 var(--space-2); }
+.pal, .item { padding: var(--space-2) var(--space-3); border: 1px solid var(--color-divider); border-left: 4px solid var(--color-accent);
+  background: var(--color-surface-raised); border-radius: var(--radius); }
+.pal-head, .item-head { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); align-items: center; justify-content: space-between; }
+.grab { font-weight: var(--weight-strong, 600); text-align: left; flex: 1 1 8rem; cursor: grab; }
+.grab[aria-pressed="true"] { background: var(--color-accent); color: var(--color-accent-text); border-color: var(--color-accent); }
+.avail, .times.fixed, .count { color: var(--color-text-muted); font-size: var(--text-sm); }
+.about { margin: var(--space-1) 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+.add-row, .move-to { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.times { display: inline-flex; gap: var(--space-2); align-items: center; }
+.cols-wrap { min-width: 0; }
+.columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--space-3); }
+.col { padding: var(--space-3); background: var(--color-surface-sunken); border: 1px solid var(--color-divider); border-radius: var(--radius); min-width: 0; }
+.col.over { outline: 3px dashed var(--color-accent); outline-offset: 0; }
+.col h3 { margin: 0; }
+.col ol { min-height: 56px; margin-top: var(--space-2); }
+.col li { margin: 0 0 var(--space-2); }
+.empty { margin: var(--space-1) 0 0; color: var(--color-text-muted); }
+.item.held { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.item.dragged, .pal.dragged { opacity: .5; }
+.drop-marker { height: 8px; margin: 0 0 var(--space-2); border-radius: 4px; background: var(--color-accent); list-style: none; }
+.more { margin-top: var(--space-1); }
+.more > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; padding: 0 var(--space-2); border-radius: var(--radius);
+  color: var(--color-text); text-decoration: underline; }
+.acts { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-2); padding: var(--space-2) 0; }
+.acts .move-to { align-items: center; }
+/* Reduced motion: nothing here moves, and what changes does so at once. */
+@media (prefers-reduced-motion: no-preference) { :root:not(.pref-motion-off) .col, :root:not(.pref-motion-off) button { transition: background-color .12s; } }
+/* Forced colours (Windows High Contrast): the browser's colours, and borders in place of the fills the items rely on. */
+@media (forced-colors: active) {
+  .pal, .item, .col, .grid, .banner { border-color: CanvasText; }
+  .grab[aria-pressed="true"] { background: Highlight; color: HighlightText; forced-color-adjust: none; }
+  .item.held { outline-color: Highlight; }
+  .drop-marker { background: Highlight; forced-color-adjust: none; }
+  .col.over { outline-color: Highlight; }
+}

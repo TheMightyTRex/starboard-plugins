@@ -11,6 +11,8 @@ Each section here says what each setting does, its choices and the one it starts
 | [Channels](#channels) | **Channels** | Add, name, number and order your channels |
 | [What each channel shows](#what-each-channel-shows) | **Channels**, the **What it shows** card | The series, films, collections, playlists, genres and decades on each channel |
 | [Schedule grid](#schedule-grid) | **Schedule grid** | A week for each channel, in 15 minute steps |
+| [Break grids](#break-grids) | **Break grids** | What plays In between programmes and in Breaks inside programmes, as columns you fill |
+| [Where breaks go inside a programme](#where-breaks-go-inside-a-programme) | **Channels**, the **Breaks** card | At silence, at set times or at the end of a scene, and how many |
 | [Breaks and idents](#breaks-and-idents) | **Channels**, the **Breaks** and **Holding slide and promos** cards, and **Idents, clips and music** | What plays between programmes |
 | [On-screen logo](#on-screen-logo) | The station's settings, and each channel's **On-screen logo and branding** card | The logo in the corner of the picture, the clock and the label |
 | [Straps and cards](#straps-and-cards) | The station's settings | The programme's name, Up next, and the Coming up next and Later cards |
@@ -98,6 +100,72 @@ The grid is a week, Monday to Sunday, in 15 minute steps. Films and series place
 
 A programme takes the time of its longest episode, rounded up to 15 minutes, so programmes never run into each other. A change that would overlap another programme is refused, and the message names it. In the grid, the arrow keys move between times and days, Page Up and Page Down by an hour, and Enter opens a programme's actions or adds one at an empty time.
 
+## Break grids
+
+**Break grids** lists each channel's two grids, with an **Open the grid** link that opens it in a new tab, on the plug-in's own page (Starboard 0.24.0 and later; the link also shows on each channel's **Breaks** card). **In between programmes** is what plays after a programme, before the next one starts. **Breaks** is what plays in a break inside a programme, where a programme stops for adverts ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more).
+
+A channel that has not changed its grids plays what it always has, and the grid shows that order as its starting point: a bumper, **Promo** (as many as **Promos and clips in each break** says), **Adverts**, the holding slide and an ident. Nothing is saved until you change the grid. **Use the standard order again** takes a grid back to that.
+
+![The In between programmes grid with its mode set to Sequence and 3 columns: step 1 marks How a break picks its column, step 2 Number of columns](../../images/tv-station/grid-between-modes.png)
+
+### How a break picks its column
+
+| Choice | Columns | What it does |
+|---|---|---|
+| **Random** | 1 to 7, as many as you choose | Each break picks one column at random. Each column is an alternative. The same programme always gets the same one |
+| **Sequence** | 1 to 7, as many as you choose | The columns play in turn, column 1 first, then 2, and round again |
+| **Day of week** | 7: Monday to Sunday | Each break plays the column for the day it is on |
+| **Morning, afternoon and evening** | 3 | The column for the time of day: morning before 12:00, afternoon from 12:00, evening from 18:00 |
+
+Changing the choice loses nothing: columns the new choice does not use are kept, and come back if you change it back.
+
+### The items
+
+![The list of items beside the columns: Bumper, Promo, Adverts, Ident and the rest, each with Add to a column and Add; Ident picked up, with a blue line showing where it will go in Column 2](../../images/tv-station/grid-between-pick-up.png)
+
+| Item | What plays | Times shown |
+|---|---|---|
+| **Bumper** | A very short version of the ident with no music, from the broadcast pack | 1 to 6 |
+| **Promo** | A promo, a trailer or one of your clips, chosen at random | 1 to 6 |
+| **Adverts** | One of your extra videos, chosen at random | 1 to 6 |
+| **Ident** | An ident with its music | 1 to 6 |
+| **Other channel promo** | A promo for a programme on one of your other channels (**Show promos for your other channels** must be active) | 1 to 6 |
+| **Coming soon promo** | A Coming soon promo for a programme on this channel | 1 to 6 |
+| **Holding countdown** | The holding slide with the time to the programme's start. It takes the time that is left. The clock counts through any promo or ident after it, so it always shows the time to the start | Once |
+| **Back soon** | The holding slide with Back soon. It takes the time that is left | Once |
+
+Each promo, clip or video plays once at most in a break, so **Promo** with 3 times shown is 3 different ones, or fewer when there are fewer. An item with nothing to play, or nothing that fits the time, is left out. A column has one holding slide at most. When the column has none, or the channel has no holding slide, Coming up next cards or a slate fill the time before the idents that end the break. A promo for a programme that has started is left out.
+
+### Moving things: three ways
+
+- **Drag:** drag an item from the list, or from a column, to where you want it.
+- **Keyboard:** Tab to an item and press Space or Enter to pick it up. Left and Right choose the column, Up and Down the place in it. Space or Enter drops it, and Escape cancels. Each step is said aloud: "Column 2, position 1 of 3", and "Bumper added to Column 2, position 1 of 3". Tab away and it is put back. With nothing picked up, the arrow keys move between items.
+- **Buttons:** in the list, **Add to** a column and **Add**. On a placed item, **Times shown**, and under **Move or remove**: **Move up**, **Move down**, **Move to** a column with **Move**, and **Remove**. Focus stays on the button you used, so you can press it again.
+
+![A column's item with Times shown set to 3, and its Move or remove actions open: Move up, Move down, Move to and Remove](../../images/tv-station/grid-breaks-item-actions.png)
+
+![The Breaks grid with its mode set to Day of week](../../images/tv-station/grid-breaks-days.png)
+
+![The Breaks grid set to Morning, afternoon and evening: step 1 marks Morning, step 2 Afternoon](../../images/tv-station/grid-breaks-times-of-day.png)
+
+## Where breaks go inside a programme
+
+These are on each channel's **Breaks** card, next to **Breaks inside programmes**, which says how long each break is (**Off** unless chosen).
+
+![The Breaks card: Breaks inside programmes (1) and Where breaks go inside a programme (2)](../../images/tv-station/grid-ads-where.png)
+
+| Setting | What it does | Choices, and the one it starts with |
+|---|---|---|
+| **Where breaks go inside a programme** | **At silence**: the quiet moments in the sound, with Jellyfin's own Commercial markers first when it has them; a moment with a black picture is preferred. **At set times**: spread evenly between 20% and 85% of the programme. **At the end of a scene**: each set time snaps to the nearest change of scene, within half the space between breaks. A break with no place found goes to its set time | **At silence**, **At set times**, **At the end of a scene**. **At silence** |
+| **Breaks in each 30 minutes** | For series and other programmes: this many for every 30 minutes, at least 1, so a 60 minute episode has twice as many as a 30 minute one | **Automatic**, **1 break** to **4 breaks**. **Automatic**: 1 up to 40 minutes, 2 up to 75 minutes, 3 after that |
+| **Breaks in a film** | How many breaks a film has, whatever its length | **Automatic** or **1 break** to **6 breaks**. **Automatic** |
+
+![The Breaks card: Breaks in each 30 minutes (1) and Breaks in a film (2)](../../images/tv-station/grid-ads-how-many.png)
+
+![The Breaks card: the In between programmes grid (1) and the Breaks grid (2), each with its link and Standard order](../../images/tv-station/grid-ads-grid-links.png)
+
+The places are found once for each programme, in the quiet hours, for programmes on in the next 48 hours, at the lowest priority and never while anyone is watching. They are kept in a small file, so a change to any of these settings needs no new search, and nothing is searched for while a channel streams. **At set times** needs no search at all. Finding the places for a 30 minute programme took about 8 processor seconds for **At silence** and 2 for **At the end of a scene** on the computer it was measured on, for a 640 by 360 file; a programme not searched yet has no breaks until the next quiet hour, except with **At set times**. A programme under 15 minutes has none. Each break's time comes from the break after the programme, so many breaks in a short slot need a longer **Break between programmes**.
+
 ## Breaks and idents
 
 A break fills the time between programmes. It opens with a bumper, then promos, trailers and clips, then one extra video, then the holding slide or Coming up next cards, and ends with one ident immediately before the next programme. A transition from the broadcast pack plays at each cut between a programme and a break.
@@ -112,12 +180,12 @@ On the channel's **Breaks** card:
 |---|---|---|---|
 | **Programmes start** | When each programme starts, with a break filling the time to it | **Back to back**, **On the quarter hour**, **On the half hour** or **On the hour**. **On the half hour** | On the half hour: a programme ending at 20:52 has an 8 minute break, then the next starts at 21:00 |
 | **Break between programmes** | Added after each programme. With programmes on the half hour, the break also fills the rest of the slot | **No break**, **1 minute**, **2 minutes**, **3 minutes** or **5 minutes**. **No break** | 3 minutes, back to back: a programme ending at 20:40 is followed by a break, and the next starts at 20:43 |
-| **Breaks inside programmes** | Where a programme made for commercial television fades to black with a moment of silence for its adverts, a short break plays there: a bumper, promos, trailers or clips, one extra video, the holding slide with Back soon, and a bumper. There is no ident. The places are found in quiet hours, from Jellyfin's Commercial markers or from the sound and picture, for programmes on in the next 48 hours, and each programme is checked once. Up to 1 break in a programme under 40 minutes, 2 under 75 minutes and 3 in a longer one. A programme with no clear fade to black, such as most films, has none. Their time comes from the break after the programme, so the schedule never moves | **Off**, **Up to 1 minute each**, **Up to 2 minutes each** or **Up to 3 minutes each**. **Off** | Up to 2 minutes each: a 45 minute episode with two fades to black has two short breaks |
+| **Breaks inside programmes** | Where a break goes inside a programme, a short break plays there ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more): a bumper, promos, trailers or clips, one extra video, the holding slide with Back soon, and a bumper. There is no ident. Their time comes from the break after the programme, so the schedule never moves | **Off**, **Up to 1 minute each**, **Up to 2 minutes each** or **Up to 3 minutes each**. **Off** | Up to 2 minutes each: a 45 minute episode with two fades to black has two short breaks |
 | **Idents** | Whose idents play before each programme | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | One ident, then the programme |
 | **Idents play** | The order idents play in. A broadcast pack's idents always play in a random order | **In order** or **In a random order**. **In order** | In order: ident 1, then 2, then 3 |
 | **Trailers** | Jellyfin's own trailers of the films on this channel | **None** or **Trailers of its films, from Jellyfin**. **None** | A film's trailer in the break |
 | **Your clips** | Whose clips play | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | A clip you added |
-| **Promos and clips in each break** | Each promo, trailer and clip plays once at most in a break, in a random order, after the bumper. The holding slide fills the rest | **Up to 2**, **Up to 3**, **Up to 4** or **Up to 6**. **Up to 3** | Up to 3: a promo, a trailer and a clip |
+| **Promos and clips in each break** | Each promo, trailer and clip plays once at most in a break, in a random order, after the bumper. The holding slide fills the rest. Once a [break grid](#break-grids) is changed, its **Promo** number is used in its place | **Up to 2**, **Up to 3**, **Up to 4** or **Up to 6**. **Up to 3** | Up to 3: a promo, a trailer and a clip |
 | **Extra videos** | One plays at random after the promos in each break, when it fits | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | A 2 minute short film |
 | **Add an ident**, **Add a clip** | Choose a video of up to 60 MB, or enter the name of a Jellyfin collection or folder of them. A clip can be up to 10 minutes | Videos you add | A 10 second ident |
 | **Add an extra video** | Select **Upload an extra video** and choose a video of up to 10 minutes and 90 MB. Add as many as you like. **Remove** in its More menu takes one off | Videos you add | A 5 minute music video |

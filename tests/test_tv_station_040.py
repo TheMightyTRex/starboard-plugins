@@ -222,7 +222,7 @@ class TheJob(unittest.TestCase):
             cid = t.channel("Films", episodes("a", 30, 1500))
             app.someone_watching = lambda: False
             looked = []
-            app.breaks.find = lambda url, key, e: (looked.append(e["id"]) or ([700.0], "picture"))
+            app.breaks.look = lambda url, key, e, methods=(): (looked.append(e["id"]) or {"sil": [[700.0, 2.0, 1]]})
             self.assertIn("Nothing new to check", app.breaks_job(now=NOW)["said"], "off unless chosen")
             s = app.state()
             app.find(s, cid)["mid_break_seconds"] = 120
@@ -232,7 +232,7 @@ class TheJob(unittest.TestCase):
             self.assertIn("more in the next quiet hour", said)
             app.breaks_job(now=NOW, most=100)
             self.assertEqual(len(looked), len(set(looked)), "each programme once")
-            self.assertEqual(app.found_breaks().points(looked[0]), [700.0])
+            self.assertEqual(app.found_breaks().places({"id": looked[0], "dur": 1500, "kind": "Episode"}), [700.0])
             app.someone_watching = lambda: True
             self.assertIn("Someone is watching", app.breaks_job(now=NOW)["said"])
             rows = {it["id"].split(":", 1)[1]: it for it in app.channels_page(now=NOW)["items"] if it["id"].startswith(cid)}

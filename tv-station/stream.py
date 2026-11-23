@@ -207,8 +207,10 @@ def piece_command(piece, now, ctx):
                 f"setsar=1,fps={FPS},format=yuv420p")
         nxt = localise((piece.get("airing") or {}).get("entry") or {})
         title = (nxt.get("title") or "") + (words.sep(lang) + episode_words(nxt, lang) if episode_words(nxt, lang) else "")
-        chain = dog.holding_chain(W, H, ctx["texts"], piece["holding"].get("words") or "countdown", title, left, layers, whole,
-                                  lang=lang)
+        # 0.8.0: a break grid's holding countdown counts to the programme's start (piece["until"]) even when a promo or an
+        # ident plays after it, so the clock runs through them; with no "until" it reaches 0:00 as the piece ends.
+        chain = dog.holding_chain(W, H, ctx["texts"], piece["holding"].get("words") or "countdown", title,
+                                  max(0.0, piece.get("until", piece["end"]) - now), layers, whole, lang=lang)
     elif kind == "slate":
         base = "setsar=1,format=yuv420p"
         chain = dog.slate_chain(W, H, ctx["texts"], f"{ctx['names']['station']}  ·  {ctx['names']['channel']}")

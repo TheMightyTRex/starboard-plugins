@@ -24,6 +24,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import animate
+import breakgrid
 import breaks
 import dog
 import grid
@@ -40,7 +41,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.7.0"
+VERSION = "0.8.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -69,6 +70,10 @@ COLOURS = {"0x1f5f99": "Blue", "0x2e7d32": "Green", "0xb3261e": "Red", "0x6a3d9a
 START_ON = {"0": "Back to back", "15": "On the quarter hour", "30": "On the half hour", "60": "On the hour"}
 BREAKS = {"0": "No break", "60": "1 minute", "120": "2 minutes", "180": "3 minutes", "300": "5 minutes"}
 MID_BREAKS = {"0": "Off", "60": "Up to 1 minute each", "120": "Up to 2 minutes each", "180": "Up to 3 minutes each"}  # 0.4.0
+PLACE_HOW = breaks.METHOD_WORDS  # 0.8.0: where breaks go inside a programme
+GRID_LINK = {"between": "between programmes", "inside": "breaks"}
+PER_30 = {"": "Automatic", "1": "1 break", "2": "2 breaks", "3": "3 breaks", "4": "4 breaks"}  # in each 30 minutes of a programme
+PER_FILM = {"": "Automatic", "1": "1 break", "2": "2 breaks", "3": "3 breaks", "4": "4 breaks", "5": "5 breaks", "6": "6 breaks"}
 BREAKS_FILE = "breaks.json"  # breaks inside programmes found in quiet hours (0.4.0)
 BREAKS_AHEAD = 48 * 3600  # programmes airing this soon are looked at
 THREE_D_FILE = "three_d.json"  # films looked at for 3D in quiet hours (0.5.5)
@@ -886,13 +891,23 @@ def found_breaks():
 def break_options(ch, opts):
     """What schedule.pieces_at needs to plan a channel's breaks."""
     out = {"seed": ch["seed"], "cards": opts["cards"], "ident_order": ch.get("ident_order", "in_order"),
-           "fill_most": int(ch.get("per_break") or 3)}  # 0.5.0: each once, up to this many
+           "fill_most": int(ch.get("per_break") or 3), "cid": ch["id"]}  # 0.5.0: each once, up to this many
+    grids = {w: g for w in breakgrid.GRIDS if (g := breakgrid.grid_of(ch, w))}  # 0.8.0: a saved grid replaces the classic order
+    if grids:
+        out["grids"] = grids
     mid = int(ch.get("mid_break_seconds") or 0)
     if mid:
         found = found_breaks()
+        how, per_30, per_film = place_choice(ch)
         out["mid_seconds"] = mid
-        out["breaks_in"] = lambda e: found.points(e.get("id"))
+        out["breaks_in"] = lambda e: found.places(e, how, per_30, per_film)  # reads the small file: nothing is run
     return out
+
+
+def place_choice(ch):
+    """Where and how many (0.8.0): At silence unless chosen, and the number automatic unless chosen."""
+    how = ch.get("place_how") if ch.get("place_how") in PLACE_HOW else "silence"
+    return how, int(ch.get("breaks_per_30") or 0), int(ch.get("breaks_per_film") or 0)
 
 
 def breaks_job(now=None, limit_seconds=40 * 60, most=12):
@@ -913,35 +928,38 @@ def _breaks_run(now, limit_seconds, most):
         return {"said": "Someone is watching, so the search for breaks waits for the next quiet hour"}
     s = state()
     found = found_breaks()
-    todo, seen = [], set()
+    wanted, first = {}, {}
     for ch in s["channels"]:
         if not ch.get("on", True) or not int(ch.get("mid_break_seconds") or 0):
             continue
+        how = place_choice(ch)[0]
         for a in sched_of(ch).airings(now, now + BREAKS_AHEAD, limit=400):
             e = a["entry"]
-            if e.get("id") and e["id"] not in seen and not found.known(e["id"]) and float(e.get("dur") or 0) >= 15 * 60:
-                seen.add(e["id"])
-                todo.append((a["start"], e))
+            if e.get("id") and float(e.get("dur") or 0) >= 15 * 60:
+                wanted.setdefault(e["id"], (e, set()))[1].add(how)
+                first.setdefault(e["id"], a["start"])
+    # Each programme once for what its channels need: At set times needs no search at all (0.8.0).
+    todo = [(first[i], e, tuple(sorted(m - {"times"}))) for i, (e, m) in wanted.items() if not found.has(i, m)]
     if not todo:
         return {"said": "Nothing new to check for breaks inside programmes"}
     todo.sort(key=lambda x: x[0])
     c = jf_conf()
     breaks.begin()
     looked, with_breaks, failed, began = 0, 0, "", time.monotonic()
-    for _, e in todo[:most]:
+    for _, e, methods in todo[:most]:
         if time.monotonic() - began > limit_seconds or sbplugin.holding() or someone_watching():
             break
         try:
-            at, how = breaks.find(c.get("url", ""), c.get("api_key", ""), e)
+            got = breaks.look(c.get("url", ""), c.get("api_key", ""), e, methods)
         except InterruptedError as err:
             failed = str(err)
             break
         except (OSError, ValueError) as err:
             failed = str(err)[:100]
             continue
-        found.put(e["id"], at, how)
+        found.put_survey(e["id"], got)
         looked += 1
-        with_breaks += bool(at)
+        with_breaks += any(got.get(k) for k in ("sil", "scn", "seg"))
     said = f"Checked {sbplugin.plural(looked, 'programme')}: {with_breaks} with breaks inside"
     if len(todo) > looked:
         said += f". {len(todo) - looked} more in the next quiet hour"
@@ -1416,6 +1434,22 @@ def channel_rows(s, ch, cfg, base, now):
         detail="Added after each programme. With programmes on the half hour, the break also fills the rest of the slot.")
     row("mid_break_seconds", "Breaks inside programmes", g, choice=_choice("Breaks inside", str(ch.get("mid_break_seconds") or 0), MID_BREAKS),
         detail="Where a programme fades to black for its adverts, found in quiet hours. Their time comes from the break after it.")
+    how_now, per_30, per_film = place_choice(ch)
+    row("place_how", "Where breaks go inside a programme", g, choice=_choice("Where", how_now, PLACE_HOW),
+        detail="Found once for each programme, in quiet hours. A break with no place found goes to its set time.")
+    row("breaks_per_30", "Breaks in each 30 minutes", g, choice=_choice("Breaks in 30 minutes", str(per_30 or ""), PER_30),
+        detail="This many for every 30 minutes, at least 1. Automatic is 1 up to 40 minutes, 2 up to 75 minutes and 3 after that. A film has its own number.")
+    row("breaks_per_film", "Breaks in a film", g, choice=_choice("Breaks in a film", str(per_film or ""), PER_FILM),
+        detail="How many breaks a film has, whatever its length. Their time comes from the break after it, so a film with many needs a long one.")
+    for which in breakgrid.GRIDS:
+        saved = breakgrid.grid_of(ch, which) is not None
+        row(f"grid-{which}", f"{breakgrid.GRID_WORDS[which]} grid", g, state="ok" if saved else "unknown",
+            state_label="Your grid" if saved else "Standard order",
+            detail=("What plays between one programme and the next: " if which == "between" else "What plays in a break inside a programme: ") +
+                   ("your grid is in use." if saved else "the order it has always had. Open the grid to change it.") +
+                   " Drag items into columns, or use the buttons and the keyboard.",
+            **({"link": {"url": f"{base}/t/{s['token']}/breaks?channel={cid}&grid={which}",
+                         "label": f"Open the {GRID_LINK[which]} grid for {ch['name']}"}} if base else {}))
     both = {"none": "None", "own": "This channel's", "shared": "The station's", "both": "This channel's and the station's"}
     row("idents", "Idents", g, choice=_choice("Idents", ch.get("idents"), both))
     row("ident_order", "Idents play", g, choice=_choice("Idents play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
@@ -1845,6 +1879,13 @@ def choose(ch, key, value):
         ch["break_seconds"] = int(v)
     elif key == "mid_break_seconds" and v in MID_BREAKS:
         ch["mid_break_seconds"] = int(v)
+    elif key == "place_how" and v in PLACE_HOW:
+        ch["place_how"] = v
+        return f"Saved: breaks go {PLACE_HOW[v].lower()}"
+    elif key == "breaks_per_30" and v in PER_30:
+        ch["breaks_per_30"] = int(v or 0)
+    elif key == "breaks_per_film" and v in PER_FILM:
+        ch["breaks_per_film"] = int(v or 0)
     elif key in ("idents", "clips") and v in ("none", "own", "shared", "both"):
         ch[key] = v
     elif key == "per_break" and v in PER_BREAK:
@@ -2820,6 +2861,63 @@ def refresh_grid(cid):
         grid.store(grid_folder(), cid, doc)
 
 
+def breaks_available(s, ch, cfg=None):
+    """How many of each kind of thing a channel has to play in its breaks now, for the grids' page."""
+    clips = clips_for(s, ch, channel_pack(s, ch), cfg)
+    made = [c for c in clips["fillers"] if c.get("role") == "promo"]
+    return {"bumper": len(clips["bumpers"]), "promo": len(clips["fillers"]), "adverts": len(clips["extras"]),
+            "ident": len(clips["idents"]) or (1 if clips.get("sting") else 0), "other_promo": sum(1 for c in made if c.get("cid") != ch["id"]),
+            "coming_promo": sum(1 for c in made if c.get("cid") == ch["id"]), "holding": 1 if clips.get("holding") else 0,
+            "back_soon": 1 if clips.get("holding") else 0}
+
+
+def breaks_grid_view(ch, which):
+    """One grid for the grids' page: its mode, its columns as shown, and what each holds."""
+    saved = breakgrid.grid_of(ch, which)
+    g = saved or breakgrid.view_of(ch, which)
+    names = breakgrid.column_names(g)
+    cols = []
+    for i, name in enumerate(names):
+        cols.append({"name": name, "items": [{"kind": it["kind"], "name": breakgrid.KINDS[it["kind"]][0], "times": it["times"],
+                                              "counts": breakgrid.KINDS[it["kind"]][1]} for it in g["columns"][i]]})
+    kept = sum(len(c) for c in g["columns"][len(names):])
+    return {"which": which, "name": breakgrid.GRID_WORDS[which], "saved": saved is not None, "mode": g["mode"], "count": g["count"],
+            "columns": cols, "unused_items": kept, "fixed_count": g["mode"] in ("day", "time")}
+
+
+def breaks_state(cid, said="", now=None):
+    s = state()
+    chans = numbered(s)
+    if not chans:
+        return {"channels": [], "cid": "", "grids": [], "kinds": breakgrid.kinds_words(), "modes": [],
+                "said": "Add a channel first, in Starboard: Settings, Plug-ins, Create your own TV channel, Channels"}
+    ch = find(s, cid) or chans[0]
+    return {"channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans], "cid": ch["id"],
+            "grids": [breaks_grid_view(ch, w) for w in breakgrid.GRIDS], "kinds": breakgrid.kinds_words(), "available": breaks_available(s, ch),
+            "modes": [{"mode": m, "name": breakgrid.MODE_WORDS[m], "help": breakgrid.MODE_HELP[m]} for m in breakgrid.MODES],
+            "most_columns": breakgrid.MOST_COLUMNS, "said": said}
+
+
+def breaks_op(body):
+    """One change to a channel's break grid, from its page. Kept at once. reset: the channel goes back to the order it had
+    before grids, and the page shows that order as its grid again."""
+    cid, which = str(body.get("cid") or ""), str(body.get("grid") or "")
+    op = body.get("op") if isinstance(body.get("op"), dict) else {}
+    with _grid_lock:
+        s = state()
+        ch = find(s, cid)
+        if not ch:
+            raise breakgrid.GridError("That channel has gone")
+        if which not in breakgrid.GRIDS:
+            raise breakgrid.GridError("That grid is not known")
+        if op.get("op") == "reset":
+            (ch.get("break_grids") or {}).pop(which, None)
+        else:
+            ch.setdefault("break_grids", {})[which] = breakgrid.apply(breakgrid.view_of(ch, which), op)
+        save(s)
+    return breaks_state(cid)
+
+
 def schedule_page(said=None):
     """Starboard's page for the grid: a link to each channel's grid, which opens on this plug-in's own web page."""
     s = state()
@@ -2846,6 +2944,36 @@ def schedule_page(said=None):
            "intro": ("Select Open the schedule grid under a channel: its week opens in a new tab, on this plug-in's own page, in a desktop "
                      "browser. Place films and series at set times by dragging or with buttons and the keyboard, copy a day, stripe a series "
                      "across weekdays, or suggest a week from watch history.")}
+    if said:
+        out["said"] = said[:200]
+    return out
+
+
+def grids_page(said=None):
+    """Starboard's page for the break grids: a link to each channel's two grids, which open on this plug-in's own page."""
+    s = state()
+    base = address()
+    items = []
+    for ch in numbered(s):
+        for which in breakgrid.GRIDS:
+            saved = breakgrid.grid_of(ch, which)
+            words = breakgrid.GRID_WORDS[which]
+            it = {"id": f"grid-{ch['id']}-{which}", "title": words, "group": f"{ch['number']}  {ch['name']}"[:80],
+                  "state": "ok" if saved else "unknown", "state_label": (breakgrid.MODE_WORDS[saved["mode"]] if saved else "Standard order"),
+                  "detail": ("Your grid is in use." if saved else "It plays the order it has always had. Open the grid to change it.")}
+            if base:
+                it["link"] = {"url": f"{base}/t/{s['token']}/breaks?channel={ch['id']}&grid={which}", "label": f"Open the {GRID_LINK[which]} grid for {ch['name']}"}
+            else:
+                it["detail"] = NO_ADDRESS
+            items.append(it)
+    if not items:
+        items.append({"id": "none", "title": "No channels yet", "group": "Each channel's grids", "state": "unknown", "state_label": "None",
+                      "detail": "Add a channel in Channels first."})
+    out = {"type": "list", "title": "Break grids", "items": items,
+           "intro": ("Two grids for each channel: In between programmes, what plays after a programme before the next one starts, and Breaks, "
+                     "what plays in a break inside a programme. Choose Open the grid under a channel: it opens in a new tab. Choose how a break "
+                     "picks its column (Random, Sequence, Day of week, or Morning, afternoon and evening), then drag items into the columns, "
+                     "or use the buttons and the keyboard.")}
     if said:
         out["said"] = said[:200]
     return out
@@ -2913,11 +3041,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"ok": True, "ffmpeg": stream.has_ffmpeg()})
             if p == "/card":
                 return self._json(200, card())
-            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule", "/animation"):
+            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule", "/animation", "/grids"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may open this"})
                 return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page, "/pack": pack_page,
-                                        "/schedule": schedule_page, "/animation": animation_page}[p]())
+                                        "/schedule": schedule_page, "/animation": animation_page, "/grids": grids_page}[p]())
             if p == "/":
                 self._learn()
                 s = state()
@@ -2988,6 +3116,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._stream(m.group(1))
         if rest == "grid" or rest.startswith("grid/"):
             return self._grid_get(rest, query)
+        if rest == "breaks" or rest.startswith("breaks/"):
+            return self._breaks_get(rest, query)
         m = re.match(r"^download/([a-z-]+\.(png|zip))$", rest)
         if m:
             data, kind, filename = download(m.group(1), query)
@@ -3029,6 +3159,28 @@ class Handler(BaseHTTPRequestHandler):
             doc, _ = grid_target(one.get("channel", ""))
             eps = (doc["series"].get(one.get("series", "")) or {}).get("episodes") or []
             return self._json(200, {"items": [{"s": e.get("s"), "e": e.get("e"), "name": e.get("ep") or ""} for e in eps[:2000]]})
+        return self._json(404, {"error": "Not found"})
+
+    def _breaks_get(self, rest, query):
+        """The break grids' own page (0.8.0), its script, style and font, and the answer it reads."""
+        static = {"breaks": ("breaks.html", "text/html; charset=utf-8"), "breaks/breaks.js": ("breaks.js", "text/javascript; charset=utf-8"),
+                  "breaks/breaks.css": ("breaks.css", "text/css; charset=utf-8"), "breaks/tokens.css": ("ds-tokens.css", "text/css; charset=utf-8"),
+                  "breaks/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2")}
+        if rest in static:
+            name, kind = static[rest]
+            with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), name), "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", kind)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(data)
+            return None
+        if rest == "breaks/api/state":
+            return self._json(200, breaks_state({k: v[0] for k, v in query.items() if v}.get("channel", "")))
         return self._json(404, {"error": "Not found"})
 
     def _stream(self, cid):
@@ -3101,6 +3253,16 @@ class Handler(BaseHTTPRequestHandler):
                 if (self.headers.get("Content-Type") or "").split(";")[0] != "application/json":
                     return self._json(415, {"error": "Send JSON"})
                 return self._json(200, grid_op(self._body()))
+            m = re.match(r"^/t/([A-Za-z0-9_-]+)/breaks/api/op$", p)
+            if m:
+                if not secrets.compare_digest(m.group(1), state()["token"]):
+                    return self._json(404, {"error": "Not found"})
+                if (self.headers.get("Content-Type") or "").split(";")[0] != "application/json":
+                    return self._json(415, {"error": "Send JSON"})
+                try:
+                    return self._json(200, breaks_op(self._body()))
+                except breakgrid.GridError as e:
+                    return self._json(400, {"error": str(e)})
             if p == "/schedule":
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may change this"})

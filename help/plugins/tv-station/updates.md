@@ -1,12 +1,13 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.6.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.7.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 0.7.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
+| 0.8.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
+| 0.7.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 22 November 2026 |
 | 0.6.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 21 November 2026 |
 | 0.5.7 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 21 November 2026 |
 | 0.5.6 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 20 November 2026 |
@@ -27,9 +28,20 @@ Create your own TV channel 0.6.0 is the latest version. It needs Starboard with 
 
 The catalogue offers each Starboard the newest version it can run.
 
-## What is new in 0.7.0
+## What is new in 0.8.0
 
 Not released yet.
+
+Added:
+
+- **Break grids:** two grids for each channel, **In between programmes** and **Breaks**, with up to 7 columns each. Choose **Random**, **Sequence**, **Day of week**, or **Morning, afternoon and evening**, then drag **Bumper**, **Promo**, **Adverts**, **Ident**, **Other channel promo**, **Coming soon promo**, **Holding countdown** and **Back soon** into the columns, and say how many times each is shown. Everything also works from the keyboard and with buttons. [Break grids](settings.md#break-grids) says how.
+- **Where breaks go inside a programme:** at silence, at set times or at the end of a scene, with how many in each 30 minutes and in a film, found once for each programme in the quiet hours. [Where breaks go inside a programme](settings.md#where-breaks-go-inside-a-programme) says what each does.
+
+Nothing you have set changes. A channel that has not changed its grids plays what it always has, and the grids start from that order.
+
+## What is new in 0.7.0
+
+Released on 22 November 2026.
 
 Added:
 

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Break grids</title>
+<link rel="stylesheet" href="breaks/tokens.css">
+<link rel="stylesheet" href="breaks/breaks.css">
+<script src="breaks/breaks.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#grids">Skip to the grids</a>
+<header class="top">
+  <div>
+    <h1>Break grids</h1>
+    <p class="lede">What plays between programmes, and in a break inside a programme. Each change is kept at once. Drag an item into a column, or pick it up with the keyboard, or use the buttons: all three do the same.</p>
+  </div>
+  <div class="field">
+    <label for="theme">Colours</label>
+    <select id="theme"><option value="light">Light</option><option value="dark">Dark</option><option value="contrast">High contrast</option></select>
+  </div>
+</header>
+<main id="main">
+  <noscript><p class="problem">The break grids need JavaScript. Turn it on for this page, or change the breaks in Starboard: Settings, Plug-ins, Create your own TV channel, Channels.</p></noscript>
+  <section class="controls" aria-label="Channel">
+    <div class="field">
+      <label for="channel">Channel</label>
+      <select id="channel"></select>
+    </div>
+  </section>
+  <p id="said" class="said" role="status" aria-live="polite" aria-atomic="true"></p>
+  <p id="problem" class="problem" role="alert"></p>
+  <div id="grids"></div>
+</main>
+</body>
+</html>
