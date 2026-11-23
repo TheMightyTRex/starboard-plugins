@@ -523,8 +523,9 @@ IMAGE_VERSION = "1.2.4"
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = {"notifications", "backups-watch"}
-# 1.2.4 also names Backups watch (DASH-513), new to the image.
+NEW_IN_IMAGE = set()
+# 1.2.4 was built from 0b10e00 (Notifications 1.3.0 and Backups watch 0.1.0 included) and pinned on 22 November 2026
+# (sha256:c99b4b167a4e...), so Notifications and Backups watch run from the pinned image like the others and are published.
 
 
 def _switch(key, label, hint, group, default=True):
