@@ -1,0 +1,38 @@
+# UPS and power: Updates
+
+UPS and power 0.1.0 is the first version. It needs Starboard with plug-in API 1.17 or later.
+
+## Versions
+
+| Version | Needs plug-in API | Released |
+|---|---|---|
+| 0.1.0 | 1.17 or later | 25 November 2026 |
+
+## What is new in 0.1.0
+
+Added:
+
+- **One card for your UPS:** on mains power or on battery, the battery charge, the time left and the load, with the voltage and power used in a list.
+- **Alerts:** once when the mains power is lost, when the battery is low, when it needs replacing and when the UPS cannot be reached, and once when each is over, through Starboard.
+- **NUT or PeaNUT:** it reads NUT's own protocol, or PeaNUT's web address; you choose, and the UPS if there is more than one.
+- **Light:** one small question a minute, about 32 MB of memory at most, and a short history kept for the sparkline.
+
+## How an update is kept safe
+
+- **Before the update** Starboard asks UPS and power to get ready: it starts nothing new and lets anything running finish, for up to 60 seconds. If it is not ready, nothing changes and Starboard says why.
+- **After the update,** or after a Roll back, it carries on with its work.
+- Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
+- Your settings and its folder are kept.
+
+## Update it
+
+1. Go to **Settings**, then **Plug-ins**. When a newer version is known, UPS and power has an **Update** chip in **Manage**.
+2. Select **UPS and power** to open its tab.
+3. In **Versions**, select **Update to** and the new version.
+4. Read **What is new since** your version and **How the update is kept safe**, enter your Starboard password, and select **Update UPS and power**.
+5. When the dialog says it is updated, select **Done**.
+
+## Find out more
+
+- [Settings](settings.md)
+- [Problems](problems.md)

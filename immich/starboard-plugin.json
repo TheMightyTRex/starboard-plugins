@@ -1,0 +1,128 @@
+{
+ "manifest_version": 1,
+ "id": "immich",
+ "name": "Immich",
+ "version": "0.1.0",
+ "description": "Photo and video counts, storage used and the job queue of your Immich server on cards.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/immich",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.17 <2.0",
+ "permissions": [
+  "network:lan"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.5",
+   "port": 8080,
+   "network": "lan",
+   "volumes": [
+    "data"
+   ],
+   "start": "when_needed",
+   "idle_stop_minutes": 5,
+   "env": {
+    "EXAMPLE": "immich"
+   }
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 32,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "address",
+   "label": "Immich's address",
+   "type": "address",
+   "group": "Immich",
+   "required": true,
+   "hint": "Such as http://192.0.2.10:2283, without /api on the end."
+  },
+  {
+   "key": "api_key",
+   "label": "API key",
+   "type": "secret",
+   "group": "Immich",
+   "required": true,
+   "hint": "Made in Immich under Account settings, API keys. Give it only the permissions server.statistics, server.storage and queue.read (job.read for an older Immich). Starboard never shows it again."
+  }
+ ],
+ "cards": [
+  {
+   "id": "library",
+   "title": "Immich library",
+   "type": "stat",
+   "path": "/library",
+   "format": "number",
+   "refresh_minutes": 5,
+   "example": {
+    "value": 48210,
+    "label": "photos and videos",
+    "note": "44,870 photos, 3,340 videos, 412.6 GB",
+    "status": "ok",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "storage",
+   "title": "Immich storage",
+   "type": "list",
+   "path": "/storage",
+   "refresh_minutes": 5,
+   "example": {
+    "items": [
+     {
+      "title": "Photos",
+      "detail": "44,870, 301.2 GB"
+     },
+     {
+      "title": "Videos",
+      "detail": "3,340, 111.4 GB"
+     },
+     {
+      "title": "The disk Immich is on",
+      "detail": "1.2 TB used of 4.0 TB (30%), 2.8 TB free"
+     }
+    ],
+    "status": "ok",
+    "updated": 1794694110
+   }
+  },
+  {
+   "id": "jobs",
+   "title": "Immich jobs",
+   "type": "status",
+   "path": "/jobs",
+   "refresh_minutes": 1,
+   "example": {
+    "state": "ok",
+    "text": "Working: Thumbnails, Smart search. 340 waiting.",
+    "status": "working",
+    "status_label": "Working",
+    "updated": 1794694110
+   }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "Immich logo"
+ },
+ "changes": [
+  {
+   "version": "0.1.0",
+   "date": "2026-11-25",
+   "added": [
+    "**Three cards for Immich:** how many photos and videos, where the space goes and how full the disk is, and what the job queues are doing.",
+    "**Failed jobs** are said on the jobs card, so a stuck queue does not hide.",
+    "**Light:** it runs only when a card asks, keeps each answer for a minute, and rests five minutes after; nothing at rest.",
+    "**You choose** the address and an API key with only the permissions it needs."
+   ]
+  }
+ ]
+}

@@ -114,6 +114,12 @@ LOGOS = {
     "backups-watch": ("#1f6b4a", "A stack of two discs with a tick",
                       f'<ellipse cx="22" cy="14" rx="12" ry="5" {s(3)}/><path d="M10 14v9c0 2.8 5.4 5 12 5M10 23v9c0 2.8 5.4 5 12 5M34 14v6" {s(3)}/>'
                       f'<circle cx="34" cy="33" r="8" fill="{W}"/><path d="M30 33l3 3 5-6" fill="none" stroke="#1f6b4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'),
+    "ups-power": ("#9a4d0b", "A battery with a lightning bolt",
+                  f'<rect x="9" y="16" width="28" height="18" rx="3" {s(3)}/><path d="M41 22v6" {s(3.5)}/>'
+                  f'<path d="M24.5 19l-6 8h6l-2 6 7-9h-6z" fill="{W}"/>'),
+    "immich": ("#3a4fb0", "A photograph with a sun and hills",
+               f'<rect x="8" y="11" width="32" height="26" rx="3" {S}/><circle cx="31" cy="19" r="3" fill="{W}"/>'
+               f'<path d="M9 33l9-9 6 6 5-5 10 10" {s(3)}/>'),
     "watch-stats": ("#4a3a8c", "A bar chart",
                     f'<rect x="12.5" y="25" width="5.5" height="11" rx="1" fill="{W}"/><rect x="21.25" y="18" width="5.5" height="18" rx="1" fill="{W}"/>'
                     f'<rect x="30" y="12" width="5.5" height="24" rx="1" fill="{W}"/><path d="M10 39h28" {s(3)}/>'),

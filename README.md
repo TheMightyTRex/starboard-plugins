@@ -56,6 +56,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 |---|---|
 | [Disk forecast](https://themightytrex.github.io/starboard-plugins/help/plugins/disk-forecast/index.html) | When each disk fills at the rate it has been filling over the last month. |
 | [Backups watch](https://themightytrex.github.io/starboard-plugins/help/plugins/backups-watch/index.html) | The last run, size and failures of your Backrest or Kopia backups on a card, and an alert when one is overdue. Needs Starboard with plug-in API 1.17. |
+| [UPS and power](https://themightytrex.github.io/starboard-plugins/help/plugins/ups-power/index.html) | Load, battery and time left of your UPS on a card, and an alert when the mains power is lost, read from NUT or PeaNUT. Needs Starboard with plug-in API 1.17. Coming soon. |
 | [Notifications](https://themightytrex.github.io/starboard-plugins/help/plugins/notifications/index.html) | Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week. |
 
 ### Network
@@ -72,6 +73,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 | Plug-in | What it does |
 |---|---|
 | [Home Assistant](https://themightytrex.github.io/starboard-plugins/help/plugins/home-assistant/index.html) | Your house in one sentence on the dashboard: the things you choose from Home Assistant. |
+| [Immich](https://themightytrex.github.io/starboard-plugins/help/plugins/immich/index.html) | Photo and video counts, storage used and the job queue of your Immich server on cards. Needs Starboard with plug-in API 1.17. Coming soon. |
 | [Philips Hue](https://themightytrex.github.io/starboard-plugins/help/plugins/philips-hue/index.html) | Your Hue lights by room, zone and type: on and off, brightness, colour, scenes and schedules, through the Hue bridge on your home network. Nothing goes to the Hue cloud. Needs Starboard 0.23.0. |
 
 ### Accessibility

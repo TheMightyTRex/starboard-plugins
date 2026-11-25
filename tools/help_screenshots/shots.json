@@ -508,6 +508,326 @@
       "topic": "dashboard-card",
       "page": "dashboard.html",
       "plugin": "backups-watch"
+    },
+    {
+      "phase": "absent",
+      "file": "install-1-catalogue.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const rows = [...document.querySelectorAll('li')].filter((x) => x.textContent.includes('UPS and power') && x.querySelector('button')).sort((a, b) => a.textContent.length - b.textContent.length); const row = rows[0]; row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=lc] button",
+          "step": 2,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "The Catalogue under System, with Install\u2026 beside UPS and power (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "ups-power"
+    },
+    {
+      "phase": "absent",
+      "file": "install-2-what-it-may-do.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('UPS and power')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const li = [...document.querySelectorAll('#side-panel li')].find((x) => /alert/i.test(x.textContent)) || document.querySelector('#side-panel li'); li.dataset.shot = 'media'; li.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "$#side-panel li[data-shot=media]",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        3
+      ],
+      "alt": "The Install UPS and power? slide-out, with the line about sending alerts under It can change (step 3) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "ups-power"
+    },
+    {
+      "phase": "absent",
+      "file": "install-3-password.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('UPS and power')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const pw = document.querySelector('#side-panel input[type=password]'); pw.value = 'example-password'; pw.closest('.field')?.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "Install UPS and power",
+          "step": 4,
+          "side": "top",
+          "tail": 70
+        }
+      ],
+      "steps": [
+        4
+      ],
+      "alt": "The foot of the install slide-out, with Your Starboard password filled in and Install UPS and power (step 4) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "ups-power"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-1-add.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(UPS and power)'))); s.value = [...s.options].find((o) => o.textContent.includes('(UPS and power)')).value; s.dataset.shot = 'add'; window.scrollTo(0, 0); await w(300);",
+      "after": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const b = btn('Cancel'); if (b) b.click();",
+      "marks": [
+        {
+          "t": "$[data-shot=add]",
+          "step": 2,
+          "side": "bottom",
+          "tail": 60
+        },
+        {
+          "t": "Save",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        2,
+        3
+      ],
+      "alt": "Edit dashboard, with Power (UPS and power) chosen in Add a card (step 2) and Save (step 3) outlined",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "ups-power"
+    },
+    {
+      "plugin": "ups-power",
+      "phase": "present",
+      "file": "settings-1-ups.png",
+      "height": 1000,
+      "run": "const small = (txt, sel) => [...document.querySelectorAll(sel)].filter((x) => x.textContent.includes(txt)).sort((a, b) => a.textContent.length - b.textContent.length)[0]; const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; await w(1500); await tab('The UPS'); const r = small('NUT server', 'main div, main fieldset, main label, main li'); r.dataset.shot = 'x'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=x]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "UPS and power's The UPS settings, with NUT server outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=ups-power"
+    },
+    {
+      "plugin": "ups-power",
+      "phase": "present",
+      "file": "settings-2-alerts.png",
+      "height": 1000,
+      "run": "const small = (txt, sel) => [...document.querySelectorAll(sel)].filter((x) => x.textContent.includes(txt)).sort((a, b) => a.textContent.length - b.textContent.length)[0]; const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; await w(1500); await tab('Alerts'); const r = small('Low battery at', 'main div, main fieldset, main label, main li'); r.dataset.shot = 'x'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=x]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "UPS and power's Alerts settings, with Low battery at outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=ups-power"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-2-light.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(UPS and power)'))); s.value = [...s.options].find((o) => o.textContent.includes('(UPS and power)')).value; s.dispatchEvent(new Event('change', { bubbles: true })); await w(1000); btn('Save').click(); await w(3000); const card = document.querySelector('[data-card=\"plugin:ups-power:status\"]'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The Power card in the light theme: the band with UPS and power's logo and On mains power, and the battery, time left and load",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "ups-power"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-3-history.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.value === 'plugin:ups-power:history')); s.value = 'plugin:ups-power:history'; s.dispatchEvent(new Event('change', { bubbles: true })); await w(1000); btn('Save').click(); await w(3000); const card = [...document.querySelectorAll('[data-card]')].find((x) => x.dataset.card === 'plugin:ups-power:history'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The Load and battery card: a line for the load and one for the battery",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "ups-power"
+    },
+    {
+      "phase": "absent",
+      "file": "install-1-catalogue.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const rows = [...document.querySelectorAll('li')].filter((x) => x.textContent.includes('Immich') && x.querySelector('button')).sort((a, b) => a.textContent.length - b.textContent.length); const row = rows[0]; row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=lc] button",
+          "step": 2,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "The Catalogue under System, with Install\u2026 beside Immich (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "immich"
+    },
+    {
+      "phase": "absent",
+      "file": "install-2-what-it-may-do.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Immich')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const li = [...document.querySelectorAll('#side-panel li')].find((x) => /home network/i.test(x.textContent)) || document.querySelector('#side-panel li'); li.dataset.shot = 'media'; li.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "$#side-panel li[data-shot=media]",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        3
+      ],
+      "alt": "The Install Immich? slide-out, with the line about reaching your home network under It can change (step 3) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "immich"
+    },
+    {
+      "phase": "absent",
+      "file": "install-3-password.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Immich')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const pw = document.querySelector('#side-panel input[type=password]'); pw.value = 'example-password'; pw.closest('.field')?.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "Install Immich",
+          "step": 4,
+          "side": "top",
+          "tail": 70
+        }
+      ],
+      "steps": [
+        4
+      ],
+      "alt": "The foot of the install slide-out, with Your Starboard password filled in and Install Immich (step 4) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "immich"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-1-add.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(Immich)'))); s.value = [...s.options].find((o) => o.textContent.includes('(Immich)')).value; s.dataset.shot = 'add'; window.scrollTo(0, 0); await w(300);",
+      "after": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const b = btn('Cancel'); if (b) b.click();",
+      "marks": [
+        {
+          "t": "$[data-shot=add]",
+          "step": 2,
+          "side": "bottom",
+          "tail": 60
+        },
+        {
+          "t": "Save",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        2,
+        3
+      ],
+      "alt": "Edit dashboard, with Immich library (Immich) chosen in Add a card (step 2) and Save (step 3) outlined",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "immich"
+    },
+    {
+      "plugin": "immich",
+      "phase": "present",
+      "file": "settings-1-address.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); const t = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === 'Immich'); if (t) { t.click(); await w(1200); } const f = document.querySelector('#pl-immich-address'); const r = f.closest('.field, .setting, li, fieldset') || f; r.dataset.shot = 'x'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=x]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Immich's settings, with Immich's address outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=immich"
+    },
+    {
+      "plugin": "immich",
+      "phase": "present",
+      "file": "settings-2-key.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); const t = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === 'Immich'); if (t) { t.click(); await w(1200); } const f = document.querySelector('#pl-immich-api_key'); const r = f.closest('.field, .setting, li, fieldset') || f; r.dataset.shot = 'x'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=x]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Immich's settings, with API key outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=immich"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-2-light.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(Immich)'))); s.value = [...s.options].find((o) => o.textContent.includes('(Immich)')).value; s.dispatchEvent(new Event('change', { bubbles: true })); await w(1000); btn('Save').click(); await w(3000); const card = document.querySelector('[data-card=\"plugin:immich:library\"]'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The Immich library card in the light theme: the band with Immich's logo and OK, and the number of photos and videos",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "immich"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-3-storage.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.value === 'plugin:immich:storage')); s.value = 'plugin:immich:storage'; s.dispatchEvent(new Event('change', { bubbles: true })); await w(1000); btn('Save').click(); await w(3000); const card = [...document.querySelectorAll('[data-card]')].find((x) => x.dataset.card === 'plugin:immich:storage'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The Immich storage card: photos and videos with their space, and the disk",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "immich"
     }
   ]
 }

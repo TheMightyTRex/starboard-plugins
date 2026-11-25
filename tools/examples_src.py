@@ -26,7 +26,7 @@ def image(pid):
 # Update steps for the examples that work in the background: sbplugin's /update/before holds new runs and waits for one
 # that is running to finish, and /update/after lets them run again. The others finish what they do in a second.
 _STEPS = {"before": {"path": "/update/before", "time_limit_seconds": 60}, "after": {"path": "/update/after", "time_limit_seconds": 10}}
-UPDATE_STEPS = {pid: _STEPS for pid in ("line-speed", "most-watched", "library-health", "notifications", "watch-stats", "backups-watch")}
+UPDATE_STEPS = {pid: _STEPS for pid in ("line-speed", "most-watched", "library-health", "notifications", "watch-stats", "backups-watch", "ups-power")}
 RELEASED = "2026-11-15"
 RELEASED_111 = "2026-11-16"
 RELEASED_112 = "2026-11-17"
@@ -517,13 +517,13 @@ serve({"/card": card})
 # 1.2.3 (17 November 2026, design system audit): the examples whose app.py changed name this tag until it is built and
 # pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
 # manifest.
-IMAGE_VERSION = "1.2.4"
+IMAGE_VERSION = "1.2.5"
 # 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
 # Built again under the same tag for Audio description 1.3.0 (pull request 9) and pinned on 17 November 2026
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = set()
+NEW_IN_IMAGE = {"ups-power", "immich"}  # 1.2.5 (25 November 2026, DASH-517): UPS and power is in the Dockerfile; its manifest names this tag until the image is built and pinned
 # 1.2.4 was built from 0b10e00 (Notifications 1.3.0 and Backups watch 0.1.0 included) and pinned on 22 November 2026
 # (sha256:c99b4b167a4e...), so Notifications and Backups watch run from the pinned image like the others and are published.
 
@@ -693,6 +693,106 @@ EXAMPLES["backups-watch"] = ({
 
 Both are read only. Neither was tried against the real program when this version was written: read the help's
 Problems page before relying on it.
+""",
+}, "file")
+
+# 14. UPS and power (DASH-517) -------------------------------------------------------------------------------------
+EXAMPLES["ups-power"] = ({
+    "name": "UPS and power", "version": "0.1.0",
+    "description": "Load, battery and time left of your UPS on a card, and an alert when the mains power is lost, read from NUT or PeaNUT.",
+    "starboard_api": ">=1.17 <2.0", "_own_changes": True,
+    "permissions": ["network:lan", "alerts:send"],
+    "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"]}],
+    "resources": {"main": {"memory": 32, "cpus": 0.1}}, "health": "/health",
+    "settings": [
+        {"key": "tool", "label": "Read the UPS through", "type": "choice", "default": "nut", "group": "The UPS",
+         "hint": "NUT is the Network UPS Tools server (upsd). PeaNUT is the web page that sits in front of NUT.",
+         "choices": [{"value": "nut", "label": "NUT"}, {"value": "peanut", "label": "PeaNUT"}]},
+        {"key": "host", "label": "NUT server", "type": "text", "group": "The UPS",
+         "hint": "For NUT: its address, such as 192.0.2.10, or 192.0.2.10:3493 for another port. NUT must allow this computer to read (LISTEN and ACCESS in its upsd.conf)."},
+        {"key": "peanut_address", "label": "PeaNUT's address", "type": "address", "group": "The UPS",
+         "hint": "For PeaNUT: such as http://192.0.2.10:8080."},
+        {"key": "ups", "label": "UPS name", "type": "text", "group": "The UPS",
+         "hint": "Leave empty to use the first UPS the server lists. Otherwise the name in ups.conf, such as ups."},
+        {"key": "user", "label": "User name", "type": "text", "group": "The UPS",
+         "hint": "For PeaNUT only, when it asks for a sign-in. Leave empty otherwise."},
+        {"key": "password", "label": "Password", "type": "secret", "group": "The UPS",
+         "hint": "PeaNUT's password. Starboard never shows it again."},
+        _switch("alerts", "Send alerts through Starboard", "Once when the mains power is lost, when the battery is low, when it needs replacing or when the UPS cannot be reached, and once when each is over, to where Starboard sends its own alerts.", "Alerts"),
+        {"key": "low_percent", "label": "Low battery at", "type": "number", "unit": "%", "default": 30, "min": 0, "max": 99, "group": "Alerts",
+         "hint": "On battery, a charge at or under this counts as low. 0 leaves it to the UPS's own low battery flag."},
+        {"key": "low_minutes", "label": "Low battery under", "type": "number", "unit": "minutes", "default": 5, "min": 0, "max": 600, "group": "Alerts",
+         "hint": "On battery, a time left at or under this counts as low. 0 leaves it to the UPS's own flag."},
+    ],
+    "actions": [{"id": "check", "label": "Check now", "path": "/check"}],
+    "cards": [{"id": "status", "title": "Power", "type": "status", "path": "/card", "refresh_minutes": 1,
+               "example": {"state": "ok", "text": "On mains power: battery 100%, about 42 minutes left, load 23%.", "status": "ok", "status_label": "On mains power", "updated": 1794694110}},
+              {"id": "details", "title": "UPS details", "type": "list", "path": "/details", "refresh_minutes": 5,
+               "example": {"items": [{"title": "ups (APC Back-UPS ES 700)", "detail": "On mains power, charging"}, {"title": "Battery", "detail": "100%"},
+                                     {"title": "Time left on battery", "detail": "42 minutes"}, {"title": "Load", "detail": "23%"}], "status": "ok", "updated": 1794694110}},
+              {"id": "history", "title": "Load and battery", "type": "sparkline", "path": "/history", "refresh_minutes": 5,
+               "example": {"series": [{"title": "Load", "points": [21, 23, 22, 40, 23], "unit": "%", "detail": "Latest 23%"},
+                                      {"title": "Battery", "points": [100, 100, 100, 100, 100], "unit": "%", "detail": "Latest 100%"}],
+                           "note": "One point every 5 minutes for the last 8 hours.", "status": "ok", "updated": 1794694110}}],
+    "changes": [{"version": "0.1.0", "date": "2026-11-25", "added": [
+        "**One card for your UPS:** on mains power or on battery, the battery charge, the time left and the load, with the voltage and power used in a list.",
+        "**Alerts:** once when the mains power is lost, when the battery is low, when it needs replacing and when the UPS cannot be reached, and once when each is over, through Starboard.",
+        "**NUT or PeaNUT:** it reads NUT's own protocol, or PeaNUT's web address; you choose, and the UPS if there is more than one.",
+        "**Light:** one small question a minute, about 32 MB of memory at most, and a short history kept for the sparkline."]}],
+    "_readme": """## What it reads
+
+- **NUT:** the Network UPS Tools server (`upsd`, port 3493), with its text protocol: `LIST UPS`, then `LIST VAR <ups>`. It
+  needs no sign-in to read, but `upsd.conf` must listen on an address this computer can reach, and `upsd.users` or
+  access rules must allow it.
+- **PeaNUT:** `GET /api/v1/devices/<ups>` (or `/api/v1/devices` for the first), with a sign-in when PeaNUT is set to ask for one.
+
+Both are read only. Neither was tried against a real UPS when this version was written: read the help's Problems page
+before relying on it.
+
+## Heavy jobs on battery
+
+A plug-in cannot pause Starboard's own heavy jobs, so this version only tells you: the card says **On battery** and an alert
+goes out. Pausing them needs a new plug-in permission in Starboard.
+""",
+}, "file")
+
+# 15. Immich (DASH-518) ---------------------------------------------------------------------------------------------
+EXAMPLES["immich"] = ({
+    "name": "Immich", "version": "0.1.0",
+    "description": "Photo and video counts, storage used and the job queue of your Immich server on cards.",
+    "starboard_api": ">=1.17 <2.0", "_own_changes": True,
+    "permissions": ["network:lan"],
+    "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
+                    "idle_stop_minutes": 5}],
+    "resources": {"main": {"memory": 32, "cpus": 0.1}}, "health": "/health",
+    "settings": [
+        {"key": "address", "label": "Immich's address", "type": "address", "group": "Immich", "required": True,
+         "hint": "Such as http://192.0.2.10:2283, without /api on the end."},
+        {"key": "api_key", "label": "API key", "type": "secret", "group": "Immich", "required": True,
+         "hint": "Made in Immich under Account settings, API keys. Give it only the permissions server.statistics, server.storage and queue.read (job.read for an older Immich). Starboard never shows it again."},
+    ],
+    "cards": [{"id": "library", "title": "Immich library", "type": "stat", "path": "/library", "format": "number", "refresh_minutes": 5,
+               "example": {"value": 48210, "label": "photos and videos", "note": "44,870 photos, 3,340 videos, 412.6 GB", "status": "ok", "updated": 1794694110}},
+              {"id": "storage", "title": "Immich storage", "type": "list", "path": "/storage", "refresh_minutes": 5,
+               "example": {"items": [{"title": "Photos", "detail": "44,870, 301.2 GB"}, {"title": "Videos", "detail": "3,340, 111.4 GB"},
+                                     {"title": "The disk Immich is on", "detail": "1.2 TB used of 4.0 TB (30%), 2.8 TB free"}], "status": "ok", "updated": 1794694110}},
+              {"id": "jobs", "title": "Immich jobs", "type": "status", "path": "/jobs", "refresh_minutes": 1,
+               "example": {"state": "ok", "text": "Working: Thumbnails, Smart search. 340 waiting.", "status": "working", "status_label": "Working", "updated": 1794694110}}],
+    "changes": [{"version": "0.1.0", "date": "2026-11-25", "added": [
+        "**Three cards for Immich:** how many photos and videos, where the space goes and how full the disk is, and what the job queues are doing.",
+        "**Failed jobs** are said on the jobs card, so a stuck queue does not hide.",
+        "**Light:** it runs only when a card asks, keeps each answer for a minute, and rests five minutes after; nothing at rest.",
+        "**You choose** the address and an API key with only the permissions it needs."]}],
+    "_readme": """## What it reads
+
+Immich's own API, with your API key in the `x-api-key` header, read only:
+
+- `GET /api/server/statistics`: the photo and video counts and the space they use, in total and for each person.
+- `GET /api/server/storage`: how full the disk Immich keeps its library on is.
+- `GET /api/queues` (or `GET /api/jobs` on an Immich from before it): each job queue's active, waiting and failed jobs.
+
+It never changes anything in Immich. It was not tried against a real server when this version was written: read the
+help's Problems page before relying on it.
 """,
 }, "file")
 
