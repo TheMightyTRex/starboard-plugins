@@ -518,15 +518,18 @@ serve({"/card": card})
 # 1.2.3 (17 November 2026, design system audit): the examples whose app.py changed name this tag until it is built and
 # pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
 # manifest.
-IMAGE_VERSION = "1.2.5"
+IMAGE_VERSION = "1.2.6"
 # 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
 # Built again under the same tag for Audio description 1.3.0 (pull request 9) and pinned on 17 November 2026
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = {"notifications"}
+NEW_IN_IMAGE = {"notifications", "backups-watch"}
 # 1.2.5 (25 November 2026, DASH-522): Notifications 1.4.0's app.py is not in the pinned image, so its manifest names this tag
 # until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
+# 1.2.6 (25 November 2026): the Dockerfile had no COPY for Backups watch, so the 1.2.5 image (sha256:866e3a790459...) has no
+# /app/backups-watch/app.py and Backups watch would not start. 1.2.6 adds it; Notifications 1.4.0 (in 1.2.5) and Backups watch
+# name this tag until it is built and pinned.
 # 1.2.4 was built from 0b10e00 (Notifications 1.3.0 and Backups watch 0.1.0 included) and pinned on 22 November 2026
 # (sha256:c99b4b167a4e...), so Notifications and Backups watch run from the pinned image like the others and are published.
 
