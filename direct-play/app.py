@@ -23,6 +23,7 @@ Lightweight: the worker wakes once a minute and does nothing outside its hours. 
 the worker writes while converting, at most as often as Card updates every says (30 seconds unless changed): no probing for the card.
 """
 import contextlib
+import errno
 import json
 import os
 import re
@@ -217,10 +218,11 @@ def survey():
     with ThreadPoolExecutor(2) as ex:
         new = list(ex.map(facts, todo))
     out = keep_ + new
-    keep("survey", out)
+    if not save("survey", out):
+        raise NoRoom()
     state = _state()
     state.update(surveyed=now(), probed=len(new))
-    keep("state", state)
+    save("state", state, hold=True)
     return out
 
 
@@ -384,6 +386,45 @@ def _rm(p):
             os.remove(p)
         except OSError:
             pass
+
+
+_unsaved = {"state": None, "n": 0}  # progress the disk had no room for: kept here and written as soon as there is room
+
+
+class NoRoom(Exception):
+    """The plug-in's own folder is full: nothing more is converted until its progress can be written down again."""
+
+
+def _no_room(e):
+    return isinstance(e, OSError) and e.errno in (errno.ENOSPC, errno.EDQUOT)
+
+
+def save(name, value, hold=False):
+    """keep(), safe on a full disk. keep() writes a new file and swaps it in, so a failed write leaves the last good one
+    as it was; here the half-written new file is also removed (it only takes up the room that is missing) and False comes
+    back instead of an error. A value the plug-in cannot do without (hold=True: the progress) is kept in memory and
+    written as soon as there is room, by flush_unsaved()."""
+    try:
+        keep(name, value)
+    except OSError as e:
+        with contextlib.suppress(OSError):
+            os.remove(os.path.join(sbplugin.DATA, f"{name}.json.tmp"))
+        if not _no_room(e):
+            raise
+        if hold:
+            _unsaved[name] = value
+            _unsaved["n"] += 1
+        return False
+    if hold and _unsaved.get(name) is not None:
+        _unsaved[name] = None
+        _unsaved["n"] += 1
+    return True
+
+
+def flush_unsaved():
+    """Writes down the progress that had no room before. False while the disk is still full."""
+    value = _unsaved.get("state")
+    return value is None or save("state", value, hold=True)
 
 
 def free_enough(folder, size):
@@ -615,7 +656,7 @@ def quiet_job():
     if t - float(q.get("at") or 0) > 3 * 3600:  # a new night: remember when it starts, for the card
         q["from"] = localtime(t).tm_hour
     q["at"] = t
-    keep("quiet", q)
+    save("quiet", q)
     _wake.set()
     return {"said": "Quiet hours: working on the files that need it" if options()["when"] == "quiet" else "Quiet hours noted"}
 
@@ -645,7 +686,7 @@ def todo_head():
     again only when the survey, the state or the devices and options changed, so the card asked every 30 seconds costs
     a look at two files' times, not a read of the whole survey."""
     prof, opts = profile(), options()
-    key = (_stamp("survey"), _stamp("state"), tuple(sorted(prof["devices"])) if prof else None, json.dumps(opts, sort_keys=True))
+    key = (_stamp("survey"), _stamp("state"), _unsaved["n"], tuple(sorted(prof["devices"])) if prof else None, json.dumps(opts, sort_keys=True))
     if _head["key"] != key:
         todo = todo_list(prof=prof, opts=opts)
         _head.update(key=key, count=len(todo), head=todo[:HEAD])
@@ -653,7 +694,7 @@ def todo_head():
 
 
 def _state():
-    s = remember("state", None) or {}
+    s = _unsaved["state"] or remember("state", None) or {}
     return {"done": 0, "saved_bytes": 0, "failed": {}, "paused": False, **s}
 
 
@@ -684,7 +725,7 @@ def status(rec=None, bucket=None, pct=None, left=None, force=False, reason=None)
                    left=round(left) if left is not None else None, started=st.get("started") if st.get("path") == rec["path"] else now())
     else:
         out["reason"] = reason or ""
-    keep("now", out)
+    save("now", out)  # only the card: not worth stopping for when the disk is full
 
 
 def why_idle():
@@ -706,6 +747,8 @@ def work_once():
     """One pass: survey when it is due, then fix files one at a time while the hours allow. Returns files fixed."""
     _pass.settings = sbplugin.settings()  # read once for the pass (see setting)
     try:
+        if not flush_unsaved():
+            raise NoRoom()
         return _work()
     finally:
         _pass.settings = None
@@ -747,6 +790,9 @@ def _work():
             except Stopped:
                 break
             except Exception as e:  # noqa: BLE001
+                if _no_room(e):  # not this file's fault: it is not marked as failed, and it is tried again when there is room
+                    _rm(os.path.join(os.path.dirname(rec["path"]), f".{os.path.splitext(os.path.basename(rec['path']))[0]}.direct-play.mkv"))
+                    raise NoRoom() from e
                 err = f"error: {e}"[:200]
         s = _state()
         if err:
@@ -759,7 +805,8 @@ def _work():
             s["last"] = {"title": title(rec["path"]), "action": WORDS[rec["bucket"]], "before": rec["size"], "after": new, "at": now()}
             fixed += 1
             _refresh_one(rec["path"], dst)
-        keep("state", s)
+        if not save("state", s, hold=True):
+            raise NoRoom()  # the result is kept in memory; the next pass writes it down first, and no file is started before
     status(reason=why_idle())
     return fixed
 
@@ -769,7 +816,17 @@ def _refresh_one(old, new):
     recs = [r for r in remember("survey", []) or [] if r["path"] not in (old, new)]
     if os.path.exists(new):
         recs.append(facts(new))
-    keep("survey", recs)
+    save("survey", recs)  # the survey is worked out again from the files if this cannot be written
+
+
+def note_error(e):
+    """Keeps what went wrong for the page. On a full disk it cannot, and the worker must still be alive for when there is
+    room again (it once ended here, and nothing was converted until the plug-in was restarted)."""
+    if isinstance(e, NoRoom) or _no_room(e):
+        text = "The disk is full, so it stopped before the next file. Free some space and it carries on by itself"
+    else:
+        text = f"{type(e).__name__}: {e}"[:200]
+    save("_error", {"at": now(), "text": text})
 
 
 def worker():
@@ -779,7 +836,7 @@ def worker():
             work_once()
             sbplugin.clear_error()
         except Exception as e:  # noqa: BLE001 - kept for the page, never fatal
-            keep("_error", {"at": now(), "text": f"{type(e).__name__}: {e}"[:200]})
+            note_error(e)
         _wake.wait(TICK)
         _wake.clear()
 
@@ -889,14 +946,14 @@ def screen():
 
 def screen_post(body=None):
     if (body or {}).get("action") == "dismiss":
-        keep("_error", None)
+        save("_error", None)
     return screen()
 
 
 def pause():
     s = _state()
     s["paused"] = True
-    keep("state", s)
+    save("state", s, hold=True)
     with _lock:
         p = _current["proc"]
     if p:
@@ -908,7 +965,7 @@ def pause():
 def resume():
     s = _state()
     s["paused"] = False
-    keep("state", s)
+    save("state", s, hold=True)
     _wake.set()
     return {"said": "Resumed. It carries on " + ("now" if in_hours() else next_run())}
 

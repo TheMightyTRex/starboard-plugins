@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- A full disk: when the disk has no room to write its progress, it no longer stops working until it is restarted. The progress it could not write is kept and written as soon as there is room, a file that ran out of room is not marked as failed, and half-written files are removed. The page says the disk is full.
+
 ## 1.0.3 (17 November 2026)
 
 ### Changed
