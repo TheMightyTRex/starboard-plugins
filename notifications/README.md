@@ -38,6 +38,13 @@ Starboard sends it these events: `request.available`, `download.failed`, `app.do
 - **Send New this week by**: Email uses the settings in Email. The other choice uses every way you activated.
 - **Starboard's address, for links**: Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address.
 
+### Quiet hours
+
+- **Hold alerts that are not urgent in quiet hours**: A request ready, a failed download, an app back or an update ready wait, and one summary goes when the quiet hours end. Deactivated until you activate it.
+- **Quiet hours start at**: Choose every day. Only the hour counts.
+- **Quiet hours end at**: Choose every day. The summary is sent at this hour.
+- **Still send urgent ones**: An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Deactivate it to hold them too.
+
 ### Email
 
 - **Send by email**: Activate once the email details are entered and the test arrives.

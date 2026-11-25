@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0 (25 November 2026)
+
+### Added
+- A certificate check: `Site: cert example.org` watches a certificate alone, with no web request. It is up while the certificate is good and says the days left, and down when it has run out or is not trusted. The alert some days before it ends is the one already set under Warn when a certificate has this long left.
+
 ## 2.0.0 (20 November 2026)
 
 ### Added

@@ -1,11 +1,12 @@
 # Notifications: Updates
 
-Notifications 1.3.0 is the latest version. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0); an older Starboard keeps 1.1.3.
+Notifications 1.4.0 is the latest version. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0); an older Starboard keeps 1.1.3.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.4.0 | 1.16 or later | 25 November 2026 |
 | 1.3.0 | 1.16 or later | 22 November 2026 |
 | 1.2.0 | 1.16 or later | 19 November 2026 |
 | 1.1.4 | 1.14 or later | Not released on its own: it came in 1.2.0 |
@@ -16,6 +17,12 @@ Notifications 1.3.0 is the latest version. It needs Starboard with plug-in API 1
 | 1.0.0 | 1.11 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.4.0
+
+Added:
+
+- **Quiet hours:** choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. An app that stops answering, a full disk and a disk change still go at once. Deactivated until you activate it.
 
 ## What is new in 1.3.0
 

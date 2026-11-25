@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 (25 November 2026)
+
+### Added
+- Quiet hours: choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. An app that stops answering, a full disk and a disk change still go at once. Deactivated until you activate it.
+
 ## 1.3.0 (22 November 2026)
 
 ### Added

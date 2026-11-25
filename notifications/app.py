@@ -21,6 +21,9 @@ CHANNELS = {"email": "Email", "telegram": "Telegram", "discord": "Discord", "sig
 KINDS = {"request.available": "send_requests", "download.failed": "send_failed", "app.down": "send_apps", "app.up": "send_apps",
          "disk.nearly_full": "send_disk", "disk.changed": "send_disk_changes", "update.available": "send_updates", "weekly": "send_weekly"}
 TIMEOUT = 8  # a Test button has 10 seconds
+URGENT = {"app.down", "disk.nearly_full", "disk.changed"}  # sent at once in quiet hours unless "Still send urgent ones" is off
+HELD_MAX = 200  # the most held in one night; the summary lists 40 and says how many more
+HELD_LISTED = 40
 
 
 # Words ---------------------------------------------------------------------------------------------------------
@@ -290,6 +293,71 @@ def handle(body):
         return _handle(body)
 
 
+def _minutes(key, default):
+    when = setting(key, None)
+    t = str(when.get("time") if isinstance(when, dict) else "") or default
+    try:
+        h, m = t.split(":")
+        return max(0, min(int(h), 23)) * 60 + max(0, min(int(m), 59))
+    except ValueError:
+        h, m = default.split(":")
+        return int(h) * 60 + int(m)
+
+
+def in_quiet(now=None):
+    """True inside the quiet hours (only the hour of each schedule counts; the day is ignored), in Starboard's time zone."""
+    if setting("quiet_on", False) is not True:
+        return False
+    start, end = _minutes("quiet_from", "22:00"), _minutes("quiet_until", "07:00")
+    if start == end:
+        return False
+    t = time.localtime(now if now is not None else time.time())
+    m = t.tm_hour * 60 + t.tm_min
+    return start <= m < end if start < end else (m >= start or m < end)
+
+
+def hold(event, data, title, body, tone):
+    """Keeps a message that is not urgent until the quiet hours end. Nothing is sent now."""
+    held = (remember("held", []) or [])[-(HELD_MAX - 1):]
+    held.append({"at": time.time(), "event": event, "title": clean(title)[:120], "body": body, "tone": tone,
+                 "by": str((data or {}).get("by") or "")[:60]})
+    keep("held", held)
+    return {"ok": True, "said": "Held until the quiet hours end"}
+
+
+def summary_words(held):
+    lines = [f"- {time.strftime('%H:%M', time.localtime(x['at']))} {x['title']}" for x in held[:HELD_LISTED]]
+    if len(held) > HELD_LISTED:
+        lines.append(f"- and {len(held) - HELD_LISTED} more")
+    return "\n".join(lines)
+
+
+def release(force=False):
+    """Sends what quiet hours held as one summary, then tells each person whose request is ready. Does nothing while the
+    quiet hours last, unless forced, and keeps what it could not send for the next time."""
+    with _work:
+        held = remember("held", []) or []
+        if not held:
+            return {"said": "Nothing was held"}
+        if not force and in_quiet():
+            return {"said": "Still in the quiet hours"}
+        n = len(held)
+        sent, failed = deliver(f"{n} thing{'s' if n != 1 else ''} while you were away", "Held in the quiet hours:\n\n" + summary_words(held),
+                               "info", kind="summary")
+        if sent or not active():  # with no channel active there is nothing to wait for either
+            if setting("tell_requester", True) is True:
+                for x in [x for x in held if x["event"] == "request.available" and x.get("by")][:20]:
+                    tell_person({"by": x["by"]}, x["title"], x["body"], x["tone"])
+            keep("held", [])
+        return {"said": _said(sent, failed, "The quiet hours summary")}
+
+
+def held_now():
+    """The button: held messages go in the background, as New this week does."""
+    threading.Thread(target=release, kwargs={"force": True}, daemon=True).start()
+    return {"said": "Sending what quiet hours held now. The Notifications card says when it has gone"}
+
+
 def _handle(body):
     event, data = str(body.get("event") or ""), body.get("data") or {}
     if event == "item.added":  # kept for the weekly message only, 8 days at most
@@ -301,6 +369,10 @@ def _handle(body):
     if KINDS.get(event) and setting(KINDS[event], True) is not True:
         return {"ok": True, "said": "Not sent: this kind is deactivated"}
     title, body_text, tone = words(event, data)
+    if in_quiet() and not (event in URGENT and setting("quiet_urgent", True) is True):
+        return hold(event, data, title, body_text, tone)
+    if remember("held", []):  # the quiet hours ended: the summary goes before the new message
+        release()
     sent, failed = deliver(title, body_text, tone, kind=event)
     if event == "request.available" and setting("tell_requester", True) is True:
         sent += tell_person(data, title, body_text, tone)
@@ -411,6 +483,9 @@ def card():
                     "needs_setup", label="No channel active")
     if not real:
         return band({"state": "ok", "text": f"Ready to send by {', '.join(CHANNELS[c] for c in active())}. Nothing sent yet."}, "ready")
+    held = len(remember("held", []) or [])
+    if held and in_quiet():
+        return band({"state": "ok", "text": f"Quiet hours. {held} held until they end."}, "ok", label="Quiet hours")
     last = real[-1]
     when = time.strftime("%a %H:%M", time.localtime(last["at"]))
     if last["failed"]:
@@ -432,7 +507,7 @@ def recent():
 
 
 ROUTES = {"/card": card, "/recent": recent, ("POST", "/events"): on_event, ("POST", "/jobs/weekly"): lambda: weekly(),
-          ("POST", "/weekly-now"): weekly_now, **{("POST", f"/test/{c}"): test(c) for c in CHANNELS}}
+          ("POST", "/weekly-now"): weekly_now, ("POST", "/jobs/quiet-end"): lambda: release(), ("POST", "/held-now"): held_now, **{("POST", f"/test/{c}"): test(c) for c in CHANNELS}}
 
 if __name__ == "__main__":
     serve(ROUTES, port=int(os.environ.get("PORT", 8080)))

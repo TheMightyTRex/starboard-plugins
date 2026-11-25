@@ -97,7 +97,7 @@ class Line(unittest.TestCase):
     def test_a_check_is_written_back_as_the_same_line(self):
         for text in ["Router: ping 192.168.1.1 in Home #network every 1m", 'Shop: keyword https://example.org "In stock" every 5m',
                      "NAS: tcp 192.168.1.5:445 tls in \"Home office\" every 2m", "Mail: dns example.org MX is mail.example.org every 5m",
-                     "Backup: push grace 25h in Jobs"]:
+                     "Backup: push grace 25h in Jobs", "Site: cert example.org:8443 in Web every 1d"]:
             c = ck.parse(text)
             again = ck.parse(ck.line(c))
             for k in ("name", "kind", "target", "group", "tags", "every", "words", "record", "expect", "tls", "grace"):
@@ -308,6 +308,32 @@ class Certificates(unittest.TestCase):
         self.assertIsNone(ck.cert_target(ck.parse("http://example.org")))
         self.assertEqual(ck.cert_target(ck.parse("tcp mail.example.org:993 tls")), ("mail.example.org", 993))
         self.assertIsNone(ck.cert_target(ck.parse("tcp mail.example.org:993")))
+
+    def test_a_certificate_check_reads_the_certificate_and_sends_no_request(self):
+        c = ck.parse("Site: cert example.org #web")
+        self.assertEqual((c["kind"], c["target"], c["every"]), ("cert", "example.org:443", ck.CERT_CHECK_EVERY))
+        self.assertEqual(ck.parse("cert https://example.org:8443/x")["target"], "example.org:8443")
+        self.assertEqual(ck.parse("cert [2001:db8::1]:443")["target"], "[2001:db8::1]:443")
+        self.assertEqual(ck.parse("cert example.org every 1d")["every"], 86400)
+        self.assertEqual(ck.cert_target(c), ("example.org", 443))
+        with self.assertRaises(ck.LineError):
+            ck.parse("cert")
+        with self.assertRaises(ck.LineError):
+            ck.parse("cert example.org extra")
+        good = {**ck.read_cert(CERT), "trusted": True, "why": "", "checked": 0}
+        with mock.patch.object(ck, "fetch_cert", return_value=good), mock.patch.object(ck.time, "time", return_value=CERT_END - 5 * 86400):
+            out = ck.run(c)
+        self.assertTrue(out["up"])
+        self.assertEqual(out["said"], "5 days left")
+        with mock.patch.object(ck, "fetch_cert", return_value=good), mock.patch.object(ck.time, "time", return_value=CERT_END + 86400):
+            out = ck.run(c)
+        self.assertFalse(out["up"])
+        self.assertEqual(out["said"], "The certificate has run out")
+        bad = {**good, "trusted": False, "why": "self-signed certificate"}
+        with mock.patch.object(ck, "fetch_cert", return_value=bad), mock.patch.object(ck.time, "time", return_value=CERT_END - 5 * 86400):
+            self.assertIn("not trusted: self-signed", ck.run(c)["said"])
+        with mock.patch.object(ck, "fetch_cert", side_effect=OSError("refused")):
+            self.assertFalse(ck.run(c)["up"])
 
     def test_an_untrusted_certificate_is_still_read(self):
         class Tls:
@@ -524,6 +550,15 @@ class App(unittest.TestCase):
         self.assertEqual(self.sent, [("cert-addr0", "raised", "Router's certificate runs out in 5 days")])
         self.assertIn("5 days left, for nas.example.org", self.app.cert_words("addr0", now))
 
+    def test_a_certificate_check_keeps_its_certificate_for_the_alert(self):
+        c = ck.parse("Site: cert example.org")
+        c["id"] = "cert0"
+        good = {**ck.read_cert(CERT), "trusted": True, "why": "", "checked": time.time()}
+        with mock.patch.object(ck, "fetch_cert", return_value=good), mock.patch.object(self.app.ck, "fetch_cert", return_value=good):
+            self.app.run_one(c, time.time())
+        self.assertIn("cert0", self.app.CERTS)
+        self.assertNotIn("cert", self.app.LIVE["cert0"])
+
     def test_starboard_without_the_alerts_api_is_said_once_an_hour(self):
         app = load(PID, {"addresses": ["Router http://192.0.2.1"]})
         calls = []
@@ -674,7 +709,7 @@ class Manifest(unittest.TestCase):
 
     def test_it_keeps_its_id_and_settings_and_needs_api_117(self):
         m = json.load(open(os.path.join(HERE, "starboard-plugin.json"), encoding="utf-8"))
-        self.assertEqual((m["id"], m["version"], m["starboard_api"]), ("outside-services", "2.0.0", ">=1.17 <2.0"))
+        self.assertEqual((m["id"], m["version"], m["starboard_api"]), ("outside-services", "2.1.0", ">=1.17 <2.0"))
         keys = {s["key"]: s for s in m["settings"]}
         self.assertEqual(keys["addresses"]["type"], "list")  # Outside services' settings, unchanged
         self.assertEqual((keys["minutes"]["type"], keys["minutes"]["default"]), ("number", 5))

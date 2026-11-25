@@ -59,7 +59,8 @@ def changes_for(pid, m):
         "instead of a description of the symbol."]}
     if m.get("_own_changes"):  # a plug-in made after the shared helper's versions has only its own history (Backups watch 0.1.0)
         return m["changes"]
-    own = [m["_newest"]] + ([m["_before"]] if m.get("_before") else []) if m.get("_newest") else []  # a version of its own after the shared one (Notifications 1.3.0)
+    before = m.get("_before") or []
+    own = [m["_newest"]] + (before if isinstance(before, list) else [before]) if m.get("_newest") else []  # a version of its own after the shared one (Notifications 1.3.0)
     return own + [v114, newest, v112, v111, {"version": VERSION_110, "date": RELEASED, "added": added,
              "changed": ["Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API keeps version 1.0.0."]}] + earlier
 
@@ -517,13 +518,15 @@ serve({"/card": card})
 # 1.2.3 (17 November 2026, design system audit): the examples whose app.py changed name this tag until it is built and
 # pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
 # manifest.
-IMAGE_VERSION = "1.2.4"
+IMAGE_VERSION = "1.2.5"
 # 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
 # Built again under the same tag for Audio description 1.3.0 (pull request 9) and pinned on 17 November 2026
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = set()
+NEW_IN_IMAGE = {"notifications"}
+# 1.2.5 (25 November 2026, DASH-522): Notifications 1.4.0's app.py is not in the pinned image, so its manifest names this tag
+# until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
 # 1.2.4 was built from 0b10e00 (Notifications 1.3.0 and Backups watch 0.1.0 included) and pinned on 22 November 2026
 # (sha256:c99b4b167a4e...), so Notifications and Backups watch run from the pinned image like the others and are published.
 
@@ -534,22 +537,25 @@ def _switch(key, label, hint, group, default=True):
 
 # 11. Notifications (DASH-401) -------------------------------------------------------------------------------------
 EXAMPLES["notifications"] = ({
-    "name": "Notifications", "version": "1.3.0",
+    "name": "Notifications", "version": "1.4.0",
     "description": "Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week.",
     "starboard_api": ">=1.16 <2.0",
     # 1.2.0 (owner, 19 November 2026, Starboard issue #187): a message whenever a disk is erased, added to the pool or
     # taken out of it, from Starboard's disk.changed event (plug-in API 1.16).
-    "_newest": {"version": "1.3.0", "date": "2026-11-22", "added": [
+    "_newest": {"version": "1.4.0", "date": "2026-11-25", "added": [
+        "**Quiet hours:** choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. "
+        "An app that stops answering, a full disk and a disk change still go at once. Deactivated until you activate it."]},
+    "_before": [{"version": "1.3.0", "date": "2026-11-22", "added": [
         "**New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books, with "
         "titles and years only and no pictures. You choose the day and the hour, and it can go by email alone or by every "
         "way you activated."],
         "changed": [
         "**Deactivated at first:** New this week is now deactivated until you activate it under What to send. "
         "Send New this week on is replaced by **When to send New this week**, one setting for the day and the hour."]},
-    "_before": {"version": "1.2.0", "date": "2026-11-19", "added": [
+        {"version": "1.2.0", "date": "2026-11-19", "added": [
         "**Disk changes:** a message whenever a disk is erased, added to the pool or taken out of it, however it was asked "
         "for, so an erase you did not start reaches you at once. Needs Starboard with plug-in API 1.16 or later; an older "
-        "Starboard keeps 1.1.3."]},
+        "Starboard keeps 1.1.3."]}],
     "permissions": ["apps:read", "downloads:read", "media:read", "system:read", "network:lan"],
     "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
                     "idle_stop_minutes": 5}],
@@ -570,6 +576,12 @@ EXAMPLES["notifications"] = ({
          "choices": [{"value": "email", "label": "Email only"}, {"value": "all", "label": "Every way I activated"}]},
         {"key": "starboard_address", "label": "Starboard's address, for links", "type": "address", "group": "What to send",
          "hint": "Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address."},
+        _switch("quiet_on", "Hold alerts that are not urgent in quiet hours", "A request ready, a failed download, an app back or an update ready wait, and one summary goes when the quiet hours end. Deactivated until you activate it.", "Quiet hours", False),
+        {"key": "quiet_from", "label": "Quiet hours start at", "type": "schedule", "default": {"every": "day", "time": "22:00"},
+         "group": "Quiet hours", "hint": "Choose every day. Only the hour counts."},
+        {"key": "quiet_until", "label": "Quiet hours end at", "type": "schedule", "default": {"every": "day", "time": "07:00"},
+         "group": "Quiet hours", "hint": "Choose every day. The summary is sent at this hour."},
+        _switch("quiet_urgent", "Still send urgent ones", "An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Deactivate it to hold them too.", "Quiet hours"),
         _switch("email_active", "Send by email", "Activate once the email details are entered and the test arrives.", "Email", False),
         {"key": "smtp_host", "label": "Email server", "type": "text", "group": "Email", "hint": "Such as smtp.example.com"},
         {"key": "smtp_port", "label": "Port", "type": "number", "default": 587, "min": 1, "max": 65535, "group": "Email"},
@@ -612,13 +624,15 @@ EXAMPLES["notifications"] = ({
                 {"id": "test-pushover", "label": "Send a test by Pushover", "path": "/test/pushover"},
                 {"id": "test-ntfy", "label": "Send a test by ntfy", "path": "/test/ntfy"},
                 {"id": "test-webhook", "label": "Send a test to the webhooks", "path": "/test/webhook"},
-                {"id": "weekly-now", "label": "Send New this week now", "path": "/weekly-now"}],
+                {"id": "weekly-now", "label": "Send New this week now", "path": "/weekly-now"},
+                {"id": "held-now", "label": "Send what quiet hours held now", "path": "/held-now"}],
     "cards": [{"id": "status", "title": "Notifications", "type": "status", "path": "/card", "refresh_minutes": 60,
                "example": {"state": "ok", "text": "Mon 09:00, New this week: sent by Email, Telegram", "status": "ok", "updated": 1794694110}},
               {"id": "recent", "title": "Notifications sent", "type": "list", "path": "/recent", "refresh_minutes": 60,
                "example": {"items": [{"title": "Ready to watch: Dune (2021)", "detail": "Mon 12 Nov 20:15, sent by Email, Telegram"}], "status": "ok", "updated": 1794694110}}],
     "events": ["request.available", "download.failed", "app.down", "app.up", "disk.nearly_full", "disk.changed", "update.available", "item.added"],
-    "jobs": [{"id": "weekly", "label": "Send New this week", "path": "/jobs/weekly", "schedule": "weekly_when", "time_limit_minutes": 2}],
+    "jobs": [{"id": "weekly", "label": "Send New this week", "path": "/jobs/weekly", "schedule": "weekly_when", "time_limit_minutes": 2},
+             {"id": "quiet-end", "label": "Send what quiet hours held", "path": "/jobs/quiet-end", "schedule": "quiet_until", "time_limit_minutes": 2}],
     "changes": [{"version": "1.0.0", "date": "2026-11-13", "added": [
         "**Seven ways to send:** email, Telegram, Discord, Signal (through signal-cli-rest-api), Pushover, ntfy and Apprise-style webhooks, each with a Test button.",
         "**What it sends:** a request ready to watch (to the person who asked too), a failed download, an app down and back, a disk nearly full, an update ready, and New this week.",
