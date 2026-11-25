@@ -38,9 +38,12 @@ Added:
 - **Fit for Adverts:** in either grid, **Times shown** for **Adverts** can be **Fit**, which adds as many whole adverts as the break has room for, never cutting an advert or another item short, and the holding countdown makes up the rest. [Fit, and a break length for each column](settings.md#fit-and-a-break-length-for-each-column) says how.
 - **Break length for each column:** **Automatic**, or 2 to 30 minutes. A column whose items need more than that says so in words, and the programme still starts on time.
 
+- **File lists:** one page for every ident, promo clip, advert and PSA, with a search, sorting, filters, paging, and several files added to a channel or taken off it together. [File lists](settings.md#file-lists) says how.
+- **PSA:** a new kind of item for the grids, with its own files. [PSAs](settings.md#psas) says what it needs.
+
 Fixed:
 
-- **The holding countdown and Back soon count what comes after them:** a bumper, a promo, an ident, an other channel promo or a Coming soon promo placed after them. The clock reaches 0:00 as the programme starts, and the slide ends early by the length of what follows, in the classic breaks too. When a clip's length cannot be read, the length last seen is used and the log says so.
+- **The holding countdown and Back soon count what comes after them:** a bumper, a promo, an ident, an other channel promo or a Coming soon promo placed after them. The clock reaches 0:00 as the programme starts, and the slide ends early by the length of what follows, in the classic breaks too. When a clip's length cannot be read, the length kept from the last time it could be read is used, and the log says so.
 
 ## What is new in 0.8.0
 

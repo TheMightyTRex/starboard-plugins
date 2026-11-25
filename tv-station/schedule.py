@@ -432,7 +432,7 @@ def remember_lengths(clips, memory):
     no readable length gets the length last seen for it. Returns the lines for the log, one for each clip that was given
     its last length, and changes `clips` and `memory` in place. A clip never seen has none, and is left out of a break."""
     said = []
-    lists = [clips.get(k) or [] for k in ("idents", "fillers", "extras", "bumpers")] + [[clips["sting"]] if clips.get("sting") else []]
+    lists = [clips.get(k) or [] for k in ("idents", "fillers", "extras", "bumpers", "psa")] + [[clips["sting"]] if clips.get("sting") else []]
     for group in lists:
         for c in group:
             try:
@@ -449,8 +449,8 @@ def remember_lengths(clips, memory):
 
 # Breaks from a grid (0.8.0, DASH-537) ----------------------------------------------------------------------------------
 FIT_HERE = {"dur": 0.0, "id": "fit"}  # stands in for a Fit item while a column is worked out
-PRIORITY = {"ident": 0, "bumper": 1, "adverts": 2, "promo": 3, "other_promo": 3, "coming_promo": 3}  # 0 is the last to go
-CLIP_ROLES = {"bumper": "bumper", "ident": "ident", "adverts": "extra"}
+PRIORITY = {"ident": 0, "bumper": 1, "adverts": 2, "psa": 2, "promo": 3, "other_promo": 3, "coming_promo": 3}  # 0 is the last to go
+CLIP_ROLES = {"bumper": "bumper", "ident": "ident", "adverts": "extra", "psa": "psa"}
 
 
 def fit_adverts(pool, room, turn=0):
@@ -483,6 +483,7 @@ def resolve_column(column, clips, options, rng, end, slot_no, longest, room=None
     sting = clips.get("sting") if clips.get("sting") and float(clips["sting"].get("dur") or 0) > 0 else None
     pools = {"bumper": [c for c in clips.get("bumpers") or [] if c.get("dur", 0) > 0], "ident": idents or ([sting] if sting else []),
              "adverts": [c for c in clips.get("extras") or [] if c.get("dur", 0) > 0], "promo": fillers,
+             "psa": [c for c in clips.get("psa") or [] if c.get("dur", 0) > 0],
              "other_promo": [c for c in made if c.get("cid") != cid], "coming_promo": [c for c in made if c.get("cid") == cid]}
     in_order = options.get("ident_order", "in_order") == "in_order" and not clips.get("random_idents") and bool(idents)
     used, last, played, out = set(), {}, 0, []

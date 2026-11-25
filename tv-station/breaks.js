@@ -186,7 +186,7 @@
         el("p", { class: "count", text: c.items.length ? plural(c.items.length, "item", "items") : "Empty" }),
         el("div", { class: "field len" }, el("label", { for: `len-${w}-${ci}`, text: "Break length" }), lenSel),
         el("p", { class: "hint small", id: `lenhelp-${w}-${ci}`, text: w === "between" ? "Automatic is the gap the schedule leaves. The countdown or the cards make up the rest." : "Automatic is the longest break set for the channel." }),
-        c.warning ? el("p", { class: "warning", "data-warning": `${w}-${ci}`, text: c.warning }) : null);
+        ...(c.warning ? [el("p", { class: "warning", "data-warning": `${w}-${ci}`, text: c.warning })] : []));
       const ol = el("ol", { "aria-label": `${g.name}, ${c.name}`, "data-list": `${w}-${ci}` });
       c.items.forEach((it, i) => ol.append(drawItem(g, ci, i, it)));
       wireColumn(ol, w, ci);

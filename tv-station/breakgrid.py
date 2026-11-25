@@ -48,6 +48,7 @@ KINDS = {
     "ident": ("Ident", True, "An ident, with its music."),
     "other_promo": ("Other channel promo", True, "A promo for a programme on one of your other channels."),
     "coming_promo": ("Coming soon promo", True, "A Coming soon promo for a programme on this channel."),
+    "psa": ("PSA", True, "A public service announcement: one of your own videos with sound, chosen at random."),
     "holding": ("Holding countdown", False, "The holding slide with the time to the programme's start. It takes the time that is left, "
                                            "and the clock counts through anything that plays after it."),
     "back_soon": ("Back soon", False, "The holding slide with Back soon. It takes the time that is left."),

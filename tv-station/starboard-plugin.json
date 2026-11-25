@@ -69,6 +69,13 @@
    "hint": "What plays In between programmes and in Breaks inside programmes, as two grids for each channel, with drag and drop, buttons and the keyboard."
   },
   {
+   "key": "files",
+   "label": "File lists",
+   "type": "custom",
+   "choices": "/files",
+   "hint": "Every ident, promo clip, advert and PSA in one list that can be searched, sorted and filtered, with several files added to a channel or taken off it together."
+  },
+  {
    "key": "clips",
    "label": "Idents, clips and music",
    "type": "custom",
@@ -746,7 +753,9 @@
    "date": "2026-11-25",
    "added": [
     "**Fit for Adverts**: in a break grid, Adverts can be set to Fit, which adds as many whole adverts as the break has room for. Nothing is cut short, and the holding countdown makes up the rest of the time.",
-    "**Break length for each column**: Automatic, or 2 to 30 minutes. A column whose items need more time says so in words, and the programme still starts on time."
+    "**Break length for each column**: Automatic, or 2 to 30 minutes. A column whose items need more time says so in words, and the programme still starts on time.",
+    "**File lists**: one page for every ident, promo clip, advert and PSA, with search, sorting, filters, paging, and several files added to a channel or taken off it together.",
+    "**PSA**: a new kind of item for the break grids, with its own files, checked when added."
    ],
    "fixed": [
     "**The holding countdown and Back soon count what comes after them**: a bumper, promo or ident after them no longer makes the clock reach 0:00 early."

@@ -12,6 +12,6 @@ server=$!
 for _ in $(seq 1 20); do grep -q READY "$work/server.log" 2>/dev/null && break; sleep 1; done
 mkdir -p "$work/out"; chmod 777 "$work/out"
 docker run --rm --network host -u "$(id -u):$(id -g)" -e HOME=/tmp -e URL="$(head -1 "$work/server.log")" -e OUT=/work/out -e ANNOTATE=/j/annotate.js \
-  -v "$work:/work" -v "$cache:/cache:ro" -v "$PWD/tools/tv_break_screens/shots.mjs:/j/shots.mjs:ro" -v "$sb/tools/screenshots/annotate.js:/j/annotate.js:ro" \
+  -v "$work:/work" -v "$cache:/cache:ro" -v "$PWD/tools/tv_break_screens/${SHOTS:-shots}.mjs:/j/shots.mjs:ro" -v "$sb/tools/screenshots/annotate.js:/j/annotate.js:ro" \
   mcr.microsoft.com/playwright:v1.63.0-noble sh -c "mkdir -p /tmp/s && cp /j/shots.mjs /tmp/s/ && cd /tmp/s && ln -s /cache/node_modules node_modules && node shots.mjs"
 mkdir -p tools/tv_break_screens/out && cp "$work"/out/*.png tools/tv_break_screens/out/

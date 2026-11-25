@@ -1,0 +1,54 @@
+/* The file lists' page (0.9.0), on the design system's tokens (ds-tokens.css, Mica) and nothing else: no new framework.
+   Built to be used by anyone: every control is at least 44 pixels high and wide, focus is a clear outline in every theme,
+   nothing depends on colour alone (each item says what it is in words), the text grows with the browser's text size and
+   the columns stack on a phone, motion is left out when the device asks, and in forced colours the browser's own
+   colours are used. */
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html { background: var(--color-bg); }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font: var(--text-md)/1.5 var(--font); }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: var(--space-4); top: var(--space-2); background: var(--color-surface-raised); padding: var(--space-3); z-index: 10;
+  border-radius: var(--radius); min-height: 44px; display: inline-flex; align-items: center; }
+.top, main { max-width: 90rem; margin: 0 auto; padding: 0 var(--space-4); }
+.top { padding-top: var(--space-6); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; align-items: flex-start; }
+.top > div:first-child { flex: 1 1 24rem; }
+h1 { font-size: var(--text-xl); margin: 0 0 var(--space-1); }
+h2 { font-size: var(--text-lg); margin: 0 0 var(--space-2); }
+h3 { font-size: var(--text-md); margin: 0 0 var(--space-1); }
+.lede { color: var(--color-text-muted); margin: 0 0 var(--space-4); max-width: 60rem; }
+.controls { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: flex-end; padding: var(--space-4);
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius); box-shadow: var(--shadow-card); }
+.field { display: flex; flex-direction: column; gap: var(--space-1); max-width: 100%; min-width: 0; }
+label, legend { font-weight: var(--weight-strong, 600); }
+select { font: inherit; max-width: 100%; min-height: 44px; min-width: 44px; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border);
+  background: var(--color-surface-raised); color: var(--color-text); border-radius: var(--radius); }
+button { font: inherit; min-height: 44px; min-width: 44px; padding: var(--space-1) var(--space-4); border: 1px solid var(--color-border);
+  background: var(--color-surface-raised); color: var(--color-text); cursor: pointer; border-radius: var(--radius); }
+button:hover { background: var(--color-hover); border-color: var(--color-hover-edge); }
+button.primary { background: var(--color-accent); color: var(--color-accent-text); border-color: var(--color-accent); font-weight: var(--weight-strong, 600); }
+button.danger { color: var(--status-danger-fg); border-color: var(--status-danger-fg); }
+button:disabled { opacity: .55; cursor: not-allowed; }
+:focus-visible { outline: var(--focus-w) solid var(--color-focus); outline-offset: 2px; }
+.said { min-height: 1.5em; margin: var(--space-3) 0 0; font-weight: var(--weight-strong, 600); }
+.problem { margin: 0; padding: var(--space-2) var(--space-3); background: var(--status-danger-bg); color: var(--status-danger-fg);
+  border-radius: var(--radius); font-weight: var(--weight-strong, 600); }
+.problem:empty { display: none; }
+.hint { color: var(--color-text-muted); margin: var(--space-1) 0 var(--space-2); max-width: 60rem; }
+.banner { margin: var(--space-2) 0; padding: var(--space-2) var(--space-4); border: 1px solid var(--color-divider);
+  border-left: 4px solid var(--color-accent); background: var(--color-surface); border-radius: var(--radius); max-width: 60rem; }
+input[type="search"] { font: inherit; min-height: 44px; min-width: 14rem; padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border);
+  background: var(--color-surface-raised); color: var(--color-text); border-radius: var(--radius); }
+input[type="checkbox"] { width: 24px; height: 24px; margin: 10px; }
+.filters { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: flex-end; padding: var(--space-4); margin-top: var(--space-4);
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius); box-shadow: var(--shadow-card); }
+.bulk { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: flex-end; margin: var(--space-3) 0; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--color-divider); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; min-width: 48rem; }
+th, td { text-align: left; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-divider); vertical-align: top; }
+thead th { background: var(--color-surface); }
+tbody th { font-weight: var(--weight-strong, 600); overflow-wrap: anywhere; }
+.pager { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin: var(--space-3) 0 var(--space-6); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (forced-colors: active) { button, select, input { border: 1px solid ButtonText; } }

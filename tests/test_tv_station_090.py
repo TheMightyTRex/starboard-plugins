@@ -11,6 +11,7 @@ from helpers import ROOT  # noqa: E402
 sys.path.insert(0, os.path.join(ROOT, "tv-station"))
 import breakgrid  # noqa: E402
 import schedule  # noqa: E402
+from test_tv_station_020 import App, NOW, episodes  # noqa: E402
 from test_tv_station_080 import A, CLIPS, OPTS, clip  # noqa: E402
 
 GAP = A["end"] - A["content_end"]  # 300 seconds
@@ -227,6 +228,138 @@ class WhenALengthCannotBeRead(unittest.TestCase):
         self.assertEqual((clips["idents"][0]["dur"], clips["bumpers"][0]["dur"], clips["bumpers"][1]["dur"]), (5.0, 3.0, 0))
         self.assertEqual(len(said), 2)
         self.assertIn("last seen", said[0])
+
+
+# The file lists (DASH-546) ---------------------------------------------------------------------------------------------
+import filelist  # noqa: E402
+
+
+def sample_state(n=0):
+    shared = {"idents": [], "clips": [], "extras": [{"id": "e1", "src": "file:Sale.mp4", "dur": 30.0, "title": "Sale.mp4", "has_audio": True}], "psa": []}
+    own = {"idents": [{"id": "i1", "src": "file:Ident.mp4", "dur": 4.0, "title": "Ident.mp4", "has_audio": False}], "clips": [], "extras": [], "psa": []}
+    for i in range(n):
+        shared["clips"].append({"id": f"c{i}", "src": f"file:Clip {i:04d}.mp4", "dur": 10.0 + i % 200, "title": f"Clip {i:04d}.mp4", "has_audio": i % 2 == 0})
+    return {"shared": shared, "channels": [{"id": "A", "name": "Comedy", "own": own, "idents": "both", "clips": "shared"},
+                                           {"id": "B", "name": "Drama", "own": {"idents": [], "clips": []}, "idents": "none", "clips": "none", "extras": "none"}]}
+
+
+class TheFileLists(unittest.TestCase):
+    def test_rows_say_where_a_file_is_kept_and_who_plays_it(self):
+        got = {r["key"]: r for r in filelist.rows(sample_state(), {"Sale.mp4": (2048, 1e9)})}
+        self.assertEqual(got["extras:e1"]["held"], ["station"])
+        self.assertEqual(got["extras:e1"]["used_by"], ["A"], "channel B chose none, A has the default, both")
+        self.assertEqual((got["extras:e1"]["size"], got["extras:e1"]["added"]), (2048, 1e9))
+        self.assertEqual(got["idents:i1"]["held"], ["A"])
+        self.assertEqual(got["idents:i1"]["used_by"], ["A"])
+        self.assertIsNone(got["idents:i1"]["size"])
+
+    def test_search_filters_and_sorts(self):
+        rows = filelist.rows(sample_state(60))
+        self.assertEqual(filelist.query(rows, q="clip 0007")["total"], 1)
+        self.assertEqual(filelist.query(rows, kind="idents")["total"], 1)
+        self.assertEqual(filelist.query(rows, scope="this", channel="B")["total"], 0)
+        self.assertEqual(filelist.query(rows, scope="this", channel="A")["total"], 62)
+        self.assertEqual(filelist.query(rows, scope="unused")["total"], 0)
+        self.assertEqual(filelist.query(rows, sound="without", kind="clips")["total"], 30)
+        self.assertEqual(filelist.query(rows, length="short")["total"], 1)
+        self.assertEqual(filelist.query(rows, length="long")["total"], 0)
+        by = filelist.query(rows, kind="clips", sort="length", descending=True)["rows"]
+        self.assertEqual([r["dur"] for r in by], sorted((r["dur"] for r in by), reverse=True))
+        self.assertEqual(filelist.query(rows, sort="size")["total"], 62, "a file with no size still sorts, last")
+
+    def test_a_list_of_thousands_is_one_page_at_a_time(self):
+        rows = filelist.rows(sample_state(5000))
+        first = filelist.query(rows, kind="clips")
+        self.assertEqual((len(first["rows"]), first["total"], first["pages"], first["first"], first["last"]), (50, 5000, 100, 1, 50))
+        last = filelist.query(rows, kind="clips", page=999)
+        self.assertEqual((last["page"], last["first"], last["last"]), (100, 4951, 5000))
+        again = filelist.query(rows, kind="clips", page=2)
+        self.assertEqual([r["key"] for r in again["rows"]], [r["key"] for r in filelist.query(rows, kind="clips", page=2)["rows"]], "stable order")
+        self.assertEqual(filelist.query(rows, kind="clips", size=10000)["rows"].__len__(), 50, "never more than 50 at once")
+
+    def test_several_files_added_and_removed_together(self):
+        st = sample_state(5)
+        keys = [f"clips:c{i}" for i in range(5)]
+        self.assertEqual(filelist.change(st, keys, "B", "add"), 5)
+        self.assertEqual(len(st["channels"][1]["own"]["clips"]), 5)
+        self.assertEqual(filelist.change(st, keys, "B", "add"), 0, "nothing is added twice")
+        self.assertEqual(filelist.change(st, keys[:2], "B", "remove"), 2)
+        self.assertEqual(len(st["shared"]["clips"]), 5, "the station's own list is not touched")
+        self.assertEqual(filelist.change(st, keys, "station", "remove"), 5)
+        for bad in (([], "B", "add"), (keys, "Z", "add"), (["zz:1"], "B", "add"), (keys, "B", "delete"), (["clips:c0"] * 501, "B", "add")):
+            with self.assertRaises(filelist.ListError):
+                filelist.change(st, *bad)
+
+
+# PSA (DASH-545) -----------------------------------------------------------------------------------------------------
+class ThePsa(unittest.TestCase):
+    def test_psa_is_a_kind_with_a_count_and_plays_in_a_break(self):
+        self.assertIn("psa", breakgrid.KINDS)
+        g = breakgrid.apply(breakgrid.new_grid(), {"op": "add", "kind": "psa", "column": 0, "times": 2})
+        self.assertEqual(g["columns"][0][0], {"kind": "psa", "times": 2})
+        clips = {**CLIPS, "psa": [clip("p1", 20), clip("p2", 25), clip("p3", 30)]}
+        out = schedule.plan_break_grid(A, [A], clips, OPTS, g["columns"][0] + [{"kind": "holding", "times": 1}])
+        got = [p for p in out if p.get("role") == "psa"]
+        self.assertEqual(len(got), 2)
+        self.assertEqual(len({p["clip"]["id"] for p in got}), 2, "each once in a break")
+        contiguous(self, out, A["content_end"], A["end"])
+
+    def test_a_psa_with_no_files_is_left_out(self):
+        out = schedule.plan_break_grid(A, [A], CLIPS, OPTS, [{"kind": "psa", "times": 3}, {"kind": "holding", "times": 1}])
+        self.assertEqual(kind_order(out), ["holding"])
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class TheApp(App):
+    def test_the_breaks_page_has_lengths_fit_and_warnings(self):
+        cid = self.channel("Comedy", episodes("a", 6, 1500))
+        self.app.breaks_op({"cid": cid, "grid": "between", "op": {"op": "add", "kind": "adverts", "column": 0, "times": "fit"}})
+        st = self.app.breaks_op({"cid": cid, "grid": "between", "op": {"op": "length", "column": 0, "seconds": 300}})
+        col = st["grids"][0]["columns"][0]
+        self.assertEqual((col["length"], col["length_words"]), (300, "5 minutes"))
+        self.assertTrue(any(i["fit"] for i in col["items"]))
+        self.assertEqual(st["lengths"][0], {"seconds": 0, "name": "Automatic"})
+        self.assertEqual(len(st["lengths"]), 13)
+        self.assertEqual(col["warning"], "", "no clips of a kind, so nothing is known to need room")
+        with self.assertRaises(self.app.breakgrid.GridError):
+            self.app.breaks_op({"cid": cid, "grid": "between", "op": {"op": "length", "column": 0, "seconds": 61}})
+        self.assertEqual(self.app.break_options(self.app.find(self.app.state(), cid), {"cards": True})["grids"]["between"]["lengths"][0], 300)
+
+    def test_a_psa_is_kept_in_the_lists_and_played_by_the_channels_that_use_it(self):
+        cid = self.channel("Comedy", episodes("a", 6, 1500))
+        s = self.app.state()
+        s["shared"]["psa"] = [{"id": "p1", "src": "file:Safety.mp4", "dur": 25.0, "title": "Safety.mp4", "has_audio": True}]
+        self.app.save(s)
+        ch = self.app.find(self.app.state(), cid)
+        self.assertEqual([c["id"] for c in self.app.clips_for(self.app.state(), ch)["psa"]], ["p1"])
+        self.app.channels_post({"action": "choose", "id": f"{cid}:psa", "value": "none"}, now=NOW)
+        self.assertEqual(self.app.clips_for(self.app.state(), self.app.find(self.app.state(), cid))["psa"], [])
+        self.assertEqual(self.app.breaks_state(cid)["available"]["psa"], 0)
+        ids = [i["id"] for i in self.app.clips_page()["items"]]
+        self.assertIn("psa:p1", ids)
+        self.assertIn("add:psa", ids)
+
+    def test_the_file_lists_page_and_a_bulk_change(self):
+        cid = self.channel("Comedy", episodes("a", 6, 1500))
+        s = self.app.state()
+        s["shared"]["clips"] = [{"id": f"c{i}", "src": f"file:C{i}.mp4", "dur": 20.0 + i, "title": f"C{i}.mp4", "has_audio": True} for i in range(120)]
+        self.app.save(s)
+        st = self.app.files_state({"kind": "clips", "channel": cid, "sort": "length", "order": "desc"})
+        self.assertEqual((st["total"], len(st["rows"]), st["pages"], st["cid"]), (120, 50, 3, cid))
+        self.assertEqual(st["rows"][0]["dur"], 139.0)
+        self.assertEqual(st["rows"][0]["held_names"], ["The station"])
+        st = self.app.files_state({"q": "c11", "kind": "bad", "sort": "bad", "page": "x"})
+        self.assertEqual(st["total"], 11 + 0, "the search matches C11 and C110 to C119")
+        said = self.app.files_op({"op": "add", "to": cid, "keys": ["clips:c1", "clips:c2"]})
+        self.assertEqual(said["changed"], 2)
+        self.assertEqual(len(self.app.find(self.app.state(), cid)["own"]["clips"]), 2)
+        self.assertIn("Comedy", said["said"])
+        self.assertEqual(self.app.files_op({"op": "remove", "to": cid, "keys": ["clips:c1"]})["changed"], 1)
+        item = self.app.files_page()["items"][0]
+        self.assertTrue(item["link"]["url"].endswith("/files"))
 
 
 if __name__ == "__main__":
