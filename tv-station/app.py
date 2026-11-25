@@ -27,6 +27,7 @@ import animate
 import breakgrid
 import breaks
 import dog
+import filelist
 import grid
 import guide
 import library
@@ -41,7 +42,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.8.0"
+VERSION = "0.9.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -80,7 +81,7 @@ THREE_D_FILE = "three_d.json"  # films looked at for 3D in quiet hours (0.5.5)
 THREE_D_MOST = 60  # films looked at in one quiet-hours run
 TITLES_FILE = "titles.json"  # titles and descriptions in the station's language, kept per item and language (0.6.0)
 TITLES_AHEAD = 3 * 3600  # programmes on a channel being watched airing this soon are asked for in that language
-ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer", "extras": "Extra video"}
+ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer", "extras": "Extra video", "psa": "PSA"}
 PER_BREAK = {"2": "Up to 2", "3": "Up to 3", "4": "Up to 4", "6": "Up to 6"}  # promos, trailers and clips in a break (0.5.0)
 EXTRA_MOST = 90 * 1024 * 1024  # bytes: an extra video for the breaks (0.5.0)
 _lock = threading.RLock()
@@ -607,7 +608,46 @@ def promo_clips(s, ch, cfg=None):
     return out
 
 
+_lengths = {"seen": None, "said": set()}
+
+
+def lengths_seen():
+    """The length last seen for each clip (0.9.0, DASH-550), read once from lengths.json in the plug-in's folder."""
+    if _lengths["seen"] is None:
+        try:
+            with open(os.path.join(sbplugin.DATA, "lengths.json")) as f:
+                _lengths["seen"] = {str(k): float(v) for k, v in json.load(f).items()}
+        except (OSError, ValueError, AttributeError):
+            _lengths["seen"] = {}
+    return _lengths["seen"]
+
+
+def note_lengths(clips):
+    """Keep each clip's length for the day one cannot be read, and say so in the log once for each clip. The file is only
+    written when a length is new or has changed."""
+    seen = lengths_seen()
+    before = dict(seen)
+    for line in schedule.remember_lengths(clips, seen):
+        if line not in _lengths["said"]:
+            _lengths["said"].add(line)
+            print(line, flush=True)
+    if seen != before:
+        try:
+            tmp = os.path.join(sbplugin.DATA, "lengths.json.tmp")
+            with open(tmp, "w") as f:
+                json.dump(seen, f)
+            os.replace(tmp, os.path.join(sbplugin.DATA, "lengths.json"))
+        except OSError:
+            pass
+
+
 def clips_for(s, ch, p=None, cfg=None):
+    out = clips_made(s, ch, p, cfg)
+    note_lengths(out)
+    return out
+
+
+def clips_made(s, ch, p=None, cfg=None):
     shared, own = s["shared"], ch.get("own") or {}
     idents = []
     if ch.get("idents") in ("own", "both"):
@@ -625,8 +665,13 @@ def clips_for(s, ch, p=None, cfg=None):
         extras += own.get("extras") or []
     if (ch.get("extras") or "both") in ("shared", "both"):
         extras += shared.get("extras") or []
+    psa = []  # 0.9.0 (DASH-545): the owner's public service announcements, chosen in the grids like the extra videos
+    if (ch.get("psa") or "both") in ("own", "both"):
+        psa += own.get("psa") or []
+    if (ch.get("psa") or "both") in ("shared", "both"):
+        psa += shared.get("psa") or []
     out = {"idents": idents, "fillers": fillers, "sting": None, "random_idents": False, "holding": holding_for(s, ch), "bumpers": [],
-           "extras": extras}
+           "extras": extras, "psa": psa}
     if p:
         name = pack_name(p)
         out["bumpers"] = [{"id": f"pk-{b['path']}", "src": f"pack:{name}/{b['path']}", "dur": b["dur"], "title": os.path.basename(b["path"]),
@@ -1460,7 +1505,7 @@ def channel_rows(s, ch, cfg, base, now):
     row("extras", "Extra videos", g, choice=_choice("Extra videos", ch.get("extras") or "both", both),
         detail="One plays at random after the promos in each break, when it fits.")
     own = ch.get("own") or {}
-    for role in ("idents", "clips", "extras"):
+    for role in ("idents", "clips", "extras", "psa"):
         for c in own.get(role) or []:
             row(f"clip-{c['id']}", f"{ROLES[role]}: {c['title']}", g, detail=f"{round(c['dur'])} seconds", actions=["remove"], state_label="Ready")
     row("add-ident", "Add an ident", g, actions=["attach"], state="unknown", state_label="Add one",
@@ -1468,6 +1513,12 @@ def channel_rows(s, ch, cfg, base, now):
                 "accept": ",".join(CLIP_TYPES)})
     row("add-clip", "Add a clip", g, actions=["attach"], state="unknown", state_label="Add one",
         attach={"label": "Add a clip", "field": "Clip", "hint": "A trailer or clip, up to 60 MB, or the name of a Jellyfin collection of them",
+                "accept": ",".join(CLIP_TYPES)})
+    row("psa", "PSAs", g, choice=_choice("PSAs", ch.get("psa") or "both", both),
+        detail="Public service announcements for the grids' PSA item: this channel's, the station's or both.")
+    row("add-psa", "Add a PSA", g, actions=["attach"], state="unknown", state_label="Add one",
+        detail="A video with sound, up to 10 minutes and 90 MB. It is checked when it is added.",
+        attach={"label": "Upload a PSA", "field": "PSA", "hint": "A video with a picture and a sound track, up to 10 minutes and 90 MB",
                 "accept": ",".join(CLIP_TYPES)})
     row("add-extra", "Add an extra video", g, actions=["attach"], state="unknown", state_label="Add one",
         detail="As many as you like. One plays at random after the promos in each break.",
@@ -1841,7 +1892,7 @@ def channels_post(body, now=None):
                 refresh = True
         elif key.startswith("clip-") and action == "remove":
             own = ch.get("own") or {}
-            for role in ("idents", "clips", "extras"):
+            for role in ("idents", "clips", "extras", "psa"):
                 own[role] = [c for c in own.get(role) or [] if c["id"] != key[5:]]
             said = "Removed the clip. Its file stays in the plug-in's folder until you add another with the same name"
         elif key == "forget-played" and action == "remove":
@@ -1890,8 +1941,8 @@ def choose(ch, key, value):
         ch[key] = v
     elif key == "per_break" and v in PER_BREAK:
         ch["per_break"] = int(v)
-    elif key == "extras" and v in ("none", "own", "shared", "both"):
-        ch["extras"] = v
+    elif key in ("extras", "psa") and v in ("none", "own", "shared", "both"):
+        ch[key] = v
     elif key == "ident_order" and v in ("in_order", "random"):
         ch["ident_order"] = v
     elif key == "trailers" and v in ("on", "off"):
@@ -1974,10 +2025,12 @@ def save_upload(name, length, rfile, folder, types, most=MAX_UPLOAD):
 
 def add_clip_file(holder, role, name, length, rfile):
     path, base = save_upload(name, length, rfile, os.path.join(sbplugin.DATA, CLIPS), CLIP_TYPES,
-                             most=EXTRA_MOST if role == "extras" else MAX_UPLOAD)
+                             most=EXTRA_MOST if role in ("extras", "psa") else MAX_UPLOAD)
     dur, has_audio, has_video = probe_seconds(path)
     if not has_video or dur <= 0:
         raise ValueError(f"{base} has no picture FFmpeg can read")
+    if role == "psa" and not has_audio:
+        raise ValueError(f"{base} has no sound track: a PSA needs one")
     if dur > 600:
         raise ValueError(f"{base} is over 10 minutes: too long for a break")
     cid = hashlib.sha256(base.encode()).hexdigest()[:10]
@@ -2044,9 +2097,9 @@ def channels_file(name, item, length, rfile):
             if r.returncode != 0:
                 raise ValueError(f"{base} could not be read as a picture. Choose a PNG")
             said = f"Added the logo {base}"
-        elif key in ("add-ident", "add-clip", "add-extra"):
+        elif key in ("add-ident", "add-clip", "add-extra", "add-psa"):
             said = add_clip_file(ch.setdefault("own", {"idents": [], "clips": [], "sources": []}),
-                                 {"add-ident": "idents", "add-clip": "clips", "add-extra": "extras"}[key], name, length, rfile)
+                                 {"add-ident": "idents", "add-clip": "clips", "add-extra": "extras", "add-psa": "psa"}[key], name, length, rfile)
         else:
             raise ValueError("That row takes no file")
         save(s)
@@ -2057,8 +2110,8 @@ def clips_page(said=None):
     s = state()
     sh = s["shared"]
     items = []
-    groups = {"idents": "The station's idents", "clips": "The station's clips", "extras": "Extra videos for the breaks"}
-    for role in ("idents", "clips", "extras"):
+    groups = {"idents": "The station's idents", "clips": "The station's clips", "extras": "Extra videos for the breaks", "psa": "PSAs"}
+    for role in ("idents", "clips", "extras", "psa"):
         for c in sh.get(role) or []:
             items.append({"id": f"{role}:{c['id']}", "title": c["title"][:120], "detail": f"{round(c['dur'])} seconds",
                           "group": groups[role], "actions": ["remove"], "state": "ok", "state_label": "Ready"})
@@ -2067,6 +2120,10 @@ def clips_page(said=None):
                   "detail": "As many as you like. One plays at random after the promos in each break, on every channel that uses the station's.",
                   "attach": {"label": "Upload an extra video", "field": "Extra video", "accept": ",".join(CLIP_TYPES),
                              "hint": "A video of up to 10 minutes and 90 MB. Choose a file: names are not used here"}})
+    items.append({"id": "add:psa", "title": "Add a PSA", "group": "PSAs", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
+                  "detail": "A public service announcement every channel can use in the grids. A video with sound, up to 10 minutes and 90 MB.",
+                  "attach": {"label": "Upload a PSA", "field": "PSA", "accept": ",".join(CLIP_TYPES),
+                             "hint": "A video with a picture and a sound track, up to 10 minutes and 90 MB. Choose a file: names are not used here"}})
     for role, label in (("idents", "Add the station's idents"), ("clips", "Add the station's clips")):
         items.append({"id": f"add:{role}", "title": label, "group": "Add", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
                       "attach": {"label": label, "field": "Name", "hint": "A video up to 60 MB, or the name of a Jellyfin collection or folder",
@@ -2116,7 +2173,7 @@ def clips_post(body):
     with _lock:
         s = state()
         role, _, cid = rid.partition(":")
-        if action == "remove" and role in ("idents", "clips", "extras"):
+        if action == "remove" and role in ("idents", "clips", "extras", "psa"):
             s["shared"][role] = [c for c in s["shared"].get(role) or [] if c["id"] != cid]
             said = "Removed"
         elif action == "remove" and role == "music":
@@ -2127,7 +2184,7 @@ def clips_post(body):
             said = "Removed the background loop"
         elif action == "attach" and role == "add" and cid in ("idents", "clips"):
             said = add_jellyfin_clips(s["shared"], cid, str(value or ""))
-        elif action == "attach" and rid in ("add:music", "add:back", "add:extras", "holding"):
+        elif action == "attach" and rid in ("add:music", "add:back", "add:extras", "add:psa", "holding"):
             raise ValueError("Choose a file, then Upload")
         elif action == "detach" and rid == "holding":
             drop_holding(s.pop("holding", None))
@@ -2167,7 +2224,7 @@ def clips_file(name, item, length, rfile):
             save(s)
         return clips_page(said + ". Promos use it from the next quiet hour")
     role = item.partition(":")[2]
-    if role not in ("idents", "clips", "extras"):
+    if role not in ("idents", "clips", "extras", "psa"):
         raise ValueError("That row takes no file")
     with _lock:
         s = state()
@@ -2865,21 +2922,33 @@ def breaks_available(s, ch, cfg=None):
     """How many of each kind of thing a channel has to play in its breaks now, for the grids' page."""
     clips = clips_for(s, ch, channel_pack(s, ch), cfg)
     made = [c for c in clips["fillers"] if c.get("role") == "promo"]
-    return {"bumper": len(clips["bumpers"]), "promo": len(clips["fillers"]), "adverts": len(clips["extras"]),
+    return {"bumper": len(clips["bumpers"]), "promo": len(clips["fillers"]), "adverts": len(clips["extras"]), "psa": len(clips["psa"]),
             "ident": len(clips["idents"]) or (1 if clips.get("sting") else 0), "other_promo": sum(1 for c in made if c.get("cid") != ch["id"]),
             "coming_promo": sum(1 for c in made if c.get("cid") == ch["id"]), "holding": 1 if clips.get("holding") else 0,
             "back_soon": 1 if clips.get("holding") else 0}
 
 
-def breaks_grid_view(ch, which):
+def breaks_shortest(s, ch, cfg=None):
+    """The shortest clip of each kind a channel has, in seconds, for the grids' warnings (a kind with none is missing)."""
+    clips = clips_for(s, ch, channel_pack(s, ch), cfg)
+    made = [c for c in clips["fillers"] if c.get("role") == "promo"]
+    pools = {"bumper": clips["bumpers"], "promo": clips["fillers"], "adverts": clips["extras"], "psa": clips["psa"],
+             "ident": clips["idents"] or ([clips["sting"]] if clips.get("sting") else []),
+             "other_promo": [c for c in made if c.get("cid") != ch["id"]], "coming_promo": [c for c in made if c.get("cid") == ch["id"]]}
+    return {k: min(float(c["dur"]) for c in v) for k, v in pools.items() if v and all(float(c.get("dur") or 0) > 0 for c in v)}
+
+
+def breaks_grid_view(ch, which, shortest=None):
     """One grid for the grids' page: its mode, its columns as shown, and what each holds."""
     saved = breakgrid.grid_of(ch, which)
     g = saved or breakgrid.view_of(ch, which)
     names = breakgrid.column_names(g)
     cols = []
     for i, name in enumerate(names):
-        cols.append({"name": name, "items": [{"kind": it["kind"], "name": breakgrid.KINDS[it["kind"]][0], "times": it["times"],
-                                              "counts": breakgrid.KINDS[it["kind"]][1]} for it in g["columns"][i]]})
+        cols.append({"name": name, "length": breakgrid.length_of(g, i), "length_words": breakgrid.length_words(breakgrid.length_of(g, i)),
+                     "warning": breakgrid.warning(g, i, shortest or {}),
+                     "items": [{"kind": it["kind"], "name": breakgrid.KINDS[it["kind"]][0], "times": it["times"], "fit": bool(it.get("fit")),
+                                "counts": breakgrid.KINDS[it["kind"]][1]} for it in g["columns"][i]]})
     kept = sum(len(c) for c in g["columns"][len(names):])
     return {"which": which, "name": breakgrid.GRID_WORDS[which], "saved": saved is not None, "mode": g["mode"], "count": g["count"],
             "columns": cols, "unused_items": kept, "fixed_count": g["mode"] in ("day", "time")}
@@ -2892,8 +2961,10 @@ def breaks_state(cid, said="", now=None):
         return {"channels": [], "cid": "", "grids": [], "kinds": breakgrid.kinds_words(), "modes": [],
                 "said": "Add a channel first, in Starboard: Settings, Plug-ins, Create your own TV channel, Channels"}
     ch = find(s, cid) or chans[0]
+    shortest = breaks_shortest(s, ch)
     return {"channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans], "cid": ch["id"],
-            "grids": [breaks_grid_view(ch, w) for w in breakgrid.GRIDS], "kinds": breakgrid.kinds_words(), "available": breaks_available(s, ch),
+            "grids": [breaks_grid_view(ch, w, shortest) for w in breakgrid.GRIDS], "lengths": [{"seconds": 0, "name": "Automatic"}] + [
+                {"seconds": n, "name": breakgrid.length_words(n)} for n in breakgrid.LENGTHS], "kinds": breakgrid.kinds_words(), "available": breaks_available(s, ch),
             "modes": [{"mode": m, "name": breakgrid.MODE_WORDS[m], "help": breakgrid.MODE_HELP[m]} for m in breakgrid.MODES],
             "most_columns": breakgrid.MOST_COLUMNS, "said": said}
 
@@ -2979,6 +3050,73 @@ def grids_page(said=None):
     return out
 
 
+def files_page(said=None):
+    """Starboard's page for the file lists: a link to the plug-in's own page, which opens in a new tab."""
+    s, base = state(), address()
+    item = {"id": "files", "title": "File lists", "group": "Files", "state": "ok", "state_label": "Ready",
+            "detail": "Every ident, promo clip, advert and PSA in one list that can be searched, sorted and filtered, with several files added to a channel or taken off it together."}
+    if base:
+        item["link"] = {"url": f"{base}/t/{s['token']}/files", "label": "Open the file lists"}
+    else:
+        item["detail"] = NO_ADDRESS
+    out = {"type": "list", "title": "File lists", "items": [item],
+           "intro": "One list for each kind of file you add, with a search, sorting, filters and a tick box on each file. Choose Open the file lists: it opens in a new tab."}
+    if said:
+        out["said"] = said[:200]
+    return out
+
+
+def file_sizes():
+    """What each file in the plug-in's clips folder weighs and when it was added: {name: (bytes, seconds since 1970)}."""
+    out = {}
+    try:
+        with os.scandir(os.path.join(sbplugin.DATA, CLIPS)) as it:
+            for e in it:
+                if e.is_file():
+                    st = e.stat()
+                    out[e.name] = (st.st_size, st.st_mtime)
+    except OSError:
+        pass
+    return out
+
+
+def files_state(query, said=""):
+    """One page of the file lists for the page: the rows asked for and what it needs to draw its filters."""
+    s = state()
+    chans = numbered(s)
+    names = {c["id"]: c["name"] for c in chans}
+    cid = str(query.get("channel") or "")
+    cid = cid if cid in names else (chans[0]["id"] if chans else "")
+
+    def one(k, allowed, default):
+        v = str(query.get(k) or default)
+        return v if v in allowed else default
+    try:
+        page = int(query.get("page") or 1)
+    except ValueError:
+        page = 1
+    got = filelist.query(filelist.rows(s, file_sizes()), str(query.get("q") or "")[:80], one("kind", filelist.KINDS, ""), cid,
+                         one("scope", filelist.SCOPES, "all"), one("length", filelist.LENGTHS, "any"), one("sound", filelist.SOUNDS, "any"),
+                         one("sort", filelist.SORTS, "name"), str(query.get("order") or "") == "desc", page)
+    for r in got["rows"]:
+        r["held_names"] = ["The station" if h == "station" else names.get(h, "A removed channel") for h in r["held"]]
+        r["used_names"] = [names[u] for u in r["used_by"] if u in names]
+    return {**got, "cid": cid, "channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans],
+            "kinds": filelist.KINDS, "sorts": filelist.SORTS, "scopes": filelist.SCOPES, "lengths": filelist.LENGTHS, "sounds": filelist.SOUNDS, "said": said}
+
+
+def files_op(body):
+    """Several files added to, or taken off, one channel's own list (or the station's), in one change."""
+    with _lock:
+        s = state()
+        where = str(body.get("to") or "")
+        n = filelist.change(s, body.get("keys"), where, str(body.get("op") or ""))
+        save(s)
+    name = "the station" if where == "station" else (find(s, where) or {}).get("name", "the channel")
+    verb = "Added to" if body.get("op") == "add" else "Removed from"
+    return {"said": f"{verb} {name}: {sbplugin.plural(n, 'file')}. Files stay in the plug-in's folder", "changed": n}
+
+
 # The web server -------------------------------------------------------------------------------------------------------
 HOME = """<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{name}</title><style>body{{font:1.125rem/1.5 system-ui,sans-serif;margin:0;padding:24px 16px;background:#fff;color:#1a1a1a}}
@@ -3041,11 +3179,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"ok": True, "ffmpeg": stream.has_ffmpeg()})
             if p == "/card":
                 return self._json(200, card())
-            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule", "/animation", "/grids"):
+            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule", "/animation", "/grids", "/files"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may open this"})
                 return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page, "/pack": pack_page,
-                                        "/schedule": schedule_page, "/animation": animation_page, "/grids": grids_page}[p]())
+                                        "/schedule": schedule_page, "/animation": animation_page, "/grids": grids_page, "/files": files_page}[p]())
             if p == "/":
                 self._learn()
                 s = state()
@@ -3118,6 +3256,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._grid_get(rest, query)
         if rest == "breaks" or rest.startswith("breaks/"):
             return self._breaks_get(rest, query)
+        if rest == "files" or rest.startswith("files/"):
+            return self._files_get(rest, query)
         m = re.match(r"^download/([a-z-]+\.(png|zip))$", rest)
         if m:
             data, kind, filename = download(m.group(1), query)
@@ -3181,6 +3321,28 @@ class Handler(BaseHTTPRequestHandler):
             return None
         if rest == "breaks/api/state":
             return self._json(200, breaks_state({k: v[0] for k, v in query.items() if v}.get("channel", "")))
+        return self._json(404, {"error": "Not found"})
+
+    def _files_get(self, rest, query):
+        """The file lists' own page (0.9.0), its script, style and font, and the page of rows it asks for."""
+        static = {"files": ("files.html", "text/html; charset=utf-8"), "files/files.js": ("files.js", "text/javascript; charset=utf-8"),
+                  "files/files.css": ("files.css", "text/css; charset=utf-8"), "files/tokens.css": ("ds-tokens.css", "text/css; charset=utf-8"),
+                  "files/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2")}
+        if rest in static:
+            name, kind = static[rest]
+            with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), name), "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", kind)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(data)
+            return None
+        if rest == "files/api/state":
+            return self._json(200, files_state({k: v[0] for k, v in query.items() if v}))
         return self._json(404, {"error": "Not found"})
 
     def _stream(self, cid):
@@ -3253,6 +3415,16 @@ class Handler(BaseHTTPRequestHandler):
                 if (self.headers.get("Content-Type") or "").split(";")[0] != "application/json":
                     return self._json(415, {"error": "Send JSON"})
                 return self._json(200, grid_op(self._body()))
+            m = re.match(r"^/t/([A-Za-z0-9_-]+)/files/api/op$", p)
+            if m:
+                if not secrets.compare_digest(m.group(1), state()["token"]):
+                    return self._json(404, {"error": "Not found"})
+                if (self.headers.get("Content-Type") or "").split(";")[0] != "application/json":
+                    return self._json(415, {"error": "Send JSON"})
+                try:
+                    return self._json(200, files_op(self._body()))
+                except filelist.ListError as e:
+                    return self._json(400, {"error": str(e)})
             m = re.match(r"^/t/([A-Za-z0-9_-]+)/breaks/api/op$", p)
             if m:
                 if not secrets.compare_digest(m.group(1), state()["token"]):

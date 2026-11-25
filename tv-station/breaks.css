@@ -79,3 +79,7 @@ button:disabled { opacity: .55; cursor: not-allowed; }
   .drop-marker { background: Highlight; forced-color-adjust: none; }
   .col.over { outline-color: Highlight; }
 }
+
+.col .len { margin: var(--space-2) 0; }
+.col .small { font-size: .85em; }
+.col .warning { margin: var(--space-2) 0; padding: var(--space-2) var(--space-3); border: 2px solid var(--status-warning-fg); border-radius: 6px; background: var(--status-warning-bg); color: var(--status-warning-fg); }

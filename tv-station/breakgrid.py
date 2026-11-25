@@ -34,6 +34,9 @@ TIME_NAMES = ("Morning", "Afternoon", "Evening")
 MOST_COLUMNS = 7
 MOST_ITEMS = 12  # in one column
 MOST_TIMES = 6  # one kind in one place
+FIT = "fit"  # 0.9.0 (DASH-549): Adverts shown as many times as the break has room for
+LENGTHS = (120, 180, 240, 300, 360, 480, 600, 720, 900, 1200, 1500, 1800)  # break lengths on offer, in seconds; 0 is Automatic
+LEAST_LENGTH, MOST_LENGTH = 60, 3600  # seconds a saved length may be
 GRIDS = ("between", "inside")
 GRID_WORDS = {"between": "In between programmes", "inside": "Breaks"}
 
@@ -45,6 +48,7 @@ KINDS = {
     "ident": ("Ident", True, "An ident, with its music."),
     "other_promo": ("Other channel promo", True, "A promo for a programme on one of your other channels."),
     "coming_promo": ("Coming soon promo", True, "A Coming soon promo for a programme on this channel."),
+    "psa": ("PSA", True, "A public service announcement: one of your own videos with sound, chosen at random."),
     "holding": ("Holding countdown", False, "The holding slide with the time to the programme's start. It takes the time that is left, "
                                            "and the clock counts through anything that plays after it."),
     "back_soon": ("Back soon", False, "The holding slide with Back soon. It takes the time that is left."),
@@ -77,10 +81,45 @@ def column_names(grid):
     return [f"Column {i + 1}" for i in range(shown(grid))]
 
 
-def new_grid(mode="random", columns=None, count=1):
+def clean_lengths(lengths):
+    """Seven break lengths in seconds, 0 for Automatic (the time left until the next programme, or the gap the schedule
+    leaves), from whatever was saved."""
+    out = []
+    for v in list(lengths or [])[:MOST_COLUMNS]:
+        try:
+            n = int(v)
+        except (TypeError, ValueError):
+            n = 0
+        out.append(n if LEAST_LENGTH <= n <= MOST_LENGTH else 0)
+    return out + [0] * (MOST_COLUMNS - len(out))
+
+
+def new_grid(mode="random", columns=None, count=1, lengths=None):
     cols = [list(c) for c in (columns or [])][:MOST_COLUMNS]
     cols += [[] for _ in range(MOST_COLUMNS - len(cols))]
-    return {"version": 1, "mode": mode, "count": max(1, min(MOST_COLUMNS, int(count))), "columns": cols}
+    return {"version": 1, "mode": mode, "count": max(1, min(MOST_COLUMNS, int(count))), "columns": cols,
+            "lengths": clean_lengths(lengths)}
+
+
+def length_of(grid, c):
+    """A column's break length in seconds; 0 means Automatic."""
+    try:
+        return clean_lengths(grid.get("lengths"))[int(c)]
+    except (TypeError, ValueError, IndexError):
+        return 0
+
+
+def length_words(seconds):
+    """A break length as the page says it: Automatic, or 2 minutes."""
+    if not seconds:
+        return "Automatic"
+    m, sec = divmod(int(seconds), 60)
+    return (f"{m} minute{'' if m == 1 else 's'}" if m else "") + (f" {sec} seconds" if sec and m else f"{sec} seconds" if sec else "")
+
+
+def seconds_words(seconds):
+    """Seconds as a sentence's words: 3 minutes 20 seconds."""
+    return length_words(max(0, int(round(seconds)))) if seconds >= 1 else "under a second"
 
 
 def clean_item(it):
@@ -90,6 +129,8 @@ def clean_item(it):
     kind = it["kind"]
     if not KINDS[kind][1]:
         return {"kind": kind, "times": 1}
+    if kind == "adverts" and (it.get("times") == FIT or it.get("fit") is True):
+        return {"kind": kind, "times": 1, "fit": True}
     try:
         times = int(it.get("times") or 1)
     except (TypeError, ValueError):
@@ -116,7 +157,7 @@ def clean(doc):
                 elastic = True
             got.append(it)
         cols.append(got)
-    return new_grid(mode, cols, doc.get("count") or 1)
+    return new_grid(mode, cols, doc.get("count") or 1, doc.get("lengths"))
 
 
 # What a channel has had all along -------------------------------------------------------------------------------------
@@ -204,7 +245,8 @@ def _room(col, item, skip=None):
 def apply(grid, op):
     """The grid after one change, which is a dict: {"op": ...}. Raises GridError with a sentence when it cannot be done.
     ops: mode (mode), count (count), add (kind, column, position), move (column, index, to_column, to_position),
-    remove (column, index), times (column, index, times), clear (column)."""
+    remove (column, index), times (column, index, times; "fit" for Adverts), length (column, seconds; 0 is Automatic),
+    clear (column)."""
     g = copy.deepcopy(grid)
     kind = op.get("op")
     if kind == "mode":
@@ -258,7 +300,18 @@ def apply(grid, op):
         else:
             if not KINDS[col[i]["kind"]][1]:
                 raise GridError(f"{KINDS[col[i]['kind']][0]} has no number of times: it is shown once")
+            if op.get("times") == FIT and col[i]["kind"] != "adverts":
+                raise GridError("Only Adverts can be set to Fit")
             col[i] = clean_item({"kind": col[i]["kind"], "times": op.get("times")})
+    elif kind == "length":
+        c = _col(g, op.get("column"))
+        try:
+            n = int(op.get("seconds") or 0)
+        except (TypeError, ValueError):
+            raise GridError("Choose a break length")
+        if n and n not in LENGTHS:
+            raise GridError("Choose Automatic or a length from 2 to 30 minutes")
+        g["lengths"][c] = n
     elif kind == "clear":
         g["columns"][_col(g, op.get("column"))] = []
     else:
@@ -268,6 +321,8 @@ def apply(grid, op):
 
 def item_words(it):
     name = KINDS[it["kind"]][0]
+    if it.get("fit"):
+        return f"{name}, fit"
     return f"{name}, {it['times']} times" if KINDS[it["kind"]][1] and it["times"] > 1 else name
 
 
@@ -275,3 +330,29 @@ def column_words(grid, c):
     """One column in a sentence, for the page's summary and the live region."""
     col = grid["columns"][c]
     return ", ".join(item_words(x) for x in col) if col else "empty"
+
+
+def minimum_seconds(column, shortest):
+    """The least time a column's fixed items take: each item with a number of times, as many times as it says, at the
+    shortest clip of its kind (`shortest`: kind -> seconds, missing when there is none). Fit takes nothing: it only fills
+    what is left. The holding items take what is left, so they count nothing."""
+    total = 0.0
+    for it in column:
+        if it.get("fit") or it["kind"] in ELASTIC:
+            continue
+        total += float(shortest.get(it["kind"]) or 0) * int(it.get("times") or 1)
+    return total
+
+
+def warning(grid, c, shortest, gap=None):
+    """A sentence for a column whose fixed items cannot fit its break length, or "" when they can. The break still
+    ends on the programme's start: the last of the least wanted items are left out (promos, then adverts, then bumpers;
+    an ident is the last to go). gap: the room there is when the length is Automatic and is known."""
+    room = length_of(grid, c) or (gap or 0)
+    if not room:
+        return ""
+    need = minimum_seconds(grid["columns"][c], shortest)
+    if need <= room:
+        return ""
+    return (f"These items need at least {seconds_words(need)}, but the break is {seconds_words(room)}. "
+            "Some are left out so the programme starts on time.")

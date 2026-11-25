@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.8.0",
+ "version": "0.9.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -67,6 +67,13 @@
    "type": "custom",
    "choices": "/grids",
    "hint": "What plays In between programmes and in Breaks inside programmes, as two grids for each channel, with drag and drop, buttons and the keyboard."
+  },
+  {
+   "key": "files",
+   "label": "File lists",
+   "type": "custom",
+   "choices": "/files",
+   "hint": "Every ident, promo clip, advert and PSA in one list that can be searched, sorted and filtered, with several files added to a channel or taken off it together."
   },
   {
    "key": "clips",
@@ -741,6 +748,19 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.9.0",
+   "date": "2026-11-25",
+   "added": [
+    "**Fit for Adverts**: in a break grid, Adverts can be set to Fit, which adds as many whole adverts as the break has room for. Nothing is cut short, and the holding countdown makes up the rest of the time.",
+    "**Break length for each column**: Automatic, or 2 to 30 minutes. A column whose items need more time says so in words, and the programme still starts on time.",
+    "**File lists**: one page for every ident, promo clip, advert and PSA, with search, sorting, filters, paging, and several files added to a channel or taken off it together.",
+    "**PSA**: a new kind of item for the break grids, with its own files, checked when added."
+   ],
+   "fixed": [
+    "**The holding countdown and Back soon count what comes after them**: a bumper, promo or ident after them no longer makes the clock reach 0:00 early."
+   ]
+  },
   {
    "version": "0.8.0",
    "date": "2026-11-23",

@@ -47,3 +47,14 @@ The grids are the plug-in's own page, checked with axe (WCAG 2.2 AA) in light, d
 
 - [Accessibility in Starboard](https://themightytrex.github.io/starboard/help/accessibility/overview.html)
 - [Problems](problems.md)
+- **Fit and Break length (0.9.0):** **Times shown** for Adverts has **Fit** as a choice, described by a line under the list of items, and each column has a labelled **Break length** choice with its own help line. After a change, a column's warning, when it has one, is text in the column and is read out with what was changed. Both are keyboard choices in the same order as the rest of the column.
+
+## The file lists (0.9.0)
+
+The page is the plug-in's own, built the same way as the break grids and checked with axe, the reading order, a Tab walk, where focus goes after each change and what is said after each.
+
+- **A search form,** each choice with its own label, and a real table with column headings and the file's name as each row's heading, so a screen reader says the name with each cell.
+- **A tick box on each file** is named "Tick" and the file's name; the heading's box ticks the page. How many are ticked is text beside the buttons, and read out as it changes.
+- **Pages** are two buttons, **Previous page** and **Next page**, with "Page 2 of 5" between them; the number of files and the page are said when they change. Focus stays on the button you used.
+- 44 pixel targets, visible focus, the same three themes, reduced motion, forced colours and phone width with the table scrolling sideways inside its own region.
+
