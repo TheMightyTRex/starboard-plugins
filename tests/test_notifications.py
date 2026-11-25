@@ -260,17 +260,127 @@ class Weekly(unittest.TestCase):
         self.assertNotIn("weekly_day", {s["key"] for s in m["settings"]})
 
 
+def at(hour, minute=0):
+    """A local time on a fixed day, so the quiet hours are tested whatever the computer's zone."""
+    return time.mktime((2026, 11, 25, hour, minute, 0, 0, 0, -1))
+
+
+class Quiet(unittest.TestCase):
+    """DASH-522: alerts that are not urgent wait for the quiet hours to end, then one summary goes."""
+
+    def setUp(self):
+        self.app = load("notifications", {"webhook_active": True, "webhooks": "http://hook.local/x", "quiet_on": True,
+                                          "quiet_from": {"every": "day", "time": "22:00"}, "quiet_until": {"every": "day", "time": "07:00"},
+                                          "people": ["Sam, telegram 777"], "telegram_token": SECRET})
+        self.calls = []
+        self.app.fetch = lambda url, **k: self.calls.append((url, k.get("data"))) or {}
+        self.hook = lambda: [d for u, d in self.calls if "hook.local" in u]
+
+    def event(self, name, hour, minute=0):
+        with mock.patch.object(self.app.time, "time", return_value=at(hour, minute)):
+            return self.app._handle({"event": name, "data": EVENTS[name]})
+
+    def test_the_hours_run_over_midnight(self):
+        for hour, inside in ((21, False), (22, True), (23, True), (0, True), (6, True), (7, False), (12, False)):
+            self.assertEqual(self.app.in_quiet(at(hour)), inside, hour)
+        self.assertTrue(self.app.in_quiet(at(6, 59)))
+        self.assertFalse(self.app.in_quiet(at(21, 59)))
+
+    def test_hours_inside_one_day_and_the_same_hour_twice(self):
+        self.app._set(quiet_from={"every": "day", "time": "13:00"}, quiet_until={"every": "day", "time": "14:00"})
+        self.assertEqual([self.app.in_quiet(at(h)) for h in (12, 13, 14)], [False, True, False])
+        self.app._set(quiet_until={"every": "day", "time": "13:00"})
+        self.assertFalse(self.app.in_quiet(at(13)))  # start and end the same: no quiet hours
+
+    def test_off_until_switched_on(self):
+        self.app._set(quiet_on=False)
+        self.assertFalse(self.app.in_quiet(at(23)))
+        self.assertFalse(next(s for s in manifest("notifications")["settings"] if s["key"] == "quiet_on")["default"])
+
+    def test_an_alert_that_is_not_urgent_is_held_and_nothing_is_sent(self):
+        out = self.event("download.failed", 23)
+        self.assertIn("Held", out["said"])
+        self.assertEqual(self.calls, [])
+        self.assertEqual(len(self.app.remember("held")), 1)
+        self.assertIn("1 held", self.app.card()["text"] if self.app.in_quiet() else "1 held")
+
+    def test_an_urgent_alert_still_goes_at_once(self):
+        for name in ("app.down", "disk.nearly_full", "disk.changed"):
+            self.assertIn("sent", self.event(name, 23), name)
+        self.assertEqual(len(self.hook()), 3)
+        self.assertFalse(self.app.remember("held", []))
+
+    def test_urgent_ones_are_held_too_when_asked(self):
+        self.app._set(quiet_urgent=False)
+        self.event("app.down", 23)
+        self.assertEqual(self.calls, [])
+        self.assertEqual(len(self.app.remember("held")), 1)
+
+    def test_outside_the_hours_nothing_is_held(self):
+        self.assertIn("sent", self.event("download.failed", 12))
+        self.assertEqual(len(self.hook()), 1)
+
+    def test_one_summary_after_the_hours_and_each_person_hears(self):
+        for name, hour in (("download.failed", 23), ("request.available", 1), ("app.up", 3), ("update.available", 5)):
+            self.event(name, hour)
+        self.assertEqual(self.calls, [])
+        with mock.patch.object(self.app.time, "time", return_value=at(7)):
+            self.assertIn("quiet hours summary", self.app.release()["said"])
+        summary = self.hook()
+        self.assertEqual(len(summary), 1)
+        text = json.dumps(summary[0])
+        self.assertIn("4 things while you were away", text)
+        for part in ("Dune", "23:00", "01:00", "Jellyfin", "Starboard"):
+            self.assertIn(part, text)
+        self.assertTrue(any("api.telegram.org" in u and d["chat_id"] == "777" for u, d in self.calls))  # Sam's own message
+        self.assertFalse(self.app.remember("held", []))
+        self.assertIn("Nothing was held", self.app.release()["said"])
+
+    def test_the_summary_waits_while_the_hours_last_and_a_new_event_after_them_releases_it(self):
+        self.event("update.available", 23)
+        with mock.patch.object(self.app.time, "time", return_value=at(23, 30)):
+            self.assertIn("Still in the quiet hours", self.app.release()["said"])
+        self.assertEqual(self.calls, [])
+        self.event("download.failed", 8)  # after the hours: the summary first, then this one
+        self.assertEqual(len(self.hook()), 2)
+        self.assertIn("1 thing while you were away", json.dumps(self.hook()[0]))
+
+    def test_what_could_not_be_sent_is_kept(self):
+        self.event("update.available", 23)
+        def boom(url, **k):
+            raise OSError("down")
+        self.app.fetch = boom
+        with mock.patch.object(self.app.time, "time", return_value=at(7)):
+            self.assertIn("not sent", self.app.release()["said"])
+        self.assertEqual(len(self.app.remember("held")), 1)
+
+    def test_a_long_night_stays_short(self):
+        self.app.keep("held", [{"at": at(23), "event": "app.up", "title": f"Item {i}", "body": "", "tone": "info", "by": ""} for i in range(55)])
+        text = self.app.summary_words(self.app.remember("held"))
+        self.assertEqual(text.count("\n- ") + 1, 41)
+        self.assertIn("- and 15 more", text)
+
+    def test_starboard_runs_the_summary_when_the_hours_end(self):
+        m = manifest("notifications")
+        job = next(j for j in m["jobs"] if j["id"] == "quiet-end")
+        self.assertEqual(job["schedule"], "quiet_until")
+        spec = {s["key"]: s for s in m["settings"]}
+        self.assertEqual((spec["quiet_until"]["type"], spec["quiet_until"]["default"]["time"]), ("schedule", "07:00"))
+        self.assertEqual(spec["quiet_from"]["default"]["time"], "22:00")
+        self.assertTrue(spec["quiet_urgent"]["default"])
+
+
 class Manifest(unittest.TestCase):
     def test_it_rests_and_is_woken_by_starboard(self):
         m = manifest("notifications")
         self.assertEqual(m["containers"][0]["start"], "when_needed")
         self.assertTrue(set(m["events"]) >= {"request.available", "download.failed", "app.down", "app.up", "disk.nearly_full", "update.available"})
-        self.assertEqual([j["id"] for j in m["jobs"]], ["weekly"])
+        self.assertEqual([j["id"] for j in m["jobs"]], ["weekly", "quiet-end"])
         secrets = {s["key"] for s in m["settings"] if s["type"] == "secret"}
         self.assertEqual(secrets, {"smtp_password", "telegram_token", "discord_webhook", "pushover_user", "pushover_token", "ntfy_token", "webhooks"})
         load_app = load("notifications")
         self.assertEqual(set(load_app.SECRETS), secrets)
-        self.assertEqual({a["path"] for a in m["actions"]} - {"/weekly-now"}, {f"/test/{c}" for c in load_app.CHANNELS})
+        self.assertEqual({a["path"] for a in m["actions"]} - {"/weekly-now", "/held-now"}, {f"/test/{c}" for c in load_app.CHANNELS})
 
     def test_starboard_accepts_the_manifest_and_the_cards(self):
         got = starboard_cleaners()

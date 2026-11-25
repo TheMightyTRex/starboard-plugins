@@ -1,11 +1,12 @@
 # Uptime and status: Updates
 
-Uptime and status 2.0.0 is the latest version. It takes over Outside services and needs Starboard with plug-in API 1.17 or later.
+Uptime and status 2.1.0 is the latest version. It takes over Outside services and needs Starboard with plug-in API 1.17 or later.
 
 ## Versions
 
 | Version | Name | Needs plug-in API | Released |
 |---|---|---|---|
+| 2.1.0 | Uptime and status | 1.17 or later | 25 November 2026 |
 | 2.0.0 | Uptime and status | 1.17 or later | 20 November 2026 |
 | 1.1.4 | Outside services | 1.14 or later | 19 November 2026 |
 | 1.1.3 | Outside services | 1.14 or later | 17 November 2026 |
@@ -22,6 +23,12 @@ The catalogue offers each Starboard the newest version it can run, so a Starboar
 - **Your cards stay:** the one-line card is now **All checks** and the list is **Checks**.
 - **It asks for two more permissions**, marked as new before you update: its own page on your home network (`network:port`), and sending alerts through Starboard (`alerts:send`).
 - **Its own image:** the update downloads it once, about 25 MB.
+
+## What is new in 2.1.0
+
+Added:
+
+- **A certificate check:** write `Site: cert example.org` to watch a certificate alone, with no web request. It says the days left, is down when the certificate has run out or is not trusted, and the alert before it ends covers it.
 
 ## What is new in 2.0.0
 

@@ -87,6 +87,7 @@ When the card says a message was sent but nobody saw it:
 - Check that kind is activated under **What to send**. A deactivated kind is not sent and not listed.
 - For email, check the junk or spam folder of each address in **Send email to**.
 - For the person who asked, check **Tell the person who asked too** is activated, and that their line under **People** uses the name they use in Reelix or Seerr, such as `Sam, sam@example.com` or `Sam, telegram 123456`.
+- If nothing arrives at night, check **Hold alerts that are not urgent in quiet hours**: held messages go as one summary at the hour in **Quiet hours end at**. Select **Send what quiet hours held now** to send it at once. Urgent ones go at once unless **Still send urgent ones** is deactivated.
 - For New this week, it is sent on the day and at the hour in **When to send New this week**, and only when **New this week** is activated. By default it goes by email alone, so activate **Send by email** too. A week with nothing new sends nothing. Select **Send New this week now** to try it.
 
 ## Report a problem

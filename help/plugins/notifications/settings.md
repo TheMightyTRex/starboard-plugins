@@ -20,6 +20,17 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 ![Notifications' What to send, with When to send New this week outlined](../../images/notifications/settings-1-new-this-week.png)
 
+## Quiet hours
+
+| Setting | What it does | Default |
+|---|---|---|
+| **Hold alerts that are not urgent in quiet hours** | A request ready, a failed download, an app back or an update ready wait, and one summary goes when the quiet hours end. Activated or deactivated. | Deactivated |
+| **Quiet hours start at** | Choose every day. Only the hour counts. A schedule: every day, week or month, and a time. | Every day, 22:00 |
+| **Quiet hours end at** | Choose every day. The summary is sent at this hour. A schedule: every day, week or month, and a time. | Every day, 07:00 |
+| **Still send urgent ones** | An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Deactivate it to hold them too. Activated or deactivated. | Activated |
+
+![Notifications' Quiet hours, with Quiet hours start at outlined](../../images/notifications/settings-4-quiet-hours.png)
+
 ## Email
 
 | Setting | What it does | Default |
@@ -94,6 +105,7 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 These are on Notifications' tab.
 
 - **Send a test email**, **Send a test to Telegram**, **Send a test to Discord**, **Send a test by Signal**, **Send a test by Pushover**, **Send a test by ntfy** and **Send a test to the webhooks** each send "A test from Starboard" by that one channel, with the details saved. They work even before you activate the channel. Starboard says "Test sent by" and the channel, or "Test not sent" and why.
+- **Send what quiet hours held now** sends the summary of what was held straight away, even inside the quiet hours. It says "Sending what quiet hours held now". If nothing was held, nothing is sent.
 - **Send New this week now** sends New this week straight away, at any time, the way **Send New this week by** says, even while **New this week** is deactivated. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
 
 ![Notifications' Actions, with Send New this week now outlined](../../images/notifications/settings-3-send-now.png)
@@ -102,6 +114,7 @@ These are on Notifications' tab.
 
 - A setting you change is used for the next message; you do not need to deactivate it first.
 - Fill in a channel's details, select its test button, and activate **Send by** that channel only once the test arrives.
+- **Quiet hours** run from the start hour to the end hour in your server's time, over midnight when the start is later. Held messages are kept in the plug-in's folder, at most 200 a night, and go as one list of up to 40 lines, with the time of each and how many more. The person who asked for something that became ready is told then, in their own message. New this week and the test buttons are never held.
 - Each message goes by every active channel. One channel failing never stops the others.
 - Under **People**, give one line for each person, such as `Sam, sam@example.com` or `Sam, telegram 123456`. The name must be the one they use in Reelix or Seerr. Only email and Telegram can tell a person.
 - New this week is sent on the day and at the hour you choose in **When to send New this week**, once a week. A week with nothing new sends nothing.

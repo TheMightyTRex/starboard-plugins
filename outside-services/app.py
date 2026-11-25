@@ -2,7 +2,7 @@
 keeps 90 days of response times, warns before certificates run out, pauses its alerts in maintenance windows, and
 writes a read-only status page for your home network.
 
-- Checks: http, keyword, tcp, ping, dns and push (heartbeat), in checks.py, each written as one line in Settings,
+- Checks: http, keyword, tcp, ping, dns, cert and push (heartbeat), in checks.py, each written as one line in Settings,
   Plug-ins, Uptime and status, Checks. The addresses of Outside services' "Addresses to check" are web address checks,
   as before, so an update keeps them with no step.
 - History: history.py, 43 KB a check for 90 days, written once an hour.
@@ -198,7 +198,12 @@ def record(c, result, now=None):
 
 
 def run_one(c, now=None):
-    record(c, ck.run(c), now)
+    result = ck.run(c)
+    cert = result.pop("cert", None)
+    record(c, result, now)
+    if cert:  # a certificate check has just read it: keep it, so the alert some days before the end can be raised
+        CERTS[c["id"]] = cert
+        return
     target = ck.cert_target(c)
     if target and (time.time() - (CERTS.get(c["id"]) or {}).get("checked", 0) > CERT_EVERY):
         try:
@@ -573,7 +578,7 @@ def checks_page(said=None):
         items.append(item)
     out = {"type": "list", "title": "Checks", "intro": INTRO,
            "add": {"label": "Add a check", "placeholder": "Router: ping 192.168.1.1 in Home",
-                   "hint": "A name, a colon, then http, keyword, tcp, ping, dns or push and what to check"},
+                   "hint": "A name, a colon, then http, keyword, tcp, ping, dns, cert or push and what to check"},
            "items": items}
     if said:
         out["said"] = said

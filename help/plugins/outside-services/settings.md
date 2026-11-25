@@ -12,6 +12,7 @@ Each check is one line: a name, a colon, then what to check. Enter it in **Add a
 | `keyword` | `Shop: keyword https://example.org/shop "In stock"` | It answers under 400 and the words are on the page, in any case. With `without` before the words, they must not be there |
 | `tcp` | `NAS files: tcp 192.168.1.5:445` | The port takes a connection. Add `tls` to read the port's certificate |
 | `ping` | `Router: ping 192.168.1.1` | It answers ping within 8 seconds. Where the container may not send ping, it knocks on ports 443, 80, 22 and 53, and any answer counts |
+| `cert` | `Site: cert example.org` or `cert example.org:8443` | The certificate can be read, is trusted and has not run out. Its row says how many days are left, and it is down when the certificate has run out or is not trusted. No web request is sent |
 | `dns` | `Home name: dns example.org A is 192.0.2.10 at 192.168.1.1` | The name has a record of that type (`A`, `AAAA`, `CNAME`, `MX`, `NS` or `TXT`), with the value after `is` when you give one, asked of the server after `at` when you give one |
 | `push` | `Backup: push grace 25h` | Something calls its secret address within the grace time. Its row shows the address |
 
@@ -49,6 +50,7 @@ Each group made by `in` has a row with how many of its checks are up.
 
 ## Things to note
 
+- **A `cert` check** reads one certificate and nothing else, four times a day unless you write `every`, such as `cert example.org every 1h`. It sends the alert before the end like the others: set the days under **Warn when a certificate has this long left**.
 - **Certificates** are read for every `https` address and every `tcp` check with `tls`, every 6 hours. A home device with its own certificate is still up; the certificate says **Not trusted** and why.
 - **History:** 90 days of response times and uptime for each check, about 43 KB each.
 - A change is used at the next round, within a minute. Settings are kept when you update or deactivate it.
