@@ -83,7 +83,7 @@
    "version": "0.1.0",
    "starboard_api": ">=1.17 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/backups-watch/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5CYWNrdXBzIHdhdGNoIGxvZ288L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjMWY2YjRhIi8+PGVsbGlwc2UgY3g9IjIyIiBjeT0iMTQiIHJ4PSIxMiIgcnk9IjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNMTAgMTR2OWMwIDIuOCA1LjQgNSAxMiA1TTEwIDIzdjljMCAyLjggNS40IDUgMTIgNU0zNCAxNHY2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMzQiIGN5PSIzMyIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik0zMCAzM2wzIDMgNS02IiBmaWxsPSJub25lIiBzdHJva2U9IiMxZjZiNGEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
    "logo_alt": "Backups watch logo"
