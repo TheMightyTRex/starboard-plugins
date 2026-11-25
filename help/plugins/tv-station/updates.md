@@ -1,11 +1,12 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.7.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.8.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.9.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.8.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.7.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 22 November 2026 |
 | 0.6.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 21 November 2026 |
@@ -27,6 +28,19 @@ Create your own TV channel 0.7.0 is the latest version. It needs Starboard with 
 | 0.1.0 | 1.15 or later | 19 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
+
+## What is new in 0.9.0
+
+Not released yet.
+
+Added:
+
+- **Fit for Adverts:** in either grid, **Times shown** for **Adverts** can be **Fit**, which adds as many whole adverts as the break has room for, never cutting an advert or another item short, and the holding countdown makes up the rest. [Fit, and a break length for each column](settings.md#fit-and-a-break-length-for-each-column) says how.
+- **Break length for each column:** **Automatic**, or 2 to 30 minutes. A column whose items need more than that says so in words, and the programme still starts on time.
+
+Fixed:
+
+- **The holding countdown and Back soon count what comes after them:** a bumper, a promo, an ident, an other channel promo or a Coming soon promo placed after them. The clock reaches 0:00 as the programme starts, and the slide ends early by the length of what follows, in the classic breaks too. When a clip's length cannot be read, the length last seen is used and the log says so.
 
 ## What is new in 0.8.0
 

@@ -41,7 +41,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.8.0"
+VERSION = "0.9.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -607,7 +607,46 @@ def promo_clips(s, ch, cfg=None):
     return out
 
 
+_lengths = {"seen": None, "said": set()}
+
+
+def lengths_seen():
+    """The length last seen for each clip (0.9.0, DASH-550), read once from lengths.json in the plug-in's folder."""
+    if _lengths["seen"] is None:
+        try:
+            with open(os.path.join(sbplugin.DATA, "lengths.json")) as f:
+                _lengths["seen"] = {str(k): float(v) for k, v in json.load(f).items()}
+        except (OSError, ValueError, AttributeError):
+            _lengths["seen"] = {}
+    return _lengths["seen"]
+
+
+def note_lengths(clips):
+    """Keep each clip's length for the day one cannot be read, and say so in the log once for each clip. The file is only
+    written when a length is new or has changed."""
+    seen = lengths_seen()
+    before = dict(seen)
+    for line in schedule.remember_lengths(clips, seen):
+        if line not in _lengths["said"]:
+            _lengths["said"].add(line)
+            print(line, flush=True)
+    if seen != before:
+        try:
+            tmp = os.path.join(sbplugin.DATA, "lengths.json.tmp")
+            with open(tmp, "w") as f:
+                json.dump(seen, f)
+            os.replace(tmp, os.path.join(sbplugin.DATA, "lengths.json"))
+        except OSError:
+            pass
+
+
 def clips_for(s, ch, p=None, cfg=None):
+    out = clips_made(s, ch, p, cfg)
+    note_lengths(out)
+    return out
+
+
+def clips_made(s, ch, p=None, cfg=None):
     shared, own = s["shared"], ch.get("own") or {}
     idents = []
     if ch.get("idents") in ("own", "both"):
@@ -2871,15 +2910,27 @@ def breaks_available(s, ch, cfg=None):
             "back_soon": 1 if clips.get("holding") else 0}
 
 
-def breaks_grid_view(ch, which):
+def breaks_shortest(s, ch, cfg=None):
+    """The shortest clip of each kind a channel has, in seconds, for the grids' warnings (a kind with none is missing)."""
+    clips = clips_for(s, ch, channel_pack(s, ch), cfg)
+    made = [c for c in clips["fillers"] if c.get("role") == "promo"]
+    pools = {"bumper": clips["bumpers"], "promo": clips["fillers"], "adverts": clips["extras"],
+             "ident": clips["idents"] or ([clips["sting"]] if clips.get("sting") else []),
+             "other_promo": [c for c in made if c.get("cid") != ch["id"]], "coming_promo": [c for c in made if c.get("cid") == ch["id"]]}
+    return {k: min(float(c["dur"]) for c in v) for k, v in pools.items() if v and all(float(c.get("dur") or 0) > 0 for c in v)}
+
+
+def breaks_grid_view(ch, which, shortest=None):
     """One grid for the grids' page: its mode, its columns as shown, and what each holds."""
     saved = breakgrid.grid_of(ch, which)
     g = saved or breakgrid.view_of(ch, which)
     names = breakgrid.column_names(g)
     cols = []
     for i, name in enumerate(names):
-        cols.append({"name": name, "items": [{"kind": it["kind"], "name": breakgrid.KINDS[it["kind"]][0], "times": it["times"],
-                                              "counts": breakgrid.KINDS[it["kind"]][1]} for it in g["columns"][i]]})
+        cols.append({"name": name, "length": breakgrid.length_of(g, i), "length_words": breakgrid.length_words(breakgrid.length_of(g, i)),
+                     "warning": breakgrid.warning(g, i, shortest or {}),
+                     "items": [{"kind": it["kind"], "name": breakgrid.KINDS[it["kind"]][0], "times": it["times"], "fit": bool(it.get("fit")),
+                                "counts": breakgrid.KINDS[it["kind"]][1]} for it in g["columns"][i]]})
     kept = sum(len(c) for c in g["columns"][len(names):])
     return {"which": which, "name": breakgrid.GRID_WORDS[which], "saved": saved is not None, "mode": g["mode"], "count": g["count"],
             "columns": cols, "unused_items": kept, "fixed_count": g["mode"] in ("day", "time")}
@@ -2892,8 +2943,10 @@ def breaks_state(cid, said="", now=None):
         return {"channels": [], "cid": "", "grids": [], "kinds": breakgrid.kinds_words(), "modes": [],
                 "said": "Add a channel first, in Starboard: Settings, Plug-ins, Create your own TV channel, Channels"}
     ch = find(s, cid) or chans[0]
+    shortest = breaks_shortest(s, ch)
     return {"channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans], "cid": ch["id"],
-            "grids": [breaks_grid_view(ch, w) for w in breakgrid.GRIDS], "kinds": breakgrid.kinds_words(), "available": breaks_available(s, ch),
+            "grids": [breaks_grid_view(ch, w, shortest) for w in breakgrid.GRIDS], "lengths": [{"seconds": 0, "name": "Automatic"}] + [
+                {"seconds": n, "name": breakgrid.length_words(n)} for n in breakgrid.LENGTHS], "kinds": breakgrid.kinds_words(), "available": breaks_available(s, ch),
             "modes": [{"mode": m, "name": breakgrid.MODE_WORDS[m], "help": breakgrid.MODE_HELP[m]} for m in breakgrid.MODES],
             "most_columns": breakgrid.MOST_COLUMNS, "said": said}
 

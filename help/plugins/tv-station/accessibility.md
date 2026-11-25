@@ -47,3 +47,4 @@ The grids are the plug-in's own page, checked with axe (WCAG 2.2 AA) in light, d
 
 - [Accessibility in Starboard](https://themightytrex.github.io/starboard/help/accessibility/overview.html)
 - [Problems](problems.md)
+- **Fit and Break length (0.9.0):** **Times shown** for Adverts has **Fit** as a choice, described by a line under the list of items, and each column has a labelled **Break length** choice with its own help line. After a change, a column's warning, when it has one, is text in the column and is read out with what was changed. Both are keyboard choices in the same order as the rest of the column.

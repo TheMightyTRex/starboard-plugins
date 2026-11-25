@@ -127,14 +127,22 @@ Changing the choice loses nothing: columns the new choice does not use are kept,
 |---|---|---|
 | **Bumper** | A very short version of the ident with no music, from the broadcast pack | 1 to 6 |
 | **Promo** | A promo, a trailer or one of your clips, chosen at random | 1 to 6 |
-| **Adverts** | One of your extra videos, chosen at random | 1 to 6 |
+| **Adverts** | One of your extra videos, chosen at random | 1 to 6, or **Fit** |
 | **Ident** | An ident with its music | 1 to 6 |
 | **Other channel promo** | A promo for a programme on one of your other channels (**Show promos for your other channels** must be active) | 1 to 6 |
 | **Coming soon promo** | A Coming soon promo for a programme on this channel | 1 to 6 |
-| **Holding countdown** | The holding slide with the time to the programme's start. It takes the time that is left. The clock counts through any promo or ident after it, so it always shows the time to the start | Once |
-| **Back soon** | The holding slide with Back soon. It takes the time that is left | Once |
+| **Holding countdown** | The holding slide with the time to the programme's start. It takes the time that is left. The clock counts through everything after it (a bumper, a promo, an ident, an other channel promo or a Coming soon promo) and reaches 0:00 as the programme starts, so the slide ends early by the length of what follows | Once |
+| **Back soon** | The holding slide with Back soon. It takes the time that is left, and ends early enough for what follows it | Once |
 
 Each promo, clip or video plays once at most in a break, so **Promo** with 3 times shown is 3 different ones, or fewer when there are fewer. An item with nothing to play, or nothing that fits the time, is left out. A column has one holding slide at most. When the column has none, or the channel has no holding slide, Coming up next cards or a slate fill the time before the idents that end the break. A promo for a programme that has started is left out.
+
+### Fit, and a break length for each column
+
+**Fit** is a choice beside the numbers for **Adverts**, in **Times shown**. It adds as many whole adverts as the break has room for: the other items in the column keep their counts and their places, then the adverts go where the **Fit** item is, each at most once, in an order that turns by one each break so that over a day every advert has a turn first. An advert is never cut short, and nothing runs past the programme's start. Whatever time is left over, **Holding countdown** (or Back soon) makes up, so the countdown's own length changes from break to break. When too little is left for even the shortest advert, the countdown has it.
+
+Each column also has a **Break length**: **Automatic**, or 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25 or 30 minutes. In **In between programmes**, **Automatic** is the gap the schedule leaves, and a set length is the most that plays besides the countdown or the cards, which take the rest of the gap. In **Breaks**, **Automatic** is the longest break set for the channel (**Breaks inside programmes**), and a set length replaces it, as far as the programme has room. A column that was saved before 0.9.0 is **Automatic**.
+
+If a column's items need more time than its break length, the column says so in words, such as "These items need at least 2 minutes 35 seconds, but the break is 2 minutes. Some are left out so the programme starts on time.", and the message is read out after the change that caused it. The programme still starts on time: the last of the least wanted items go first (promos, then adverts, then bumpers; an ident is the last to go).
 
 ### Moving things: three ways
 
