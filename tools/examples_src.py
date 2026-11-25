@@ -524,7 +524,9 @@ IMAGE_VERSION = "1.2.6"
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = {"notifications", "backups-watch"}
+NEW_IN_IMAGE = set()
+# 1.2.6 was built from 0a0be8a (Notifications 1.4.0 and Backups watch 0.1.0's app.py included) and pinned on 25 November 2026
+# (sha256:0f5dc5966760...), so both run from the pinned image like the others and are published.
 # 1.2.5 (25 November 2026, DASH-522): Notifications 1.4.0's app.py is not in the pinned image, so its manifest names this tag
 # until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
 # 1.2.6 (25 November 2026): the Dockerfile had no COPY for Backups watch, so the 1.2.5 image (sha256:866e3a790459...) has no
