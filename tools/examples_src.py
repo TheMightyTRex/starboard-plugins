@@ -524,7 +524,9 @@ IMAGE_VERSION = "1.2.7"  # 1.2.7 (26 November 2026, DASH-517, DASH-518): UPS and
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = {"ups-power", "immich"}  # not in the pinned 1.2.6 image; they name 1.2.7 until it is built and pinned
+NEW_IN_IMAGE = set()
+# 1.2.7 was built from 152366e (UPS and power 0.1.0 and Immich 0.1.0 app.py included) and pinned on 26 November 2026
+# (sha256:d31add45f768...), checked by listing /app in the pinned image, so both run from it and are published.
 # 1.2.6 was built from 0a0be8a (Notifications 1.4.0 and Backups watch 0.1.0's app.py included) and pinned on 25 November 2026
 # (sha256:0f5dc5966760...), so both run from the pinned image like the others and are published.
 # 1.2.5 (25 November 2026, DASH-522): Notifications 1.4.0's app.py is not in the pinned image, so its manifest names this tag
