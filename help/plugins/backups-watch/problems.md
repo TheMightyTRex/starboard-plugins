@@ -33,7 +33,7 @@ q2: What does it say after the tool's name?
 
 1. Open the address in a browser on another computer. Backrest answers with its page, and the Kopia server with its sign-in.
 2. Check **Backup tool** matches the program at that address. Backrest's address is the one you open its page at, with no path after it.
-3. Where Starboard and the tool run on the same computer, use the computer's own address on your network, not `localhost`: Backups watch runs in its own container.
+3. Where Starboard and the tool run on the same computer, use the computer's own address on your network, not `localhost`. Backups watch runs in its own container.
 
 ## Read which backup
 

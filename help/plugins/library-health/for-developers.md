@@ -37,7 +37,7 @@ Each image is pinned by digest in the manifest:
 
 - `app.py` checks every 6 hours with `every()` from `sbplugin.py`, and when **Check now** sends `POST /check`. It asks Jellyfin for every film and series with its description, year and poster, in one request.
 - A title with no poster, no description or no year is kept in `/data/result.json`, with how many titles there were. Both cards read that file, so they never wait on Jellyfin.
-- The cards' status comes from `band()`: `waiting` before the first check, `problem` when the first check failed, `warning` with titles to fix and `ok` with none.
+- `band()` sets the cards' status: `waiting` before the first check, `problem` when the first check failed, `warning` with titles to fix and `ok` with none.
 
 ## Find out more
 

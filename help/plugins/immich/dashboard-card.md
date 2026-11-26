@@ -13,7 +13,7 @@ Shows how many photos and videos Immich holds, with the split and the space they
 
 ## Immich storage
 
-Shows where the space goes, photos and videos, then the disk Immich is on: how much is used, how full it is and how much is free, and the people who use the most space.
+Shows where the space goes, photos and videos. Then it shows the disk Immich is on: how much is used, how full it is and how much is free. It also shows the people who use the most space.
 
 - **How often it updates:** every 5 minutes while the dashboard is open.
 - **Status:** **Nearly full** from 90% and **Full** from 98%, the same limits as Starboard's own disk card.

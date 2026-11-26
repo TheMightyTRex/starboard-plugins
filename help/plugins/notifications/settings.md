@@ -104,9 +104,9 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 These are on Notifications' tab.
 
-- **Send a test email**, **Send a test to Telegram**, **Send a test to Discord**, **Send a test by Signal**, **Send a test by Pushover**, **Send a test by ntfy** and **Send a test to the webhooks** each send "A test from Starboard" by that one channel, with the details saved. They work even before you activate the channel. Starboard says "Test sent by" and the channel, or "Test not sent" and why.
+- **Send a test email**, **Send a test to Telegram**, **Send a test to Discord**, **Send a test by Signal**, **Send a test by Pushover**, **Send a test by ntfy** and **Send a test to the webhooks** each send "A test from Starboard" by that one channel. They use the details you saved. They work even before you activate the channel. Starboard says "Test sent by" and the channel, or "Test not sent" and why.
 - **Send what quiet hours held now** sends the summary of what was held straight away, even inside the quiet hours. It says "Sending what quiet hours held now". If nothing was held, nothing is sent.
-- **Send New this week now** sends New this week straight away, at any time, the way **Send New this week by** says, even while **New this week** is deactivated. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
+- **Send New this week now** sends New this week straight away, at any time. It goes the way **Send New this week by** says, even while **New this week** is deactivated. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
 
 ![Notifications' Actions, with Send New this week now outlined](../../images/notifications/settings-3-send-now.png)
 
@@ -114,11 +114,11 @@ These are on Notifications' tab.
 
 - A setting you change is used for the next message; you do not need to deactivate it first.
 - Fill in a channel's details, select its test button, and activate **Send by** that channel only once the test arrives.
-- **Quiet hours** run from the start hour to the end hour in your server's time, over midnight when the start is later. Held messages are kept in the plug-in's folder, at most 200 a night, and go as one list of up to 40 lines, with the time of each and how many more. The person who asked for something that became ready is told then, in their own message. New this week and the test buttons are never held.
+- **Quiet hours** run from the start hour to the end hour in your server's time, over midnight when the start is later. The plug-in keeps held messages in its folder, at most 200 a night. They go as one list of up to 40 lines, with the time of each and how many more. The person who asked for something that became ready is told then, in their own message. New this week and the test buttons are never held.
 - Each message goes by every active channel. One channel failing never stops the others.
 - Under **People**, give one line for each person, such as `Sam, sam@example.com` or `Sam, telegram 123456`. The name must be the one they use in Reelix or Seerr. Only email and Telegram can tell a person.
 - New this week is sent on the day and at the hour you choose in **When to send New this week**, once a week. A week with nothing new sends nothing.
-- Passwords, tokens, keys and webhook addresses are secret: Starboard never shows them again, and the plug-in never writes them to its log, its cards or its folder.
+- Passwords, tokens, keys and webhook addresses are secret. Starboard never shows them again. The plug-in never writes them to its log, its cards or its folder.
 - On ntfy.sh anyone who knows the topic can read it, so make the topic hard to guess.
 - Signal works only if you already run signal-cli-rest-api with a number registered. Otherwise leave **Send by Signal** deactivated.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.

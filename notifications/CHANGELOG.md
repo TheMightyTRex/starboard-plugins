@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1 (26 November 2026)
+
+### Changed
+- Plainer wording in the text and help pages. How it works has not changed.
+
 ## 1.4.0 (25 November 2026)
 
 ### Added
@@ -8,7 +13,7 @@
 ## 1.3.0 (22 November 2026)
 
 ### Added
-- New this week, by email: a weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only and no pictures. You choose the day and the hour, and it can go by email alone or by every way you activated.
+- New this week, by email: a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, and no pictures. You choose the day and the hour, and it can go by email alone or by every way you activated.
 
 ### Changed
 - Deactivated at first: New this week is now deactivated until you activate it under What to send. Send New this week on is replaced by When to send New this week, one setting for the day and the hour.
@@ -21,13 +26,13 @@
 ## 1.1.4 (19 November 2026)
 
 ### Changed
-- Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
+- Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder. So it works on its own closed network too. An older Starboard works as before.
 
 ## 1.1.3 (17 November 2026)
 
 ### Changed
 - Clearer words: each channel's switch says what to enter before you activate it, the band says Not sent, and a message about an event it does not know says "Starboard has an alert. Open Starboard for the details."
-- Logo description: where its logo stands on its own, a screen reader says "Notifications logo", the plug-in's name, instead of a description of the symbol.
+- Logo description: a screen reader says "Notifications logo", the plug-in's name, instead of a description of the symbol.
 
 ## 1.1.2 (17 November 2026)
 
@@ -37,7 +42,7 @@
 ## 1.1.1 (16 November 2026)
 
 ### Changed
-- Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.
+- Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second. It writes nothing to its folder when a run goes well.
 - Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## 1.1.0 (15 November 2026)

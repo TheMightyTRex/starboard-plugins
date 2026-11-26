@@ -17,7 +17,7 @@ Immich's settings are on its own tab: go to **Settings**, then **Plug-ins**, the
 
 - Make a key for Starboard alone, so you can remove it in Immich if you stop using the plug-in. Read only permissions are enough: it never changes anything.
 - Nothing is asked until a card is shown. Each answer is kept for a minute, so a dashboard with all three cards makes three small requests a minute at most.
-- Where Starboard and Immich run on the same computer, use the computer's own address on your network, not `localhost`: Immich's plug-in runs in its own container.
+- Where Starboard and Immich run on the same computer, use the computer's own address on your network, not `localhost`. Immich's plug-in runs in its own container.
 
 ## Find out more
 

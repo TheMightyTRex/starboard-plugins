@@ -11,7 +11,7 @@ Shows how many films and series in Jellyfin have no poster, no description or no
 
 ## To fix in Jellyfin
 
-Shows a short list, up to 10 lines: the films and series to fix, each with what it is missing, such as "No poster" or "No description, no year". With nothing to fix, it says "Nothing to fix" and "Every title has a poster, a description and a year".
+Shows a short list, up to 10 lines. It lists the films and series to fix, each with what it is missing, such as "No poster" or "No description, no year". With nothing to fix, it says "Nothing to fix" and "Every title has a poster, a description and a year".
 
 - **How often it updates:** Library health checks Jellyfin every 6 hours, or when you select **Check now**. The card is asked once a minute while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:**

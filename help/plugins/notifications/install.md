@@ -6,7 +6,14 @@ Add Notifications from Starboard's **Catalogue**, where it is listed under **Sys
 
 - Starboard with plug-in API 1.16 or later (Starboard 0.23.0). An older Starboard is offered version 1.1.3: read [Updates](updates.md).
 - Your Starboard password. Adding and removing a plug-in ask for it.
-- The details for at least one way to send: an email account that can send by SMTP, a Telegram bot, a Discord webhook, a Pushover account, an ntfy topic, a webhook address, or signal-cli-rest-api you already run.
+- The details for at least one way to send. This can be:
+  - an email account that can send by SMTP
+  - a Telegram bot
+  - a Discord webhook
+  - a Pushover account
+  - an ntfy topic
+  - a webhook address
+  - signal-cli-rest-api that you already run
 
 ## What it may do
 
@@ -54,7 +61,7 @@ Tip: Notifications is marked **Recommended** in the catalogue.
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json
@@ -66,7 +73,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 1. Go to **Settings**, then **Plug-ins**, then **Notifications**.
 2. Under **Remove**, select **Remove Notifications**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted.

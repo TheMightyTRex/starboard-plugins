@@ -35,7 +35,7 @@ The image is the shared examples image. Until it is built and pinned by digest, 
 
 ## How it works
 
-- A background thread asks the UPS once a minute and keeps the reading in `/data/state.json`, with a history of one point every 5 minutes (96 kept) and the last 10 times the power switched. The cards read only that file, so a card never asks the UPS.
+- A background thread asks the UPS once a minute and keeps the reading in `/data/state.json`. It keeps a history of one point every 5 minutes (96 kept) and the last 10 times the power switched. The cards read only that file, so a card never asks the UPS.
 - **NUT:** a TCP connection to port 3493 with `LIST UPS`, then `LIST VAR <ups>`, then `LOGOUT`. Each `VAR <ups> <name> "<value>"` line is one variable. At most 600 lines and 128 KB are read, and the whole exchange has a deadline.
 - **PeaNUT:** `GET <address>/api/v1/devices/<ups>` (or `/api/v1/devices?meta=true` for the first), with HTTP Basic sign-in when set. The answer is read whether its variables are flat (`battery.charge`) or nested (`battery: {charge}`).
 - Neither was tried against a real UPS. The tests use a made-up NUT server that speaks the real text protocol, and recorded PeaNUT answers that follow its README.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 (26 November 2026)
+
+### Changed
+- Plainer wording in the text and help pages. How it works has not changed.
+
 ## 0.1.0 (22 November 2026)
 
 ### Added

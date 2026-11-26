@@ -142,7 +142,7 @@ class Job(unittest.TestCase):
 class Manifest(unittest.TestCase):
     def test_it_rests_and_runs_hourly(self):
         m = manifest("backups-watch")
-        self.assertEqual(m["version"], "0.1.0")
+        self.assertEqual(m["version"], "0.1.1")
         self.assertEqual(m["containers"][0]["start"], "when_needed")
         self.assertEqual(m["jobs"][0]["every_hours"], 1)
         self.assertIn("alerts:send", m["permissions"])
