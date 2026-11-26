@@ -4,9 +4,9 @@ Library clean-up adds 1 card you can put on your dashboard. Each starts with a b
 
 ## Holding folder
 
-Shows how much is in the holding folder. Under it, how many items are held and when it checks next, what **Preview** would move while moving is deactivated, or how far the work it is on has gone.
+Shows how much is in the holding folder. Under it, it says how many items are held and when it checks next. While moving is deactivated, it shows what **Preview** would move. While it works, it shows how far it has got.
 
-- **How often it updates:** every 30 seconds while it is working, and every 10 minutes the rest of the time, while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
+- **How often it updates:** every 30 seconds while it is working, and every 10 minutes the rest of the time. This happens only while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
 - **Example:** 186.40 GB in the holding folder. 41 items held. Next check in quiet hours
 
 ![The Holding folder card in the light theme, with example data](../../images/library-cleanup/dashboard-card-2-light.png)

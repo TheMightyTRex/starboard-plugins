@@ -82,7 +82,7 @@ The card says "Stopped the tunnel to keep your apps safe" and names a route. Rem
    - **"Not checked: Remote access could not read Starboard's apps"**: the same cause as the one before. It goes once Remote access can reach Starboard.
    - **"is not in Starboard's apps, so it is not shared"**: add the app in **Settings**, **Apps** first.
    - **"is not answering"**: the app is not running, or has moved. Check it in **System**, **Apps**.
-   - **"does not open at"** a name, or the steps to use your Tailscale name: in Starboard's folder on the server, add the name to `STARBOARD_ALLOWED_HOSTS` in the `.env` file (names separated by commas), then run `./update.sh`.
+   - **"does not open at"** a name, or the steps to use your Tailscale name: on the server, in Starboard's folder, add the name to `STARBOARD_ALLOWED_HOSTS` in the `.env` file (separate names with commas). Then run `./update.sh`.
    - **"No route in Cloudflare leads to"** an app: add a public hostname for it in Cloudflare.
 4. With Tailscale, check your phone is signed in to the same tailnet.
 

@@ -1,11 +1,12 @@
 # Philips Hue: Updates
 
-Philips Hue 0.1.0 is the latest version, and the first. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0).
+Philips Hue 0.1.1 is the latest version, and the first. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0).
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.1.1 | 1.16 or later | Not released yet |
 | 0.1.0 | 1.16 or later | 20 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run. A Starboard with an older plug-in API is not offered Philips Hue.
@@ -15,8 +16,8 @@ The catalogue offers each Starboard the newest version it can run. A Starboard w
 Added:
 
 - **Pairing on your home network:** give the bridge's address, or choose one found on the network, then press its link button. Nothing goes to the Hue cloud.
-- **Lights three ways:** by room, by zone and by device type, each light with on and off, brightness, and a colour or a white named in words.
-- **A switch for every light** in a room, a zone, a type or the whole home, and the brightness and colour of them all at once.
+- **Lights three ways:** by room, by zone and by device type. Each light has on and off, brightness, and a colour or a white named in words.
+- **A switch for every light** in a room, a zone, a type or the whole home. You can also set the brightness and colour of them all at once.
 - **Scenes:** each room's and zone's scenes, to show one or turn the room off.
 - **Schedules in words,** such as Every weekday at 07:00, Kitchen to 80%, with sunrise and sunset. Kept on the bridge, so they run while the plug-in rests.
 - **When something plays:** a scene of your choice when someone starts playing something in Jellyfin, after sunset if you like.
@@ -26,7 +27,7 @@ Added:
 
 - Philips Hue runs nothing in the background, so there is nothing to finish first: Starboard stops it, installs the new version and starts it again.
 - Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
-- Your settings and its folder are kept: the bridge's address and key, your choice for **When something plays**, and its list of the schedules it made.
+- Starboard keeps your settings and its folder. That covers the bridge's address and key, your choice for **When something plays**, and its list of the schedules it made.
 - Your schedules are kept on the bridge, so they run while it updates.
 
 ## Update it

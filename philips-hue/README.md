@@ -29,8 +29,7 @@ cannot reach says **Not reachable**.
 
 ## Schedules in words
 
-Write when, at what time, then what, and the list shows each schedule in the same words, so you change one by
-changing its words with **Change**:
+Write when, at what time, then what. The list shows each schedule in the same words, so you change one by changing its words with **Change**:
 
 - `Every weekday at 07:00, Kitchen to 80%`
 - `Every Monday, Wednesday and Friday at sunset, Lounge to Relax` (a scene)
@@ -42,8 +41,7 @@ Days can be every day, weekday or weekend, or days by name. Times are hours and 
 name after the comma is a room, a zone, a light or every light. Each schedule is activated and deactivated with
 **Activate** and **Deactivate**, and removed from the row's **More** menu.
 
-Schedules are kept on the bridge, so they run while Starboard or this plug-in rests. The bridge's newer API (CLIP
-v2) has no schedules, so these use its version 1 schedules, and rules on its daylight sensor for sunrise and sunset.
+Schedules are kept on the bridge, so they run while Starboard or this plug-in rests. The bridge's newer API (CLIP v2) has no schedules. So these use its version 1 schedules, and rules on its daylight sensor for sunrise and sunset.
 Sunrise and sunset need your location set in the Hue app. A one-off schedule is removed by the bridge once it has
 run. Schedules made in the Hue app or another app are listed under **Made in another app**, to read only.
 
@@ -51,7 +49,7 @@ run. Schedules made in the Hue app or another app are listed under **Made in ano
 
 On the **When something plays** tab, activate one scene. When Starboard finds something has started playing in Jellyfin, the
 plug-in runs that scene. Starboard checks what is playing every 5 minutes, so the lights can change up to 5 minutes
-after it starts. **Only after sunset** (on when added) runs it only when the bridge's daylight sensor says it is dark;
+after it starts. **Only after sunset** (on when added) runs it only when the bridge's daylight sensor says it is dark.
 **Only when playing in these apps** limits it to apps you name, such as Jellyfin Android TV.
 
 ## On the dashboard
@@ -59,8 +57,7 @@ after it starts. **Only after sunset** (on when added) runs it only when the bri
 - **Rooms**: a list card of your rooms and their lights, such as "Kitchen: On at 80%, 2 of 3 lights".
 - **Lights on**: a status card, such as "Lights on in Kitchen and Lounge".
 
-Plug-in cards cannot hold buttons, so the quick on and off is **Turn every light off** and **Turn every light on**
-under **Actions** on the plug-in's page.
+Plug-in cards cannot hold buttons. For a quick on and off, use **Turn every light off** and **Turn every light on** under **Actions** on the plug-in's page.
 
 ## What it may do
 
@@ -71,9 +68,7 @@ under **Actions** on the plug-in's page.
   bridge whose certificate is not the one it paired with, so nothing else on the network can pose as the bridge.
 - It runs one small container: 48 MB of memory and a quarter of a processor at most. It rests when not used
   (`"start": "when_needed"`), and Starboard starts it again when you open its page, a card asks or an event comes.
-- Memory, measured 20 November 2026 against a made-up bridge with 8 lights in 4 rooms and 2 zones, locked down as
-  Starboard runs it: 15.4 MB at start, 16.6 MB after 160 screens, schedules and switches, 15.6 MB a minute later,
-  0% of a processor at rest, and nothing while it rests.
+- Memory, measured 20 November 2026 against a made-up bridge with 8 lights in 4 rooms and 2 zones, locked down as Starboard runs it. It used 15.4 MB at start, 16.6 MB after 160 screens, schedules and switches, and 15.6 MB a minute later. It uses 0% of a processor at rest, and nothing while it rests.
 
 ## Finding the bridge
 

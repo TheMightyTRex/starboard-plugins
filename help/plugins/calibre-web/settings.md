@@ -1,6 +1,6 @@
 # Calibre-Web: Settings
 
-Calibre-Web has no settings in Starboard to change. Starboard sets it up when it first starts, and everything else is set in the app itself, on its own page: open it with **Open Calibre-Web** on its tab.
+Calibre-Web has no settings in Starboard to change. Starboard sets it up when it first starts. You set everything else in the app itself, on its own page. Open it with **Open Calibre-Web** on its tab.
 
 ## Its first sign-in
 

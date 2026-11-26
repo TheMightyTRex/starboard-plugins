@@ -20,7 +20,7 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- Kavita is an app plug-in: it runs Kavita's own image, pinned by digest, started with `/kavita/Kavita`, with no code of its own and no dashboard card.
+- Kavita is an app plug-in. It runs Kavita's own image, pinned by digest, started with `/kavita/Kavita`. It has no code of its own and no dashboard card.
 - Its page is published on your home network (`network:port`). Starboard chooses the port, 5000 when it is free.
 - Its own folder is mounted at `/kavita/config`. `/media/books` and `/media/comics` are mounted read only.
 - `appsettings.json` is written into its folder once, before Kavita first starts, with `{secret:token_key}` filled in with a sign-in key Starboard makes for this install. It is never written over what Kavita or the owner changed.

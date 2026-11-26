@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "maintainerr",
  "name": "Maintainerr",
- "version": "1.1.1",
+ "version": "1.1.2",
  "description": "Maintainerr, clean-up rules for Jellyfin, such as films everyone has watched. It changes nothing until you give it keys and a rule that removes.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -42,6 +42,13 @@
   "alt": "Maintainerr logo"
  },
  "changes": [
+  {
+   "version": "1.1.2",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.1.1",
    "date": "2026-11-17",

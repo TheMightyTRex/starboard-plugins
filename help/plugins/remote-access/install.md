@@ -30,7 +30,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 Measured:
 
-- About 20 MB with nothing chosen, 22 to 32 MB with Tailscale waiting to sign in, and 20 to 30 MB with Cloudflare Tunnel, and 0.01 to 0.03% of a core at rest (13 November 2026).
+- About 20 MB with nothing chosen, 22 to 32 MB with Tailscale waiting to sign in, and 20 to 30 MB with Cloudflare Tunnel. It uses 0.01 to 0.03% of a core at rest (13 November 2026).
 
 ## Add it
 
@@ -85,7 +85,7 @@ Cloudflare's terms limit how much video its free service carries, so use Tailsca
 
 1. Go to **Settings**, then **Plug-ins**, then **Remote access**.
 2. Under **Remove**, select **Remove Remote access**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted.

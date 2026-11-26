@@ -40,7 +40,7 @@ Measured:
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/navidrome/starboard-plugin.json
@@ -58,13 +58,13 @@ Navidrome's tab shows its address on your home network, with **Open**. Anyone on
 2. In **Its web page**, select **Open Navidrome**.
 3. Make the first account. It is Navidrome's admin, so give it a strong password.
 4. Put your music in `music` in your media folder. Navidrome reads it there, read only.
-5. In your Subsonic app, such as Symfonium, Substreamer, Amperfy or play:Sub, add a server with the address Starboard shows, such as `http://192.168.1.20:4533`, and the account you made.
+5. In your Subsonic app, such as Symfonium, Substreamer, Amperfy or play:Sub, add a server. Use the address Starboard shows, such as `http://192.168.1.20:4533`, and the account you made.
 
 ## Remove it
 
 1. Go to **Settings**, then **Plug-ins**, then **Navidrome**.
 2. Under **Remove**, select **Remove Navidrome**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes. **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted.

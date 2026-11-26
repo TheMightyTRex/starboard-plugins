@@ -22,7 +22,7 @@ It uses `network:lan` only to reach the bridge. It asks for `media:read` only so
 
 What it runs:
 
-- **main:** reaches the Hue bridge on your home network over HTTPS. It can use its own folder in Starboard's data (`data/plugins/philips-hue`), where it keeps the bridge's address, the key the bridge gave it and the bridge's certificate fingerprint.
+- **main:** reaches the Hue bridge on your home network over HTTPS. It can use its own folder in Starboard's data (`data/plugins/philips-hue`). There it keeps the bridge's address, the key the bridge gave it and the bridge's certificate fingerprint.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest once GitHub has built it, so what you approved is what runs.
 
@@ -30,7 +30,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 - **main:** 48 MB of memory and a quarter of a processor core at most.
 - It rests when nothing asks it anything, and Starboard starts it again when you open its tab, a card asks or something starts playing. It rests again after 15 minutes with nothing to do.
-- Measured on 20 November 2026 against a made-up bridge with 8 lights in 4 rooms and 2 zones: 15.4 MB at start, 16.6 MB after 160 page loads, schedules and switches, 0% of a processor at rest, and nothing while it rests.
+- Measured on 20 November 2026 against a made-up bridge with 8 lights in 4 rooms and 2 zones, it used 15.4 MB at start. It used 16.6 MB after 160 page loads, schedules and switches. It uses 0% of a processor at rest, and nothing while it rests.
 
 ## Add it
 
@@ -66,7 +66,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
    ![The Bridge tab before pairing, with the address box and Pair with a bridge (step 2) outlined](../../images/philips-hue/install-1-pair.png)
 
-3. Press the round link button on top of the bridge. The page says **Press the link button on** and the bridge's name, with a bar and the seconds left: it waits 90 seconds and pairs as soon as the button is pressed.
+3. Press the round link button on top of the bridge. The page says **Press the link button on** and the bridge's name, with a bar and the seconds left. It waits 90 seconds and pairs as soon as you press the button.
 
    ![The Bridge tab waiting, with the notice Press the link button on Hue Bridge and its 90 seconds left (step 3) outlined](../../images/philips-hue/install-2-link-button.png)
 
@@ -74,7 +74,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
    ![The Bridge tab after pairing, with the notice Paired with Hue Bridge (step 4) and the bridge's Paired row outlined](../../images/philips-hue/install-3-paired.png)
 
-If the button was not pressed in time, the page says **The link button was not pressed in time**: select **Activate** beside the bridge and press the button again.
+If you did not press the button in time, the page says **The link button was not pressed in time**. Select **Activate** beside the bridge and press the button again.
 
 Then put its cards on your dashboard. Read [Dashboard card](dashboard-card.md).
 
@@ -85,7 +85,7 @@ Then put its cards on your dashboard. Read [Dashboard card](dashboard-card.md).
 3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**.
 4. Enter your Starboard password and select **Remove**.
 
-Its container stops and its API key stops working. Nothing is deleted. Your lights, scenes and the schedules it made stay on the bridge and keep running: remove those schedules first on **Schedules** if you no longer want them. The Hue app lists it among the bridge's connected apps as `starboard#philips-hue`, where you can remove its key too. To stop it for a while instead, select **Deactivate** on its tab.
+Its container stops and its API key stops working. Nothing is deleted. Your lights, scenes and the schedules it made stay on the bridge and keep running. If you no longer want those schedules, remove them first on **Schedules**. The Hue app lists it among the bridge's connected apps as `starboard#philips-hue`, where you can remove its key too. To stop it for a while instead, select **Deactivate** on its tab.
 
 ## Find out more
 

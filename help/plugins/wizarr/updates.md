@@ -1,11 +1,12 @@
 # Wizarr: Updates
 
-Wizarr 1.1.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Wizarr 1.1.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.2 | 1.14 or later | Not released yet |
 | 1.1.1 | 1.14 or later | 17 November 2026 |
 | 1.1.0 | 1.14 or later | 15 November 2026 |
 | 1.0.0 | 1.13 or later | 13 November 2026 |
@@ -39,7 +40,7 @@ Added:
 - Wizarr has no step before an update: Starboard stops it, installs the new version and starts it again.
 - It has no health check of its own, so Starboard waits for its containers to start. If they do not, Starboard goes back to the version you had by itself.
 - Your settings and its folder are kept.
-- **Roll back** brings back the older Wizarr and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
+- **Roll back** brings back the older Wizarr and your settings. It does not bring back its folder as it was. If the newer app changed its own data, that stays. Back up its folder first if you are unsure.
 
 ## Update it
 

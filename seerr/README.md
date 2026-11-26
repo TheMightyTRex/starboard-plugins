@@ -2,8 +2,7 @@
 
 Seerr, a requests page for Jellyfin users. Reelix already has requests in Starboard, so most people do not need it.
 
-An app plug-in for Starboard (plug-in API 1.14 or later): Seerr runs outside the main install, in Starboard's locked-down
-containers, with its own page on your home network. Starboard chooses the port (5055 when it is free) and shows the address
+An app plug-in for Starboard (plug-in API 1.14 or later). Seerr runs outside the main install, in Starboard's locked-down containers. It has its own page on your home network. Starboard chooses the port (5055 when it is free) and shows the address
 on the plug-in's page with **Open**.
 
 ## Who it is for
@@ -19,7 +18,7 @@ People whose Jellyfin users already know Seerr's request page. Reelix already ha
 
 - It can change: Its own folder in Starboard's data (data/plugins/seerr).
 - It can reach: Other computers on your home network, and the internet.
-- It can reach: Its own web page is opened on your home network: anyone on your home network can open it, at this computer's address and a port Starboard chooses.
+- It can reach: Its own web page on your home network. Anyone on your home network can open it, at this computer's address and a port Starboard chooses.
 
 It runs read only, as a user that is not root, with no extra rights, like every plug-in. Its images, pinned by digest:
 
@@ -38,8 +37,8 @@ What it uses when nobody is using it, measured with `tools/app_check.py` (median
 ## Removing it
 
 **Settings**, **Plug-ins**, Seerr, **Remove**. Its containers stop and go and its key stops working. You choose
-where its folder goes, with everything it kept (settings):
-kept in `data/plugins/.removed`, or moved to the holding folder in **System**, **Clean up**.
+where its folder goes, with everything it kept (settings). It is either
+kept in `data/plugins/.removed` or moved to the holding folder in **System**, **Clean up**.
 From there you can put it back or delete it permanently. Starboard never deletes it. Your media folder is not touched.
 
 ## Licence

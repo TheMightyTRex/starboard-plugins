@@ -1,12 +1,12 @@
 # Philips Hue: Dashboard card
 
-Philips Hue adds 2 cards you can put on your dashboard: **Rooms** and **Lights on**. Each starts with a band: its logo and name and a status in words. A footer says when it last changed. Each is asked once a minute while the dashboard is open, never while the browser tab is hidden, and the plug-in reads the bridge on your home network to answer.
+Philips Hue adds 2 cards you can put on your dashboard: **Rooms** and **Lights on**. Each starts with a band: its logo and name and a status in words. A footer says when it last changed. Starboard asks each card once a minute while the dashboard is open, never while the browser tab is hidden. To answer, the plug-in reads the bridge on your home network.
 
 ![The Rooms and Lights on cards side by side on the dashboard, both outlined](../../images/philips-hue/dashboard-card-1-both.png)
 
 ## Rooms
 
-A list of your rooms, up to 10, each with its lights in words: **Off**, **On at** a brightness, how many of its lights are on when only some are, or **Not reachable** when the bridge can reach none of them. The band says how many rooms have lights on, or **All off**.
+A list of your rooms, up to 10, each with its lights in words. Each room says **Off**, **On at** a brightness, or how many of its lights are on when only some are. It says **Not reachable** when the bridge can reach none of them. The band says how many rooms have lights on, or **All off**.
 
 - **Example:** Kitchen: On at 80%, 2 of 3 lights
 

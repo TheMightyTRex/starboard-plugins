@@ -1,11 +1,12 @@
 # Themearr: Updates
 
-Themearr 1.0.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Themearr 1.0.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.1 | 1.14 or later | Not released yet |
 | 1.0.0 | 1.14 or later | 17 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
@@ -24,7 +25,7 @@ Added:
 - Themearr has no step before an update: Starboard stops it, installs the new version and starts it again.
 - Starboard waits for its helper to answer its health check. If it does not, Starboard goes back to the version you had by itself.
 - Your settings, its folder and the tunes in your film folders are kept.
-- **Roll back** brings back the older Themearr and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
+- **Roll back** brings back the older Themearr and your settings. It does not bring back its folder as it was. If the newer app changed its own data, that stays. Back up its folder first if you are unsure.
 - Themearr's own **Updates** page cannot update it here, as its files are read only: Starboard updates it, from the catalogue.
 
 ## Update it

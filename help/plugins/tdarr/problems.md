@@ -42,7 +42,7 @@ Your Starboard's plug-in API is outside what this version of Tdarr works with, s
 
 ## Open its page
 
-Tdarr's page is on your home network, at this computer's address and the port Starboard chose for it: 8265 when it is free, otherwise the next free port.
+Tdarr's page is on your home network, at this computer's address. Starboard chose the port: 8265 when it is free, otherwise the next free port.
 
 1. Check Tdarr's tab says **Active**. Starboard gives it a port only once it is active.
 2. Under **Its web page**, read the address, then select **Open Tdarr**.
@@ -77,7 +77,7 @@ On its tab, under **Settings**:
 - **Tdarr has none of the folders this plug-in copies**: there is nothing to bring in. Set it up as a new Tdarr.
 - **Starboard could not stop Tdarr for the copy**, or **The copy did not finish**: read the rest of the message, then try again. Go to **System**, then **Logs**, for more.
 
-If the plug-in had made folders of its own already, Starboard puts them beside the copy, named `before-copy` with the date and time, and deletes nothing.
+If the plug-in had made folders of its own already, Starboard puts them beside the copy, named `before-copy` with the date and time. It deletes nothing.
 
 ## Report a problem
 

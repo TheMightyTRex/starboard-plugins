@@ -1,11 +1,12 @@
 # Remote access: Updates
 
-Remote access 1.1.4 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Remote access 1.1.5 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.5 | 1.14 or later | Not released yet |
 | 1.1.4 | 1.14 or later | 18 November 2026 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
 | 1.1.2 | 1.14 or later | 17 November 2026 |
@@ -19,7 +20,7 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Changed:
 
-- **Clearer messages with what to do:** when it cannot reach Starboard it says so and to update Starboard, then Start again; an app it could not check says Not checked instead of saying it is missing; a missing app says to add it in Settings, Apps.
+- **Clearer messages with what to do:** when it cannot reach Starboard, it says so and tells you to update Starboard, then Start again. An app it could not check says Not checked instead of saying it is missing. A missing app says to add it in Settings, Apps.
 - **Your Tailscale name:** it checks whether Starboard opens at the name, says when it works, and otherwise gives the steps to add it to STARBOARD_ALLOWED_HOSTS.
 
 ## What is new in 1.1.3
@@ -27,7 +28,7 @@ Changed:
 Changed:
 
 - **Clearer words:** **Cloudflare tunnel token** is now **Cloudflare Tunnel token**, and its messages say "the server" instead of "this computer".
-- **Logo description:** where its logo stands on its own, a screen reader says "Remote access logo", the plug-in's name, instead of a description of the symbol.
+- **Logo description:** where its logo stands on its own, a screen reader says "Remote access logo", the plug-in's name. It no longer describes the symbol.
 
 ## What is new in 1.1.2
 

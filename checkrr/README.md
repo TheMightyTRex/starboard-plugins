@@ -2,18 +2,18 @@
 
 Checkrr checks your films and series for damaged files each Sunday night and lists them. It only reports: it never deletes, moves or replaces a file, and reads your media read only.
 
-An app plug-in for Starboard (plug-in API 1.14 or later): Checkrr runs outside the main install, in Starboard's locked-down
-containers, with its own page on your home network. Starboard chooses the port (8585 when it is free) and shows the address
+An app plug-in for Starboard (plug-in API 1.14 or later). Checkrr runs outside the main install, in Starboard's locked-down
+containers. It has its own page on your home network. Starboard chooses the port (8585 when it is free) and shows the address
 on the plug-in's page with **Open**.
 
 ## Who it is for
 
-People who want to know before a film night that a file will not play: files damaged by a failing disk, a download that went wrong or a copy cut short at the start. Checkrr reads each file in your `movies` and `tv` folders, checks it is a film or episode FFprobe can read, and lists the ones that fail.
+People who want to know before a film night that a file will not play. Causes include a failing disk, a download that went wrong or a copy cut short at the start. Checkrr reads each file in your `movies` and `tv` folders. It checks that FFprobe can read the file as a film or episode, and lists the ones that fail.
 
 ## What it does with a bad file
 
 It adds it to its list, with its reason, and the plug-in's card and page show it. Nothing else: it never deletes, moves,
-renames or replaces a file. It reads the folders read only, and it is given no Reelix, Radarr or Sonarr, so its own way
+renames or replaces a file. It reads the folders read only. Starboard gives it no Reelix, Radarr or Sonarr, so its own way
 of replacing a file (which deletes it first) never runs. Replacing a file is up to you.
 
 ## Set it up
@@ -26,7 +26,7 @@ of replacing a file (which deletes it first) never runs. Replacing a file is up 
 - It can read: The `movies` and `tv` folders in your media folder, read only.
 - It can change: Its own folder in Starboard's data (data/plugins/checkrr).
 - It can reach: Other computers on your home network, and the internet.
-- It can reach: Its own web page is opened on your home network: anyone on your home network can open it, at this computer's address and a port Starboard chooses.
+- It can reach: Its own web page. Starboard opens it on your home network, so anyone on your home network can open it, at this computer's address and a port Starboard chooses.
 
 It runs read only, as a user that is not root, with no extra rights, like every plug-in. A small helper beside it, run in the
 official Python image, answers Starboard's card, page and button; it reaches only Starboard and Checkrr. Its images, pinned by digest:
@@ -46,8 +46,8 @@ What it uses when nobody is using it, measured with `tools/app_check.py` (median
 ## Removing it
 
 **Settings**, **Plug-ins**, Checkrr, **Remove**. Its containers stop and go and its key stops working. You choose
-where its folder goes, with everything it kept (its settings file and its list of bad files):
-kept in `data/plugins/.removed`, or moved to the holding folder in **System**, **Clean up**.
+where its folder goes, with everything it kept (its settings file and its list of bad files).
+Either it stays in `data/plugins/.removed`, or it moves to the holding folder in **System**, **Clean up**.
 From there you can put it back or delete it permanently. Starboard never deletes it. Your media folder is not touched.
 
 ## Licence

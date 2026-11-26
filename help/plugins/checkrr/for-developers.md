@@ -35,12 +35,12 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- **No image of ours.** The helper, `helper.py`, is Python's standard library only. It is in the manifest's `files` as `app-1.0.0.py`: Starboard writes it once into the helper's own folder before its first start, and `command` runs it in the official Python image. The version in the file name means an update writes the new helper beside the old one.
+- **No image of ours.** The helper, `helper.py`, is Python's standard library only. It is in the manifest's `files` as `app-1.0.0.py`. Starboard writes it once into the helper's own folder before its first start. `command` runs it in the official Python image. The version in the file name means an update writes the new helper beside the old one.
 - **Checkrr's settings** are `checkrr.yaml`, also in `files`, written once into Checkrr's folder, which is mounted at `/etc/checkrr`. Checkrr finds it there by itself, so the image runs as it is, with no command. Its database (`checkrr.db`) and list of bad files (`badfiles.csv`) go in the same folder.
-- **Report only.** The settings file names no Radarr, Sonarr or Lidarr. Checkrr's own replacing (`DeleteMovieFiles`, then a search) needs one of them, so it never runs, and with none Checkrr only records a bad file in its database and list. Checkrr has no code that deletes a file itself, and the `movies` and `tv` folders are mounted read only.
+- **Report only.** The settings file names no Radarr, Sonarr or Lidarr. Checkrr's own replacing (`DeleteMovieFiles`, then a search) needs one of them, so it never runs. With none, Checkrr only records a bad file in its database and list. Checkrr has no code that deletes a file itself, and the `movies` and `tv` folders are mounted read only.
 - **Not given Reelix.** Reelix answers Radarr's and Sonarr's API, but Checkrr's replacing deletes the file first. Reelix does not answer that delete today, but it is not given the chance: the plug-in asks for no `reelix:key`.
 - **The helper** asks Checkrr's `GET /api/stats/current`, `GET /api/files/bad` and `GET /api/schedule` every 5 minutes (every 30 seconds during a check), and **Check now** calls `POST /api/run`.
-- **The check:** FFprobe and the file's first bytes, with `ffmpeg-quick` and `ffmpeg-full` off, each Sunday at 03:30 (`cron: "30 3 * * 0"`) in the server's time zone (Starboard passes `TZ`).
+- **The check:** FFprobe and the file's first bytes, with `ffmpeg-quick` and `ffmpeg-full` off. It runs each Sunday at 03:30 (`cron: "30 3 * * 0"`) in the server's time zone (Starboard passes `TZ`).
 
 ## Find out more
 

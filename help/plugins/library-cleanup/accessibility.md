@@ -1,6 +1,6 @@
 # Library clean-up: Accessibility
 
-Starboard draws everything Library clean-up shows in Starboard: its settings, its **Preview**, **Holding folder** and **Libraries** pages, the **Put back** buttons, its card and messages, with the same parts as the rest of Starboard. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
+Starboard draws everything Library clean-up shows, with the same parts as the rest of Starboard. That covers its settings, its **Preview**, **Holding folder** and **Libraries** pages, the **Put back** buttons, its card and its messages. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
 
 ## What was checked
 

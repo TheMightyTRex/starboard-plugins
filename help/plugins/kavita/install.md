@@ -18,7 +18,7 @@ Starboard lists these before you add it, each with its risk.
 
 What it runs:
 
-- **app:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/kavita`), the `books` folder in your media folder, to read only, the `comics` folder in your media folder, to read only. Its web page is on your home network at port 5000 when that port is free, or the next free one.
+- **app:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/kavita`). It can read the `books` and `comics` folders in your media folder, and cannot change them. Its web page is on your home network at port 5000 when that port is free, or the next free one.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 
@@ -40,7 +40,7 @@ Measured:
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/kavita/starboard-plugin.json
@@ -56,7 +56,7 @@ Kavita's tab shows its address on your home network, with **Open**. Anyone on yo
 
 1. On Kavita's tab, select **Activate** if it is not active yet.
 2. In **Its web page**, select **Open Kavita**.
-3. Make the first account. Whoever makes the first account becomes Kavita's admin, and Kavita does not make a password for you, so choose a strong one of your own and keep it in a password manager.
+3. Make the first account. Whoever makes the first account becomes Kavita's admin. Kavita does not make a password for you, so choose a strong one of your own and keep it in a password manager.
 4. In Kavita, add a library for `/media/books`.
 5. Add a library for `/media/comics`.
 
@@ -66,7 +66,7 @@ Kavita reads both folders only, so it cannot change or delete a file. Its sign-i
 
 1. Go to **Settings**, then **Plug-ins**, then **Kavita**.
 2. Under **Remove**, select **Remove Kavita**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes. **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted.

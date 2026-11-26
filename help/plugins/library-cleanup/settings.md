@@ -50,7 +50,7 @@ These are on Library clean-up's tab.
 
 - **Preview again** works out **Preview** again straight away, in the background. The page updates by itself.
 - **Put back**, beside an item on **Holding folder**, returns it to the same folder. Reelix follows it again exactly as before (the same episodes), and Jellyfin is told, so it is back in your library within a minute. If something else is in its place now, it stays in the holding folder and the page says so.
-- **Run now** in **System**, then **Jobs**, beside **Move items to the holding folder**, runs the move straight away, only when **Move items each day** is activated.
+- **Run now** in **System**, then **Jobs**, beside **Move items to the holding folder**, runs the move straight away. It works only when **Move items each day** is activated.
 
 ## Things to note
 

@@ -45,7 +45,7 @@ Your Starboard's plug-in API is outside what this version of Library clean-up wo
 - Nothing moves until **Move items each day** is activated in **Rules**. When it is deactivated, the card says **Deactivated** and what **Preview** would move.
 - It moves once a day, in Starboard's quiet hours. To move straight away, go to **System**, then **Jobs**, and select **Run now** beside **Move items to the holding folder**.
 - A run moves up to 200 items, within 50 minutes. The next run carries on.
-- A move that would have to copy the files is not made, and something with the same name already in the holding folder is never overwritten.
+- It never makes a move that would have to copy the files. It never overwrites something with the same name already in the holding folder.
 
 ## Check the rules
 

@@ -1,11 +1,12 @@
 # Styles: Updates
 
-Styles 1.6.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Styles 1.6.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.6.1 | 1.14 or later | Not released yet |
 | 1.6.0 | 1.14 or later | 20 November 2026 |
 | 1.5.0 | 1.14 or later | 18 November 2026 |
 | 1.4.1 | 1.14 or later | 17 November 2026 |
@@ -18,8 +19,8 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Changed:
 
-- **Eleven styles redesigned in full:** Dusk, Liquid glass, Brutal, Bento, Almanac, Garden, Terminal, Riso, Vantage, Newsprint and Piste now change cards, buttons, tabs, the header, the side menu and chips, not only colours.
-- **They replace the old eleven:** Midnight is now Dusk, Frost is Liquid glass, Bold is Brutal, Bento keeps its name, Paper is Almanac, Forest is Garden, Retro is Terminal, Vivid is Riso, Graphite is Vantage, Editorial is Newsprint and Nordic is Piste. Anyone using one of the old ones moves to its new design, with nothing to choose again.
+- **Eleven styles redesigned in full:** Dusk, Liquid glass, Brutal, Bento, Almanac, Garden, Terminal, Riso, Vantage, Newsprint and Piste. They now change cards, buttons, tabs, the header, the side menu and chips, not only colours.
+- **They replace the old eleven:** Midnight is now Dusk, Frost is Liquid glass, Bold is Brutal, Bento keeps its name, Paper is Almanac, Forest is Garden. Retro is Terminal, Vivid is Riso, Graphite is Vantage, Editorial is Newsprint and Nordic is Piste. Anyone using one of the old ones moves to its new design, with nothing to choose again.
 
 ## What is new in 1.5.0
 
@@ -30,7 +31,7 @@ Added:
 Changed:
 
 - **Mica first:** Mica, now Starboard's own design, is the first style, with the same colours as the design system's default.
-- Every style keeps its own design on top of the new Mica design system: cards lift only in styles with elevated cards, and the hover on menus has a clear edge.
+- Every style keeps its own design on top of the new Mica design system: cards lift only in styles with elevated cards. The hover on menus has a clear edge.
 
 ## What is new in 1.4.1
 

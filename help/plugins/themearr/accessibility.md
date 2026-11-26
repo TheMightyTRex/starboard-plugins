@@ -1,6 +1,6 @@
 # Themearr: Accessibility
 
-Starboard draws everything Themearr shows in Starboard: its settings, its card, the **Sign in to Themearr** page and its messages, with the same parts as the rest of Starboard. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
+Starboard draws everything Themearr shows in Starboard with the same parts as the rest of Starboard. That covers its settings, its card, the **Sign in to Themearr** page and its messages. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
 
 ## What was checked
 

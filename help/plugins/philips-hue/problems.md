@@ -37,7 +37,7 @@ q2: What is wrong?
 
 ## Give the bridge's address
 
-The **Bridge** tab asks your network for Hue bridges, but inside Docker's own network that question often reaches nothing, so **Found on your network** can stay empty. Hue's own discovery website is never used: it is part of the Hue cloud.
+The **Bridge** tab asks your network for Hue bridges. Inside Docker's own network that question often reaches nothing, so **Found on your network** can stay empty. Hue's own discovery website is never used: it is part of the Hue cloud.
 
 1. In the Hue app, go to **Settings**, then **My Hue system**, then your bridge, and find **IP address**.
 2. Enter it in **Pair with a bridge**, such as `192.168.1.20`, and select **Pair with a bridge**.
@@ -68,7 +68,7 @@ It says "Something at" the address "answered with a different certificate from t
 
 ## Remove the bridge and pair again
 
-It says "The bridge no longer knows this plug-in": its key was removed from the bridge, such as in the Hue app or by a reset.
+It says "The bridge no longer knows this plug-in". Someone removed its key from the bridge, for example in the Hue app or by a reset.
 
 1. On **Bridge**, select **Remove** in the bridge's **More** menu.
 2. Pair again and press the link button. Read [Install](install.md).
@@ -85,7 +85,7 @@ A light says **Not reachable** when the bridge cannot reach it.
 
 ## Write the schedule again
 
-**Add a schedule** says what it could not read, such as "Give the time as hours and minutes, such as 07:00 or 18:30, or say sunrise or sunset". Write it as when, at what time, then what: `Every weekday at 07:00, Kitchen to 80%`. Read [Settings](settings.md) for every part.
+**Add a schedule** says what it could not read. For example: "Give the time as hours and minutes, such as 07:00 or 18:30, or say sunrise or sunset". Write it as when, at what time, then what: `Every weekday at 07:00, Kitchen to 80%`. Read [Settings](settings.md) for every part.
 
 - **Sunrise and sunset:** "Your bridge does not know sunrise and sunset yet" means your location is not set in the Hue app. Set it there, then try again. Sunrise and sunset work only with a schedule that repeats.
 - **A scene** can be shown only in a room or a zone, and only by a scene's name in that room or zone.

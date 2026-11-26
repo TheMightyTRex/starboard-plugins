@@ -5,15 +5,14 @@ your router. Download apps are never shared.
 
 A Starboard plug-in by TheMightyTRexUK, MIT licence. Needs Starboard with plug-in API 1.14 or later.
 
-Its image is for 64-bit computers only (amd64 and arm64): Cloudflare does not make cloudflared for 32-bit Arm, so
-there is no arm/v7 build for older Raspberry Pis.
+Its image is for 64-bit computers only (amd64 and arm64). Cloudflare does not make cloudflared for 32-bit Arm, so there is no arm/v7 build for older Raspberry Pis.
 
 ## Choose a way
 
 - **Tailscale (recommended).** Your phone joins your own private network (a tailnet), and Starboard, Jellyfin and
   Audiobookshelf answer there at an address such as `http://<its Tailscale address>:8095`. Nothing is open to the internet.
   It runs in userspace networking: no device, no extra rights and no change to this computer's network.
-  Sign in with an auth key you make in your own Tailscale admin page (**Settings**, **Keys**), or choose
+  Sign in with an auth key you make in your own Tailscale admin page (**Settings**, **Keys**). Or choose
   **A sign-in link** and open the link the plug-in shows.
 - **Cloudflare Tunnel.** A web address of your own, such as `https://tv.example.org`, through Cloudflare. Paste the
   tunnel token from Cloudflare's dashboard (**Networks**, **Tunnels**; the whole command is fine too). Add each
@@ -30,12 +29,9 @@ there is no arm/v7 build for older Raspberry Pis.
 
 ## Kept safe
 
-- Only Starboard, Jellyfin and Audiobookshelf are forwarded, each by its own small forwarder inside the plug-in.
-  qBittorrent, NZBGet, SABnzbd, Reelix and the other apps are never reachable this way.
-- With Cloudflare, the plug-in reads the tunnel's routes and **stops the tunnel** if any route leads anywhere else,
-  to an app you have not shared, or to Starboard without Cloudflare Access.
-- A key or token that is missing or wrong is said plainly on the card and in **Addresses away from home**; a token
-  Cloudflare refuses stops the tunnel rather than retrying for ever.
+- Only Starboard, Jellyfin and Audiobookshelf are forwarded, each by its own small forwarder inside the plug-in. Nobody can reach qBittorrent, NZBGet, SABnzbd, Reelix or the other apps this way.
+- With Cloudflare, the plug-in reads the tunnel's routes. It **stops the tunnel** if any route leads anywhere else, to an app you have not shared, or to Starboard without Cloudflare Access.
+- The card and **Addresses away from home** say plainly when a key or token is missing or wrong. If Cloudflare refuses a token, the tunnel stops instead of retrying for ever.
 - Keys and tokens never go on a command line or in the log. The image is pinned by digest, and the Tailscale,
   cloudflared and Python images it is built from are pinned by digest too.
 
@@ -43,9 +39,7 @@ there is no arm/v7 build for older Raspberry Pis.
 
 - It reads your apps and whether they answer (`apps:read`), to find Jellyfin and Audiobookshelf.
 - It reaches your home network and the internet (`network:lan`).
-- It runs one container, 128 MB of memory and half a core at most. Measured on 13 November 2026: about 20 MB with
-  nothing chosen, about 22 to 32 MB with Tailscale waiting to sign in, about 20 to 30 MB with Cloudflare Tunnel, and
-  0.01 to 0.03% of a core at rest.
+- It runs one container, 128 MB of memory and half a core at most. Measured on 13 November 2026, it used about 20 MB with nothing chosen. It used about 22 to 32 MB with Tailscale waiting to sign in, and about 20 to 30 MB with Cloudflare Tunnel. It used 0.01 to 0.03% of a core at rest.
 
 ## On the dashboard
 

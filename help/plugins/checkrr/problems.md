@@ -47,7 +47,7 @@ Checkrr changed nothing: the file is where it was. Replace it yourself.
 
 1. On Checkrr's tab, open **Files that failed the check**. Each row has the file, its folder and Checkrr's reason.
 2. Play the file in Jellyfin to check it is damaged. "not recognised" means its start is not a film or episode Checkrr knows.
-3. In Reelix, search for the film or episode again and choose a new copy. When Reelix brings the new one in, it replaces the old file: it moves the old one to Reelix's recycle bin when **Recycle bin folder** is set in Reelix's settings, and otherwise deletes it for good. Set the recycle bin first to keep the old file.
+3. In Reelix, search for the film or episode again and choose a new copy. When Reelix brings the new one in, it replaces the old file. If **Recycle bin folder** is set in Reelix's settings, Reelix moves the old file to its recycle bin. Otherwise it deletes the old file for good. Set the recycle bin first to keep the old file.
 4. Select **Check now** on Checkrr's tab. A replaced file drops off the list once it passes.
 
 To take a damaged film out of the library without deleting it, the Library clean-up plug-in moves it to the holding folder.

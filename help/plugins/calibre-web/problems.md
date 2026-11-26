@@ -53,7 +53,7 @@ Calibre-Web finds books only in a Calibre library: a folder with `metadata.db` i
 
 1. Check whether `books-library` in your media folder has `metadata.db`. If it does, deactivate Calibre-Web and activate it again: Starboard sets the library at its start.
 2. If not, and `books` has no `metadata.db` either, make a library with [Calibre library maker](../calibre-library/install.md). Read [Your books](your-books.md).
-3. If your own Calibre library is somewhere else, move it into `books` with Calibre, or enter `/media/books` as **Location of Calibre database** in Calibre-Web's admin settings.
+3. If your own Calibre library is somewhere else, move it into `books` with Calibre. Or enter `/media/books` as **Location of Calibre database** in Calibre-Web's admin settings.
 
 ## Add books with Calibre
 

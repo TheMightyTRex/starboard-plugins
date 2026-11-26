@@ -17,7 +17,7 @@ The same lights grouped three ways:
 - **Zones:** the zones you made in the Hue app, such as Downstairs. A light can be in several zones.
 - **Device types:** what each light is: **Bulbs**, **Candle bulbs**, **Spot lights**, **Light strips**, **Lamps**, **Ceiling lights**, **Outdoor lights**, **Smart plugs** and **Other lights**.
 
-Each tab starts with **Activate or deactivate in bulk**: a switch for **Every light in the home**, and one for every light in each room, zone or type, with how many are on. Deactivate a switch and every light in it goes off; activate it and they all come on. Then open a room, zone or type by its name: it lists its lights.
+Each tab starts with **Activate or deactivate in bulk**. It has a switch for **Every light in the home**. It also has one for every light in each room, zone or type, with how many are on. Deactivate a switch and every light in it goes off; activate it and they all come on. Then open a room, zone or type by its name: it lists its lights.
 
 ![Rooms, with the switch for Every light in the home and the Kitchen row, At 80%, 2 of 3 active, outlined](../../images/philips-hue/settings-1-rooms.png)
 
@@ -53,11 +53,11 @@ Timed actions written in words, kept on the bridge, so they run while Starboard 
 
 - **When:** `Every day`, `Every weekday`, `Every weekend`, days by name (`Every Monday and Friday`), or `Once on` a date, `Today` or `Tomorrow`.
 - **Time:** hours and minutes, such as `07:00` or `18:30`, or `7am` and `6:30pm`, or `sunrise` or `sunset`. Sunrise and sunset need a schedule that repeats, and your location set in the Hue app.
-- **What:** after the comma, a room, a zone, a light or `every light`, then `on`, `off`, `to 80%`, `to` a white or a colour, or `to` the name of a room's or zone's scene.
+- **What:** after the comma, give a room, a zone, a light or `every light`. Then give `on`, `off`, `to 80%`, `to` a white or a colour, or `to` the name of a room's or zone's scene.
 
 ![Schedules, with Change on a schedule's row and the Add a schedule box outlined](../../images/philips-hue/settings-3-schedules.png)
 
-Each row says when it next runs. **Change** opens the schedule in words, to change it; **Deactivate** stops it until you activate it again; **Remove**, in the row's **More** menu, removes it from the bridge. A schedule that runs once is removed by the bridge after it runs. If the words cannot be read, the box says what to change, such as "Give the time as hours and minutes".
+Each row says when it next runs. **Change** opens the schedule in words, so you can change it. **Deactivate** stops it until you activate it again. **Remove**, in the row's **More** menu, removes it from the bridge. A schedule that runs once is removed by the bridge after it runs. If the words cannot be read, the box says what to change, such as "Give the time as hours and minutes".
 
 Schedules made in the Hue app or another app are listed under **Made in another app**, to read only: change them there.
 

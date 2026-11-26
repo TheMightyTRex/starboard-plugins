@@ -1,11 +1,12 @@
 # Library clean-up: Updates
 
-Library clean-up 1.0.3 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
+Library clean-up 1.0.4 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.4 | 1.15 or later | Not released yet |
 | 1.0.3 | 1.15 or later | 17 November 2026 |
 | 1.0.2 | 1.15 or later | 17 November 2026 |
 | 1.0.1 | 1.14 or later | 16 November 2026 |
@@ -17,8 +18,8 @@ The catalogue offers each Starboard the newest version it can run. 1.0.0 is the 
 
 Changed:
 
-- **Clearer words:** **Libraries** says **Checked** for each library the rules check, the card says "Next check in quiet hours", and its hints name the setting they mean.
-- **Logo description:** where its logo stands on its own, a screen reader says "Library clean-up logo", the plug-in's name, instead of a description of the symbol.
+- **Clearer words:** **Libraries** says **Checked** for each library the rules check. The card says "Next check in quiet hours". Its hints name the setting they mean.
+- **Logo description:** where its logo stands on its own, a screen reader says "Library clean-up logo", the plug-in's name. It no longer describes the symbol.
 
 ## What is new in 1.0.2
 
@@ -45,7 +46,7 @@ Added:
 
 ## How an update is kept safe
 
-- **Before the update** Starboard asks Library clean-up to get ready: it finishes the item it is moving and starts no new run, so nothing is left half moved. If it is still working, it says "Still working. Try again in a minute" and nothing changes.
+- **Before the update** Starboard asks Library clean-up to get ready. It finishes the item it is moving and starts no new run, so nothing is left half moved. If it is still working, it says "Still working. Try again in a minute" and nothing changes.
 - **After the update,** or after a Roll back, it says when it checks again, or that **Move items each day** is deactivated. The next run carries on where it stopped.
 - Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
 - Your settings, its folder and what is in the holding folder are kept.

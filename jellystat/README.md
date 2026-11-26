@@ -2,19 +2,19 @@
 
 Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page.
 
-An app plug-in for Starboard (plug-in API 1.14 or later): Jellystat runs outside the main install, in Starboard's locked-down
-containers, with its own page on your home network. Starboard chooses the port (3000 when it is free) and shows the address
+An app plug-in for Starboard (plug-in API 1.14 or later). Jellystat runs outside the main install, in Starboard's locked-down
+containers. It has its own page on your home network. Starboard chooses the port (3000 when it is free) and shows the address
 on the plug-in's page with **Open**.
 
 ## Who it is for
 
-People who want every figure Jellystat gives (libraries, people, devices and a long history), and people who had Jellystat in the main install before 13 November 2026. For the usual figures, the Watch statistics plug-in is lighter: no database, and it rests when nobody has it open.
+People who want every figure Jellystat gives (libraries, people, devices and a long history). Also people who had Jellystat in the main install before 13 November 2026. For the usual figures, the Watch statistics plug-in is lighter: no database, and it rests when nobody has it open.
 
 ## Set it up
 
 1. Activate it. Starboard gives Jellystat your Jellyfin's address and key, so you do not enter them.
 2. Choose **Open Jellystat** and make Jellystat's own account (the first one is its admin).
-3. Optional: **Restore a Jellystat backup**. Put a PostgreSQL backup of Jellystat's database (made with `pg_dump -Fc`) in `data/plugins/jellystat/data/main/restore` in Starboard's data folder, enter its name in **Backup file to restore**, then choose **Restore the backup**. It is restored into a new database first; only when that worked is it swapped in, and the database before it is kept beside it, never deleted. Jellystat's own JSON backups are restored in Jellystat itself.
+3. Optional: **Restore a Jellystat backup**. Put a PostgreSQL backup of Jellystat's database (made with `pg_dump -Fc`) in `data/plugins/jellystat/data/main/restore` in Starboard's data folder. Enter its name in **Backup file to restore**, then choose **Restore the backup**. Starboard restores it into a new database first. Only when that works does it swap the new database in. It keeps the old database beside it and never deletes it. Jellystat's own JSON backups are restored in Jellystat itself.
 
 ## What it may do
 
@@ -22,7 +22,7 @@ People who want every figure Jellystat gives (libraries, people, devices and a l
 - It can change: Its own folder in Starboard's data (data/plugins/jellystat).
 - It can change: Anything in Jellyfin: it gets Jellyfin's API key, which can change users, libraries and settings.
 - It can reach: Other computers on your home network, and the internet.
-- It can reach: Its own web page is opened on your home network: anyone on your home network can open it, at this computer's address and a port Starboard chooses.
+- It can reach: Its own web page. Starboard opens it on your home network, so anyone on your home network can open it, at this computer's address and a port Starboard chooses.
 
 It runs read only, as a user that is not root, with no extra rights, like every plug-in. Its images, pinned by digest:
 
@@ -43,8 +43,8 @@ What it uses when nobody is using it, measured with `tools/app_check.py` (median
 ## Removing it
 
 **Settings**, **Plug-ins**, Jellystat, **Remove**. Its containers stop and go and its key stops working. You choose
-where its folder goes, with everything it kept (settings, its database):
-kept in `data/plugins/.removed`, or moved to the holding folder in **System**, **Clean up**.
+where its folder goes, with everything it kept (settings, its database).
+Either it stays in `data/plugins/.removed`, or it moves to the holding folder in **System**, **Clean up**.
 From there you can put it back or delete it permanently. Starboard never deletes it. Your media folder is not touched.
 
 ## Licence

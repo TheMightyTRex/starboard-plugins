@@ -23,7 +23,7 @@ Starboard passes the key and user name to Themearr within 2 minutes of **Save**,
 - **Nothing to enter for Reelix.** Starboard gives Themearr Reelix's address and key as its Radarr, because Reelix answers Radarr's API. Themearr reads every film Reelix has a file for, every 15 minutes.
 - **Where the films are.** Themearr is given your `movies` folder at `/media/movies`, and told that Reelix's `/data/media/movies` is the same folder.
 - **The access token** is made by Starboard for this install. Anyone with it can change Themearr's settings, so keep it private. It is shown only on Themearr's tab, to people who can open Starboard's settings.
-- **Fetching by itself** is given to Themearr when the plug-in first starts and each time you change the switch, so a choice you make in Themearr's own page stays until then.
+- **Fetching by itself** Starboard gives this to Themearr when the plug-in first starts and each time you change the switch. A choice you make in Themearr's own page stays until then.
 - **The tunes are full length** unless you choose trimming in Themearr's own settings. Read Themearr's own help for how much space they take: about 3.7 GB for every 1,000 films.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 

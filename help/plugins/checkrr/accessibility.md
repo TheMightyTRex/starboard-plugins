@@ -1,6 +1,6 @@
 # Checkrr: Accessibility
 
-Starboard draws everything Checkrr shows in Starboard: its card, its **Check now** button, the **Files that failed the check** page and its messages, with the same parts as the rest of Starboard. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
+Starboard draws everything Checkrr shows: its card, its **Check now** button, the **Files that failed the check** page and its messages. They use the same parts as the rest of Starboard. They follow your **Display** choices: text size, spacing, theme, **High contrast**, underlined links and reduced motion.
 
 ## What was checked
 
