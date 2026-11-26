@@ -1,6 +1,6 @@
 [Help centre](../README.md) · Developers · reference
 <!-- help: dev / build -->
-<!-- plugin-api: 1.17 -->
+<!-- plugin-api: 1.20 -->
 
 # Plug-in API 1.15 for the collection
 
@@ -12,6 +12,10 @@ Starboard's help has the full references.
 
 - You want to change a plug-in here, or add one, and need to know what it must do.
 - You are bringing a plug-in of your own up to 1.14, 1.15, 1.16 or 1.17.
+
+## What plug-in API 1.20 added
+
+- `first_sign_in`: Starboard makes a password for an app plug-in, the app sets it before it first starts, and the plug-in's page shows it once, after the Starboard password. Calibre-Web 1.2.0 uses it, so it does not start with the default sign-in everyone knows. A plug-in that needs it names `>=1.20` in `starboard_api`, so an older Starboard is offered the earlier version.
 
 ## What plug-in API 1.17 added
 

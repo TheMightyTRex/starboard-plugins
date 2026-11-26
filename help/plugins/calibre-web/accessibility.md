@@ -4,9 +4,15 @@ Starboard draws everything Calibre-Web shows in Starboard: its tab, its buttons 
 
 ## What was checked
 
-- **The plug-in tester:** accessibility passed. Starboard runs it before the plug-in is added, every time. Calibre-Web has no settings, card or actions in Starboard, so there was little to check.
+- **The plug-in tester:** accessibility passed. Starboard runs it before the plug-in is added, every time. The one thing Calibre-Web adds is **Its first sign-in**: its button, the password box and the copy button were checked (read next).
 - **Its logo**, a book in a browser window, has the text description "Calibre-Web logo" where it is shown without its name. Beside its name, screen readers skip it, so the name is read once.
 - **Starboard's own parts** (settings, buttons, dialogs and cards) are checked with axe, a keyboard walk and the reading order in each Starboard release. Read [How Starboard is tested](https://themightytrex.github.io/starboard/help/accessibility/how-starboard-is-tested.html).
+
+## Its first sign-in
+
+- **Show the password…** is a button with a clear name. It opens Starboard's own dialog, which starts on **Cancel**, keeps focus inside and closes with Escape.
+- The password appears in a read-only box with its own label, and focus moves to it, selected, so a screen reader reads it and you can copy it by keyboard. **Copy the password for admin** is a button with that name.
+- The result is announced in a live region, and nothing depends on colour.
 
 ## Not checked
 

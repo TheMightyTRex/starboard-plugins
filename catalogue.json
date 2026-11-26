@@ -89,17 +89,32 @@
    "logo_alt": "Backups watch logo"
   },
   {
+   "id": "calibre-library",
+   "name": "Calibre library maker",
+   "description": "Makes a Calibre library from the books in your books folder, in a new folder beside it, so Calibre-Web has something to open. Your own books are never changed.",
+   "kind": "Books",
+   "author": "TheMightyTRexUK",
+   "permissions": [],
+   "version": "1.0.0",
+   "starboard_api": ">=1.14 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/calibre-library/starboard-plugin.json",
+   "published": false,
+   "recommended": false,
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5DYWxpYnJlIGxpYnJhcnkgbWFrZXIgbG9nbzwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiM0YTVkMjMiLz48cmVjdCB4PSI4IiB5PSIxMiIgd2lkdGg9IjkiIGhlaWdodD0iMjQiIHJ4PSIxLjUiIGZpbGw9IiNmZmZmZmYiLz48cmVjdCB4PSIxOSIgeT0iMTIiIHdpZHRoPSI5IiBoZWlnaHQ9IjI0IiByeD0iMS41IiBmaWxsPSIjZmZmZmZmIi8+PHBhdGggZD0iTTM1IDE4djEyTTI5IDI0aDEyIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4K",
+   "logo_alt": "Calibre library maker logo"
+  },
+  {
    "id": "calibre-web",
    "name": "Calibre-Web",
-   "description": "Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books folder and never changes it.",
+   "description": "Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books and never changes them. Starboard sets it up for you.",
    "kind": "Apps you can add",
    "author": "TheMightyTRexUK",
    "permissions": [
     "network:lan",
     "network:port"
    ],
-   "version": "1.1.1",
-   "starboard_api": ">=1.14 <2.0",
+   "version": "1.2.0",
+   "starboard_api": ">=1.20 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/calibre-web/starboard-plugin.json",
    "published": true,
    "recommended": false,
@@ -107,11 +122,17 @@
    "logo_alt": "Calibre-Web logo",
    "versions": [
     {
+     "version": "1.2.0",
+     "starboard_api": ">=1.20 <2.0",
+     "released": "2026-11-26",
+     "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/calibre-web/starboard-plugin.json",
+     "changelog": "Set up for you: Calibre-Web no longer starts with the first sign-in everybody knows. Starboard makes a long password before it first starts, replaces the default one and shows it once on the plug-in's page, after you enter your Starboard password. Your library is found: if a Calibre library is in your media folder, in a folder called books-library (made by the Calibre library maker plug-in) or in books itself, Calibre-Web is set to it at its start, so there is nothing to enter in Admin."
+    },
+    {
      "version": "1.1.1",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
-     "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/calibre-web/starboard-plugin.json",
-     "changelog": "Logo description: where its logo stands on its own, a screen reader says \"Calibre-Web logo\", the plug-in's name, instead of a description of the symbol."
+     "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/3096e6ea20ae69aafa00bd57a091bf0a9a6dd527/calibre-web/starboard-plugin.json",
+     "manifest_sha256": "138355f3653a14dccfa006b191e770fde6703485f79b985e2bf555de37115758"
     },
     {
      "version": "1.0.0",
@@ -121,7 +142,7 @@
     }
    ],
    "rest": {
-    "memory_mb": 182,
+    "memory_mb": 172,
     "cpu_percent": 0.01
    }
   },

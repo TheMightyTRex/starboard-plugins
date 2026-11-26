@@ -1,0 +1,69 @@
+{
+ "manifest_version": 1,
+ "id": "calibre-library",
+ "name": "Calibre library maker",
+ "version": "1.0.0",
+ "description": "Makes a Calibre library from the books in your books folder, in a new folder beside it, so Calibre-Web has something to open. Your own books are never changed.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/calibre-library",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.14 <2.0",
+ "permissions": [],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-calibre-library:1.0.0",
+   "port": 8080,
+   "volumes": [
+    "data",
+    "media/books:ro",
+    "media/books-library"
+   ],
+   "start": "when_needed",
+   "idle_stop_minutes": 5
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 320,
+   "cpus": 1.0,
+   "pids": 128
+  }
+ },
+ "settings": [
+  {
+   "key": "library",
+   "label": "Make a Calibre library from your books",
+   "type": "custom",
+   "choices": "/library",
+   "hint": "Shows what it will do first: how many books, how much room and how long. Your books folder is never changed."
+  }
+ ],
+ "actions": [
+  {
+   "id": "make",
+   "label": "Make the library",
+   "path": "/make",
+   "confirm": "Copies the books that are not in the library yet into the books-library folder, using room for a second copy of them. Your own books folder is not changed. It can take a while: about 3 seconds a book. Continue?"
+  },
+  {
+   "id": "stop",
+   "label": "Stop",
+   "path": "/stop"
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "Calibre library maker logo"
+ },
+ "changes": [
+  {
+   "version": "1.0.0",
+   "date": "2026-11-26",
+   "added": [
+    "**Calibre library maker:** makes a Calibre library from your books folder, in a new books-library folder, so Calibre-Web has something to open. It never changes your books, says what it will do first, shows progress, lists files it could not read and can be run again."
+   ]
+  }
+ ]
+}

@@ -154,13 +154,14 @@ KINDS["direct-play"] = "Jellyfin"  # hand-made, its own image with ffmpeg (DASH-
 KINDS["picture-shrinker"] = "Jellyfin"  # hand-made, its own image with Pillow (DASH-432); not recommended, never added by itself
 KINDS["library-cleanup"] = "Jellyfin"  # hand-made, its own image (DASH-406, plug-in API 1.15); not recommended, never added by itself
 KINDS["philips-hue"] = "Home"  # hand-made, its own image (20 November 2026, plug-in API 1.16); not recommended, never added by itself
+KINDS["calibre-library"] = "Books"  # hand-made, its own image with Calibre (DASH-590); not recommended, never added by itself
 KINDS["tv-station"] = "Jellyfin"  # hand-made, its own image with FFmpeg (DASH-477); not recommended, never added by itself
 # Recommended (DASH-425, owner 14 November 2026: "its recommended in the catalogue"): a few plug-ins that suit most
 # servers, shown first in Starboard's Catalogue (plug-in API 1.14). Never installed by default: adding stays a choice.
 RECOMMENDED = {"direct-play", "notifications", "disk-forecast"}
 # Apps you can add (DASH-411), each with its memory and processor at rest: the 13 November 2026 benchmark where it
 # measured the app, else measured with tools/app_check.py.
-REST = {"calibre-web": (182, 0.01), "jellystat": (117, 0.22), "kavita": (337, 0.99), "maintainerr": (127, 0.0),
+REST = {"calibre-web": (172, 0.01), "jellystat": (117, 0.22), "kavita": (337, 0.99), "maintainerr": (127, 0.0),
         "navidrome": (16, 0.01), "seerr": (127, 0.0), "tdarr": (59, 0.11), "uptime-kuma": (116, 0.0), "wizarr": (124, 0.02),
         "themearr": (48, 0.64), "checkrr": (19, 0.01)}  # 17 November 2026, tools/app_check.py, as Starboard runs them
 KINDS.update({pid: "Apps you can add" for pid in REST})

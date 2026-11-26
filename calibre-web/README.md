@@ -1,8 +1,8 @@
 # Calibre-Web
 
-Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books folder and never changes it.
+Calibre-Web, a browser page for a Calibre library: read, search and send books to an e-reader. It reads your books and never changes them. Starboard sets it up for you.
 
-An app plug-in for Starboard (plug-in API 1.14 or later): Calibre-Web runs outside the main install, in Starboard's locked-down
+An app plug-in for Starboard (plug-in API 1.20 or later): Calibre-Web runs outside the main install, in Starboard's locked-down
 containers, with its own page on your home network. Starboard chooses the port (8083 when it is free) and shows the address
 on the plug-in's page with **Open**.
 
@@ -12,13 +12,19 @@ People who keep their books in a Calibre library (a folder with metadata.db) and
 
 ## Set it up
 
-1. Activate it and choose **Open Calibre-Web**.
-2. Sign in with Calibre-Web's own first sign-in, `admin` and `admin123`, and **change the password at once** in Admin, Edit user: anyone on your home network can open the page.
-3. For **Location of Calibre database** give `/media/books` (the folder with `metadata.db`). It is read only, so uploading and editing books in Calibre-Web are not possible; add books with Calibre itself.
+Starboard sets it up before it first starts, so there is nothing to change in Calibre-Web itself:
+
+1. Activate it. Its library is found by itself: `books-library` in your media folder (made by the Calibre library maker plug-in) or `books`, when it holds a Calibre library (a folder with `metadata.db`).
+2. Its first password is made by Starboard, not the default `admin123`. On its tab, **Its first sign-in** has **Show the password…**: it asks for your Starboard password and shows it once.
+3. Choose **Open Calibre-Web** and sign in as `admin`.
+
+Uploads, public sign-up, anonymous browsing and remote sign-in are off, and the admin cannot edit or delete books: your books are read only. OPDS, for e-reader apps, is at `/opds` on its page, with your sign-in.
+
+If your books are only files in folders, with no `metadata.db`, add the **Calibre library maker** plug-in: it makes a library beside them, never changing them.
 
 ## What it may do
 
-- It can read: Files in your media folder under books (read only).
+- It can read: Files in your media folder under books and books-library (read only).
 - It can change: Its own folder in Starboard's data (data/plugins/calibre-web).
 - It can reach: Other computers on your home network, and the internet.
 - It can reach: Its own web page is opened on your home network: anyone on your home network can open it, at this computer's address and a port Starboard chooses.
@@ -35,6 +41,7 @@ What it uses when nobody is using it, measured with `tools/app_check.py` (median
 | Reading | Memory | Processor (one core) |
 |---|---|---|
 | As Starboard runs it (hardened, empty library), 13 November 2026 | 182.2 MiB | 0.01% |
+| Version 1.2.0 with its start-up, a library of 12 books, 26 November 2026 | 171.9 MiB | 0.01% |
 
 ## Removing it
 
