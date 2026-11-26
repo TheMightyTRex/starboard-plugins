@@ -16,6 +16,15 @@ People who keep their books in a Calibre library (a folder with metadata.db) and
 2. Sign in with Calibre-Web's own first sign-in, `admin` and `admin123`, and **change the password at once** in Admin, Edit user: anyone on your home network can open the page.
 3. For **Location of Calibre database** give `/media/books` (the folder with `metadata.db`). It is read only, so uploading and editing books in Calibre-Web are not possible; add books with Calibre itself.
 
+## Read on your phone
+
+Starboard names three phone apps that work well with Calibre-Web. They are made by others, and neither Starboard nor this plug-in runs them.
+
+- **Android:** [KOReader](https://koreader.rocks/) opens your library over OPDS: add a catalogue with the address of Calibre-Web followed by `/opds`, and your Calibre-Web user name and password. [Calibre-Web-Companion](https://f-droid.org/en/packages/de.doen1el.calibreWebCompanion/) is made for Calibre-Web: enter its address and sign in.
+- **iPhone and iPad:** [Readest](https://apps.apple.com/app/id6738622779) connects to Calibre-Web and to OPDS catalogues.
+
+Use the address on this plug-in's page, from your home network. In Starboard the same list is under **Read on your phone**, on this plug-in's page and in **Settings**, **Apps**, **Manage apps**.
+
 ## What it may do
 
 - It can read: Files in your media folder under books (read only).
