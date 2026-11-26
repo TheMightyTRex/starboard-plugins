@@ -70,6 +70,14 @@ class Maker(unittest.TestCase):
         self.assertIn("not enough room", said)
         self.assertFalse(self.app._lock.locked())
 
+    def test_a_folder_it_cannot_write_in_is_said_plainly_before_anything_runs(self):
+        with mock.patch.object(self.app.os, "makedirs", side_effect=PermissionError("no")):
+            said = self.app.start()["said"]
+        self.assertIn("cannot write in the books-library folder", said)
+        self.assertFalse(self.app._lock.locked())
+        self.assertTrue(self.app.can_write() is True)  # a folder it can make is fine
+        self.assertFalse(os.path.exists(os.path.join(self.lib, ".starboard-write-test")))
+
     def run_now(self, calibre):
         with mock.patch.object(self.app, "calibredb", calibre), mock.patch.object(self.app, "nameless", return_value=[]):
             self.app.run_all(self.app.plan()["new"])

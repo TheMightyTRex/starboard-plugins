@@ -126,6 +126,20 @@ def free_space():
         return 0
 
 
+def can_write():
+    """True when the library folder can be written in (made first if it is missing), else the reason in words."""
+    try:
+        os.makedirs(LIBRARY, exist_ok=True)
+        test = os.path.join(LIBRARY, ".starboard-write-test")
+        with open(test, "w"):
+            pass
+        os.remove(test)
+    except OSError:
+        return ("It cannot write in the books-library folder in your media folder. Starboard makes that folder for it, so check "
+                "that the folder was not made by something else, and that the disk is not full or read only")
+    return True
+
+
 def plan():
     """What a run would do now: the new books, their size, the space needed and the time, and whether it can start."""
     done = set(sb.remember("done", []) or [])
@@ -231,6 +245,10 @@ def start():
     if not p["new_count"]:
         _lock.release()
         return {"said": "There is nothing new to add. Every book in your books folder is already handled"}
+    ok = can_write()
+    if ok is not True:
+        _lock.release()
+        return {"said": ok}
     if not p["enough"]:
         _lock.release()
         return {"said": f"There is not enough room. The library needs about {size_words(p['need'])} and {size_words(p['free'])} is free"}
