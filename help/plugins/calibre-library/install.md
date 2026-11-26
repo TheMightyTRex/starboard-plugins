@@ -34,6 +34,9 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 1. Go to **Settings**, then **Plug-ins**, then **Catalogue**.
 2. Find **Calibre library maker** and select **Install…**.
+
+![The Catalogue, with Install… beside Calibre library maker (step 2) outlined](../../images/calibre-library/install-1-catalogue.png)
+
 3. A slide-out opens with what it can read and change. Read it all.
 4. Enter your Starboard password and select **Install Calibre library maker**. To stop, select **Cancel**: nothing is installed.
 
@@ -49,7 +52,16 @@ https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/calibre-l
 
 1. Go to **Settings**, then **Plug-ins**, then **Calibre library maker**.
 2. Read **What Make the library will do**: the number of books, the room and the time.
+
+![Calibre library maker's page, with What Make the library will do, the number of books, the room needed and the time (step 1), outlined](../../images/calibre-library/make-1-plan.png)
+
+![Calibre library maker's page, with Your books folder, the number of book files found, outlined](../../images/calibre-library/make-3-books.png)
+
+
 3. Select **Make the library** and confirm. The page shows how far it has got, in words.
+
+![Calibre library maker's Actions, with Make the library (step 2) outlined](../../images/calibre-library/make-2-button.png)
+
 4. When it says **Done**, deactivate Calibre-Web and activate it again.
 
 Run it again when new books arrive. Select **Stop** to end a run after the books it is adding now; run it again to carry on.

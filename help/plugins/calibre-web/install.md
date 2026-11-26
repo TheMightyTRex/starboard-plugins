@@ -36,6 +36,9 @@ Measured:
 
 1. Go to **Settings**, then **Plug-ins**, then **Catalogue**.
 2. Under **Apps you can add**, find **Calibre-Web** and select **Install…**.
+
+![The Catalogue under Apps you can add, with Install… beside Calibre-Web (step 2) outlined](../../images/calibre-web/install-1-catalogue.png)
+
 3. A slide-out opens with what it can read, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Calibre-Web**. To stop, select **Cancel**: nothing is installed.
 5. Calibre-Web's own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Activate**.
@@ -63,6 +66,12 @@ Then:
 
 1. Go to **Settings**, then **Plug-ins**, then **Calibre-Web**, and find **Its first sign-in**.
 2. Select **Show the password…**, enter your Starboard password and select **Show it once**. Starboard shows the password once, with a button to copy it. Keep it in a password manager.
+
+![Calibre-Web's Its first sign-in, with Show the password… (step 2) outlined](../../images/calibre-web/first-sign-in-1.png)
+
+![The Show the first sign-in dialog, with Your Starboard password filled in and Show it once (step 3) outlined](../../images/calibre-web/first-sign-in-2.png)
+
+
 3. Select **Open Calibre-Web** under **Its web page**, and sign in as `admin` with that password.
 4. If it finds no books, read [Your books](your-books.md).
 

@@ -161,7 +161,7 @@ KINDS["tv-station"] = "Jellyfin"  # hand-made, its own image with FFmpeg (DASH-4
 RECOMMENDED = {"direct-play", "notifications", "disk-forecast"}
 # Apps you can add (DASH-411), each with its memory and processor at rest: the 13 November 2026 benchmark where it
 # measured the app, else measured with tools/app_check.py.
-REST = {"calibre-web": (182, 0.01), "jellystat": (117, 0.22), "kavita": (337, 0.99), "maintainerr": (127, 0.0),
+REST = {"calibre-web": (172, 0.01), "jellystat": (117, 0.22), "kavita": (337, 0.99), "maintainerr": (127, 0.0),
         "navidrome": (16, 0.01), "seerr": (127, 0.0), "tdarr": (59, 0.11), "uptime-kuma": (116, 0.0), "wizarr": (124, 0.02),
         "themearr": (48, 0.64), "checkrr": (19, 0.01)}  # 17 November 2026, tools/app_check.py, as Starboard runs them
 KINDS.update({pid: "Apps you can add" for pid in REST})

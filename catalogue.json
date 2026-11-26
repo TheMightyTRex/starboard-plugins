@@ -142,7 +142,7 @@
     }
    ],
    "rest": {
-    "memory_mb": 182,
+    "memory_mb": 172,
     "cpu_percent": 0.01
    }
   },

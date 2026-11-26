@@ -18,8 +18,17 @@ The first one with `metadata.db` is set as Calibre-Web's library. If you chose a
 ## If you have a folder of books and no library
 
 1. Add **Calibre library maker** from the **Catalogue**. It is small to keep: it rests when it is not used.
+
+![The Catalogue, with Install… beside Calibre library maker (step 2) outlined](../../images/calibre-library/install-1-catalogue.png)
+
 2. Go to **Settings**, then **Plug-ins**, then **Calibre library maker**. The page says how many books it found, how much room the library needs and how long it takes.
+
+![Calibre library maker's page, with What Make the library will do, the number of books, the room needed and the time (step 1), outlined](../../images/calibre-library/make-1-plan.png)
+
 3. Select **Make the library**, read the question and select **Make the library** again. Your books folder is read only here and is never changed.
+
+![Calibre library maker's Actions, with Make the library (step 2) outlined](../../images/calibre-library/make-2-button.png)
+
 4. Watch the progress in words on the same page. A file that cannot be read is listed with the reason.
 5. When it says **Done**, deactivate Calibre-Web and activate it again. It opens the new library.
 
