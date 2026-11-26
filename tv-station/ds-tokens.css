@@ -1,7 +1,7 @@
-/* The design system's tokens (github.com/TheMightyTRex/design-system, tokens.css at f1a7d38, Mica), copied for the
-   schedule grid's own page. Refresh with: tools in the design system, or copy tokens.css again and change the font address. */
+/* The TRex Design System's tokens.css, copied by tools/sync.py (github.com/TheMightyTRex/design-system).
+   Do not change this copy: change the design system and run sync.py again. */
 /*
- * Shared design tokens for Storyarr and Starboard (version 1, 2 November 2026).
+ * Shared design tokens for Starboard, its plug-ins and Stallboard (version 1, 2 November 2026).
  *
  * Role names only: components use these and nothing else, so both apps look like one family and a
  * theme is a change of values, not of components. Three themes: Light, Dark, High contrast (light and
@@ -24,6 +24,8 @@
 :root {
   /* Type: one typeface, five sizes, scaled by the Text size setting. */
   --font: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  /* For code, addresses and keys: the system's own monospace face, so nothing more is downloaded. */
+  --font-mono: ui-monospace, monospace;
   --text-scale: 1;
   --text-xs: calc(0.75rem * var(--text-scale));
   --text-sm: calc(0.875rem * var(--text-scale));
@@ -59,6 +61,15 @@
   --icon-lg: 20px;
   --radius: 6px; /* Mica's corners, on every control, card, panel, menu and dialog */
   --radius-round: 50%;
+  /* Two more corner sizes, for Starboard's own boxes (a backup place, a recovery code): 4px and 8px. They do not
+     follow --radius, so a style that squares the corners leaves them as they were. */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  /* The colour of a status word that sits in a line of text, not in a chip (a backup place's last copy, a test
+     result). It is the text colour: the word and its icon carry the status, so it never depends on colour. A style may
+     set these two to --status-success-fg and --status-danger-fg, which pass contrast on every surface. */
+  --color-success-text: var(--color-text);
+  --color-danger-text: var(--color-text);
   --header-h: 64px;
   --tabs-h: 48px;
   /* The side menu grows with the text, so its names never break in the middle of a word or run past its edge
@@ -301,4 +312,15 @@
     --motion-fast: 0ms;
     --motion-panel: 0ms;
   }
+}
+
+/* Remove drop shadows (Starboard DASH-536; owner, 23 November 2026: "add a setting to remove the all drop shadows"):
+   one switch sets every shadow token to none, so no component can forget it. Borders stay, so nothing loses its
+   edge. Set data-shadows="off" on <html> (an app does it before first paint, as it does the theme), or on any
+   element to turn the shadows off inside it. The root rule is doubled so it beats every theme. Inset edges and
+   status bars (the 3px accent bar, the hover edge) are not drop shadows and stay. */
+:root:root[data-shadows="off"],
+[data-shadows="off"] {
+  --shadow-raised: none;
+  --shadow-card: none;
 }

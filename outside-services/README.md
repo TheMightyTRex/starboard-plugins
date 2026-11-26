@@ -82,5 +82,5 @@ Or run `python3 install.py` in this folder.
 
 ## For developers
 
-`make_css.py` copies the TRex Design System's `tokens.css` and `components.css` into `ds.css`, and its font, for the
-status page. Run it again after the design system changes. The tests are `tests/test_uptime_status.py`.
+The design system's `tools/sync.py` copies its `tokens.css` and `components.css` into `ds.css`, and its font, for the
+status page. Run it again after the design system changes (`make_css.py` has retired). The tests are `tests/test_uptime_status.py`.

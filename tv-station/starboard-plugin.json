@@ -752,7 +752,8 @@
    "version": "0.9.1",
    "date": "2026-11-26",
    "changed": [
-    "Plainer wording in the text and help pages. How it works has not changed."
+    "Plainer wording in the text and help pages. How it works has not changed.",
+    "The copy of the design system's styles is current, with every theme and the latest components."
    ]
   },
   {
