@@ -18,7 +18,7 @@ Starboard lists these before you add it, each with its risk.
 | Use Jellyfin's API key, kept by Starboard (`jellyfin:key`) | High |
 | Reach other computers on your home network, and the internet (`network:lan`) | Medium |
 
-It uses Jellyfin's key to read Jellyfin's libraries and list of plug-ins, so it stays idle when Jellyfin's own Picture shrinker is installed, and for **Start again**, to have Jellyfin download pictures again.
+It uses Jellyfin's key to read Jellyfin's libraries and list of plug-ins. This lets it stay idle when Jellyfin's own Picture shrinker is installed. It also uses the key for **Start again**, to have Jellyfin download pictures again.
 
 What it runs:
 
@@ -32,7 +32,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 Measured:
 
-- 12.1 MiB at rest, and 28.0 MiB at its busiest while it shrank a sample of 540 pictures (1.17 GB down to 91 MB in 93 seconds, at half a processor), measured on 14 November 2026.
+- 12.1 MiB at rest, and 28.0 MiB at its busiest while it shrank a sample of 540 pictures. We measured this on 14 November 2026. The sample went from 1.17 GB down to 91 MB in 93 seconds, at half a processor.
 
 ## Add it
 
@@ -50,7 +50,7 @@ To shrink straight away, select **Shrink now** on its tab.
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/picture-shrinker/starboard-plugin.json
@@ -62,7 +62,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 1. Go to **Settings**, then **Plug-ins**, then **Picture shrinker**.
 2. Under **Remove**, select **Remove Picture shrinker**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes. Either **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted. Pictures it already shrank stay as they are.

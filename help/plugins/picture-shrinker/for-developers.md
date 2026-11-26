@@ -47,9 +47,11 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- Starboard runs its two jobs. `POST /jobs/shrink` runs on the schedule in **When to shrink**, for 120 minutes at most. `POST /jobs/new` runs each hour of quiet hours, for 30 minutes at most, when **Shrink new pictures in quiet hours** is activated. It shrinks only pictures saved since the last pass.
-- Each picture is written to a hidden file beside it (JPEG at quality 85, progressive; PNG and WebP stay PNG and WebP), opened again and decoded in full, checked for its size and format, and swapped in only when it is smaller. Its work runs at nice 19 and in the idle disk class.
-- A run stops itself after 115 minutes, before the job's limit. The totals and the last runs are kept in its folder.
+- Starboard runs its two jobs.
+  - `POST /jobs/shrink` runs on the schedule in **When to shrink**, for 120 minutes at most.
+  - `POST /jobs/new` runs each hour of quiet hours when **Shrink new pictures in quiet hours** is activated, for 30 minutes at most. It shrinks only pictures saved since the last pass.
+- The plug-in writes each picture to a hidden file beside it (JPEG at quality 85, progressive; PNG and WebP stay PNG and WebP). It opens the file again, decodes it in full and checks its size and format. It swaps the file in only when it is smaller. Its work runs at nice 19 and in the idle disk class.
+- A run stops itself after 115 minutes, before the job's limit. The plug-in keeps the totals and the last runs in its folder.
 - `GET /health` answers 200 only while Jellyfin's metadata folder can be read and changed and its own folder can be written.
 - The card's status comes from `band()`: `running`, `scheduled`, `done` or `problem`.
 - It reaches only Starboard and holds no key: it needs only `jellyfin:metadata`.

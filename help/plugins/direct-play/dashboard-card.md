@@ -6,7 +6,7 @@ Direct play adds 2 cards you can put on your dashboard. Each starts with a band:
 
 Shows a short list, up to 6 lines:
 
-- **Converting now:** the film or episode, what is being done, how far it is as a percentage and about how long is left. When nothing is being converted, the first line says why instead, such as "Waiting for the weekend", "Paused" or "Nothing left to do", and when it next runs.
+- **Converting now:** the film or episode, what is being done, how far it is as a percentage and about how long is left. When nothing is being converted, the first line says why instead, such as "Waiting for the weekend", "Paused" or "Nothing left to do". It also says when it next runs.
 - **Next:** the next four files and what will be done to each.
 - **Totals:** how many files are fixed, how much space is saved and how many are still to do.
 
@@ -33,7 +33,7 @@ Shows how much space Direct play has saved, with how many files are fixed and ho
 | **Done** | Every file is checked and nothing is left to do. New films and series are checked when it next runs. |
 | **Needs setting up** | On the **Direct play** card only: no device is chosen in **Devices**. The card says "No devices chosen". |
 
-The band's time on the **Space saved by Direct play** card is when the last file was fixed. If a pass goes wrong, the cards do not say so: the **Files** page on its tab says "The last pass did not finish" and why.
+The band's time on the **Space saved by Direct play** card is when the last file was fixed. If a pass goes wrong, the cards do not say so. The **Files** page on its tab says "The last pass did not finish" and why.
 
 ## Add it to your dashboard
 

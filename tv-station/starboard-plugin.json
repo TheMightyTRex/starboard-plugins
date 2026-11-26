@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.9.0",
- "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos.",
+ "version": "0.9.1",
+ "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/tv-station",
@@ -45,7 +45,7 @@
    "label": "Channels",
    "type": "custom",
    "choices": "/channels",
-   "hint": "Add a channel and open it: a card each for its name and number, what it shows, its breaks, its on-screen logo, its animation, its holding slide and promos, its programmes and what it has played."
+   "hint": "Add a channel and open it. It has a card for each of these: its name and number, what it shows, its breaks, its on-screen logo, its animation, its holding slide and promos, its programmes and what it has played."
   },
   {
    "key": "guide",
@@ -59,7 +59,7 @@
    "label": "Schedule grid",
    "type": "custom",
    "choices": "/schedule",
-   "hint": "Open each channel's week on a grid, in a new tab in a desktop browser: place films and series at set times, copy a day, stripe a series, or suggest a week from watch history."
+   "hint": "Open each channel's week on a grid, in a new tab in a desktop browser. Place films and series at set times, copy a day, stripe a series, or suggest a week from watch history."
   },
   {
    "key": "grids",
@@ -73,7 +73,7 @@
    "label": "File lists",
    "type": "custom",
    "choices": "/files",
-   "hint": "Every ident, promo clip, advert and PSA in one list that can be searched, sorted and filtered, with several files added to a channel or taken off it together."
+   "hint": "Every ident, promo clip, advert and PSA in one list. You can search, sort and filter it, and add several files to a channel or take them off together."
   },
   {
    "key": "clips",
@@ -151,7 +151,7 @@
      "label": "Norsk bokmål (Norwegian)"
     }
    ],
-   "hint": "The words drawn on the picture, such as Coming up next and the day and time, and in the guide; the sound track, where a programme has one in this language; and film and series titles and descriptions, read from the film database.",
+   "hint": "This sets the language of three things. The first is the words on the picture and in the guide, such as Coming up next and the day and time. The second is the sound track, where a programme has one in this language. The third is film and series titles and descriptions, which come from the film database.",
    "group": "Station"
   },
   {
@@ -400,7 +400,7 @@
    "type": "switch",
    "default": false,
    "group": "Promos",
-   "hint": "A voice says each promo's words: Coming soon, the title, the episode, the day and time and the channel, and the first sentence of the description when there is room. The music and the programme's sound fall under it. The voice is made on your server (eSpeak NG), in the station's language; nothing is sent anywhere. Promos are made again in the next quiet hours."
+   "hint": "A voice says each promo's words: Coming soon, the title, the episode, the day and time and the channel. It adds the first sentence of the description when there is room. The music and the programme's sound fall under it. The voice is made on your server (eSpeak NG), in the station's language; nothing is sent anywhere. Promos are made again in the next quiet hours."
   },
   {
    "key": "promo_other",
@@ -749,6 +749,13 @@
  },
  "changes": [
   {
+   "version": "0.9.1",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
+  {
    "version": "0.9.0",
    "date": "2026-11-25",
    "added": [
@@ -929,21 +936,6 @@
    ],
    "fixed": [
     "**Channel names and numbers are accepted:** with Starboard 0.23.0 and later, Add a channel, Rename and Change number take plain text, not only web addresses."
-   ]
-  },
-  {
-   "version": "0.1.0",
-   "date": "2026-11-17",
-   "added": [
-    "**Your own channels:** name the station and each channel, with its number, logo and colour, and fill it from series, films, collections, playlists, genres or decades, in order or shuffled, with episodes of a series in a row.",
-    "**Schedule grid:** place films and series at set times on a week's grid, by dragging or with buttons and the keyboard; copy a day; stripe a series across weekdays; choose where a series starts; suggest a week from watch history.",
-    "**In Jellyfin's Live TV, first:** numbered from 1 in your order, with a 7-day guide of titles, episode names, synopses, pictures and New or Repeat. Tuning in joins part way through, as on television.",
-    "**Breaks:** idents, Jellyfin's trailers, your own clips, and Coming up next and Later cards with the programme's picture, title, date and time and a short synopsis.",
-    "**Broadcast pack:** your own branding from a zip made from the template: the on-screen logo, the logo with its music, idents in a random order, transitions, and Coming up next and promo backgrounds. Every file is checked first. Or try the example pack.",
-    "**Promos:** made in quiet hours from short clips of a programme coming up, a music bed from the pack and its day and time from the schedule, kept and replaced as the settings say, and shown on your other channels too.",
-    "**Downloads:** the template, with pack.json, its schema and a README, and placement guides for the Coming up next card, the promo and the on-screen logo.",
-    "**On-screen logo:** the channel's logo or name in a corner you choose, with its size, opacity, a clock, a New, Repeat or Live label and a backing plate, for the station or each channel, with a preview.",
-    "**Light:** nothing runs until someone chooses a channel, viewers of a channel share one stream, and it stops 30 seconds after the last one leaves."
    ]
   }
  ]

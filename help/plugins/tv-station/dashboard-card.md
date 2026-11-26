@@ -4,7 +4,7 @@ Create your own TV channel adds 1 card you can put on your dashboard. It starts 
 
 ## What is on now
 
-Shows each channel on air: its number and name, the programme on now with how far through it is, and what is next with its time. A channel being watched has how many viewers it has after its name.
+Shows each channel on air. For each one it shows the number and name. It also shows the programme on now and how far through it is, and what is next with its time. A channel being watched shows its number of viewers after its name.
 
 - **How often it updates:** every minute while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
 - **Its status:** **Running** with how many channels are playing, or **OK** and "Nothing streaming".

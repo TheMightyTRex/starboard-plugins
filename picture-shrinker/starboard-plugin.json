@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "picture-shrinker",
  "name": "Picture shrinker",
- "version": "1.2.2",
+ "version": "1.2.3",
  "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or shrink without a backup.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -385,6 +385,13 @@
   "alt": "Picture shrinker logo"
  },
  "changes": [
+  {
+   "version": "1.2.3",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.2.2",
    "date": "2026-11-17",

@@ -22,13 +22,13 @@ Starboard lists these before you add it, each with its risk.
 
 What it runs:
 
-- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/direct-play`), the `movies` folder in your media folder, to read and change, the `tv` folder in your media folder, to read and change.
+- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/direct-play`). It can also read and change the `movies` folder and the `tv` folder in your media folder.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 
 ## Memory and processor
 
-- **main:** 512 MB of memory and one processor core at most. ffmpeg runs only while a file is fixed, at the lowest processor and disk priority, with two threads at most.
+- **main:** 512 MB of memory and one processor core at most. ffmpeg runs only while a file is fixed. It uses the lowest processor and disk priority, with two threads at most.
 
 These figures are the most it may use.
 
@@ -50,7 +50,7 @@ Tip: Direct play is marked **Recommended** in the catalogue.
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/direct-play/starboard-plugin.json
@@ -62,7 +62,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 1. Go to **Settings**, then **Plug-ins**, then **Direct play**.
 2. Under **Remove**, select **Remove Direct play**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes. Either **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted. Files it already changed in your media folder stay as they are.

@@ -42,11 +42,11 @@ Your Starboard's plug-in API is outside what this version of Audio description t
 
 ## Find a track for your cut
 
-**Lengths differ** says how much longer or shorter the track is than your film. A description track is made for one cut of a film. A difference of more than a few seconds almost always means your copy is another cut: an extended edition, a director's cut, different studio logos at the start, or a broadcast with its own credits.
+**Lengths differ** says how much longer or shorter the track is than your film. A description track is made for one cut of a film. A difference of more than a few seconds almost always means your copy is another cut. It may be an extended edition, a director's cut, different studio logos at the start, or a broadcast with its own credits.
 
 - Select **Search AudioVault for** and the title, and find a track for your cut.
 - Or line the track up yourself with [describealign](https://pypi.org/project/describealign/), then put the result in the folder.
-- If the difference is only a little more than **How close the lengths must be**, raise that setting, up to 30 seconds, then choose the title again in **Film or episode** on **Description tracks to add**, so it checks again.
+- If the difference is only a little more than **How close the lengths must be**, raise that setting, up to 30 seconds. Then choose the title again in **Film or episode** on **Description tracks to add**, so it checks again.
 
 ## Rename the file or choose the title
 
@@ -59,7 +59,7 @@ Your Starboard's plug-in API is outside what this version of Audio description t
 
 ## Move the film into the media folder
 
-**Out of reach** means the film is not in the movies or tv folder of Starboard's media folder, so the plug-in cannot reach it to add a track.
+**Out of reach** means the film is not in the movies or tv folder of Starboard's media folder. So the plug-in cannot reach it to add a track.
 
 1. Move the film into the movies folder, or the series into the tv folder, of Starboard's media folder.
 2. Wait for Jellyfin to scan its library.
@@ -77,7 +77,7 @@ An upload must be up to 60 MB. For a larger file, put it in the audio-descriptio
 
 ## Add tracks in Jellyfin
 
-**Idle** means Jellyfin's own Audio description plug-in is installed. It adds tracks in the same way, so this one adds nothing and the two never add the same track. In Jellyfin, open **Dashboard**, **Plugins**, **Audio description**, then **Add a track you have**, and put your tracks in the folder it names or upload them there. To use this one again, uninstall the Jellyfin plug-in; this one notices within 10 minutes.
+**Idle** means Jellyfin's own Audio description plug-in is installed. It adds tracks in the same way, so this one adds nothing and the two never add the same track. In Jellyfin, open **Dashboard**, **Plugins**, **Audio description**, then **Add a track you have**. Put your tracks in the folder it names, or upload them there. To use this one again, uninstall the Jellyfin plug-in; this one notices within 10 minutes.
 
 ## Report a problem
 

@@ -45,10 +45,10 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- A worker wakes once a minute and does nothing outside the hours set in **When it works**. In its hours it reads the movies and tv folders with ffprobe, at most every 6 hours, reading only new or changed files, then fixes one file at a time, cheapest fix first.
+- A worker wakes once a minute and does nothing outside the hours set in **When it works**. In its hours it reads the movies and tv folders with ffprobe, at most every 6 hours, and reads only new or changed files. Then it fixes one file at a time, cheapest fix first.
 - ffmpeg runs with `nice` and `ionice` at the lowest priority, with two threads. Each new file is checked before it replaces the original, then Reelix rescans the film or series and Jellyfin is told the file changed.
 - Starboard's quiet-hours job (`POST /jobs/quiet`) wakes it each hour in Starboard's quiet hours.
-- The cards read a small status file the worker writes, at most as often as **Card updates every** says, so nothing is probed for a card. The **Direct play** card sends `converting`, `waiting`, `paused`, `done` or `needs_setup`.
+- The cards read a small status file that the worker writes. They read it at most as often as **Card updates every** says, so nothing is probed for a card. The **Direct play** card sends `converting`, `waiting`, `paused`, `done` or `needs_setup`.
 - Before an update it stops the file being converted and removes its unfinished copy, and after the update it carries on.
 - It runs as the owner of your media folder (`user: media`), so the new files are yours.
 

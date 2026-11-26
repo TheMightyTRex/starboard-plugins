@@ -36,18 +36,18 @@ Its image is built for amd64, arm64 and arm/v7 by `.github/workflows/tv-station-
 
 ## How the schedule works
 
-A channel is a function from time to programme, an idea from [Clickarr](https://github.com/thegregstengel/clickarr) (MIT); no code is copied. A channel keeps eras: each is a frozen line-up (every programme and its length), the moment it starts, a seed and the channel's order and times. What is on at any moment is worked out from those, so the guide, the card and the stream always agree, and nothing is kept or run between viewings.
+A channel is a function from time to programme, an idea from [Clickarr](https://github.com/thegregstengel/clickarr) (MIT); no code is copied. A channel keeps eras. Each era is a frozen line-up (every programme and its length), the moment it starts, a seed, and the channel's order and times. The plug-in works out what is on at any moment from those. So the guide, the card and the stream always agree, and nothing is kept or run between viewings.
 
 - **Shuffled** uses a SplitMix64 random number generator of its own, so a shuffle is the same on every computer.
 - **A new line-up** starts at the end of the programme on air, carrying on from the programme that would have come next.
-- **Breaks** are planned from the same inputs: a broadcast pack's logo with music, an ident, trailers, clips and promos that fit, then Later and Coming up next cards for the rest. A pack's idents are chosen at random from the break's seed, so the same break always has the same ident.
-- **Transitions** sit on each cut between programme and break. The last half of a piece that ends on a cut is played as a piece of its own, so each FFmpeg run starts its transition at its own start, paced like the piece, and never holds frames waiting.
-- **The stream** carries on from the end of what it has sent, within 8 seconds of the clock, so FFmpeg's first burst never sends anything twice and a slow start never passes anything over. Every looped input is cut a second after its piece.
+- **Breaks** are planned from the same inputs. They use a broadcast pack's logo with music, an ident, trailers, clips and promos that fit. Later and Coming up next cards fill the rest. The plug-in chooses a pack's idents at random from the break's seed, so the same break always has the same ident.
+- **Transitions** sit on each cut between programme and break. The last half of a piece that ends on a cut plays as a piece of its own. So each FFmpeg run starts its transition at its own start, paced like the piece, and never holds frames waiting.
+- **The stream** carries on from the end of what it has sent, within 8 seconds of the clock. So FFmpeg's first burst never sends anything twice, and a slow start never passes anything over. Every looped input is cut a second after its piece.
 
 ## Broadcast packs and promos
 
-- **A pack** is unpacked to a new folder, checked, and only then put in place of the one in use, in `/data/packs/station`, `/data/packs/example` or `/data/packs/ch-<channel>`. What the stream uses is kept as `checked.json` beside it. [Make a broadcast pack](../../use/make-a-broadcast-pack.md) has the specification.
-- **Promos** are made by `POST /jobs/promos`, which Starboard calls each hour of its quiet hours: one FFmpeg at a time, at the lowest priority with one thread, stopped at once when a channel starts. They are kept in `/data/promos`.
+- **A pack** is unpacked to a new folder and checked. Only then does it take the place of the one in use, in `/data/packs/station`, `/data/packs/example` or `/data/packs/ch-<channel>`. What the stream uses is kept as `checked.json` beside it. [Make a broadcast pack](../../use/make-a-broadcast-pack.md) has the specification.
+- **Promos** are made by `POST /jobs/promos`, which Starboard calls each hour of its quiet hours. It runs one FFmpeg at a time, at the lowest priority with one thread, and stops at once when a channel starts. They are kept in `/data/promos`.
 
 ## What Starboard and Jellyfin call
 
@@ -76,7 +76,15 @@ A channel is a function from time to programme, an idea from [Clickarr](https://
 
 ## Tests
 
-`python3 -m unittest tests.test_tv_station tests.test_tv_station_pack tests.test_tv_station_grid`: the schedule (the same answer for the same time, joining part way, boundaries, breaks filling the gap, new episodes joining at the next boundary), the guide and channel list, the on-screen logo options, the pages, and, where FFmpeg is installed, a real run that tunes in part way through a made-up clip and checks the logo is drawn, then two viewers sharing one stream that stops after they leave. For packs: `pack.json` against its schema, the zip rules (paths outside the folder, links, unknown names, zip bombs, size limits), the example pack made small and checked, broken copies of it refused, a card drawn from it, the random ident choice, the logo with music, both halves of a transition at each cut, which promos are made and replaced, a real promo made by FFmpeg and stopped when someone watches, promos on the other channels, the placement guides' marks and the template. For the grid: the store, every change and its alternative to dragging, copy a day, stripe, where a series starts, the guide following the grid, the suggester with made-up history, and the page's answers.
+`python3 -m unittest tests.test_tv_station tests.test_tv_station_pack tests.test_tv_station_grid`
+
+The tests cover these parts.
+
+- **The schedule:** the same answer for the same time, joining part way, boundaries, breaks filling the gap, and new episodes joining at the next boundary.
+- **Other checks:** the guide and channel list, the on-screen logo options and the pages.
+- **A real FFmpeg run,** where FFmpeg is installed. It tunes in part way through a made-up clip and checks the logo is drawn. Then two viewers share one stream that stops after they leave.
+- **Packs:** `pack.json` against its schema. The zip rules (paths outside the folder, links, unknown names, zip bombs, size limits). The example pack made small and checked, and broken copies of it refused. A card drawn from it, the random ident choice, and the logo with music. Both halves of a transition at each cut, and which promos are made and replaced. A real promo made by FFmpeg and stopped when someone watches. Promos on the other channels, the placement guides' marks and the template.
+- **The grid:** the store, every change and its alternative to dragging, copy a day, stripe, and where a series starts. Also the guide following the grid, the suggester with made-up history, and the page's answers.
 
 ## Find out more
 

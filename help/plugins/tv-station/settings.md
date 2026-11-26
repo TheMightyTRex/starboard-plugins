@@ -26,7 +26,16 @@ The station's settings are for every channel. A channel's own choice, on its pag
 
 ## Channels
 
-**Channels** lists your channels, each on a card with its number, its name, whether it is on air and what is on now. Select a channel to open it. An opened channel has a card for each part of it, each saying what it is for: **Name and number**, **What it shows**, **Breaks**, **On-screen logo and branding**, **Animation**, **Holding slide and promos**, **Today and tomorrow**, and **Played on this channel**.
+**Channels** lists your channels, each on a card with its number, its name, whether it is on air and what is on now. Select a channel to open it. An opened channel has a card for each part of it, and each card says what it is for. The cards are:
+
+- **Name and number**
+- **What it shows**
+- **Breaks**
+- **On-screen logo and branding**
+- **Animation**
+- **Holding slide and promos**
+- **Today and tomorrow**
+- **Played on this channel**
 
 ### Add a channel
 
@@ -75,17 +84,17 @@ New episodes join the line-up at the end of the programme on air. **Read the cha
 | The last 5 programmes | When each was on, and how many of its minutes were played to someone watching: **Watched** at 70% or more, else **Part watched** | Listed on the **Played on this channel** card |
 | **The record of what it has played** | **Remove**, in its More menu, forgets everything this channel has played, after you confirm. Jellyfin is not changed | Kept until you remove it |
 
-A channel streams only while someone is watching it in Jellyfin's Live TV, so what it plays is what was watched. For each episode and film it keeps when it was on and how much of it was played, in its own small file in the plug-in's folder, the newest 5,000 programmes. It never tells Jellyfin, so Jellyfin's watched marks, and **Continue watching**, stay as they were.
+A channel streams only while someone is watching it in Jellyfin's Live TV, so what it plays is what was watched. For each episode and film, it keeps when it was on and how much of it was played. It keeps the newest 5,000 programmes in its own small file in the plug-in's folder. It never tells Jellyfin, so Jellyfin's watched marks and **Continue watching** stay as they were.
 
 ## Guide
 
-**Guide** starts by saying when Jellyfin last read the guide, and how many programmes on how many channels it had, so you can tell Jellyfin has it. It then has a table for each channel: what is on in the next 24 hours, with the time, the programme, the episode, New or Repeat, and what it is about. Jellyfin's own guide has as many days as **Days in Jellyfin's guide** says. An episode or film first shown in the last 30 days is New; anything older is a Repeat.
+**Guide** starts by saying when Jellyfin last read the guide, and how many programmes on how many channels it had. This tells you that Jellyfin has the guide. Then each channel has a table of what is on in the next 24 hours. It shows the time, the programme, the episode, New or Repeat, and what it is about. Jellyfin's own guide has as many days as **Days in Jellyfin's guide** says. An episode or film first shown in the last 30 days is New. Anything older is a Repeat.
 
 ## Schedule grid
 
-**Schedule grid** lists your channels, each with an **Open the schedule grid** link that opens its grid in a new tab, on the plug-in's own page, in a desktop browser. From Starboard 0.24.0 the link uses the address you opened Starboard with.
+**Schedule grid** lists your channels. Each has an **Open the schedule grid** link, which opens its grid in a new tab on the plug-in's own page. Use a desktop browser. From Starboard 0.24.0 the link uses the address you opened Starboard with.
 
-The grid is a week, Monday to Sunday, in 15 minute steps. Films and series placed on it play at those times every week; the time between them keeps the channel's automatic line-up, whole programmes only, and the rest is a break. A channel with nothing on its grid is as it was. The guide in Jellyfin follows the grid.
+The grid is a week, Monday to Sunday, in 15 minute steps. Films and series you place on it play at those times every week. The time between them keeps the channel's automatic line-up, with whole programmes only, and the rest is a break. A channel with nothing on its grid is as it was. The guide in Jellyfin follows the grid.
 
 | On the grid | What it does | Example result |
 |---|---|---|
@@ -98,13 +107,13 @@ The grid is a week, Monday to Sunday, in 15 minute steps. Films and series place
 | **Suggest a schedule** | Asks what to make the week from, then proposes it, the most watched first. **This channel's line-up**: every series and film the channel shows, in its order, watched or not. **Watch history**: the channel's own series and films people have watched. **General watch history**: everything anyone has watched, whatever the channel shows. **All TV**: series from the whole library, every day. **All films**: films from the whole library. **TV and Films**: series on weekdays and films at the weekend, from the whole library. Then **Hours to fill**: **Fill weekdays** and **Fill Saturday and Sunday**, each **From** and **To**, in half hours; a programme that would run past the end is left out. The choices and hours are remembered for each channel. Nothing is saved until you select **Save the suggestion**; **Discard the suggestion** keeps the grid as it was | TV and Films, weekdays 18:00 to 23:00: five evenings of series and a weekend of films |
 | **Undo** | Takes back the last change | The last move undone |
 
-A programme takes the time of its longest episode, rounded up to 15 minutes, so programmes never run into each other. A change that would overlap another programme is refused, and the message names it. In the grid, the arrow keys move between times and days, Page Up and Page Down by an hour, and Enter opens a programme's actions or adds one at an empty time.
+A programme takes the time of its longest episode, rounded up to 15 minutes, so programmes never run into each other. The grid refuses a change that would overlap another programme, and the message names it. In the grid, the arrow keys move between times and days. Page Up and Page Down move by an hour. Enter opens a programme's actions, or adds one at an empty time.
 
 ## Break grids
 
-**Break grids** lists each channel's two grids, with an **Open the grid** link that opens it in a new tab, on the plug-in's own page (Starboard 0.24.0 and later; the link also shows on each channel's **Breaks** card). **In between programmes** is what plays after a programme, before the next one starts. **Breaks** is what plays in a break inside a programme, where a programme stops for adverts ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more).
+**Break grids** lists each channel's two grids. Each has an **Open the grid** link, which opens it in a new tab on the plug-in's own page (Starboard 0.24.0 and later). The link also shows on each channel's **Breaks** card. **In between programmes** is what plays after a programme, before the next one starts. **Breaks** is what plays in a break inside a programme, where a programme stops for adverts ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more).
 
-A channel that has not changed its grids plays what it always has, and the grid shows that order as its starting point: a bumper, **Promo** (as many as **Promos and clips in each break** says), **Adverts**, the holding slide and an ident. Nothing is saved until you change the grid. **Use the standard order again** takes a grid back to that.
+A channel that has not changed its grids plays what it always has. The grid shows that order as its starting point. It is a bumper, **Promo** (as many as **Promos and clips in each break** says), **Adverts**, the holding slide and an ident. Nothing is saved until you change the grid. **Use the standard order again** takes a grid back to that.
 
 ![The In between programmes grid with its mode set to Sequence and 3 columns: step 1 marks How a break picks its column, step 2 Number of columns](../../images/tv-station/grid-between-modes.png)
 
@@ -135,15 +144,15 @@ Changing the choice loses nothing: columns the new choice does not use are kept,
 | **Holding countdown** | The holding slide with the time to the programme's start. It takes the time that is left. The clock counts through everything after it (a bumper, a promo, an ident, an other channel promo or a Coming soon promo) and reaches 0:00 as the programme starts, so the slide ends early by the length of what follows | Once |
 | **Back soon** | The holding slide with Back soon. It takes the time that is left, and ends early enough for what follows it | Once |
 
-Each promo, clip or video plays once at most in a break, so **Promo** with 3 times shown is 3 different ones, or fewer when there are fewer. An item with nothing to play, or nothing that fits the time, is left out. A column has one holding slide at most. When the column has none, or the channel has no holding slide, Coming up next cards or a slate fill the time before the idents that end the break. A promo for a programme that has started is left out.
+Each promo, clip or video plays once at most in a break. So **Promo** with 3 times shown is 3 different ones, or fewer when there are fewer. The grid leaves out an item with nothing to play, or nothing that fits the time. A column has one holding slide at most. When the column has none, or the channel has no holding slide, Coming up next cards or a slate fill the time. They play before the idents that end the break. The grid also leaves out a promo for a programme that has started.
 
 ### Fit, and a break length for each column
 
-**Fit** is a choice beside the numbers for **Adverts**, in **Times shown**. It adds as many whole adverts as the break has room for: the other items in the column keep their counts and their places, then the adverts go where the **Fit** item is, each at most once, in an order that turns by one each break so that over a day every advert has a turn first. An advert is never cut short, and nothing runs past the programme's start. Whatever time is left over, **Holding countdown** (or Back soon) makes up, so the countdown's own length changes from break to break. When too little is left for even the shortest advert, the countdown has it.
+**Fit** is a choice beside the numbers for **Adverts**, in **Times shown**. It adds as many whole adverts as the break has room for. The other items in the column keep their counts and their places. The adverts then go where the **Fit** item is, each at most once. The order turns by one each break, so over a day every advert has a turn first. An advert is never cut short, and nothing runs past the programme's start. **Holding countdown** (or Back soon) takes whatever time is left over, so the countdown's own length changes from break to break. When too little is left for even the shortest advert, the countdown has it.
 
-Each column also has a **Break length**: **Automatic**, or 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25 or 30 minutes. In **In between programmes**, **Automatic** is the gap the schedule leaves, and a set length is the most that plays besides the countdown or the cards, which take the rest of the gap. In **Breaks**, **Automatic** is the longest break set for the channel (**Breaks inside programmes**), and a set length replaces it, as far as the programme has room. A column that was saved before 0.9.0 is **Automatic**.
+Each column also has a **Break length**: **Automatic**, or 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25 or 30 minutes. In **In between programmes**, **Automatic** is the gap the schedule leaves. A set length is the most that plays besides the countdown or the cards, which take the rest of the gap. In **Breaks**, **Automatic** is the longest break set for the channel (**Breaks inside programmes**). A set length replaces it, as far as the programme has room. A column that was saved before 0.9.0 is **Automatic**.
 
-If a column's items need more time than its break length, the column says so in words, such as "These items need at least 2 minutes 35 seconds, but the break is 2 minutes. Some are left out so the programme starts on time.", and the message is read out after the change that caused it. The programme still starts on time: the last of the least wanted items go first (promos, then adverts, then bumpers; an ident is the last to go).
+If a column's items need more time than its break length, the column says so in words. For example: "These items need at least 2 minutes 35 seconds, but the break is 2 minutes. Some are left out so the programme starts on time." The message is read out after the change that caused it. The programme still starts on time. The least wanted items go first: promos, then adverts, then bumpers. An ident is the last to go.
 
 ### Moving things: three ways
 
@@ -163,7 +172,7 @@ If a column's items need more time than its break length, the column says so in 
 
 ## PSAs
 
-A **PSA** (public service announcement) is a kind of item beside **Bumper**, **Promo**, **Adverts** and the rest, and it is dragged into the grids in the same way, with how many times it is shown. Its files are your own videos, added with **Add a PSA** in **Idents, clips and music** (for every channel) or on a channel's own page (for that channel only). Each is checked when you add it: it must be a real video that FFmpeg can read, up to 10 minutes and 90 MB, with a picture, a length and a sound track. A file with no sound track is refused, and the message says so. A channel's **PSAs** choice says whether it plays its own, the station's, both or none. A PSA is listed with the other files in [File lists](#file-lists).
+A **PSA** (public service announcement) is a kind of item beside **Bumper**, **Promo**, **Adverts** and the rest. You drag it into the grids in the same way, and set how many times it is shown. Its files are your own videos. Add them with **Add a PSA** in **Idents, clips and music** (for every channel) or on a channel's own page (for that channel only). The plug-in checks each file when you add it. It must be a real video that FFmpeg can read. It must have a picture, a length and a sound track, and be no more than 10 minutes and 90 MB. The plug-in refuses a file with no sound track, and the message says so. A channel's **PSAs** choice says whether it plays its own, the station's, both or none. A PSA is listed with the other files in [File lists](#file-lists).
 
 Not in 0.9.0: choosing a PSA from a folder on the server with a file picker, and levelling a PSA's sound to the channel's loudness. The plug-in can only reach the files you add to it for now.
 
@@ -184,11 +193,17 @@ Not in 0.9.0: choosing a PSA from a folder on the server with a file picker, and
 
 ![The kind, Show and Length choices, with Adverts and Not used by any channel chosen](../../images/tv-station/files-filters.png)
 
-Each row shows the file's name, kind, length, whether it has sound, size, the date it was added, where it is **Kept in** (the station, or a channel) and which channels play it. Tick the files you want (the box in the heading ticks the whole page; ticks stay while you change page or filter), choose **Channel to change**, then **Add to the channel**, which copies each file into that channel's own list, or **Remove from the channel**, which takes it off that list. Choose **The station** to change the station's list. **A file is never deleted**: it stays in the plug-in's folder. Each change is said aloud once, such as "Added to Comedy: 2 files".
+Each row shows the file's name, kind, length, whether it has sound, size and the date it was added. It also shows where the file is **Kept in** (the station, or a channel) and which channels play it. To change a list:
+
+1. Tick the files you want. The box in the heading ticks the whole page. Ticks stay while you change page or filter.
+2. Choose **Channel to change**. Choose **The station** to change the station's list.
+3. Select **Add to the channel** to copy each file into that channel's own list. Or select **Remove from the channel** to take it off that list.
+
+**A file is never deleted**: it stays in the plug-in's folder. Each change is said aloud once, such as "Added to Comedy: 2 files".
 
 ![The PSA files in the list](../../images/tv-station/files-psa.png)
 
-Not in 0.9.0: a picture or first frame for each file, and the times played and last played, which the plug-in does not keep for a clip yet; a folder for each channel (DASH-551) is also still to come.
+Not in 0.9.0: a picture or first frame for each file. The plug-in does not yet keep the times played and last played for a clip, so the lists do not show them. A folder for each channel (DASH-551) is also still to come.
 
 ## Where breaks go inside a programme
 
@@ -206,11 +221,11 @@ These are on each channel's **Breaks** card, next to **Breaks inside programmes*
 
 ![The Breaks card: the In between programmes grid (1) and the Breaks grid (2), each with its link and Standard order](../../images/tv-station/grid-ads-grid-links.png)
 
-The places are found once for each programme, in the quiet hours, for programmes on in the next 48 hours, at the lowest priority and never while anyone is watching. They are kept in a small file, so a change to any of these settings needs no new search, and nothing is searched for while a channel streams. **At set times** needs no search at all. Finding the places for a 30 minute programme took about 8 processor seconds for **At silence** and 2 for **At the end of a scene** on the computer it was measured on, for a 640 by 360 file; a programme not searched yet has no breaks until the next quiet hour, except with **At set times**. A programme under 15 minutes has none. Each break's time comes from the break after the programme, so many breaks in a short slot need a longer **Break between programmes**.
+The plug-in finds the places once for each programme. It does this in the quiet hours, for programmes on in the next 48 hours, at the lowest priority, and never while anyone is watching. It keeps them in a small file, so a change to any of these settings needs no new search. Nothing is searched for while a channel streams. **At set times** needs no search at all. On the computer where this was measured, a 30 minute programme (a 640 by 360 file) took about 8 processor seconds for **At silence**. It took 2 for **At the end of a scene**. A programme that is not searched yet has no breaks until the next quiet hour, except with **At set times**. A programme under 15 minutes has none. Each break's time comes from the break after the programme, so many breaks in a short slot need a longer **Break between programmes**.
 
 ## Breaks and idents
 
-A break fills the time between programmes. It opens with a bumper, then promos, trailers and clips, then one extra video, then the holding slide or Coming up next cards, and ends with one ident immediately before the next programme. A transition from the broadcast pack plays at each cut between a programme and a break.
+A break fills the time between programmes. It opens with a bumper. Then come promos, trailers and clips, then one extra video, then the holding slide or Coming up next cards. It ends with one ident immediately before the next programme. A transition from the broadcast pack plays at each cut between a programme and a break.
 
 ![Three pieces from the Example TV pack: an ident with its logo on teal, the logo with music, and a wipe transition part way across a made-up landscape](../../images/tv-station/pack-pieces.jpg)
 
@@ -266,7 +281,7 @@ On the channel's **Holding slide and promos** card:
 | **Add music for promos** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks. Each is checked with FFmpeg and played at the same loudness as the rest. **Remove** in its More menu takes it off | Music you add |
 | **Add a background loop for promos** | Select **Upload a background loop** and choose a video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080 and up to 90 MB, up to 20 loops. Every channel's promos choose from these, its own and its pack's promo background, one at random for each promo. Leave the clip area and the places for the words clear. **Remove** in its More menu takes it off | Loops you add |
 
-With music or a background loop here, a channel whose pack has no promo, or that has no pack, gets plain promos: the programme's clips and words on a loop, or on the channel's colour.
+With music or a background loop here, a channel gets plain promos if its pack has no promo or it has no pack. A plain promo shows the programme's clips and words on a loop, or on the channel's colour.
 
 ## On-screen logo
 
@@ -278,7 +293,7 @@ The logo in a corner of the picture, as on broadcast television (also called the
 
 ### On-screen logo setting
 
-What the logo is. **The channel's logo** is the logo added on the channel's page, else the broadcast pack's `logo/dog.png`; with neither, the channel's name is drawn in its place.
+What the logo is. **The channel's logo** is the logo added on the channel's page, or else the broadcast pack's `logo/dog.png`. With neither, the plug-in draws the channel's name in its place.
 
 Choices: **The channel's logo** (the one it starts with), **The channel's name**, **The station's name** or **No on-screen logo**.
 
@@ -380,11 +395,11 @@ The next programme and its time, in a strap low in the corner, during the end cr
 
 In the breaks: the programme's picture, its title, its series and episode, the date and time it is shown and a short synopsis. The card for the next programme says Coming up next; a card for one after that says Later on and the channel's name. Deactivated, a break with no clips shows the station's name. It starts activated.
 
-With no broadcast pack, the card is drawn on the programme's own picture, darkened to a third of its brightness so the words are clear, with a bar in the channel's colour.
+With no broadcast pack, the plug-in draws the card on the programme's own picture, with a bar in the channel's colour. It darkens the picture to a third of its brightness so the words are clear.
 
 ![A Coming up next card with no pack: Kestrel Valley, Series 1, episode 1: First light, Today at 21:00 and a synopsis, on the programme's darkened picture](../../images/tv-station/card-plain.jpg)
 
-With a broadcast pack, the card is drawn on the pack's Coming up next background, with the programme's picture in its clip area and each field where `pack.json` places it.
+With a broadcast pack, the plug-in draws the card on the pack's Coming up next background. The programme's picture goes in its clip area, and each field goes where `pack.json` places it.
 
 ![A Coming up next card from the Example TV pack: the words beside the programme's picture in a yellow frame](../../images/tv-station/card-pack.jpg)
 
@@ -392,9 +407,9 @@ With a broadcast pack, the card is drawn on the pack's Coming up next background
 
 ## Promos
 
-Promos are short trailers for programmes coming up, made by the plug-in in quiet hours. They are made for channels whose broadcast pack has a promo background, and for any channel when there is music or a background loop for promos in **Idents, clips and music** or on the channel.
+Promos are short trailers for programmes coming up. The plug-in makes them in quiet hours. It makes them for channels whose broadcast pack has a promo background. It also makes them for any channel that has music or a background loop for promos, in **Idents, clips and music** or on the channel.
 
-A promo has a few short clips of the programme in its clip area, with its sound, a music bed, and its title, the day and time and the channel. It gives the day and time, such as Sunday at 21:00, as it is made days before it plays.
+A promo has a few short clips of the programme in its clip area, with its sound. It also has a music bed, and the title, the day and time and the channel. It gives the day and time, such as Sunday at 21:00, as it is made days before it plays.
 
 ![A promo from the Example TV pack: Coming soon, Kestrel Valley, Sunday at 21:00 and Comedy, with a clip of the programme in a yellow frame](../../images/tv-station/promo-pack.jpg)
 
@@ -427,8 +442,8 @@ A promo is clips of a programme, music, and words on the picture: the title, the
 viewer who cannot read the picture hears only music. With **Audio description on promos** activated, a voice says the
 words.
 
-- **What is said**, in the order the words are read on the picture: **Coming soon**, the title, the series and
-  episode, the day and time, and the channel's name. When the promo is long enough, the first sentence of the
+- **What is said.** The voice reads the words in the order they appear on the picture: **Coming soon**, the title,
+  the series and episode, the day and time, and the channel's name. When the promo is long enough, the first sentence of the
   programme's description follows. A promo too short for all of it says the title, the day and time and the channel.
 - **How it sounds:** the voice starts in the promo's first second. The music and the programme's sound fall to about a
   third while it speaks, and rise again after it. It is part of the promo's one sound track, so it plays in every
@@ -437,8 +452,8 @@ words.
   sent anywhere. It speaks the station's [Language](#language), with a voice for each of the ten. It is clear but
   plainly a machine's voice.
 - **A programme with a described sound track** plays that track in its clips, in the station's language when it has
-  one. The plug-in knows a described track by its name, such as **English (Audio Description)** or **AD**, the next
-  time it reads the channels from Jellyfin, which it does by itself each night.
+  one. The plug-in knows a described track by its name, such as **English (Audio Description)** or **AD**. It learns
+  the name the next time it reads the channels from Jellyfin, which it does by itself each night.
 - **What it costs:** a few hundredths of a second of the processor for each promo, in the quiet hours when the promo
   is made. Nothing runs for it at any other time. The plug-in's image is about 6 MB larger for the speech program.
 - **When it changes:** activating or deactivating it makes each channel's promos again in the next quiet hours.
@@ -447,7 +462,7 @@ On a channel's **Holding slide and promos** card, **Promos** says how its promos
 
 ## Broadcast pack
 
-Your own branding for every channel: the on-screen logo, the logo with its music, idents, bumpers, transitions, and backgrounds for the Coming up next card and the promos, with music for the promos. [Use a broadcast pack](../../use/use-a-broadcast-pack.md) says how to add one, and [Make a broadcast pack](../../use/make-a-broadcast-pack.md) how to make one.
+Your own branding for every channel. It can have the on-screen logo, the logo with its music, idents, bumpers and transitions. It can also have backgrounds for the Coming up next card and the promos, with music for the promos. [Use a broadcast pack](../../use/use-a-broadcast-pack.md) says how to add one, and [Make a broadcast pack](../../use/make-a-broadcast-pack.md) how to make one.
 
 | Row | What it does | Choices, and the one it starts with |
 |---|---|---|
@@ -478,9 +493,14 @@ Your own branding for every channel: the on-screen logo, the logo with its music
 | **Speed** | How long it takes | **The broadcast pack's, or normal** (the one it starts with), **Quick, 0.3 seconds**, **Normal, 0.6 seconds** or **Slow, 1 second** |
 | **Preview** | On each thing's **Coming on** row: opens a few seconds of it coming on and going off, in a new tab, drawn over a made-up picture with the choices saved | None |
 
-Example result: the example pack's cards slide in from the left and fade out; its straps wipe on and off; its logo and clock fade, slowly; its label slides in from the right, quickly; and the words on the holding slide slide up from the bottom and fade out.
+Example result, from the example pack:
+- Its cards slide in from the left and fade out.
+- Its straps wipe on and off.
+- Its logo and clock fade, slowly.
+- Its label slides in from the right, quickly.
+- The words on its holding slide slide up from the bottom and fade out.
 
-Timing stays exact: each thing comes on from its start and has gone by its end, so an animation never makes a break or a strap longer. Something shown for less time than two animations has both made shorter to fit. Each thing is drawn on its own layer only while it moves, so it costs little: measured at 720p, a programme with everything animating used no more processor than one without, and a card with animation used about half the processor of a plain one. A **Preview a frame** picture shows each thing where it rests.
+Timing stays exact. Each thing comes on from its start and has gone by its end, so an animation never makes a break or a strap longer. If something is shown for less time than its two animations need, both are made shorter to fit. The plug-in draws each thing on its own layer only while it moves, so it costs little. Measured at 720p, a programme with everything animating used no more processor than one without. A card with animation used about half the processor of a plain one. A **Preview a frame** picture shows each thing where it rests.
 
 ## Streaming
 
@@ -506,11 +526,15 @@ Timing stays exact: each thing comes on from its start and has gone by its end, 
 
 **Language** is for every channel. It changes three things, from the next piece that plays:
 
-- **Words on the picture and in the guide:** the programme's name strap with its series and episode, **Up next** at a time, the **Coming up next** and **Later on** cards with the day and time, the **New**, **Repeat** or **Live** label, **Coming soon** on promos, and **Back soon** or the countdown on the holding slide. In German, for example, a card says Als Nächstes and Morgen um 21:00. The clock stays 24-hour. The plug-in's own pages in Starboard stay in English.
+- **Words on the picture and in the guide.** These are the programme's name strap with its series and episode, and **Up next** at a time. They also include the **Coming up next** and **Later on** cards with the day and time. They also include the **New**, **Repeat** or **Live** label, **Coming soon** on promos, and **Back soon** or the countdown on the holding slide. In German, for example, a card says Als Nächstes and Morgen um 21:00. The clock stays 24-hour. The plug-in's own pages in Starboard stay in English.
 - **Sound track:** a programme with more than one sound track plays the one in this language, else its default track, as before. A line-up read before 0.6.0 knows each track's language after its next read, each night at 04:40 or with **Read the channels from Jellyfin again**.
-- **Titles and descriptions:** for a language other than English, the plug-in reads a film's title and description, and a series' name, in this language from the film database (TMDB) through Jellyfin, only for programmes about to be shown: the next 3 hours of a channel someone is watching, the guide's days each night, and each promo as it is made. It reads at most 60 an hour and keeps each one, so a new language takes a day or so to reach the whole guide. A programme the film database has nothing for keeps Jellyfin's own title. Nothing in Jellyfin is changed.
+- **Titles and descriptions.** For a language other than English, the plug-in reads a film's title and description, and a series' name, in this language. It gets them from the film database (TMDB) through Jellyfin. It reads them only for programmes about to be shown. These are the next 3 hours of a channel someone is watching, the guide's days each night, and each promo as it is made. It reads at most 60 an hour and keeps each one, so a new language takes a day or so to reach the whole guide. A programme the film database has nothing for keeps Jellyfin's own title. Nothing in Jellyfin is changed.
 
-Jellyfin cannot give an episode's own name and plot in another language this way, so they stay as Jellyfin has them. To have those in your language too, set the library's language in Jellyfin: in Jellyfin's **Dashboard**, select **Libraries**, then the library, and set **Preferred download language**; then refresh the library's metadata in Jellyfin.
+Jellyfin cannot give an episode's own name and plot in another language this way, so they stay as Jellyfin has them. To have those in your language too, set the library's language in Jellyfin:
+
+1. In Jellyfin's **Dashboard**, select **Libraries**, then the library.
+2. Set **Preferred download language**.
+3. Refresh the library's metadata in Jellyfin.
 
 After a change of language, each channel's promos are made again in the next quiet hours, with the new words.
 

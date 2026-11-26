@@ -1,7 +1,7 @@
 # Picture shrinker
 
-Jellyfin keeps a copy of every poster and every photo of an actor or crew member it shows, often much larger than
-any television or computer needs. On a large library they can take tens of gigabytes. Picture shrinker makes them smaller, so they
+Jellyfin keeps a copy of every poster and every photo of an actor or crew member it shows. These are often much larger
+than any television or computer needs. On a large library they can take tens of gigabytes. Picture shrinker makes them smaller, so they
 take less space, and checks each one before it replaces the original.
 
 Starboard never adds it by itself: you choose to add it from the catalogue.
@@ -21,16 +21,16 @@ It shrinks every type of picture Jellyfin saves, each to its own size:
 | Disc art | 500 pixels wide |
 | Clear art | 800 pixels wide |
 
-Pictures that are already that small are left alone. Every type is shrunk when you add it; you can leave types out in
-**What to shrink**.
+It leaves alone any picture that is already that small. It shrinks every type when you add it, and you can leave types
+out in **What to shrink**.
 
-Each picture is shrunk into a hidden copy beside it. The copy is opened again and checked, and it replaces the
-original only when it is the right size and smaller. If anything is wrong, the original stays as it was.
+Each picture is shrunk into a hidden copy beside it. The plug-in opens the copy again and checks it. The copy replaces
+the original only when it is the right size and smaller. If anything is wrong, the original stays as it was.
 
-You choose whether to keep a backup copy of each original, or shrink without a backup. With a backup, each original is copied to
-the plug-in's own folder before its first shrink, and if the copy cannot be made the picture is not shrunk.
+You choose whether to keep a backup copy of each original, or shrink without a backup. With a backup, the plug-in copies each original to
+its own folder before the first shrink. If it cannot make the copy, it does not shrink the picture.
 
-It works at the lowest priority, so your server stays quick for everything else, and people can watch while it runs.
+It works at the lowest priority. Your server stays quick for everything else, and people can watch while it runs.
 
 ## When it runs
 
@@ -48,8 +48,8 @@ A run stops itself after about two hours. The next run carries on where it stopp
 ## Settings
 
 - **Shrink all picture types:** activated when you add it, so every type is shrunk in one setting. Deactivate it to
-  choose types one by one with the ticks under it: **Posters**, **Photos of cast and crew**, **Backdrops**,
-  **Thumbnails**, **Logos**, **Banners**, **Disc art** and **Clear art**, all activated when you add it.
+  choose types one by one with the ticks under it. The ticks are **Posters**, **Photos of cast and crew**,
+  **Backdrops**, **Thumbnails**, **Logos**, **Banners**, **Disc art** and **Clear art**. All are activated when you add it.
 
 In **Sizes and quality**:
 
@@ -59,7 +59,7 @@ In **Sizes and quality**:
 - **Backdrops no wider than:** 1920 pixels, from 640 to 3,840. Sharp on a 1080p television and a little softer
   across the whole of a 4K television.
 - **Thumbnails no wider than** 1280, **Logos** 800, **Banners** 1000, **Disc art** 500 and **Clear art** 800 pixels
-  when you add it, each with its own range.
+  when you add it. Each has its own range.
 Its settings are in three sections. **What to shrink** comes first, so it is the first thing you set up:
 
 - **Original pictures:** **Keep a backup copy of each original**, or **Shrink without a backup**. Nothing is
@@ -99,14 +99,21 @@ nothing is changed if Jellyfin does not answer.
 
 ## Space saved
 
-**Space saved** in its section of **Settings**, **Plug-ins** shows the pictures now (their size and number), the
-backup of the originals, the space saved and how many pictures it has shrunk, measured when you open it, and when it
-runs next. Then comes a table of each run: when, what started it, how many pictures were shrunk,
-left as they were or could not be read, and the space saved. Pictures it could not read are listed under **Could not
-read**, with the reason.
+**Space saved** in its section of **Settings**, **Plug-ins** shows these figures, measured when you open it:
 
-**Saved by type**, also in its section of **Settings**, **Plug-ins**, shows the space each type of picture has saved,
-such as posters, backdrops and photos of cast and crew, with how many were shrunk and their size before and now.
+- the pictures now (their size and number)
+- the backup of the originals
+- the space saved
+- how many pictures it has shrunk
+- when it runs next
+
+Then comes a table of each run. It shows when the run started, what started it, and how many pictures were shrunk,
+left as they were or could not be read. It also shows the space saved. Pictures it could not read are listed under
+**Could not read**, with the reason.
+
+**Saved by type**, also in its section of **Settings**, **Plug-ins**, shows the space each type of picture has saved.
+The types include posters, backdrops and photos of cast and crew. It also shows how many were shrunk and their size
+before and now.
 Pictures shrunk before version 1.2.2 were not counted by type and share one row.
 
 ## The cards on your dashboard
@@ -117,9 +124,9 @@ Add them in **Edit dashboard**. Each card's band shows the Picture shrinker logo
   next.
 - **Space saved by type** shows the space each type of picture saved, the most first, and the last run.
 
-Before anything is shrunk, both say "Nothing shrunk yet" and what to do: choose an option in **Original pictures**
+Before anything is shrunk, both say "Nothing shrunk yet" and what to do. Choose an option in **Original pictures**
 first, then **Shrink now** or wait for the next run. Both read the figures kept after each run, so they add no work
-for your server. A finished run changes only these figures: it sends no notification and raises no alert.
+for your server. A finished run changes only these figures. It sends no notification and raises no alert.
 
 ## Jellyfin's own version
 
@@ -133,8 +140,8 @@ Before you add it, Starboard shows what it may do and asks for your password.
 
 - It reads and changes Jellyfin's metadata folder: the posters, photos and details Jellyfin saved. It changes only
   posters and photos of people. Jellyfin can download any picture again.
-- It uses Jellyfin's key for two things: reading Jellyfin's list of plug-ins, to stay idle when Jellyfin's own version
-  is installed, and, when you choose **Start again**, asking Jellyfin to download pictures again. It touches none of
+- It uses Jellyfin's key for two things. It reads Jellyfin's list of plug-ins, to stay idle when Jellyfin's own version
+  is installed. When you choose **Start again**, it asks Jellyfin to download pictures again. It touches none of
   your films, series or music.
 - It uses 128 MB of memory and half a processor at most.
 
@@ -148,5 +155,5 @@ goes back to the version you had, with your settings as they were.
 
 - **Stop it for a while:** choose **Deactivate**. Its settings and what it has saved are kept.
 - **Remove it:** choose **Remove**. The pictures it shrank stay shrunk. To put them back first, choose **Restore
-  original pictures**, or **Start again** to have Jellyfin download them again; to free the backup's space, choose
+  original pictures**, or **Start again** to have Jellyfin download them again. To free the backup's space, choose
   **Delete backup**.

@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "direct-play",
  "name": "Direct play",
- "version": "1.0.3",
- "description": "Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose.",
+ "version": "1.0.4",
+ "description": "Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play. It works on one file at a time, in the hours you choose.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/direct-play",
@@ -299,6 +299,13 @@
   "alt": "Direct play logo"
  },
  "changes": [
+  {
+   "version": "1.0.4",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.0.3",
    "date": "2026-11-17",

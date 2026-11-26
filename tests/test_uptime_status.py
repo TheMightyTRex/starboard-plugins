@@ -709,7 +709,7 @@ class Manifest(unittest.TestCase):
 
     def test_it_keeps_its_id_and_settings_and_needs_api_117(self):
         m = json.load(open(os.path.join(HERE, "starboard-plugin.json"), encoding="utf-8"))
-        self.assertEqual((m["id"], m["version"], m["starboard_api"]), ("outside-services", "2.1.0", ">=1.17 <2.0"))
+        self.assertEqual((m["id"], m["version"], m["starboard_api"]), ("outside-services", "2.1.1", ">=1.17 <2.0"))
         keys = {s["key"]: s for s in m["settings"]}
         self.assertEqual(keys["addresses"]["type"], "list")  # Outside services' settings, unchanged
         self.assertEqual((keys["minutes"]["type"], keys["minutes"]["default"]), ("number", 5))

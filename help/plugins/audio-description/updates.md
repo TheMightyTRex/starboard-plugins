@@ -1,11 +1,12 @@
 # Audio description: Updates
 
-Audio description 1.5.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description 1.5.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.5.1 | 1.14 or later | Not released yet |
 | 1.5.0 | 1.14 or later | 17 November 2026 |
 | 1.4.0 | 1.14 or later | 17 November 2026 |
 | 1.3.0 | 1.14 or later | 17 November 2026 |
@@ -21,7 +22,7 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Added:
 
-- **Films to list and Series to list:** how many Titles with audio description lists of each: All, or the last 10, 20, 50, 100 or 500 added to Jellyfin, newest first. Last 20 by default. A series counts by its newest described episode and still lists all its described episodes.
+- **Films to list and Series to list:** how many of each **Titles with audio description** lists. Choose All, or the last 10, 20, 50, 100 or 500 added to Jellyfin, newest first. The default is Last 20. A series counts by its newest described episode and still lists all its described episodes.
 - **The page says how many it shows,** such as "Showing the last 20 of 143 films", and where to change it.
 
 Changed:
@@ -33,7 +34,7 @@ Changed:
 Added:
 
 - **Titles with audio description:** every film, and every described episode by series, with its year, its described track and its status in words. Films and Series show their counts, and each title opens its page in Jellyfin. The same page as in Jellyfin's own Audio description plug-in.
-- **Jellyfin address for links:** the address you open Jellyfin at, for the links on Titles with audio description, when Starboard reaches Jellyfin at an address a browser cannot open.
+- **Jellyfin address for links:** the address you open Jellyfin at, for the links on Titles with audio description. Use it when Starboard reaches Jellyfin at an address a browser cannot open.
 
 Changed:
 
@@ -41,13 +42,13 @@ Changed:
 
 Fixed:
 
-- **Films in the collection:** the nightly check asks Jellyfin for each film, not the Audio description collection in their place, so once the collection was made, films in it no longer dropped out of the check and lost their tag.
+- **Films in the collection:** the nightly check now asks Jellyfin for each film itself, not the Audio description collection in its place. Once the collection was made, films in it dropped out of the check and lost their tag. They no longer do.
 
 ## What is new in 1.3.0
 
 Added:
 
-- **Find and tag:** each film and episode with a described sound track, and its series, gets the tag **Audio description** in Jellyfin at the nightly check, and the tag comes off when the track goes. Every Jellyfin app, televisions included, can filter by it.
+- **Find and tag:** at the nightly check, each film, episode and series with a described sound track gets the tag **Audio description** in Jellyfin. The tag comes off when the track goes. Every Jellyfin app, televisions included, can filter by it.
 - **The Audio description collection:** activated by default, the films and series with a described track are in one Jellyfin collection. Deactivate **Add them to the Audio description collection** to leave it as it is.
 - **Play the described track:** for each person you activate on its page, inactive until chosen. When they start a title with a described track and another plays, Starboard asks their app to change to it. Not every Jellyfin app accepts this.
 - **Rules 1.0:** the same rules file as Jellyfin's own Audio description plug-in. When that plug-in is installed, this one leaves the tag, the collection and Play the described track to it, and its card says **Idle**.
@@ -56,18 +57,18 @@ Changed:
 
 - **A new logo:** a film frame with a speech bubble holding a loudspeaker, to match the Jellyfin version.
 - **It hears when playback starts:** it asks to read what is playing (media:read), so Starboard tells it when someone starts a film.
-- **Check the Reelix choice now:** was **Apply the Reelix choice now**, and its job is **Check the audio description choice in Reelix**: both now only read Reelix and say what to do.
+- **Check the Reelix choice now:** was **Apply the Reelix choice now**, and its job is **Check the audio description choice in Reelix**. Both now only read Reelix and say what to do.
 
 Fixed:
 
-- **Reelix (issue #144):** it no longer tries to add a format to Reelix or change its quality levels, which Reelix refuses to all but an admin key. It reads Reelix's own Audio description format and says to set it to Prefer in **Settings**, **Reelix**, **Picture quality**. The job no longer fails.
+- **Reelix (issue #144):** it no longer tries to add a format to Reelix or change its quality levels. Reelix refuses both unless the key is an admin key. It reads Reelix's own Audio description format and says to set it to Prefer in **Settings**, **Reelix**, **Picture quality**. The job no longer fails.
 
 ## What is new in 1.2.3
 
 Changed:
 
 - **Clearer words:** **Look for described titles now** is now **Check for described titles now**, and its job is **Check for titles with audio description**. Its messages put the settings they name in quotation marks and spell out RNIB.
-- **Logo description:** where its logo stands on its own, a screen reader says "Audio description logo", the plug-in's name, instead of a description of the symbol.
+- **Logo description:** where its logo stands on its own, a screen reader says "Audio description logo", the plug-in's name. It no longer describes the symbol.
 
 ## What is new in 1.2.2
 
@@ -79,7 +80,7 @@ Fixed:
 
 Changed:
 
-- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.
+- **Lighter at rest:** while nothing asks it anything, it wakes about once a minute, not twice a second. It writes nothing to its folder when a run goes well.
 - **Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## What is new in 1.2.0

@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "audio-description",
  "name": "Audio description",
- "version": "1.5.0",
- "description": "Finds and tags films and series in Jellyfin with a described sound track for blind and partially sighted people, plays it for the people who choose it, and prefers releases with one in Reelix.",
+ "version": "1.5.1",
+ "description": "Finds films and series in Jellyfin that have a described sound track for blind and partially sighted people, and tags them. Plays it for people who choose it. Prefers releases with one.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/audio-description",
@@ -297,6 +297,13 @@
   "alt": "Audio description logo"
  },
  "changes": [
+  {
+   "version": "1.5.1",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.5.0",
    "date": "2026-11-17",
