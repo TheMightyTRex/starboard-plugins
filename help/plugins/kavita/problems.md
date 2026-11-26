@@ -71,7 +71,7 @@ The main install can also add Kavita, in **Install apps**, **Ebooks**. With both
 
 ## Repair the first account
 
-Kavita 1.1.1 and earlier made a sign-in key that was too short for Kavita, so making the first account ended with "400 Error, Something went wrong when registering user". Version 1.1.2 makes a long enough key for a new install. An install made before it keeps the short key, because Starboard never writes over a file Kavita keeps in its own folder, so it needs one repair.
+Kavita 1.1.1 and earlier made a sign-in key that was too short for Kavita. Making the first account then ended with "400 Error, Something went wrong when registering user". Version 1.1.2 makes a long enough key for a new install. An install made before it keeps the short key, because Starboard never writes over a file Kavita keeps in its own folder. That install needs one repair.
 
 1. Update Kavita to 1.1.2. Read [Updates](updates.md).
 2. On Kavita's tab, select **Deactivate**.

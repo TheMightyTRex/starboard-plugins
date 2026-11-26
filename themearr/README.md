@@ -2,13 +2,12 @@
 
 Themearr puts a theme tune, theme.mp3, in the folder of each film Reelix has, and Jellyfin plays it on the film's page. It needs a RapidAPI key to fetch the tunes.
 
-An app plug-in for Starboard (plug-in API 1.14 or later): Themearr runs outside the main install, in Starboard's locked-down
-containers, with its own page on your home network. Starboard chooses the port (8080 when it is free) and shows the address
+An app plug-in for Starboard (plug-in API 1.14 or later). Themearr runs outside the main install, in Starboard's locked-down containers. It has its own page on your home network. Starboard chooses the port (8080 when it is free) and shows the address
 on the plug-in's page with **Open**.
 
 ## Who it is for
 
-People who like a film's music to play while they browse it in Jellyfin. Themearr reads your films from Reelix, finds each film's theme on YouTube and saves it as `theme.mp3` beside the film, where Jellyfin, Plex, Emby and Kodi find it.
+People who like a film's music to play while they browse it in Jellyfin. Themearr reads your films from Reelix, finds each film's theme on YouTube and saves it as `theme.mp3` beside the film. Jellyfin, Plex, Emby and Kodi find it there.
 
 ## Set it up
 
@@ -18,10 +17,10 @@ People who like a film's music to play while they browse it in Jellyfin. Themear
 
 ## What it may do
 
-- It can change: Its own folder in Starboard's data (data/plugins/themearr), and the `movies` folder in your media folder, as the media folder's owner: it adds `theme.mp3` to each film's folder and changes nothing else there.
+- It can change: Its own folder in Starboard's data (data/plugins/themearr), and the `movies` folder in your media folder, as the media folder's owner. It adds `theme.mp3` to each film's folder and changes nothing else there.
 - It can use: Reelix's API key, kept by Starboard, to read the films Reelix has.
 - It can reach: Other computers on your home network, and the internet (YouTube and RapidAPI).
-- It can reach: Its own web page is opened on your home network: anyone on your home network can open it, at this computer's address and a port Starboard chooses. It asks for the access token.
+- It can reach: Its own web page on your home network. Anyone on your home network can open it, at this computer's address and a port Starboard chooses. It asks for the access token.
 
 It runs read only, as a user that is not root, with no extra rights, like every plug-in. A small helper beside it, run in the
 official Python image, gives Themearr its settings and answers Starboard's card; it reaches only Starboard and Themearr. Its images, pinned by digest:
@@ -44,8 +43,8 @@ Themearr's image is about 1 GB to download. The tunes are full length unless you
 ## Removing it
 
 **Settings**, **Plug-ins**, Themearr, **Remove**. Its containers stop and go and its key stops working. You choose
-where its folder goes, with everything it kept (settings and its list of films):
-kept in `data/plugins/.removed`, or moved to the holding folder in **System**, **Clean up**.
+where its folder goes, with everything it kept (settings and its list of films). It is either
+kept in `data/plugins/.removed` or moved to the holding folder in **System**, **Clean up**.
 From there you can put it back or delete it permanently. Starboard never deletes it. The `theme.mp3` files stay in your film folders.
 
 ## Licence

@@ -1,11 +1,12 @@
 # Jellystat: Updates
 
-Jellystat 1.1.4 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Jellystat 1.1.5 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.5 | 1.14 or later | Not released yet |
 | 1.1.4 | 1.14 or later | 17 November 2026 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
 | 1.1.2 | 1.14 or later | 16 November 2026 |
@@ -19,7 +20,7 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Changed:
 
-- **Clearer words:** its messages say to enter a backup's name in 'Backup file to restore', the Restore page says when a restore is done, and the card says "Jellystat is connected to Jellyfin."
+- **Clearer words:** its messages say to enter a backup's name in 'Backup file to restore'. The Restore page says when a restore is done. The card says "Jellystat is connected to Jellyfin."
 - **Logo description:** where its logo stands on its own, a screen reader says "Jellystat logo", the plug-in's name, instead of a description of the symbol.
 
 ## What is new in 1.1.3
@@ -63,11 +64,11 @@ Added:
 
 ## How an update is kept safe
 
-- **Before the update** Starboard asks Jellystat to get ready: it starts nothing new and lets a restore that is running finish, for up to 60 seconds. If it is not ready, nothing changes and Starboard says why.
+- **Before the update** Starboard asks Jellystat to get ready. Jellystat starts nothing new and lets a running restore finish, for up to 60 seconds. If it is not ready, nothing changes and Starboard says why.
 - **After the update,** or after a Roll back, it carries on with its work.
 - Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
 - Your settings and its folder are kept.
-- **Roll back** brings back the older Jellystat and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
+- **Roll back** brings back the older Jellystat and your settings, but not its folder as it was. If the newer app changed its own data, that change stays. Back up its folder first if you are unsure.
 
 ## Update it
 

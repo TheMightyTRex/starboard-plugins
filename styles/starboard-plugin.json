@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "styles",
  "name": "Styles",
- "version": "1.6.0",
+ "version": "1.6.1",
  "description": "22 accessible styles for Display: 17 change every part of Starboard (cards, buttons, tabs, menus), checked for contrast.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -1462,6 +1462,13 @@
   "alt": "Styles logo"
  },
  "changes": [
+  {
+   "version": "1.6.1",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.6.0",
    "date": "2026-11-20",

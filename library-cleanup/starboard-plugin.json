@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "library-cleanup",
  "name": "Library clean-up",
- "version": "1.0.3",
- "description": "Moves films and series everyone has watched, or nobody has watched for a long time, to the holding folder, so your disks do not fill up. It never deletes, and each can be put back.",
+ "version": "1.0.4",
+ "description": "Moves films and series to the holding folder when everyone has watched them, or nobody has for a long time. This stops your disks filling up. It never deletes, and each can be put back.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/library-cleanup",
@@ -208,6 +208,13 @@
   "alt": "Library clean-up logo"
  },
  "changes": [
+  {
+   "version": "1.0.4",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.0.3",
    "date": "2026-11-17",

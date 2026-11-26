@@ -23,7 +23,7 @@ Starboard lists these before you add it, each with its risk.
 What it runs:
 
 - **main:** a small helper. It reaches only Starboard and Themearr, on its own network: it cannot reach your home network or the internet. It can use its own folder in Starboard's data (`data/plugins/themearr`).
-- **app:** Themearr. It reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/themearr`) and the `movies` folder in your media folder, to read and change, as the media folder's owner. Its web page is on your home network at port 8080 when that port is free, or the next free one.
+- **app:** Themearr. It reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/themearr`) and the `movies` folder in your media folder. It can read and change that folder, as the media folder's owner. Its web page is on your home network at port 8080 when that port is free, or the next free one.
 
 What it changes in your films folder: it adds one file, `theme.mp3`, to each film's folder. It changes no film and deletes nothing there. Removing the plug-in leaves the tunes where they are.
 
@@ -50,7 +50,7 @@ Themearr's image is about 1 GB to download, as it brings its own copy of FFmpeg.
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/themearr/starboard-plugin.json
@@ -65,13 +65,13 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 3. To open Themearr's own page, open **Sign in to Themearr** on its tab and copy the access token.
 4. Under **Its web page**, select **Open Themearr**. Paste the token into Themearr's **Access token** box. Each web browser asks once.
 
-Themearr reads Reelix's films every 15 minutes and fetches a tune for each new one by itself, unless you deactivate **Fetch tunes for new films by itself**.
+Themearr reads Reelix's films every 15 minutes. It fetches a tune for each new one by itself, unless you deactivate **Fetch tunes for new films by itself**.
 
 ## Remove it
 
 1. Go to **Settings**, then **Plug-ins**, then **Themearr**.
 2. Under **Remove**, select **Remove Themearr**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes. **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted: the `theme.mp3` files stay in your film folders, and Jellyfin carries on playing them.

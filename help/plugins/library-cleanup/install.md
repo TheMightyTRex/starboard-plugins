@@ -36,7 +36,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 Measured:
 
 - 22.21 MiB at rest in the smoke test, on 15 November 2026.
-- On made-up data (3,000 films and 300 series for 3 people), measured on 15 November 2026: about 14 MB at rest, 31 MB at its busiest while it worked out **Preview** and moved 200 items, and 28 MB after. 0% of a processor at rest.
+- On made-up data (3,000 films and 300 series for 3 people), measured on 15 November 2026, it used about 14 MB at rest. It used 31 MB at its busiest while it worked out **Preview** and moved 200 items, and 28 MB after. It used 0% of a processor at rest.
 
 ## Add it
 
@@ -62,7 +62,7 @@ Measured:
 8. When **Preview** lists only what you are happy to move, activate **Move items each day** in **Rules**.
 9. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
 
-To move items straight away, once **Move items each day** is activated, go to **System**, then **Jobs**, and select **Run now** beside **Move items to the holding folder**.
+To move items straight away, first activate **Move items each day**. Then go to **System**, then **Jobs**, and select **Run now** beside **Move items to the holding folder**.
 
 ### Add it by its address
 
@@ -79,12 +79,12 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 1. First, put back anything you want to keep in your library: open **Holding folder** on its tab and select **Put back** beside each one.
 2. Go to **Settings**, then **Plug-ins**, then **Library clean-up**.
 3. Under **Remove**, select **Remove Library clean-up**.
-4. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+4. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 5. Enter your Starboard password and select **Remove**.
 
-Its containers stop and go, and its API key stops working. Nothing is deleted. What it moved stays in `media/.holding/library-cleanup`. To return a folder after it is removed, move it back to where it was yourself, then choose **Follow** for it in Starboard's **Library** so Reelix follows it again.
+Its containers stop and go, and its API key stops working. Nothing is deleted. What it moved stays in `media/.holding/library-cleanup`. To return a folder after you remove the plug-in, move it back to where it was yourself. Then choose **Follow** for it in Starboard's **Library** so Reelix follows it again.
 
-To stop it for a while instead, deactivate **Move items each day**, or select **Deactivate** on its tab: its settings, its folder and what is in the holding folder are kept.
+To stop it for a while instead, deactivate **Move items each day**, or select **Deactivate** on its tab. Starboard keeps its settings, its folder and what is in the holding folder.
 
 ## Find out more
 

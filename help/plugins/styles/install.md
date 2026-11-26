@@ -15,7 +15,7 @@ Starboard lists these before you add it, each with its risk.
 |---|---|
 | Add styles to Display: colours, corners, a font and shadows, checked for accessibility (`appearance:styles`) | Low |
 
-Styles runs nothing: no container, no code and no network access. It only adds styles, which Starboard writes itself after checking their contrast in light and dark (WCAG 2.2: 4.5:1 for text, 3:1 for edges and the focus ring). A style that fails cannot be added.
+Styles runs nothing: no container, no code and no network access. It only adds styles. Starboard writes them itself after checking their contrast in light and dark (WCAG 2.2: 4.5:1 for text, 3:1 for edges and the focus ring). Starboard does not add a style that fails.
 
 ## Memory and processor
 
@@ -46,7 +46,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 1. Go to **Settings**, then **Plug-ins**, then **Styles**.
 2. Under **Remove**, select **Remove Styles**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its styles are no longer offered in **Display**. Nothing is deleted.

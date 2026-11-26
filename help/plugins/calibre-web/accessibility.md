@@ -11,7 +11,7 @@ Starboard draws everything Calibre-Web shows in Starboard: its tab, its buttons 
 ## Its first sign-in
 
 - **Show the password…** is a button with a clear name. It opens Starboard's own dialog, which starts on **Cancel**, keeps focus inside and closes with Escape.
-- The password appears in a read-only box with its own label, and focus moves to it, selected, so a screen reader reads it and you can copy it by keyboard. **Copy the password for admin** is a button with that name.
+- The password appears in a read-only box with its own label. Focus moves to it and selects it, so a screen reader reads it and you can copy it by keyboard. **Copy the password for admin** is a button with that name.
 - The result is announced in a live region, and nothing depends on colour.
 
 ## Not checked

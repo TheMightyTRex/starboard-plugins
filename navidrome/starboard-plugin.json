@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "navidrome",
  "name": "Navidrome",
- "version": "1.1.1",
+ "version": "1.1.2",
  "description": "Navidrome, a music server for Subsonic apps on phones and in the car. It reads your music folder and never changes it.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -43,6 +43,13 @@
   "alt": "Navidrome logo"
  },
  "changes": [
+  {
+   "version": "1.1.2",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.1.1",
    "date": "2026-11-17",

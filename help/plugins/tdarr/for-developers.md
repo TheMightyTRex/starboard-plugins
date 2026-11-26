@@ -15,9 +15,9 @@ How Tdarr is built, for anyone who wants to change it or make one like it. It is
 - Its container is on the `lan` network with `publish` set. `network:port` lets Starboard open its page on the home network. `host_port` is the port Starboard tries first. When it is in use, Starboard takes the next free one and shows it on the tab.
 - It has no `settings`, `cards`, `actions` or `health` in its manifest, so Starboard waits for its container to start after an update. Its **Settings** section is Starboard's own Tdarr settings (`APP_SETTINGS` in Starboard's `plugins.js`), which Starboard writes into Tdarr through Tdarr's own API.
 - It runs read only, as a user that is not root, with no extra rights. What it writes goes in its own folder, `data/plugins/tdarr`.
-- It runs as `media`, the owner of your media folder (plug-in API 1.12), so it can replace a file with its smaller copy and the new file is yours. It can write to `media/movies`, `media/tv` and `media/tdarr-cache`, and nothing else in the media folder.
-- Its environment runs Tdarr's server with an internal node called `starboard` (`internalNode`), with its web page on 8265 and the server on 8266. `data/node-plugins` gives the node a folder it may write to for Tdarr's own plug-ins, and `/run` is a `tmpfs`.
-- `adopt` lets Starboard copy the Tdarr from the main install (the container called `tdarr`) into the `server` container's folders: `/app/server`, `/app/configs` and `/app/logs`. `stop` is true, so Starboard stops the old Tdarr first, to copy its files whole. It copies, and never moves or deletes the old folders.
+- It runs as `media`, the owner of your media folder (plug-in API 1.12). It can replace a file with its smaller copy, and the new file is yours. It can write to `media/movies`, `media/tv` and `media/tdarr-cache`, and nothing else in the media folder.
+- Its environment runs Tdarr's server with an internal node called `starboard` (`internalNode`). Its web page is on 8265 and the server is on 8266. `data/node-plugins` gives the node a folder it may write to for Tdarr's own plug-ins. `/run` is a `tmpfs`.
+- `adopt` lets Starboard copy the Tdarr from the main install (the container called `tdarr`) into the `server` container's folders: `/app/server`, `/app/configs` and `/app/logs`. `stop` is true, so Starboard stops the old Tdarr first. That lets it copy the files whole. It copies, and never moves or deletes the old folders.
 
 ## Containers
 

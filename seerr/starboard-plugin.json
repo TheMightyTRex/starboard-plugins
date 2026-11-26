@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "seerr",
  "name": "Seerr",
- "version": "1.1.1",
+ "version": "1.1.2",
  "description": "Seerr, a requests page for Jellyfin users. Reelix already has requests in Starboard, so most people do not need it.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -42,6 +42,13 @@
   "alt": "Seerr logo"
  },
  "changes": [
+  {
+   "version": "1.1.2",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.1.1",
    "date": "2026-11-17",

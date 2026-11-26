@@ -1,11 +1,12 @@
 # Kavita: Updates
 
-Kavita 1.1.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Kavita 1.1.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.3 | 1.14 or later | Not released yet |
 | 1.1.2 | 1.14 or later | 26 November 2026 |
 | 1.1.1 | 1.14 or later | 17 November 2026 |
 | 1.1.0 | 1.14 or later | 15 November 2026 |
@@ -17,7 +18,7 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Fixed:
 
-- **Making the first account:** a fresh install now gets a sign-in key long enough for Kavita, so making the first account no longer ends with "400 Error, Something went wrong when registering user". If that happened to you, [Problems](problems.md) has the short repair.
+- **Making the first account:** a fresh install now gets a sign-in key long enough for Kavita. Making the first account no longer ends with "400 Error, Something went wrong when registering user". If that happened to you, [Problems](problems.md) has the short repair.
 
 ## What is new in 1.1.1
 
@@ -47,7 +48,7 @@ Added:
 - Kavita has no step before an update: Starboard stops it, installs the new version and starts it again.
 - It has no health check of its own, so Starboard waits for its containers to start. If they do not, Starboard goes back to the version you had by itself.
 - Your settings and its folder are kept.
-- **Roll back** brings back the older Kavita and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
+- **Roll back** brings back the older Kavita and your settings. It does not bring back its folder as it was. If the newer app changed its own data, that stays. Back up its folder first if you are unsure.
 
 ## Update it
 

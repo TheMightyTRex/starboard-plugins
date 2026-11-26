@@ -13,12 +13,12 @@ How Calibre library maker is built, for anyone who wants to change it or make on
 
 ## How it works
 
-- Its one container, `main`, is `start: when_needed` with `idle_stop_minutes` 5, so Starboard stops it when it is idle and starts it for its page or a button. It has no card and no `health`, because either would wake it.
+- Its one container, `main`, is `start: when_needed` with `idle_stop_minutes` 5. Starboard stops it when it is idle and starts it for its page or a button. It has no card and no `health`, because either would wake it.
 - It is on the `default` network, so it can reach nothing. It asks for no permission.
 - `media/books:ro` mounts the books folder read only; `media/books-library` mounts the new library folder for writing. It runs as the default user, `10001:10001`, the same as Calibre-Web's, so Calibre-Web can read what it writes.
-- `app.py` scans the books folder, leaves out files that cannot be books (empty, cut short, not what the name says), and runs `calibredb add --with-library /media/books-library` on batches of 20 files. A batch that fails is listed, and the run carries on. `calibredb` copies each file, which is why the plug-in says the library needs room.
-- Re-running is safe twice over: handled files are remembered in `/data/done.json` by path and size, and Calibre skips a book that is already in the library.
-- The image is Debian with Calibre's package, with the web browser engine and graphics drivers removed in the same step, about 0.7 GB instead of 1.2 GB. `calibredb --version` runs at the end of the build.
+- `app.py` scans the books folder and leaves out files that cannot be books (empty, cut short, not what the name says). It runs `calibredb add --with-library /media/books-library` on batches of 20 files. A batch that fails is listed, and the run carries on. `calibredb` copies each file, which is why the plug-in says the library needs room.
+- Re-running is safe twice over. It remembers handled files in `/data/done.json` by path and size. Calibre also skips a book that is already in the library.
+- The image is Debian with Calibre's package. The same step removes the web browser engine and graphics drivers. That makes the image about 0.7 GB instead of 1.2 GB. `calibredb --version` runs at the end of the build.
 
 ## Containers
 

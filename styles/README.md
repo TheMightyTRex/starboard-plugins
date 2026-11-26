@@ -27,8 +27,7 @@
 | Clay | Puffy, matte soft-3D panels in calm pastels |
 | Classic | Starboard's design before Mica: teal on cool blue-grey, square corners and flat cards |
 
-Mica is Starboard's own style since 18 November 2026, so Classic keeps the design from before it. Mica, the eleven redesigned on 20 November 2026 (Dusk to Piste) and the five from Studio to Clay change every part of Starboard: cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in
-API 1.2).
+Mica is Starboard's own style since 18 November 2026, so Classic keeps the design from before it. Mica, the eleven redesigned on 20 November 2026 (Dusk to Piste) and the five from Studio to Clay change every part of Starboard. That means cards, buttons, tabs, the header, the side menu and chips (Starboard's plug-in API 1.2).
 
 ## Install
 

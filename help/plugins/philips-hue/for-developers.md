@@ -39,9 +39,9 @@ Its own image, `ghcr.io/themightytrex/starboard-plugin-philips-hue`, built for a
 
 ## How it works
 
-- **The bridge:** HTTPS to the bridge's own address only. The bridge's certificate is signed by Signify, not a public authority, so the plug-in keeps its SHA-256 fingerprint from the first answer and refuses any other afterwards. Pairing posts `{"devicetype": "starboard#philips-hue", "generateclientkey": true}` to `/api` once every 3 seconds while the page is open, for up to 90 seconds.
-- **Reading:** one CLIP v2 `GET /clip/v2/resource` gives every light, room, zone, device, scene and grouped light, kept for 3 seconds. A room's or zone's change goes to its grouped light in one command, as the Hue app does; a device type has none, so each light is sent its own.
-- **Schedules:** CLIP v2 has none, so they are version 1 schedules, named `Starboard` and the start of their words, with `autodelete` for one that runs once. Sunrise and sunset are version 1 rules on the bridge's daylight sensor. The plug-in keeps the words and the bridge's ids, and drops any the bridge no longer has.
+- **The bridge:** HTTPS to the bridge's own address only. Signify signs the bridge's certificate, not a public authority. So the plug-in keeps its SHA-256 fingerprint from the first answer and refuses any other afterwards. Pairing posts `{"devicetype": "starboard#philips-hue", "generateclientkey": true}` to `/api` once every 3 seconds while the page is open, for up to 90 seconds.
+- **Reading:** one CLIP v2 `GET /clip/v2/resource` gives every light, room, zone, device, scene and grouped light, kept for 3 seconds. A room's or zone's change goes to its grouped light in one command, as the Hue app does. A device type has no grouped light, so the plug-in sends each light its own command.
+- **Schedules:** CLIP v2 has none. So they are version 1 schedules, named `Starboard` and the start of their words, with `autodelete` for one that runs once. Sunrise and sunset are version 1 rules on the bridge's daylight sensor. The plug-in keeps the words and the bridge's ids, and drops any the bridge no longer has.
 - **When something plays:** Starboard sends `playback.started` (plug-in API 1.16). The plug-in checks the app's name and the daylight sensor, then recalls the chosen scene.
 - **Discovery:** an mDNS question for `_hue._tcp.local` on the home network, asked at most once a minute. `HUE_DISCOVER=off` asks nothing, for the tests and pictures. Hue's discovery website is never used.
 - **What is kept,** in its own folder: `bridge.json` (address, key, fingerprint, name), `pairing.json`, `schedules.json` and `play.json`.
@@ -49,7 +49,7 @@ Its own image, `ghcr.io/themightytrex/starboard-plugin-philips-hue`, built for a
 ## Tests and pictures
 
 - `python3 -m unittest tests.test_philips_hue`: 31 tests against [`tests/hue_mock_bridge.py`](../../../tests/hue_mock_bridge.py), a made-up bridge over HTTPS (needs `openssl` to make its certificate). It has not been tried on a real bridge yet.
-- `tools/hue_screens/run.sh`: runs the plug-in locked down as Starboard does against the made-up bridge, checks its tabs with axe, a Tab walk and the reading order, and takes the pictures. `tools/hue_screens/markup.py` then marks up the help pictures in `help/images/philips-hue`.
+- `tools/hue_screens/run.sh`: runs the plug-in locked down as Starboard does against the made-up bridge. It checks its tabs with axe, a Tab walk and the reading order. It also takes the pictures. `tools/hue_screens/markup.py` then marks up the help pictures in `help/images/philips-hue`.
 
 ## Find out more
 

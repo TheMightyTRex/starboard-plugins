@@ -203,7 +203,7 @@ class Manifest(unittest.TestCase):
     def test_the_old_version_is_kept_for_an_older_starboard(self):
         with open(os.path.join(ROOT, "catalogue.json"), encoding="utf-8") as f:
             entry = next(e for e in json.load(f)["plugins"] if e["id"] == "calibre-web")
-        self.assertEqual([v["version"] for v in entry["versions"]], ["1.2.0", "1.1.1", "1.0.0"])
+        self.assertEqual([v["version"] for v in entry["versions"]], ["1.2.1", "1.1.1", "1.0.0"])
         self.assertEqual(entry["versions"][1]["starboard_api"], ">=1.14 <2.0")
         self.assertTrue(entry["versions"][1]["manifest_sha256"])
 

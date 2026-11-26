@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "calibre-library",
  "name": "Calibre library maker",
- "version": "1.0.0",
+ "version": "1.0.1",
  "description": "Makes a Calibre library from the books in your books folder, in a new folder beside it, so Calibre-Web has something to open. Your own books are never changed.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -58,6 +58,13 @@
   "alt": "Calibre library maker logo"
  },
  "changes": [
+  {
+   "version": "1.0.1",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.0.0",
    "date": "2026-11-26",

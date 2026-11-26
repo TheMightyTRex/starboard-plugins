@@ -14,7 +14,7 @@ People who keep books as files, such as `Author/Title.epub`, and want Calibre-We
 - Copies each book into a new library in `books-library`, with Calibre's own tool, `calibredb`. It copies, so the library needs room for a second copy of your books. It says how much first.
 - Says what it will do before it starts: how many books, how much room and about how long (about 3 seconds a book).
 - Shows progress in words. A file it could not read is listed with the reason and left out. A book Calibre found no author in is listed too.
-- Safe to run again: it remembers what it has handled, and Calibre skips a book that is already in the library, so only new books are added.
+- Safe to run again: it remembers what it has handled. Calibre also skips a book that is already in the library, so only new books are added.
 - Calibre-Web, set up by Starboard, opens `books-library` at its next start.
 
 ## What it may do
@@ -27,7 +27,7 @@ It runs read only, as a user that is not root, with no extra rights, like every 
 
 ## At rest
 
-Nothing is running when it is not used: Starboard stops it after 5 idle minutes and starts it when you open its page. Measured 26 November 2026, hardened as Starboard runs it: 14 MiB and no processor while it waits, up to 73 MiB while Calibre adds books, 13 books in 26 seconds from a cold start (about 2.5 seconds a book after 6 seconds to start), and the image is 703 MB on disk.
+Nothing is running when it is not used: Starboard stops it after 5 idle minutes and starts it when you open its page. Measured 26 November 2026, hardened as Starboard runs it. It uses 14 MiB and no processor while it waits, and up to 73 MiB while Calibre adds books. It added 13 books in 26 seconds from a cold start (about 2.5 seconds a book after 6 seconds to start). The image is 703 MB on disk.
 
 ## Removing it
 

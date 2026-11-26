@@ -1,11 +1,12 @@
 # Calibre-Web: Updates
 
-Calibre-Web 1.2.0 is the latest version. It needs Starboard with plug-in API 1.20 or later.
+Calibre-Web 1.2.1 is the latest version. It needs Starboard with plug-in API 1.20 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.2.1 | 1.20 or later | Not released yet |
 | 1.2.0 | 1.20 or later | 26 November 2026 |
 | 1.1.1 | 1.14 or later | 17 November 2026 |
 | 1.1.0 | 1.14 or later | 15 November 2026 |
@@ -17,9 +18,9 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Added:
 
-- **Set up for you:** Calibre-Web no longer starts with the first sign-in everybody knows. Starboard makes a long password before it first starts, replaces the default one and shows it once on the plug-in's page, after you enter your Starboard password.
-- **Your library is found:** if a Calibre library is in your media folder, in a folder called books-library (made by the Calibre library maker plug-in) or in books itself, Calibre-Web is set to it at its start, so there is nothing to enter in Admin.
-- **Safe by default:** uploads, public sign-up, anonymous browsing and remote sign-in are off, and the admin cannot edit or delete books, as your books folder is read only. OPDS, for e-reader apps, works with your sign-in.
+- **Set up for you:** Calibre-Web no longer starts with the first sign-in everybody knows. Starboard makes a long password before it first starts and replaces the default one. It shows the password once on the plug-in's page, after you enter your Starboard password.
+- **Your library is found:** if your media folder holds a Calibre library, Calibre-Web uses it. The folder is called books-library (made by the Calibre library maker plug-in) or books itself. There is nothing to enter in Admin.
+- **Safe by default:** uploads, public sign-up, anonymous browsing and remote sign-in are off. The admin cannot edit or delete books, as your books folder is read only. OPDS, for e-reader apps, works with your sign-in.
 
 Changed:
 
@@ -52,7 +53,7 @@ Added:
 - Calibre-Web has no step before an update: Starboard stops it, installs the new version and starts it again. An install that is already set up keeps its password and its choices: the new start-up changes only a library that is not set.
 - It has no health check of its own, so Starboard waits for its containers to start. If they do not, Starboard goes back to the version you had by itself.
 - Your settings and its folder are kept.
-- **Roll back** brings back the older Calibre-Web and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
+- **Roll back** brings back the older Calibre-Web and your settings, but not its folder as it was. If the newer app changed its own data, that change stays. Back up its folder first if you are unsure.
 
 ## Update it
 

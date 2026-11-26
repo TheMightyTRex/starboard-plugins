@@ -16,14 +16,14 @@ These are on Checkrr's tab.
 
 ## What it checks
 
-- **Which files:** everything in your `movies` and `tv` folders, except pictures, subtitles and text files such as `.nfo`, `.srt` and `.jpg`, and folders whose names start with a dot.
+- **Which files:** everything in your `movies` and `tv` folders, except pictures, subtitles and text files such as `.nfo`, `.srt` and `.jpg`. It also skips folders whose names start with a dot.
 - **How:** the start of each file must be a known film, episode or sound file, and FFprobe must read it. A film or episode with no sound track also fails.
-- **What it finds:** files whose start is damaged, files that are not media at all, and videos with no sound. A file cut short part way through can pass, because the deeper check that plays each file through FFmpeg is not used here: it would take far more of the processor every week.
+- **What it finds:** files whose start is damaged, files that are not media at all, and videos with no sound. A file cut short part way through can pass. Checkrr does not use the deeper check that plays each file through FFmpeg, because it would take far more of the processor every week.
 - **When:** each Sunday at 03:30, in the server's time zone, and when you select **Check now**. A file that passed is remembered, so the next check skips it unless it changed.
 
 ## Things to note
 
-- **It only reports.** It never deletes, moves, renames or replaces a file, and it cannot: your folders are read only to it, and it is given no Reelix, Radarr, Sonarr or Lidarr.
+- **It only reports.** It never deletes, moves, renames or replaces a file, and it cannot. Your folders are read only to it, and Starboard gives it no Reelix, Radarr, Sonarr or Lidarr.
 - **Its settings file** is `data/plugins/checkrr/data/app/checkrr.yaml` in Starboard's data. Starboard writes it once, when Checkrr first starts, and never over a change you make. Change it only if you know Checkrr well, then deactivate and activate the plug-in.
 - **Its own page** lists the same files and its figures. Anyone on your home network can open it and start a check or clear its list: clearing the list does not touch the files.
 - Its list and figures are kept when you update or deactivate it, and when you remove it they stay in its folder.

@@ -20,7 +20,7 @@ Starboard lists these before you add it.
 
 What it runs:
 
-- **main:** no way out to your home network or the internet. It can use its own folder in Starboard's data (`data/plugins/calibre-library`), the `books` folder in your media folder to read only, and the `books-library` folder in your media folder to read and write.
+- **main:** no way out to your home network or the internet. It can use three folders. One is its own folder in Starboard's data (`data/plugins/calibre-library`). It reads the `books` folder in your media folder, and it reads and writes the `books-library` folder in your media folder.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 

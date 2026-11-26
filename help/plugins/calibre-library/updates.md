@@ -1,11 +1,12 @@
 # Calibre library maker: Updates
 
-Calibre library maker 1.0.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Calibre library maker 1.0.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.1 | 1.14 or later | Not released yet |
 | 1.0.0 | 1.14 or later | 26 November 2026 |
 
 ## What is new in 1.0.0

@@ -1,11 +1,12 @@
 # Checkrr: Updates
 
-Checkrr 1.0.0 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Checkrr 1.0.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.1 | 1.14 or later | Not released yet |
 | 1.0.0 | 1.14 or later | 17 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run.
@@ -23,7 +24,7 @@ Added:
 - Checkrr has no step before an update: Starboard stops it, installs the new version and starts it again.
 - Starboard waits for its helper to answer its health check. If it does not, Starboard goes back to the version you had by itself.
 - Your settings and its folder, with its list of bad files, are kept. Its settings file is not written again, so a change you made to it stays.
-- **Roll back** brings back the older Checkrr and your settings, but not its folder as it was: if the newer app changed its own data, that stays. Back up its folder first if you are unsure.
+- **Roll back** brings back the older Checkrr and your settings, but not its folder as it was. If the newer app changed its own data, that change stays. Back up its folder first if you are unsure.
 
 ## Update it
 

@@ -10,10 +10,10 @@ Add Checkrr from Starboard's **Catalogue**, where it is listed under **Apps you 
 
 ## What it does with a bad file
 
-Checkrr only reports. When a file fails its check, Checkrr adds it to its list of bad files, with the reason, and the plug-in's card and **Files that failed the check** page show it. That is all:
+Checkrr only reports. When a file fails its check, Checkrr adds it to its list of bad files, with the reason. The plug-in's card and **Files that failed the check** page show it. That is all:
 
 - It never deletes, moves, renames or replaces a file. It reads your `movies` and `tv` folders read only, so it cannot change them.
-- It asks no app to replace a file: it is given no Reelix, Radarr, Sonarr or Lidarr, so its own way of replacing files, which deletes the file first, is never used.
+- It asks no app to replace a file. Starboard gives it no Reelix, Radarr, Sonarr or Lidarr, so its own way of replacing files, which deletes the file first, is never used.
 - Replacing a bad file is up to you, such as by searching for the film or episode again in Reelix.
 
 ## What it may do
@@ -28,7 +28,7 @@ Starboard lists these before you add it, each with its risk.
 What it runs:
 
 - **main:** a small helper. It reaches only Starboard and Checkrr, on its own network: it cannot reach your home network or the internet. It can use its own folder in Starboard's data (`data/plugins/checkrr`).
-- **app:** Checkrr. It reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/checkrr`), the `movies` folder in your media folder, to read only, and the `tv` folder in your media folder, to read only. Its web page is on your home network at port 8585 when that port is free, or the next free one.
+- **app:** Checkrr. It reaches your home network and the internet, and this computer as `host.docker.internal`. It can use three folders. One is its own folder in Starboard's data (`data/plugins/checkrr`). It reads the `movies` and `tv` folders in your media folder, and cannot change them. Its web page is on your home network at port 8585 when that port is free, or the next free one.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its images are pinned by digest, so what you approved is what runs.
 
@@ -53,7 +53,7 @@ A check reads every file and runs FFprobe on each film and episode, so it uses a
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/checkrr/starboard-plugin.json
@@ -72,7 +72,7 @@ There is nothing to set up. Checkrr checks your films and series each Sunday at 
 
 1. Go to **Settings**, then **Plug-ins**, then **Checkrr**.
 2. Under **Remove**, select **Remove Checkrr**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted, and your media folder is not touched.

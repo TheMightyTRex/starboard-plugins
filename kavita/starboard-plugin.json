@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "kavita",
  "name": "Kavita",
- "version": "1.1.2",
+ "version": "1.1.3",
  "description": "Kavita, a reader for comics, manga and books in the browser and in e-reader apps that use OPDS (Open Publication Distribution System). It reads your books and comics folders and never changes them.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -46,6 +46,13 @@
   "alt": "Kavita logo"
  },
  "changes": [
+  {
+   "version": "1.1.3",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "1.1.2",
    "date": "2026-11-26",

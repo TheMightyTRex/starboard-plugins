@@ -1,7 +1,6 @@
 # Library clean-up
 
-Moves films and series that everyone has watched, or that nobody has watched for a long time, to the holding folder,
-so a small server's disks do not fill up. It never deletes: each item keeps its folders in
+Moves films and series to the holding folder when everyone has watched them, or when nobody has watched them for a long time. This stops a small server's disks filling up. It never deletes: each item keeps its folders in
 `media/.holding/library-cleanup`, and **Put back** returns it. Reelix stops following what moves, so it is not
 downloaded again, and follows it again when it is put back.
 
@@ -21,13 +20,12 @@ Each rule is activated when you add it and can be deactivated. They check the fi
 **Libraries** (all of them when you add it). "Everyone" is each Jellyfin user who can sign in, less those in
 **People to leave out**.
 
-Always kept, each a setting: favourites of anyone, anything in anyone's Continue watching or a series someone has
-started, films in a collection, and anything with the keep tag (`keep`).
+It always keeps these items, and you can change each one in a setting. These are favourites of anyone, anything in anyone's Continue watching, a series someone has started, films in a collection, and anything with the keep tag (`keep`).
 
 ## What moves, and where
 
 - A series: its folder. A film in its own folder: the folder. A film that shares a folder with other films, or sits at
-  the top of the library: its file and the files beside it that share its name, such as subtitles.
+  the top of the library: its file moves. So do the files beside it that share its name, such as subtitles.
 - Into `media/.holding/library-cleanup/`, at the same place: `media/movies/A Film (2001)` becomes
   `media/.holding/library-cleanup/movies/A Film (2001)`.
 - A move is a rename inside the media folder, so it is instant and needs no free space. A move that would have to copy
@@ -39,8 +37,7 @@ exactly what was followed. Jellyfin: told the path was deleted, or created on Pu
 
 ## When it runs
 
-- **Preview**, worked out in the background when opened, when a setting changes, after six hours, or with **Preview
-  again**: what would move and the space it frees. Nothing moves from Preview.
+- **Preview** shows what would move and the space it frees. Starboard works it out in the background when you open it, when a setting changes, after six hours, or with **Preview again**. Nothing moves from Preview.
 - **Move items to the holding folder**, a job once a day in Starboard's quiet hours, only when **Move items each
   day** is activated. It is deactivated when you add it. **Run now** in **System**, **Jobs** runs it at once, also only
   when activated. A run moves up to 200 items, within 50 minutes; the next carries on.
@@ -55,9 +52,7 @@ exactly what was followed. Jellyfin: told the path was deleted, or created on Pu
 - `reelix:key` (high risk): stops following what moves and follows it again on Put back. Without Reelix it still moves.
 - `network:lan` (medium risk): your home network, where Jellyfin and Reelix answer.
 - It runs as the owner of the media folder, so moved folders keep their owner.
-- Memory, measured 15 November 2026 on made-up data (3,000 films and 300 series for 3 people): about 14 MB at rest,
-  31 MB at its peak while working out Preview and moving 200 items, 28 MB after; 0% of a processor at rest. It is
-  allowed 128 MB and half a processor, and rests when not used.
+- Memory, measured 15 November 2026 on made-up data (3,000 films and 300 series for 3 people): about 14 MB at rest. It reached 31 MB at its peak while working out Preview and moving 200 items, and 28 MB after. It uses 0% of a processor at rest. It is allowed 128 MB and half a processor, and rests when not used.
 
 ## Updating
 

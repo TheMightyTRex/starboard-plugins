@@ -45,11 +45,11 @@ Its image is pinned by digest in the manifest:
 ## How it works
 
 - It asks for `library:holding` (plug-in API 1.15) and mounts `media:holding`: the whole media folder, read and write, at `/media`. What it moves goes in `/media/.holding/library-cleanup/`, keeping the folders it was in.
-- A series moves as its folder. A film in its own folder moves as the folder. A film that shares a folder with other films, or sits at the top of the library, moves as its file and the files beside it that share its name, such as subtitles.
+- A series moves as its folder. A film in its own folder moves as the folder. A film that shares a folder with other films, or sits at the top of the library, moves as its file. The files beside it that share its name, such as subtitles, move with it.
 - A move is a rename inside the one mount, so it is instant and needs no free space. A move that would have to copy is refused, and something with the same name already in the holding folder is never overwritten. It never moves the library folder itself, the holding folder, or anything outside the media folder.
 - Its code has no call that deletes a file or a folder; `tests/test_library_cleanup.py` checks that.
 - **Put back** is the `restore` action on a row of the `held` custom setting (plug-in API 1.15), drawn by Starboard as a **Put back** button.
-- With `reelix:key`, it stops Reelix following what moves, with each followed episode, and rescans it; **Put back** follows again exactly what was followed. With `jellyfin:key`, it reads each person's watched state, favourites, Continue watching and collections, and tells Jellyfin the path was deleted, or created on **Put back**, so Jellyfin updates at once. Without Reelix it still moves.
+- With `reelix:key`, it stops Reelix following what moves, with each followed episode, and rescans it; **Put back** follows again exactly what was followed. With `jellyfin:key`, it reads each person's watched state, favourites, Continue watching and collections. It tells Jellyfin the path was deleted, or created on **Put back**, so Jellyfin updates at once. Without Reelix it still moves.
 - **Preview** is worked out in the background when opened, when a setting changes, after six hours, or with **Preview again**. A run moves up to 200 items, within 50 minutes; the next carries on.
 - Before an update it finishes the item it is moving and starts no new run, so nothing is left half moved.
 - It runs as `media`, the owner of the media folder, so moved folders keep their owner.

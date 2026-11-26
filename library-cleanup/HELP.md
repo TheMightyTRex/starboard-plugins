@@ -11,15 +11,12 @@ Starboard never adds it by itself: you choose to add it from the catalogue. Noth
 
 Three rules, each activated when you add it. You can deactivate any of them in **Rules**.
 
-- **Films watched by everyone:** every person who uses Jellyfin has watched it, and the last time anyone watched it
-  was more than 90 days ago (**Last watched more than**).
-- **Series that ended, every episode watched:** Jellyfin says the series has ended, everyone has watched every
-  episode, and the last episode anyone watched was more than the same 90 days ago.
-- **Films and series nobody watches:** nobody has watched it for 12 months (**Not watched for**), and it was added
-  longer ago than that, so nothing new is moved.
+- **Films watched by everyone:** every person who uses Jellyfin has watched it. Nobody has watched it for more than 90 days (**Last watched more than**).
+- **Series that ended, every episode watched:** Jellyfin says the series has ended, and everyone has watched every episode. Nobody has watched the last episode for more than the same 90 days.
+- **Films and series nobody watches:** nobody has watched it for 12 months (**Not watched for**). It was also added longer ago than that, so nothing new is moved.
 
 "Everyone" means each person who can sign in to Jellyfin. If someone never watches, such as a guest account, add
-their Jellyfin user name to **People to leave out**, or the first rule never finds anything.
+their Jellyfin user name to **People to leave out**. If you do not, the first rule never finds anything.
 
 In **Libraries**, each film and series library in Jellyfin is listed. Choose **Deactivate** for a library the rules
 should leave alone, such as a children's library.
@@ -65,8 +62,8 @@ To run it straight away, open **System**, **Jobs** and choose **Run now** beside
 ## Put something back
 
 Open **Holding folder**. It lists everything Library clean-up moved, newest first, with when, why and its size. Choose
-**Put back** beside an item: it goes back to the same folder, Reelix follows it again exactly as before (the same
-episodes), and Jellyfin is told, so it is back in your library within a minute. If something else is in its place
+**Put back** beside an item. It goes back to the same folder. Reelix follows it again exactly as before (the same
+episodes), and Starboard tells Jellyfin, so it is back in your library within a minute. If something else is in its place
 now, it stays in the holding folder and the page says so.
 
 Jellyfin usually remembers who watched it, so it is not shown as new.
@@ -80,8 +77,8 @@ still used.
 ## The card on your dashboard
 
 Add the **Holding folder** card in **Edit dashboard**. It shows how much is in the holding folder. The card's band
-shows the Library clean-up logo, its name and a status: **Deactivated** with what Preview would move, **Next in
-quiet hours** once it is moving items each day, or **Working** while it works out Preview or moves items.
+shows the Library clean-up logo, its name and a status. The status is **Deactivated** with what Preview would move. Once it moves items each day, the status is **Next in
+quiet hours**. While it works out Preview or moves items, the status is **Working**.
 
 ## What it may do
 
@@ -106,6 +103,5 @@ to the version you had, with your settings as they were.
 
 - **Stop it for a while:** deactivate **Move items each day**, or choose **Deactivate** for the plug-in. What is in
   the holding folder stays there.
-- **Remove it:** first put back anything you want with **Put back**. After it is removed, what it moved stays in
-  `media/.holding/library-cleanup`; move a folder back to where it was yourself, and Reelix will not follow it again
-  until you choose **Follow** for it in Starboard's **Library**.
+- **Remove it:** first put back anything you want with **Put back**. After you remove it, what it moved stays in
+  `media/.holding/library-cleanup`. Move a folder back to where it was yourself. Reelix will not follow it again until you choose **Follow** for it in Starboard's **Library**.
