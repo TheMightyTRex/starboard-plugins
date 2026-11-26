@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>File lists</title>
+<link rel="stylesheet" href="files/tokens.css">
+<link rel="stylesheet" href="files/files.css">
+<script src="files/files.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#results">Skip to the files</a>
+<header class="top">
+  <div>
+    <h1>File lists</h1>
+    <p class="lede">Every ident, promo clip, advert and PSA you have added. Search, sort and filter, tick the files you want, then add them to a channel or take them off it together. A file is never deleted here.</p>
+  </div>
+  <div class="field">
+    <label for="theme">Colours</label>
+    <select id="theme"><option value="light">Light</option><option value="dark">Dark</option><option value="contrast">High contrast</option></select>
+  </div>
+</header>
+<main id="main">
+  <noscript><p class="problem">The file lists need JavaScript. Turn it on for this page, or add and remove files in Starboard: Settings, Plug-ins, Create your own TV channel.</p></noscript>
+  <form id="filters" class="filters" role="search" aria-label="Search, sort and filter the files">
+    <div class="field"><label for="q">Search by name</label><input id="q" type="search" autocomplete="off"></div>
+    <div class="field"><label for="kind">Kind</label><select id="kind"></select></div>
+    <div class="field"><label for="channel">Channel</label><select id="channel"></select></div>
+    <div class="field"><label for="scope">Show</label><select id="scope"></select></div>
+    <div class="field"><label for="length">Length</label><select id="length"></select></div>
+    <div class="field"><label for="sound">Sound</label><select id="sound"></select></div>
+    <div class="field"><label for="sort">Sort by</label><select id="sort"></select></div>
+    <div class="field"><label for="order">Order</label><select id="order"><option value="">Smallest or first</option><option value="desc">Largest or last</option></select></div>
+  </form>
+  <p id="said" class="said" role="status" aria-live="polite" aria-atomic="true"></p>
+  <p id="problem" class="problem" role="alert"></p>
+  <section id="results" aria-label="Files">
+    <p id="count" class="hint"></p>
+    <div class="bulk" role="group" aria-label="Change the ticked files">
+      <span id="ticked" class="hint" role="status" aria-live="polite">No files ticked</span>
+      <div class="field"><label for="to">Channel to change</label><select id="to"></select></div>
+      <button type="button" id="add" class="primary">Add to the channel</button>
+      <button type="button" id="remove" class="danger">Remove from the channel</button>
+      <button type="button" id="clear">Clear the ticks</button>
+    </div>
+    <div class="table-wrap"><table id="table"></table></div>
+    <nav class="pager" aria-label="Pages">
+      <button type="button" id="prev">Previous page</button>
+      <span id="where" class="hint"></span>
+      <button type="button" id="next">Next page</button>
+    </nav>
+  </section>
+</main>
+</body>
+</html>

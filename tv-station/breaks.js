@@ -43,7 +43,8 @@
     return e;
   };
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-  const say = (text) => { said.textContent = ""; setTimeout(() => { said.textContent = text; }, 30); };
+  let warned = "";         // a column's warning, said after the next change to its grid
+  const say = (text) => { const t = text + (warned ? ` ${warned}` : ""); warned = ""; said.textContent = ""; setTimeout(() => { said.textContent = t; }, 30); };
   const fail = (text) => { problem.textContent = ""; setTimeout(() => { problem.textContent = text; }, 30); };
   const clearFail = () => { problem.textContent = ""; };
   const grid = (which) => S.grids.find((g) => g.which === which);
@@ -66,7 +67,10 @@
       if (!r.ok) { fail(body.error || "That did not work. Try again."); say(body.error || "That did not work."); after = null; return false; }
       S = body;
       draw();
+      const g = grid(which);
+      warned = g ? g.columns.map((c, i) => (c.warning ? `${c.name}: ${c.warning}` : "")).filter(Boolean).join(" ") : "";
       if (then) then(S);
+      warned = "";
       return true;
     } catch {
       fail("The plug-in did not answer. Check it is running, then try again.");
@@ -125,6 +129,7 @@
       }, text: "Use the standard order again" }));
     }
     sec.append(row, el("p", { class: "hint", id: `modehelp-${w}`, text: modeHelp + (g.unused_items ? ` ${plural(g.unused_items, "item", "items")} in columns this mode does not use ${g.unused_items === 1 ? "is" : "are"} kept, and come back if you change the mode.` : "") }),
+      el("p", { class: "hint", id: `fit-help-${w}`, text: "Fit, for Adverts, adds as many whole adverts as the break has room for. It never cuts an advert or another item short. The Holding countdown, which comes last, makes up the rest of the time." }),
       el("p", { class: "hint", id: `how-${w}`, text: "With the keyboard: Tab to an item and press Space or Enter to pick it up. Left and Right choose the column, Up and Down the place in it. Space or Enter drops it, Escape cancels. Under each item, the buttons do the same." }));
     const layout = el("div", { class: "layout" }, drawPalette(g), drawColumns(g));
     sec.append(layout);
@@ -170,8 +175,18 @@
     const wrap = el("div", { class: "columns" });
     g.columns.forEach((c, ci) => {
       const sec = el("div", { class: "col", role: "group", "aria-labelledby": `ch-${w}-${ci}`, "data-col": ci });
+      const lenSel = el("select", { id: `len-${w}-${ci}`, "aria-describedby": `lenhelp-${w}-${ci}` },
+        S.lengths.map((l) => el("option", { value: l.seconds, text: l.name })));
+      lenSel.value = String(c.length);
+      lenSel.addEventListener("change", () => {
+        focusSel(`#len-${w}-${ci}`);
+        send(w, { op: "length", column: ci, seconds: lenSel.value }, () => say(`${c.name}: break length ${S.lengths.find((l) => String(l.seconds) === lenSel.value).name}.`));
+      });
       sec.append(el("h3", { id: `ch-${w}-${ci}`, tabindex: "-1", text: c.name }),
-        el("p", { class: "count", text: c.items.length ? plural(c.items.length, "item", "items") : "Empty" }));
+        el("p", { class: "count", text: c.items.length ? plural(c.items.length, "item", "items") : "Empty" }),
+        el("div", { class: "field len" }, el("label", { for: `len-${w}-${ci}`, text: "Break length" }), lenSel),
+        el("p", { class: "hint small", id: `lenhelp-${w}-${ci}`, text: w === "between" ? "Automatic is the gap the schedule leaves. The countdown or the cards make up the rest." : "Automatic is the longest break set for the channel." }),
+        ...(c.warning ? [el("p", { class: "warning", "data-warning": `${w}-${ci}`, text: c.warning })] : []));
       const ol = el("ol", { "aria-label": `${g.name}, ${c.name}`, "data-list": `${w}-${ci}` });
       c.items.forEach((it, i) => ol.append(drawItem(g, ci, i, it)));
       wireColumn(ol, w, ci);
@@ -189,11 +204,15 @@
     const grab = el("button", { type: "button", class: "grab", "aria-pressed": "false", "aria-describedby": `how-${w}`, "data-key": key, text: it.name });
     const head = el("div", { class: "item-head" }, grab);
     if (it.counts) {
-      const sel = el("select", { id: `times-${key}` }, Array.from({ length: 6 }, (_, k) => el("option", { value: k + 1, text: String(k + 1) })));
-      sel.value = String(it.times);
+      const opts = Array.from({ length: 6 }, (_, k) => el("option", { value: k + 1, text: String(k + 1) }));
+      if (it.kind === "adverts") opts.push(el("option", { value: "fit", text: "Fit" }));
+      const sel = el("select", { id: `times-${key}`, ...(it.kind === "adverts" ? { "aria-describedby": `fit-help-${w}` } : {}) }, opts);
+      sel.value = it.fit ? "fit" : String(it.times);
       sel.addEventListener("change", () => {
         focusSel(`#times-${key}`);
-        send(w, { op: "times", column: ci, index: i, times: sel.value }, () => say(`${it.name} is now shown ${plural(+sel.value, "time", "times")} in ${colName(grid(w), ci)}.`));
+        send(w, { op: "times", column: ci, index: i, times: sel.value }, () => say(sel.value === "fit"
+          ? `${it.name} is now set to Fit in ${colName(grid(w), ci)}: as many whole adverts as the break has room for.`
+          : `${it.name} is now shown ${plural(+sel.value, "time", "times")} in ${colName(grid(w), ci)}.`));
       });
       head.append(el("span", { class: "times" }, el("label", { for: `times-${key}`, text: "Times shown" }), sel));
     } else {

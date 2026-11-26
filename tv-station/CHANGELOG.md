@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.9.0 (not released yet)
+
+### Added
+- Fit for Adverts and a break length for each column (DASH-549, owner, 23 November 2026: "for the break grid - where it says adverts - add an option to Times shown - Fit - which fits as many into the break as you can without cutting off the adverts or the other items to get to the right start time with the holding countdown always making up the time. I want an option on each column to set the break length. Do the same with in between programs").
+  - In both grids, Times shown for Adverts has Fit. The other items keep their counts and places; whole adverts are then added where the Fit item is, each once at most, in an order that turns by one each break so every advert gets a turn first over a day. Nothing is cut short and nothing runs past the start. The holding countdown (or Back soon) takes whatever is left, so its length varies, and has all of it when no advert fits.
+  - Each column has a Break length: Automatic, or 2 to 30 minutes (lengths[] in the saved grid; grids saved before are Automatic). Between programmes, Automatic is the gap; a set length limits what plays besides the countdown or the cards, which make up the rest of the gap. In breaks inside programmes, Automatic is the channel's longest break and a set length replaces it as far as the programme has room.
+  - A column whose items need at least more than its break length says so in a sentence in the column, read out with the change; the plan still ends on the start (promos go first, then adverts, then bumpers, an ident last).
+  - Tested with timings on many sets of advert lengths and break lengths, including none, one very long advert, and fixed items that overrun (tests/test_tv_station_090.py).
+
+- File lists (DASH-546, owner, 23 November 2026: "I need a better way to list and sort files for each of the options and each channel"). A page of the plug-in's own (Settings, File lists) lists every ident, promo clip, advert and PSA: search by name, kind, channel, This channel / All channels / Not used by any channel, too short or too long, with or without sound, sorted by name, length, date added or size either way, 50 rows a page (never more), ticks that last across pages, and Add to or Remove from a channel for all the ticked files in one change. The row says where a file is kept and which channels play it. A file is never deleted. Axe, reading order and keyboard checked; pictures in the help. Not done: a picture or first frame (needs thumbnails), times played and last played (the plug-in does not count plays of a clip yet).
+- PSA (DASH-545, owner, 23 November 2026: "add a section for PSA - where you select a file"). A new item for the grids, PSA, with a number of times, beside Bumper, Promo and Adverts, with its own lists (the station's and each channel's, a PSAs choice for each channel), added by upload with a check that it is a real video with a length and a sound track. Not done: selecting a file from the server's folders with a file picker (the plug-in has only its own data folder, so it needs a mount: DECISIONS-WAITING), and levelling.
+
+### Fixed
+- The holding countdown and Back soon count what comes after them (DASH-550, owner, 23 November 2026). In the grids the clock already ran to the programme's start; in the classic breaks the countdown reached 0:00 before the ident and the closing bumper. Both now carry the time to the start or return, for every combination of bumper, promo, ident, adverts, other channel promo and Coming soon promo after them, and the slide ends early by the length of what follows.
+- A clip whose length cannot be read now gets the length last seen for it (kept in lengths.json, a few hundred bytes), and the log says so once.
+
 ## 0.8.0 (not released yet)
 
 ### Added

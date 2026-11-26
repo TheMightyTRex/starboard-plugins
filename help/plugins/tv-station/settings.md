@@ -127,14 +127,23 @@ Changing the choice loses nothing: columns the new choice does not use are kept,
 |---|---|---|
 | **Bumper** | A very short version of the ident with no music, from the broadcast pack | 1 to 6 |
 | **Promo** | A promo, a trailer or one of your clips, chosen at random | 1 to 6 |
-| **Adverts** | One of your extra videos, chosen at random | 1 to 6 |
+| **Adverts** | One of your extra videos, chosen at random | 1 to 6, or **Fit** |
 | **Ident** | An ident with its music | 1 to 6 |
 | **Other channel promo** | A promo for a programme on one of your other channels (**Show promos for your other channels** must be active) | 1 to 6 |
 | **Coming soon promo** | A Coming soon promo for a programme on this channel | 1 to 6 |
-| **Holding countdown** | The holding slide with the time to the programme's start. It takes the time that is left. The clock counts through any promo or ident after it, so it always shows the time to the start | Once |
-| **Back soon** | The holding slide with Back soon. It takes the time that is left | Once |
+| **PSA** | A public service announcement: one of your own videos with a sound track, chosen at random ([PSAs](#psas)) | 1 to 6 |
+| **Holding countdown** | The holding slide with the time to the programme's start. It takes the time that is left. The clock counts through everything after it (a bumper, a promo, an ident, an other channel promo or a Coming soon promo) and reaches 0:00 as the programme starts, so the slide ends early by the length of what follows | Once |
+| **Back soon** | The holding slide with Back soon. It takes the time that is left, and ends early enough for what follows it | Once |
 
 Each promo, clip or video plays once at most in a break, so **Promo** with 3 times shown is 3 different ones, or fewer when there are fewer. An item with nothing to play, or nothing that fits the time, is left out. A column has one holding slide at most. When the column has none, or the channel has no holding slide, Coming up next cards or a slate fill the time before the idents that end the break. A promo for a programme that has started is left out.
+
+### Fit, and a break length for each column
+
+**Fit** is a choice beside the numbers for **Adverts**, in **Times shown**. It adds as many whole adverts as the break has room for: the other items in the column keep their counts and their places, then the adverts go where the **Fit** item is, each at most once, in an order that turns by one each break so that over a day every advert has a turn first. An advert is never cut short, and nothing runs past the programme's start. Whatever time is left over, **Holding countdown** (or Back soon) makes up, so the countdown's own length changes from break to break. When too little is left for even the shortest advert, the countdown has it.
+
+Each column also has a **Break length**: **Automatic**, or 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25 or 30 minutes. In **In between programmes**, **Automatic** is the gap the schedule leaves, and a set length is the most that plays besides the countdown or the cards, which take the rest of the gap. In **Breaks**, **Automatic** is the longest break set for the channel (**Breaks inside programmes**), and a set length replaces it, as far as the programme has room. A column that was saved before 0.9.0 is **Automatic**.
+
+If a column's items need more time than its break length, the column says so in words, such as "These items need at least 2 minutes 35 seconds, but the break is 2 minutes. Some are left out so the programme starts on time.", and the message is read out after the change that caused it. The programme still starts on time: the last of the least wanted items go first (promos, then adverts, then bumpers; an ident is the last to go).
 
 ### Moving things: three ways
 
@@ -142,11 +151,44 @@ Each promo, clip or video plays once at most in a break, so **Promo** with 3 tim
 - **Keyboard:** Tab to an item and press Space or Enter to pick it up. Left and Right choose the column, Up and Down the place in it. Space or Enter drops it, and Escape cancels. Each step is said aloud: "Column 2, position 1 of 3", and "Bumper added to Column 2, position 1 of 3". Tab away and it is put back. With nothing picked up, the arrow keys move between items.
 - **Buttons:** in the list, **Add to** a column and **Add**. On a placed item, **Times shown**, and under **Move or remove**: **Move up**, **Move down**, **Move to** a column with **Move**, and **Remove**. Focus stays on the button you used, so you can press it again.
 
+![A column with Times shown for Adverts set to Fit (1) and its Break length set to 3 minutes (2)](../../images/tv-station/grid-fit-times.png)
+
+![A column whose items need more time than its Break length, with the warning in words under the length](../../images/tv-station/grid-length-warning.png)
+
 ![A column's item with Times shown set to 3, and its Move or remove actions open: Move up, Move down, Move to and Remove](../../images/tv-station/grid-breaks-item-actions.png)
 
 ![The Breaks grid with its mode set to Day of week](../../images/tv-station/grid-breaks-days.png)
 
 ![The Breaks grid set to Morning, afternoon and evening: step 1 marks Morning, step 2 Afternoon](../../images/tv-station/grid-breaks-times-of-day.png)
+
+## PSAs
+
+A **PSA** (public service announcement) is a kind of item beside **Bumper**, **Promo**, **Adverts** and the rest, and it is dragged into the grids in the same way, with how many times it is shown. Its files are your own videos, added with **Add a PSA** in **Idents, clips and music** (for every channel) or on a channel's own page (for that channel only). Each is checked when you add it: it must be a real video that FFmpeg can read, up to 10 minutes and 90 MB, with a picture, a length and a sound track. A file with no sound track is refused, and the message says so. A channel's **PSAs** choice says whether it plays its own, the station's, both or none. A PSA is listed with the other files in [File lists](#file-lists).
+
+Not in 0.9.0: choosing a PSA from a folder on the server with a file picker, and levelling a PSA's sound to the channel's loudness. The plug-in can only reach the files you add to it for now.
+
+## File lists
+
+**File lists** in Starboard's settings for the plug-in opens one page for all your files, in a new tab (Starboard 0.24.0 and later). It lists every **Ident**, **Promo clip**, **Adverts** and **PSA** file, 50 at a time, so a long list is as quick as a short one.
+
+![The file lists: Search by name (1), Sort by (2), a tick box on each file (3) and Add to the channel (4)](../../images/tv-station/files-list.png)
+
+| Control | What it does |
+|---|---|
+| **Search by name** | Shows the files whose name has the words you type |
+| **Kind** | One kind of file, or all |
+| **Channel** and **Show** | **All channels**, **This channel** (the files kept by it or played by it), or **Not used by any channel** |
+| **Length** | **Too short** (under 5 seconds) or **Too long** (over 2 minutes) |
+| **Sound** | Files with a sound track, or without |
+| **Sort by** and **Order** | **Name**, **Length**, **Date added** or **Size**, either way round. A file with no size or date comes last |
+
+![The kind, Show and Length choices, with Adverts and Not used by any channel chosen](../../images/tv-station/files-filters.png)
+
+Each row shows the file's name, kind, length, whether it has sound, size, the date it was added, where it is **Kept in** (the station, or a channel) and which channels play it. Tick the files you want (the box in the heading ticks the whole page; ticks stay while you change page or filter), choose **Channel to change**, then **Add to the channel**, which copies each file into that channel's own list, or **Remove from the channel**, which takes it off that list. Choose **The station** to change the station's list. **A file is never deleted**: it stays in the plug-in's folder. Each change is said aloud once, such as "Added to Comedy: 2 files".
+
+![The PSA files in the list](../../images/tv-station/files-psa.png)
+
+Not in 0.9.0: a picture or first frame for each file, and the times played and last played, which the plug-in does not keep for a clip yet; a folder for each channel (DASH-551) is also still to come.
 
 ## Where breaks go inside a programme
 

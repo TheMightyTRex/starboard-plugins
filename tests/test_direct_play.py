@@ -10,6 +10,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 PID = "direct-play"
@@ -370,6 +371,101 @@ class WithMedia(unittest.TestCase):
         self.assertEqual(screen["items"][0]["cells"]["needs"], "Repackage as MKV")
         problems = plugins.check(manifest()) if hasattr(plugins, "check") else []
         self.assertFalse([p for p in problems if "image" not in p], problems)
+
+
+class FullDisk(unittest.TestCase):
+    """DASH-575: the media disk was full on 21 November 2026 and the worker ended on 'No space left on device' while it wrote
+    its progress file. A full disk must not lose what the plug-in knows, nor stop the worker."""
+
+    def setUp(self):
+        self.app = load({"when": "any"})
+        self.app.free_enough = lambda folder, size: True
+        self.full = False
+        self.real_dump = json.dump
+
+        def dump(value, f, *a, **k):
+            if self.full:
+                f.write("{")  # the half of a file a full disk leaves
+                raise OSError(28, "No space left on device")
+            return self.real_dump(value, f, *a, **k)
+        p = mock.patch.object(json, "dump", dump)
+        p.start()
+        self.addCleanup(p.stop)
+
+    def tearDown(self):
+        shutil.rmtree(self.app._tmp, ignore_errors=True)
+
+    def leftovers(self):
+        return [f for f in os.listdir(self.app.sbplugin.DATA) if f.endswith(".tmp")]
+
+    def test_a_failed_write_keeps_the_last_good_file_and_leaves_nothing_behind(self):
+        a = self.app
+        self.assertTrue(a.save("state", {"done": 1}))
+        self.full = True
+        self.assertFalse(a.save("state", {"done": 2}))
+        self.assertEqual(a.remember("state"), {"done": 1})
+        self.assertEqual(self.leftovers(), [])
+
+    def test_progress_is_held_and_written_when_there_is_room(self):
+        a = self.app
+        self.full = True
+        self.assertFalse(a.save("state", {"done": 5, "failed": {}}, hold=True))
+        self.assertEqual(a._state()["done"], 5)  # the page and the next pass still see it
+        self.assertFalse(a.flush_unsaved())
+        self.full = False
+        self.assertTrue(a.flush_unsaved())
+        self.assertEqual(a.remember("state")["done"], 5)
+        self.assertEqual(a._state()["done"], 5)
+        self.assertIsNone(a._unsaved["state"])
+
+    def test_a_pass_with_no_room_stops_with_a_say_and_the_worker_lives(self):
+        a = self.app
+        self.full = True
+        with mock.patch.object(a, "_work", side_effect=OSError(28, "No space left on device")):
+            with self.assertRaises(OSError):
+                a.work_once()
+        a.note_error(OSError(28, "No space left on device"))  # what the worker does next: must not raise
+        a.note_error(a.NoRoom())
+        self.assertEqual(self.leftovers(), [])
+        self.full = False
+        a.note_error(a.NoRoom())
+        self.assertIn("disk is full", a.sbplugin.last_error())
+
+    def test_a_file_that_ran_out_of_room_is_not_marked_failed(self):
+        a = self.app
+        src = os.path.join(a._media["movies"], "Big (2000)", "Big (2000).avi")
+        a.survey()
+        rec_ = dict(rec(path=src), bucket="remux")
+        with mock.patch.object(a, "todo_head", return_value=(1, [rec_])), mock.patch.object(a, "fix", side_effect=OSError(28, "No space left on device")):
+            os.makedirs(os.path.dirname(src))
+            open(src, "w").close()
+            with self.assertRaises(a.NoRoom):
+                a.work_once()
+        self.assertEqual(a._state()["failed"], {})
+
+    @unittest.skipUnless(FFMPEG, "needs ffmpeg and ffprobe")
+    def test_a_converted_file_is_counted_even_when_the_count_cannot_be_written(self):
+        a = self.app
+        src = make(os.path.join(a._media["movies"], "Old (2001)", "Old (2001).avi"), acodec="mp3")
+        a.survey()
+        real_keep = a.keep
+
+        def keep(name, value):
+            if name == "state":
+                self.full = True
+            try:
+                return real_keep(name, value)
+            finally:
+                self.full = False
+        with mock.patch.object(a, "keep", keep):
+            with self.assertRaises(a.NoRoom):
+                a.work_once()
+        self.assertTrue(os.path.isfile(os.path.splitext(src)[0] + ".mkv"))  # the new file is in place, the check passed
+        self.assertEqual(self.leftovers(), [])
+        self.assertEqual(a._state()["done"], 1)  # held in memory
+        self.assertEqual(a._state()["failed"], {})
+        a.work_once()  # room again: the progress is written first, and nothing is converted twice
+        self.assertEqual(a.remember("state")["done"], 1)
 
 
 class Manifest(unittest.TestCase):

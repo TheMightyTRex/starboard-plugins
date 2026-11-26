@@ -6,6 +6,7 @@ write a check.
     tcp       a port takes a connection, such as 192.168.1.5:445
     ping      a computer answers ICMP echo; where the container may not send ICMP, a TCP knock on 443, 80, 22 and 53
     dns       a name has a record of a type, optionally with a given value, from a given server
+    cert      a certificate that is still good, and how many days it has left (reads it, sends no web request)
     push      a heartbeat: something else calls the check's secret address, and a missed grace time means down
 
 Every function here takes its network calls through module-level names (socket, ssl, urllib) so the tests replace them.
@@ -25,9 +26,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-KINDS = ("http", "keyword", "tcp", "ping", "dns", "push")
+KINDS = ("http", "keyword", "tcp", "ping", "dns", "cert", "push")
 KIND_WORDS = {"http": "Web address", "keyword": "Words on a page", "tcp": "Port", "ping": "Ping", "dns": "DNS record",
-              "push": "Heartbeat"}
+              "cert": "Certificate", "push": "Heartbeat"}
 DNS_TYPES = {"A": 1, "NS": 2, "CNAME": 5, "MX": 15, "TXT": 16, "AAAA": 28}
 TIMEOUT = 8
 PAGE_LIMIT = 512 * 1024  # the most of a page read to find words in
@@ -35,6 +36,7 @@ AGENT = "Starboard plug-in (Uptime and status)"
 KNOCK_PORTS = (443, 80, 22, 53)
 MIN_EVERY, MAX_EVERY = 20, 24 * 3600
 DEFAULT_GRACE = 3600
+CERT_CHECK_EVERY = 6 * 3600  # a certificate changes slowly: read it four times a day unless told otherwise
 
 
 class LineError(ValueError):
@@ -101,7 +103,8 @@ def parse(line, default_every=300):
         kind = "tcp"
     else:
         kind = "ping"
-    c = {"name": name, "kind": kind, "group": "", "tags": [], "every": int(default_every), "on": True}
+    c = {"name": name, "kind": kind, "group": "", "tags": [], "every": CERT_CHECK_EVERY if kind == "cert" else int(default_every),
+         "on": True}
     pos = []
     i = 0
     while i < len(words):
@@ -162,6 +165,16 @@ def parse(line, default_every=300):
         _host_port(c["target"])
     elif kind == "ping":
         c["target"] = _host(pos[0])
+    elif kind == "cert":
+        if len(pos) > 1:
+            raise LineError(f"\"{pos[1]}\" is not something a certificate check takes")
+        word = pos[0]
+        if re.match(r"^https?://", word):
+            u = urllib.parse.urlsplit(word)
+            word = f"{u.hostname}:{u.port or 443}" if u.hostname else word
+        c["target"] = "%s:%d" % _host_port(word) if re.search(r":\d+$", word) and not word.startswith("[") else \
+            (word if word.startswith("[") else "%s:443" % _host(word))
+        _host_port(c["target"])
     elif kind == "dns":
         c["target"] = _host(pos[0])
         if len(pos) > 1 and pos[1].upper() in DNS_TYPES:
@@ -174,7 +187,7 @@ def parse(line, default_every=300):
 
 
 EXAMPLES = {"http": "http https://example.org", "keyword": "keyword https://example.org \"In stock\"",
-            "tcp": "tcp 192.168.1.5:445", "ping": "ping 192.168.1.1", "dns": "dns example.org A", "push": "push grace 25h"}
+            "tcp": "tcp 192.168.1.5:445", "ping": "ping 192.168.1.1", "dns": "dns example.org A", "cert": "cert example.org", "push": "push grace 25h"}
 
 
 def _short(c):
@@ -186,7 +199,7 @@ def _short(c):
 def line(c):
     """The check written back as one line, so Change can show it as it is."""
     parts = [f"{c['name']}: {c['kind']}"]
-    if c["kind"] in ("http", "keyword", "tcp", "ping", "dns"):
+    if c["kind"] in ("http", "keyword", "tcp", "ping", "dns", "cert"):
         parts.append(c["target"])
     if c["kind"] == "keyword":
         if c.get("absent"):
@@ -221,7 +234,8 @@ def _span(seconds):
 
 def run(c, now=None):
     """Runs check c once (not push: that is worked out from its last call)."""
-    fn = {"http": check_http, "keyword": check_http, "tcp": check_tcp, "ping": check_ping, "dns": check_dns}[c["kind"]]
+    fn = {"http": check_http, "keyword": check_http, "tcp": check_tcp, "ping": check_ping, "dns": check_dns,
+          "cert": check_cert}[c["kind"]]
     started = time.monotonic()
     try:
         out = fn(c)
@@ -567,12 +581,25 @@ def read_cert(der):
             "issuer": iss.get("O") or iss.get("CN") or ""}
 
 
+def check_cert(c):
+    """Up while the certificate can be read, is trusted and has not run out. The days left are in "said"; the alert some
+    days before the end is Starboard's, raised from the "cert" fields this returns (see app.run_one)."""
+    host, port = _host_port(c["target"])
+    cert = fetch_cert(host, port)
+    left = int((cert["not_after"] - time.time()) // 86400)
+    if left < 0:
+        return {"up": False, "said": "The certificate has run out", "cert": cert}
+    if not cert.get("trusted"):
+        return {"up": False, "said": f"The certificate is not trusted: {cert.get('why') or 'not trusted'}", "cert": cert}
+    return {"up": True, "said": f"{left} day{'s' if left != 1 else ''} left", "cert": cert}
+
+
 def cert_target(c):
     """(host, port) whose certificate to read, or None: https addresses, and ports checked with tls."""
     if c["kind"] in ("http", "keyword"):
         u = urllib.parse.urlsplit(c["target"])
         return (u.hostname, u.port or 443) if u.scheme == "https" else None
-    if c["kind"] == "tcp" and c.get("tls"):
+    if c["kind"] in ("cert",) or (c["kind"] == "tcp" and c.get("tls")):
         return _host_port(c["target"])
     return None
 

@@ -24,6 +24,7 @@ what to check.
 | `keyword` | `Shop: keyword https://example.org/shop "In stock"` | It answers under 400 with the words on the page. Add `without` for words that must not be there |
 | `tcp` | `NAS files: tcp 192.168.1.5:445` | The port takes a connection. Add `tls` to read its certificate |
 | `ping` | `Router: ping 192.168.1.1` | It answers ping. Where the container may not send ping, a knock on ports 443, 80, 22 and 53 |
+| `cert` | `Site: cert example.org` or `cert example.org:8443` | The certificate can be read, is trusted and has not run out; it says the days left. Read four times a day, and Warn when a certificate has this long left sends the alert |
 | `dns` | `Home name: dns example.org A is 192.0.2.10 at 192.168.1.1` | The name has the record (`A`, `AAAA`, `CNAME`, `MX`, `NS` or `TXT`), with the value after `is` when given, from the server after `at` when given |
 | `push` | `Backup: push grace 25h` | Something calls its secret address within the grace time. Add `?status=down&msg=...` to say it failed |
 

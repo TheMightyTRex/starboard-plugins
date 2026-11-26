@@ -350,6 +350,24 @@
       "page": "settings-plugin.html?id=notifications"
     },
     {
+      "plugin": "notifications",
+      "phase": "present",
+      "file": "settings-4-quiet-hours.png",
+      "height": 1000,
+      "run": "const small = (txt, sel) => [...document.querySelectorAll(sel)].filter((x) => x.textContent.includes(txt)).sort((a, b) => a.textContent.length - b.textContent.length)[0]; const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; const rowOf = (txt) => { const el = [...document.querySelectorAll('main label, main .field, main li, main tr, main h3, main legend')].find((x) => x.textContent.includes(txt)); return el; }; await w(1500); await tab('Quiet hours'); const r = small('Quiet hours start at', 'main div, main fieldset, main label, main li'); r.dataset.shot = 'quiet'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=quiet]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Notifications' Quiet hours, with Quiet hours start at, every day at 22:00, outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=notifications"
+    },
+    {
       "phase": "absent",
       "file": "install-1-catalogue.png",
       "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const rows = [...document.querySelectorAll('li')].filter((x) => x.textContent.includes('Backups watch') && x.querySelector('button')).sort((a, b) => a.textContent.length - b.textContent.length); const row = rows[0]; row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
