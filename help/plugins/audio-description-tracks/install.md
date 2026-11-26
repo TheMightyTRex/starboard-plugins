@@ -21,7 +21,7 @@ Starboard lists these before you add it, each with its risk.
 
 What it runs:
 
-- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can use its own folder in Starboard's data (`data/plugins/audio-description-tracks`), the `movies` folder in your media folder, to read and change, the `tv` folder in your media folder, to read and change, the `audio-description` folder in your media folder, to read and change. It runs as the owner of your media folder, so the files it adds are yours. It never downloads from or reads any website. It rests after 10 minutes with nothing to do, and Starboard wakes it when it is needed.
+- **main:** reaches your home network and the internet, and this computer as `host.docker.internal`. It can read and change its own folder in Starboard's data (`data/plugins/audio-description-tracks`). It can also read and change the `movies`, `tv` and `audio-description` folders in your media folder. It runs as the owner of your media folder, so the files it adds are yours. It never downloads from or reads any website. It rests after 10 minutes with nothing to do, and Starboard wakes it when it is needed.
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 
@@ -47,7 +47,7 @@ To add the card, read [Dashboard card](dashboard-card.md). It goes with the [Aud
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/audio-description-tracks/starboard-plugin.json
@@ -59,7 +59,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 1. Go to **Settings**, then **Plug-ins**, then **Audio description tracks**.
 2. Under **Remove**, select **Remove Audio description tracks**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its containers stop and go, and its API key stops working. Nothing is deleted. Files it already changed in your media folder stay as they are.

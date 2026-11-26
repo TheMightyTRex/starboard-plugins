@@ -1,11 +1,12 @@
 # Audio description tracks: Updates
 
-Audio description tracks 1.2.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Audio description tracks 1.2.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.2.2 | 1.14 or later | Not released yet |
 | 1.2.1 | 1.14 or later | 19 November 2026 |
 | 1.2.0 | 1.14 or later | 17 November 2026 |
 | 1.1.4 | 1.14 or later | 17 November 2026 |
@@ -21,21 +22,21 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Fixed:
 
-- **Films in a collection:** on Jellyfin 12, a film in a collection was not found, because Jellyfin answered the search with the collection in its place. It now asks Jellyfin for the films themselves, so a track for a film in a collection is added. The same goes for series.
+- **Films in a collection:** on Jellyfin 12, a film in a collection was not found. Jellyfin answered the search with the collection in its place. It now asks Jellyfin for the films themselves, so a track for a film in a collection is added. The same goes for series.
 
 ## What is new in 1.2.0
 
 Changed:
 
-- **Rules 1.0:** the track words, how a file name is read, how close the lengths must be (5 seconds by default), the languages and the new track's name and title come from the same rules file as Jellyfin's own Audio description plug-in, so the two add tracks in the same way.
-- **Idle beside the Jellyfin version:** when Jellyfin's own Audio description plug-in is installed, this one adds nothing and its card says **Idle**, so the two never add the same track. Add tracks in Jellyfin instead.
+- **Rules 1.0:** the plug-in takes these from the same rules file as Jellyfin's own Audio description plug-in. They are the track words, how a file name is read, the languages, and the new track's name and title. They also set how close the lengths must be (5 seconds by default). So the two add tracks in the same way.
+- **Idle beside the Jellyfin version:** when Jellyfin's own Audio description plug-in is installed, this one adds nothing and its card says **Idle**. So the two never add the same track. Add tracks in Jellyfin instead.
 
 ## What is new in 1.1.4
 
 Changed:
 
 - **Clearer words:** **Look in the folder now** is now **Check the folder now**, and its job is **Check for new description tracks**. Its card's band says **To check**, with the numbers on the card, and a track that was not added says what to do next.
-- **Logo description:** where its logo stands on its own, a screen reader says "Audio description tracks logo", the plug-in's name, instead of a description of the symbol.
+- **Logo description:** where its logo stands on its own, a screen reader says "Audio description tracks logo", the plug-in's name. It no longer describes the symbol.
 
 ## What is new in 1.1.3
 
@@ -72,8 +73,8 @@ Changed:
 
 Added:
 
-- **Add a description track you already have:** put it in the audio-description folder in your media folder, or upload it, and it is matched to its film or episode by name
-- **Lengths checked:** added only when the track and the film are the same length, within the seconds you choose; otherwise it says the track is probably for another cut
+- **Add a description track you already have:** put it in the audio-description folder in your media folder, or upload it. The plug-in matches it to its film or episode by name
+- **Lengths checked:** the plug-in adds a track only when it and the film are the same length, within the seconds you choose. Otherwise it says the track is probably for another cut
 - **Added as an extra sound track** next to the film, named English (Audio Description), with the visual impaired flag; the film file is not changed
 - **Nothing deleted:** the original moves to Confirmed once you say it plays in step, and a wrong track moves to Taken off
 

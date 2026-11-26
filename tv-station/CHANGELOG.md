@@ -3,52 +3,128 @@
 ## 0.9.0 (not released yet)
 
 ### Added
-- Fit for Adverts and a break length for each column (DASH-549, owner, 23 November 2026: "for the break grid - where it says adverts - add an option to Times shown - Fit - which fits as many into the break as you can without cutting off the adverts or the other items to get to the right start time with the holding countdown always making up the time. I want an option on each column to set the break length. Do the same with in between programs").
-  - In both grids, Times shown for Adverts has Fit. The other items keep their counts and places; whole adverts are then added where the Fit item is, each once at most, in an order that turns by one each break so every advert gets a turn first over a day. Nothing is cut short and nothing runs past the start. The holding countdown (or Back soon) takes whatever is left, so its length varies, and has all of it when no advert fits.
-  - Each column has a Break length: Automatic, or 2 to 30 minutes (lengths[] in the saved grid; grids saved before are Automatic). Between programmes, Automatic is the gap; a set length limits what plays besides the countdown or the cards, which make up the rest of the gap. In breaks inside programmes, Automatic is the channel's longest break and a set length replaces it as far as the programme has room.
-  - A column whose items need at least more than its break length says so in a sentence in the column, read out with the change; the plan still ends on the start (promos go first, then adverts, then bumpers, an ident last).
-  - Tested with timings on many sets of advert lengths and break lengths, including none, one very long advert, and fixed items that overrun (tests/test_tv_station_090.py).
-
-- File lists (DASH-546, owner, 23 November 2026: "I need a better way to list and sort files for each of the options and each channel"). A page of the plug-in's own (Settings, File lists) lists every ident, promo clip, advert and PSA: search by name, kind, channel, This channel / All channels / Not used by any channel, too short or too long, with or without sound, sorted by name, length, date added or size either way, 50 rows a page (never more), ticks that last across pages, and Add to or Remove from a channel for all the ticked files in one change. The row says where a file is kept and which channels play it. A file is never deleted. Axe, reading order and keyboard checked; pictures in the help. Not done: a picture or first frame (needs thumbnails), times played and last played (the plug-in does not count plays of a clip yet).
-- PSA (DASH-545, owner, 23 November 2026: "add a section for PSA - where you select a file"). A new item for the grids, PSA, with a number of times, beside Bumper, Promo and Adverts, with its own lists (the station's and each channel's, a PSAs choice for each channel), added by upload with a check that it is a real video with a length and a sound track. Not done: selecting a file from the server's folders with a file picker (the plug-in has only its own data folder, so it needs a mount: DECISIONS-WAITING), and levelling.
+- Fit for Adverts (DASH-549): in both grids, Times shown for Adverts can be Fit, which adds whole adverts until the break is full.
+- The other items keep their counts and places when Fit adds adverts.
+- Fit shows each advert once at most, and the order turns by one each break so every advert goes first over a day.
+- Nothing is cut short and nothing runs past the start, and the holding countdown or Back soon takes whatever time is left.
+- Break length for each column (DASH-549): each column has Automatic or 2 to 30 minutes, saved as lengths[], and grids saved before are Automatic.
+- Between programmes, Automatic is the gap, and a set length limits what plays besides the countdown or the cards.
+- Inside programmes, Automatic is the channel's longest break, and a set length replaces it as far as the programme has room.
+- A column whose items need more than its break length says so in a sentence that is read out with the change.
+- The plan still ends on the start: promos go first, then adverts, then bumpers, and an ident last.
+- Tests cover many advert lengths and break lengths, including none, one very long advert and fixed items that overrun (tests/test_tv_station_090.py).
+- File lists (DASH-546): a page of the plug-in's own (Settings, File lists) lists every ident, promo clip, advert and PSA.
+- You can search by name, and filter by kind, by channel, or by This channel, All channels or Not used by any channel.
+- You can also filter by too short or too long, and with or without sound.
+- You can sort by name, length, date added or size, either way, with 50 rows a page and never more.
+- Ticks last across pages, and Add to or Remove from a channel works on all ticked files in one change.
+- Each row says where a file is kept and which channels play it, and a file is never deleted.
+- Axe, reading order and keyboard were checked, and the help has pictures.
+- Not done: a picture or first frame, which needs thumbnails.
+- Not done: times played and last played, as the plug-in does not count plays of a clip yet.
+- PSA (DASH-545): the grids have a new item, PSA, with a number of times, beside Bumper, Promo and Adverts.
+- A PSA has its own lists, the station's and each channel's, with a PSAs choice for each channel.
+- You add a PSA by upload, and the plug-in checks it is a real video with a length and a sound track.
+- Not done: a file picker for the server's folders, as the plug-in has only its own data folder and needs a mount (DECISIONS-WAITING).
+- Not done: levelling.
 
 ### Fixed
-- The holding countdown and Back soon count what comes after them (DASH-550, owner, 23 November 2026). In the grids the clock already ran to the programme's start; in the classic breaks the countdown reached 0:00 before the ident and the closing bumper. Both now carry the time to the start or return, for every combination of bumper, promo, ident, adverts, other channel promo and Coming soon promo after them, and the slide ends early by the length of what follows.
-- A clip whose length cannot be read now gets the length last seen for it (kept in lengths.json, a few hundred bytes), and the log says so once.
+- The holding countdown and Back soon count what comes after them (DASH-550).
+- In the grids the clock already ran to the programme's start.
+- In the classic breaks the countdown reached 0:00 before the ident and the closing bumper.
+- Both now carry the time to the start or return, whatever bumper, promo, ident, adverts, other channel promo or Coming soon promo follows.
+- The slide ends early by the length of what follows.
+- A clip whose length cannot be read now gets the length last seen for it.
+- That length is kept in lengths.json, a few hundred bytes, and the log says so once.
 
 ## 0.8.0 (not released yet)
 
 ### Added
-- Break grids (DASH-537, owner, 23 November 2026: "add two types of grid with a drag and drop (make sure its fully accessible). One for In between programs and one for Breaks; add 7 columns with a selection for Random, Sequence, Day of week, Morning, Afternoon, Evening and the columns change based on that setting; a list of items you drag into each column"). A new Break grids page in the settings lists each channel's two grids, which open on the plug-in's own page (also linked from each channel's Breaks card).
-  - Each grid has a mode: Random (1 to 7 columns, one picked at random), Sequence (1 to 7 columns in turn), Day of week (Monday to Sunday) or Morning, afternoon and evening (3 columns). Columns a mode does not use are kept, so changing the mode loses nothing.
-  - Items: Bumper, Promo (a promo, trailer or clip), Adverts (an extra video), Ident, Other channel promo, Coming soon promo, Holding countdown and Back soon. Each but the last two is shown 1 to 6 times; none repeats a clip within a break. Holding countdown counts to the next programme's start, through any promo or ident after it. A column has one holding item at most; without one, cards or a slate fill the time before the idents.
-  - Dragging is one of three ways. Space or Enter picks an item up, the arrows choose the column and place, Space or Enter drops it, Escape cancels, and a status line says each step. Buttons do the same: Add to, Move up, Move down, Move to and Remove. 44 pixel targets, visible focus, reduced motion, forced colours, phone width and 175% text.
-  - A channel that has not changed its grids plays exactly as before: its settings (Promos and clips in each break, Extra videos, Holding slide) are shown as the starting grid and nothing is saved until a change is made. Use the standard order again takes a grid back to that.
-- Where breaks go inside a programme (DASH-538, owner, 23 November 2026: "a few options on how it puts ads into programs ... when it detects silence. At a set time (try and detect the end of a scene). Number of breaks in a 30 min segment and number of breaks in a film"), on each channel's Breaks card: At silence (as before, Jellyfin's Commercial markers first, else quiet moments with a black picture preferred), At set times, or At the end of a scene (each set time snaps to the nearest change of scene), and Breaks in each 30 minutes and Breaks in a film (Automatic as before).
-  - The search is done once for each programme in the quiet hours and kept as a short list of candidate places in breaks.json (about 100 bytes). Choosing among them, and the number, is arithmetic at planning time, so changing a setting needs no new search and FFmpeg is never run while a channel streams. A break with no place found goes to its set time. A programme not searched yet has none until the next quiet hour, except At set times.
-  - Scene ends are found from the key frames only, which cost a thirtieth of decoding every frame. Measured on a made-up 30 minute 640 by 360 programme: At silence 7.7 processor seconds (10.6 seconds), the end of a scene 2.1 (3.0), once for each programme; a full decode for scenes took 68.7.
-  - Manual marks (DASH-539, later) have a place in breaks.json ("manual"): when a programme has any they are its breaks. There is no screen for them yet.
+- Break grids (DASH-537): each channel has two grids, In between programmes and Breaks, listed on a new Break grids page in the settings.
+- The grids open on the plug-in's own page, also linked from each channel's Breaks card.
+- Each grid has a mode: Random, Sequence, Day of week, or Morning, afternoon and evening.
+- Random has 1 to 7 columns and picks one at random, and Sequence has 1 to 7 columns used in turn.
+- Day of week has Monday to Sunday, and Morning, afternoon and evening has 3 columns.
+- Columns a mode does not use are kept, so changing the mode loses nothing.
+- The items are Bumper, Promo (a promo, trailer or clip), Adverts (an extra video) and Ident.
+- The other items are Other channel promo, Coming soon promo, Holding countdown and Back soon.
+- Each item but the last two is shown 1 to 6 times, and none repeats a clip within a break.
+- Holding countdown counts to the next programme's start, through any promo or ident after it.
+- A column has one holding item at most, and without one, cards or a slate fill the time before the idents.
+- Dragging is one of three ways.
+- Space or Enter picks an item up, the arrows choose the column and place, and Space or Enter drops it.
+- Escape cancels, and a status line says each step.
+- Buttons do the same: Add to, Move up, Move down, Move to and Remove.
+- The grids have 44 pixel targets, visible focus, reduced motion, forced colours, phone width and 175% text.
+- A channel that has not changed its grids plays exactly as before.
+- Its settings (Promos and clips in each break, Extra videos, Holding slide) show as the starting grid.
+- Nothing is saved until a change is made, and Use the standard order again takes a grid back to that.
+- Where breaks go inside a programme (DASH-538): each channel's Breaks card has At silence, At set times or At the end of a scene.
+- At silence works as before: Jellyfin's Commercial markers first, else quiet moments with a black picture preferred.
+- At the end of a scene snaps each set time to the nearest change of scene.
+- The card also has Breaks in each 30 minutes and Breaks in a film, both Automatic as before.
+- The search runs once for each programme in the quiet hours.
+- It is kept as a short list of candidate places in breaks.json (about 100 bytes).
+- Choosing among the places and the number is arithmetic at planning time, so changing a setting needs no new search.
+- FFmpeg is never run while a channel streams.
+- A break with no place found goes to its set time.
+- A programme not searched yet has none until the next quiet hour, except At set times.
+- Scene ends are found from the key frames only, which cost a thirtieth of decoding every frame.
+- Measured on a made-up 30 minute 640 by 360 programme: At silence took 7.7 processor seconds (10.6 seconds).
+- The end of a scene took 2.1 (3.0), once for each programme, and a full decode for scenes took 68.7.
+- Manual marks (DASH-539, later) have a place in breaks.json ("manual"), and when a programme has any they are its breaks.
+- There is no screen for manual marks yet.
 
 ## 0.7.0 (not released yet)
 
 ### Added
-- Audio description on promos (DASH-509, owner, 21 November 2026: "Can you add a task to add audio description to promos"), a setting in Promos that is not active unless you activate it. A promo is clips, music and words on screen, so a blind viewer heard only music. With it active, a voice says the promo's words in the order they are read: Coming soon, the title, the episode, the day and time, and the channel, then the first sentence of the programme's description when the promo is long enough. The time is said as a time ("21 o'clock"), in the station's language.
-  - The voice is mixed into the promo's one sound track, as a channel's stream carries one. It starts in the promo's first second and ends before the closing fade; the music and the programme's sound fall to about a third while it speaks and rise again after it.
-  - The voice is made on your server by eSpeak NG, in the image: nothing is sent anywhere, there is a voice for each of the ten languages, and it takes about 0.03 processor seconds and 13 MB of memory for each promo (measured in the image), in the quiet hours when the promo is made. The image is about 6 MB larger (68.9 MB to 74.9 MB unpacked on amd64).
-  - A programme that has an audio description sound track (named as the Audio description plug-ins read them, such as "English (Audio Description)" or "AD") plays that track in its clips, in the station's language when there is one. The line-up learns which programmes have one the next time it is read from Jellyfin, by itself each night.
-  - Activating or deactivating it makes each channel's promos again in the next quiet hours. Left as it is, every promo is kept and nothing changes.
+- Audio description on promos (DASH-509): a setting in Promos that is not active unless you activate it.
+- A promo is clips, music and words on screen, so a blind viewer heard only music.
+- With it active, a voice says the promo's words in reading order: Coming soon, the title, the episode, the day and time, and the channel.
+- It then says the first sentence of the programme's description when the promo is long enough.
+- The time is said as a time ("21 o'clock"), in the station's language.
+- The voice is mixed into the promo's one sound track, as a channel's stream carries one.
+- It starts in the promo's first second and ends before the closing fade.
+- The music and the programme's sound fall to about a third while it speaks and rise again after it.
+- eSpeak NG makes the voice on your server, in the image, and nothing is sent anywhere.
+- There is a voice for each of the ten languages.
+- Each promo takes about 0.03 processor seconds and 13 MB of memory (measured in the image), in the quiet hours when it is made.
+- The image is about 6 MB larger (68.9 MB to 74.9 MB unpacked on amd64).
+- A programme with an audio description sound track plays that track in its clips, in the station's language when there is one.
+- The plug-in reads the track's name as the Audio description plug-ins do, such as "English (Audio Description)" or "AD".
+- The line-up learns which programmes have one the next time it is read from Jellyfin, by itself each night.
+- Activating or deactivating it makes each channel's promos again in the next quiet hours.
+- Left as it is, every promo is kept and nothing changes.
 
 ## 0.6.0 (21 November 2026)
 
 ### Added
-- Language (owner, 21 November 2026: "the create your own tv channel needs to have a language choice in the settings and it defaults to english"), a station setting, English unless changed, with English, Français (French), Deutsch (German), Español (Spanish), Italiano (Italian), Português (Portuguese), Nederlands (Dutch), Svenska (Swedish), Dansk (Danish) and Norsk bokmål (Norwegian). It changes three things:
-  - The words drawn on the picture and written in the guide: the programme's name strap with its series and episode, Up next at a time, the Coming up next and Later on cards, the day and time, the New, Repeat and Live label, Coming soon on promos, and Back soon and the countdown on the holding slide. Day and month names come from the plug-in's own tables, never from the server's locale, and the clock stays 24-hour. In English every word is exactly as before. The plug-in's own pages stay in English, as Starboard does.
-  - The sound track: a programme whose file has more than one sound track plays the first in the station's language (Jellyfin's ISO 639-2 codes, such as fre or fra, ger or deu), else its default track as before, on channels and in the clips of promos. A line-up read before 0.6.0 knows each track's language from its next read (the nightly refresh, or Read the channels from Jellyfin again).
-  - Titles and descriptions: Jellyfin keeps one language of titles for each library and cannot be asked for another, but its remote search can, from the film database (TMDB) by the item's own provider ids, without changing anything in Jellyfin. For a language other than English, the plug-in asks for a film's title and description, and a series' name, only for programmes about to be shown: the next 3 hours of a channel being watched, the guide's days in the nightly refresh, and a promo being made. At most 60 an hour, each once, kept in titles.json in the plug-in's folder per item and language; anything with no answer keeps Jellyfin's own text, and is asked for again after 7 days. Jellyfin has no remote search for episodes, so an episode's own name and plot stay as Jellyfin has them; setting the library's preferred download language in Jellyfin gives those too.
-- A change of language makes each channel's promos again in the next quiet hours, with the new words. English promos made before 0.6.0 are kept.
+- Language is a station setting, English unless changed.
+- It offers English, Français (French), Deutsch (German), Español (Spanish), Italiano (Italian), Português (Portuguese), Nederlands (Dutch), Svenska (Swedish), Dansk (Danish) and Norsk bokmål (Norwegian).
+- It changes the words on the picture and in the guide, the sound track, and titles and descriptions.
+- The words on the picture and in the guide change: the programme's name strap with its series and episode, and Up next at a time.
+- They also cover the Coming up next and Later on cards, the day and time, and the New, Repeat and Live label.
+- They cover Coming soon on promos, and Back soon and the countdown on the holding slide.
+- Day and month names come from the plug-in's own tables, never from the server's locale, and the clock stays 24-hour.
+- In English every word is exactly as before.
+- The plug-in's own pages stay in English, as Starboard does.
+- A programme whose file has more than one sound track plays the first in the station's language, else its default track as before.
+- This works for Jellyfin's ISO 639-2 codes, such as fre or fra, ger or deu, on channels and in the clips of promos.
+- A line-up read before 0.6.0 knows each track's language from its next read (the nightly refresh, or Read the channels from Jellyfin again).
+- Jellyfin keeps one language of titles for each library and cannot be asked for another.
+- Its remote search can ask the film database (TMDB) by the item's own provider ids, without changing anything in Jellyfin.
+- For a language other than English, the plug-in asks for a film's title and description, and a series' name.
+- It asks only for programmes about to be shown.
+- That means the next 3 hours of a channel being watched, the guide's days in the nightly refresh, and a promo being made.
+- It asks for at most 60 an hour, each once, and keeps them in titles.json in the plug-in's folder per item and language.
+- Anything with no answer keeps Jellyfin's own text and is asked for again after 7 days.
+- Jellyfin has no remote search for episodes, so an episode's own name and plot stay as Jellyfin has them.
+- Setting the library's preferred download language in Jellyfin gives those too.
+- A change of language makes each channel's promos again in the next quiet hours, with the new words.
+- English promos made before 0.6.0 are kept.
 
 ### Fixed
-- The line the plug-in writes in its log as it starts said 0.5.6 in 0.5.7; it now gives the right version.
+- The line the plug-in writes in its log as it starts said 0.5.6 in 0.5.7, and it now gives the right version.
 
 ## 0.5.7 (21 November 2026)
 

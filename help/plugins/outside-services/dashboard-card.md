@@ -10,7 +10,7 @@ One line: whether every check is up, or which are down, such as "Down: Router, N
 
 ## Checks
 
-Each check by its name, the ones down first, with "Up" and its response time and uptime this week, or how long it has been down and why. Web addresses link to the address. Up to 10.
+Each check by its name, the ones down first. A check that is up shows "Up" with its response time and uptime this week. A check that is down shows how long it has been down and why. Web addresses link to the address. Up to 10.
 
 - **Example:** Router: Up, 4 ms, 99.98% this week
 
@@ -22,13 +22,13 @@ One row for each group: how many of its checks are up, its uptime this week, and
 
 ## Response times
 
-A small line for each check, the average each hour for the last 24 hours, up to 8, the ones down and the slowest first. Starboard writes the latest, lowest and highest in words beside each line, which is what a screen reader reads; the line is a picture of the same figures. A gap is an hour with no answer.
+A small line for each check, the average each hour for the last 24 hours, up to 8, the ones down and the slowest first. Starboard writes the latest, lowest and highest in words beside each line, and a screen reader reads those words. The line is a picture of the same figures. A gap is an hour with no answer.
 
 - **Example:** Router: Now 5 ms, lowest 4 ms, highest 6 ms. Up 99.98% of the last 24 hours
 
 ## Certificates
 
-Each certificate, the soonest to run out first: the days left, the names it was issued for, and **Not trusted** with why for one your devices made themselves.
+Each certificate, the soonest to run out first. It shows the days left and the names the certificate covers. For a certificate your devices made themselves, it shows **Not trusted** with the reason.
 
 - **Example:** Website: 41 days left, for example.org
 

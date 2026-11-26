@@ -39,7 +39,7 @@ On the home network, the same port answers `/` (the status page), its files, and
 
 - Python's standard library only. Ping uses an unprivileged ICMP socket, which Docker allows without any capability; where it is refused, a TCP knock. DNS is one UDP question built by hand. Certificates are read from their DER bytes, with no package.
 - One thread runs the rounds: up to four checks at once, then the alerts, then the page. It sleeps until the next check is due, at most a minute.
-- Alerts go to `POST /api/v1/plugin/alerts` (plug-in API 1.17), once raised and once cleared, keyed `check-<id>` and `cert-<id>`, and never while the group is paused or in a maintenance window. A Starboard that answers 404 is asked again only after an hour.
+- Alerts go to `POST /api/v1/plugin/alerts` (plug-in API 1.17), once raised and once cleared, keyed `check-<id>` and `cert-<id>`. They never go while the group is paused or in a maintenance window. A Starboard that answers 404 is asked again only after an hour.
 - What is kept: `checks.json`, `groups.json`, `state.json` (written only when something changes) and `history/<id>.bin` (written once an hour). The status page is written to `/tmp`, in memory.
 
 ## Find out more

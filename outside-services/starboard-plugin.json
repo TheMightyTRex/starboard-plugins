@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "outside-services",
  "name": "Uptime and status",
- "version": "2.1.0",
- "description": "Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat, with 90 days of response times, certificates, maintenance windows and a status page.",
+ "version": "2.1.1",
+ "description": "Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat. It keeps 90 days of response times, and has certificates, maintenance windows and a status page.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/outside-services",
@@ -220,6 +220,13 @@
   "alt": "Uptime and status logo"
  },
  "changes": [
+  {
+   "version": "2.1.1",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "2.1.0",
    "date": "2026-11-25",

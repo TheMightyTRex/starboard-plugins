@@ -6,16 +6,16 @@ Both cards read the figures Picture shrinker keeps after each run. Nothing is me
 
 ## Space saved
 
-Shows how much space Picture shrinker has saved so far. Under it, how many pictures are shrunk, the size of the backup and when it runs next, or how far the run it is on has gone.
+Shows how much space Picture shrinker has saved so far. Under that it shows how many pictures are shrunk, the size of the backup and when it runs next. During a run, it shows how far the run has gone.
 
-- **How often it updates:** every minute while a run is going, and every 10 minutes the rest of the time, while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
+- **How often it updates:** every minute while a run is going, and every 10 minutes the rest of the time. It updates only while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
 - **When it last changed:** when the last run ended.
 - **Example:** 41.2 GB saved. 18,402 pictures shrunk; backup 1.1 GB. Next run Sunday 23 November at 03:30
 - **Before anything is shrunk:** it says "Nothing shrunk yet" and when the first run is.
 
 ## Space saved by type
 
-Shows the space each type of picture has saved, the most first, such as "Backdrops: 24.6 GB", with how many were shrunk and their size before and now. The last line is the last run: when it ended, what started it, how many pictures it shrank and the space it saved.
+Shows the space each type of picture has saved, the most first, such as "Backdrops: 24.6 GB". It also shows how many were shrunk and their size before and now. The last line is the last run: when it ended, what started it, how many pictures it shrank and the space it saved.
 
 - **How often it updates:** every 10 minutes while the dashboard is open and in view, and every minute while a run is going.
 - **When it last changed:** when the last run ended.

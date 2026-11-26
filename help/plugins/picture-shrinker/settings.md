@@ -26,7 +26,7 @@ These are on Picture shrinker's tab.
 - **Stop shrinking** stops the run after the picture it is on. The next run carries on where it stopped.
 - **Restore original pictures** puts every original from the backup back in Jellyfin. The backup is kept.
 - **Delete backup** removes the backup for good, after asking you.
-- **Start again: the pictures it shrinks** deletes the backup and the records, moves each picture of every type it shrinks aside and has Jellyfin download it again at full size. A picture Jellyfin cannot download again within a day is put back.
+- **Start again: the pictures it shrinks** deletes the backup and the records. It moves each picture of every type it shrinks aside and has Jellyfin download it again at full size. It puts a picture back if Jellyfin cannot download it again within a day.
 - **Start again: every picture** deletes the backup and the records and has Jellyfin replace every picture, backdrops and logos included. It downloads much more and can take many hours.
 
 ## Things to note

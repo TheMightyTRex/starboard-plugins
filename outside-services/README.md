@@ -1,8 +1,8 @@
 # Uptime and status
 
-Checks your router, NAS (network storage device), websites and more by address, port, ping, DNS or heartbeat, with 90
-days of response times, certificates, maintenance windows and a status page. Version 2.0.0 takes over Outside services:
-its folder and id stay `outside-services`, so an update keeps your addresses.
+Checks your router, NAS (network storage device), websites and more by address, port, ping, DNS or heartbeat. It keeps
+90 days of response times and has certificates, maintenance windows and a status page. Version 2.0.0 takes over Outside
+services. Its folder and id stay `outside-services`, so an update keeps your addresses.
 
 A Starboard plug-in by TheMightyTRexUK, MIT licence.
 
@@ -29,7 +29,7 @@ what to check.
 | `push` | `Backup: push grace 25h` | Something calls its secret address within the grace time. Add `?status=down&msg=...` to say it failed |
 
 After any check: `in Home` puts it in a group, `#network` adds a tag, and `every 1m` checks it more often (20 seconds at
-the most often). Without `every`, it is checked every **Check every** minutes.
+the most often). Without `every`, it checks every **Check every** minutes.
 
 The addresses in **Addresses to check** (from Outside services) are web address checks in the group Outside services.
 
@@ -37,8 +37,9 @@ The addresses in **Addresses to check** (from Outside services) are web address 
 
 **Groups and maintenance** lists each group with how many of its checks are up. Deactivate a group to pause its
 alerts. **Maintenance** takes windows such as `Sunday 02:00 to 04:00`, `every day 03:00 to 03:30`,
-`2026-11-21 02:00 to 06:00` or `now for 2 hours`, split by `;`. In a window, its checks still run and are kept in the
-history, no alert is sent, and the status page says Maintenance. A check still down when its window ends is sent then.
+`2026-11-21 02:00 to 06:00` or `now for 2 hours`, split by `;`. In a window, its checks still run and the plug-in keeps them in the
+history. It sends no alert, and the status page says Maintenance. If a check is still down when its window ends, the
+plug-in sends the alert then.
 
 ## On the dashboard
 
@@ -51,8 +52,8 @@ history, no alert is sent, and the status page says Maintenance. A check still d
 
 ## The status page
 
-A page on your home network that only shows: each group, each check's name, up or down, its response time, and uptime
-for 24 hours, 30 days and 90 days. It never shows addresses or heartbeat links. Open it from the plug-in's page in
+A page on your home network that only shows information. It shows each group. For each check it shows the name, up or down, the
+response time, and uptime for 24 hours, 30 days and 90 days. It never shows addresses or heartbeat links. Open it from the plug-in's page in
 Starboard, with **Open**. Deactivate it in **Status page**.
 
 ## Settings
@@ -66,8 +67,8 @@ Starboard, with **Open**. Deactivate it in **Status page**.
 ## How light it is
 
 One thread runs the checks, up to four at once, and sleeps until the next is due, at most a minute. The history is
-43 KB a check for 90 days (an hour's checks in one slot), written once an hour, and the status page is written to the
-container's memory, so a round that changes nothing writes nothing to the disk.
+43 KB a check for 90 days (an hour's checks in one slot). The plug-in writes it once an hour. It writes the status page
+to the container's memory, so a round that changes nothing writes nothing to the disk.
 
 ## Add it
 

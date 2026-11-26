@@ -33,7 +33,7 @@ The same page, with the same columns and words, as **Titles with audio descripti
 2. The first line says how many films, and how many episodes in how many series, have a described sound track, and when it last checked. Then how many it shows, such as "Showing the last 20 of 143 films and all 6 series, newest first". To change how many, choose **Films to list** and **Series to list** under **Your library**.
 3. Choose **Films** or **Series**. Each says its count, such as "3 titles with audio description", and **Series** how many series. **Back to Titles with audio description** returns to the choice.
 4. Under **Films**, each film is a row with its name and year, **Described track:** and the track's name, and its status, **Described**.
-5. Under **Series**, each series is a row with its name and year, how many of its episodes are described, such as "3 of 6 episodes described" or "All 6 episodes described", and its described track. Choose a series to list its described episodes, in order, such as "S1 E3: Part three", each with its described track and **Described**.
+5. Under **Series**, each series is a row. The row shows its name and year. It also shows how many of its episodes are described, such as "3 of 6 episodes described" or "All 6 episodes described". It also shows its described track. Choose a series to list its described episodes, in order, such as "S1 E3: Part three", each with its described track and **Described**.
 6. Each film and episode has a link, such as "Open Harbour Lights (2019) in Jellyfin", that opens its page in Jellyfin in a new tab.
 
 | Part | What it shows |
@@ -81,13 +81,13 @@ Films and series are listed newest first, by when they were added to Jellyfin; a
 
 These are on Audio description's tab.
 
-- **Check for described titles now** reads the sound tracks of every film and episode in Jellyfin straight away, in the background, instead of waiting for tonight's check. It says "Checking for described titles. The list updates in a minute or two".
-- **Check the Reelix choice now** reads how Reelix treats releases with audio description and says so, such as "Reelix prefers releases with audio description in 4 quality levels". Where no level prefers them and **Prefer releases with audio description** is activated, it says "To prefer releases with audio description, set Audio description to Prefer in Settings, Reelix, Picture quality". It never changes Reelix: only an admin key may, and Starboard never gives plug-ins one.
+- **Check for described titles now** reads the sound tracks of every film and episode in Jellyfin straight away, in the background. It does not wait for tonight's check. It says "Checking for described titles. The list updates in a minute or two".
+- **Check the Reelix choice now** reads how Reelix treats releases with audio description. It tells you, for example, "Reelix prefers releases with audio description in 4 quality levels". If no level prefers them and **Prefer releases with audio description** is activated, it says "To prefer releases with audio description, set Audio description to Prefer in Settings, Reelix, Picture quality". It never changes Reelix: only an admin key may, and Starboard never gives plug-ins one.
 
 ## Things to note
 
-- At each check, every film and episode with a described track, and each series with one, gets the tag **Audio description** in Jellyfin, and the tag comes off when the track goes. Other tags stay as they are. In any Jellyfin app, filter a library by that tag.
-- When Jellyfin's own Audio description plug-in is installed, this one leaves the tag, the collection and **Play the described track** to it, and its card says **Idle**. The lists, the Reelix choice and the sources still work.
+- At each check, every film, episode and series with a described track gets the tag **Audio description** in Jellyfin. The tag comes off when the track goes. Other tags stay as they are. In any Jellyfin app, filter a library by that tag.
+- When Jellyfin's own Audio description plug-in is installed, this one leaves the tag, the collection and **Play the described track** to it. Its card says **Idle**. The lists, the Reelix choice and the sources still work.
 - The words, the tag and the collection's name come from the rules file it shares with the Jellyfin version, rules 1.0.
 - The choice itself is made in Starboard: **Settings**, **Reelix**, **Picture quality**, where **Audio description** can be set to **Prefer**, **Neutral** or **Never**. It uses Reelix's own Audio description format, which comes with Reelix; an older Reelix has none, and the plug-in says so.
 - The switches under **Sources** are used straight away: their pages show or hide their links the next time you open them.

@@ -1,11 +1,12 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.8.0 is the latest version. It needs Starboard with plug-in API 1.15 or later; Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.9.1 is the latest version. It needs Starboard with plug-in API 1.15 or later. Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.9.1 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.9.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.8.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.7.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | 22 November 2026 |
@@ -35,15 +36,15 @@ Not released yet.
 
 Added:
 
-- **Fit for Adverts:** in either grid, **Times shown** for **Adverts** can be **Fit**, which adds as many whole adverts as the break has room for, never cutting an advert or another item short, and the holding countdown makes up the rest. [Fit, and a break length for each column](settings.md#fit-and-a-break-length-for-each-column) says how.
+- **Fit for Adverts:** in either grid, **Times shown** for **Adverts** can be **Fit**, which adds as many whole adverts as the break has room for. It never cuts an advert or another item short, and the holding countdown makes up the rest. [Fit, and a break length for each column](settings.md#fit-and-a-break-length-for-each-column) says how.
 - **Break length for each column:** **Automatic**, or 2 to 30 minutes. A column whose items need more than that says so in words, and the programme still starts on time.
 
-- **File lists:** one page for every ident, promo clip, advert and PSA, with a search, sorting, filters, paging, and several files added to a channel or taken off it together. [File lists](settings.md#file-lists) says how.
+- **File lists:** one page for every ident, promo clip, advert and PSA. It has a search, sorting, filters and paging. You can add several files to a channel, or take them off it, together. [File lists](settings.md#file-lists) says how.
 - **PSA:** a new kind of item for the grids, with its own files. [PSAs](settings.md#psas) says what it needs.
 
 Fixed:
 
-- **The holding countdown and Back soon count what comes after them:** a bumper, a promo, an ident, an other channel promo or a Coming soon promo placed after them. The clock reaches 0:00 as the programme starts, and the slide ends early by the length of what follows, in the classic breaks too. When a clip's length cannot be read, the length kept from the last time it could be read is used, and the log says so.
+- **The holding countdown and Back soon count what comes after them.** That can be a bumper, a promo, an ident, an other channel promo or a Coming soon promo. The clock reaches 0:00 as the programme starts. The slide ends early by the length of what follows, in the classic breaks too. When a clip's length cannot be read, the plug-in uses the length it kept earlier. The log says so.
 
 ## What is new in 0.8.0
 
@@ -51,8 +52,8 @@ Not released yet.
 
 Added:
 
-- **Break grids:** two grids for each channel, **In between programmes** and **Breaks**, with up to 7 columns each. Choose **Random**, **Sequence**, **Day of week**, or **Morning, afternoon and evening**, then drag **Bumper**, **Promo**, **Adverts**, **Ident**, **Other channel promo**, **Coming soon promo**, **Holding countdown** and **Back soon** into the columns, and say how many times each is shown. Everything also works from the keyboard and with buttons. [Break grids](settings.md#break-grids) says how.
-- **Where breaks go inside a programme:** at silence, at set times or at the end of a scene, with how many in each 30 minutes and in a film, found once for each programme in the quiet hours. [Where breaks go inside a programme](settings.md#where-breaks-go-inside-a-programme) says what each does.
+- **Break grids:** two grids for each channel, **In between programmes** and **Breaks**, with up to 7 columns each. Choose **Random**, **Sequence**, **Day of week**, or **Morning, afternoon and evening**. Then drag **Bumper**, **Promo**, **Adverts**, **Ident**, **Other channel promo**, **Coming soon promo**, **Holding countdown** and **Back soon** into the columns. Say how many times each is shown. Everything also works from the keyboard and with buttons. [Break grids](settings.md#break-grids) says how.
+- **Where breaks go inside a programme:** at silence, at set times or at the end of a scene. You choose how many in each 30 minutes and in a film. The plug-in finds them once for each programme in the quiet hours. [Where breaks go inside a programme](settings.md#where-breaks-go-inside-a-programme) says what each does.
 
 Nothing you have set changes. A channel that has not changed its grids plays what it always has, and the grids start from that order.
 
@@ -73,20 +74,20 @@ Added:
 Added:
 
 - **Language:** a station setting, English unless changed, with French, German, Spanish, Italian, Portuguese, Dutch,
-  Swedish, Danish and Norwegian. The words drawn on the picture and in the guide, such as **Coming up next**, the series
-  and episode, and the day and time, are in that language.
+  Swedish, Danish and Norwegian. The words drawn on the picture and in the guide are in that language. That covers
+  **Coming up next**, the series and episode, and the day and time.
 - **Sound track in your language:** a programme with more than one sound track plays the one in the station's
   language, else its default track.
-- **Titles in your language:** film and series titles, and film descriptions, are read in the station's language from
-  the film database for programmes about to be shown, a few each hour, and kept. Episode names and plots stay as
+- **Titles in your language:** the plug-in reads film and series titles, and film descriptions, in the station's language.
+  It gets them from the film database for programmes about to be shown, a few each hour, and keeps them. Episode names and plots stay as
   Jellyfin has them; [Language](settings.md#language) says how to get those in your language too.
 
 ## What is new in 0.5.7
 
 Fixed:
 
-- **Moving a programme with the keyboard:** on the schedule grid, after **Move 15 minutes earlier**, **Move 15 minutes
-  later** or **Move to**, focus goes straight to the programme at its new time, and the new time is said. A screen
+- **Moving a programme with the keyboard:** on the schedule grid, focus goes straight to the programme at its new time.
+  This happens after **Move 15 minutes earlier**, **Move 15 minutes later** or **Move to**. The new time is said. A screen
   reader no longer reads the old time first. When a move cannot be made, focus goes back to the programme where it
   was and the reason is said.
 
@@ -94,13 +95,13 @@ Fixed:
 
 Changed:
 
-- **Busy buttons on the schedule grid:** a button that asks the plug-in, such as **Suggest a week**, **Save the suggestion** or **Undo**, shows a turning ring before its words while it works. With less motion asked for in **Display**, the ring fades instead of turning.
+- **Busy buttons on the schedule grid:** a button that asks the plug-in for something shows a turning ring before its words while it works. That covers **Suggest a week**, **Save the suggestion** and **Undo**. With less motion asked for in **Display**, the ring fades instead of turning.
 
 ## What is new in 0.5.5
 
 Added:
 
-- **Leave out 3D films:** a film that is 3D, by what Jellyfin or its file name says or by a check of its picture in quiet hours, is left out of every channel.
+- **Leave out 3D films:** every channel leaves out a film that is 3D. The plug-in goes by what Jellyfin or the file name says, or by a check of the picture in quiet hours.
 
 Changed:
 
@@ -127,7 +128,7 @@ Added:
 
 Changed:
 
-- **A break between programmes** is a bumper, the promos and clips, an extra video, the holding slide, and the ident with its music immediately before the next programme.
+- **A break between programmes** is a bumper, the promos and clips, an extra video and the holding slide. It ends with the ident and its music, right before the next programme.
 
 ## What is new in 0.4.0
 
@@ -140,27 +141,27 @@ Added:
 
 Added:
 
-- **Create initial schedule:** on a channel's What it shows card, a week made from the channel's own series and films in the hours you give, waiting in the schedule grid for you to change and save.
+- **Create initial schedule:** on a channel's What it shows card, the plug-in makes a week from the channel's own series and films. It uses the hours you give. It waits in the schedule grid for you to change and save.
 - **This channel's line-up** in Suggest a schedule does the same from the grid page.
 
 ## What is new in 0.3.0
 
 Added:
 
-- **Animation on and off:** the Coming up next and Later cards, the straps, the on-screen logo, the clock, the New, Repeat or Live label and the words on the holding slide can each fade, slide in from the left, the right or the bottom, wipe or grow, and go off the same ways, quick, normal or slow. Choose them for every channel on the new **Animation** page, or for one channel on its **Animation** card. Each has a **Preview**: a few seconds of it, in a new tab.
+- **Animation on and off:** each of these can come on and go off with an animation. That covers the Coming up next and Later cards, the straps, the on-screen logo and the clock. It also covers the New, Repeat or Live label and the words on the holding slide. The animation can fade, slide in from the left, the right or the bottom, wipe or grow. It can be quick, normal or slow. Choose them for every channel on the new **Animation** page, or for one channel on its **Animation** card. Each has a **Preview**: a few seconds of it, in a new tab.
 - **A broadcast pack can choose its animation** in `pack.json`, under `animation`. A choice in the settings comes first.
 - **Each channel remembers what it has played** to someone watching. **From the next episode not watched** counts an episode it played, 70% or more of it, as watched, as well as what Jellyfin says. Jellyfin's own watched marks are never changed.
-- **Played on this channel:** a card on each channel lists the last 5 programmes it played, with **Count what this channel has played as watched** and a way to forget them.
+- **Played on this channel:** a card on each channel lists the last 5 programmes it played. It has **Count what this channel has played as watched** and a way to forget them.
 
 Changed:
 
-- **From the next episode not watched** starts at the first episode, in the channel's order, that is not watched; before, it took the first not played in Jellyfin's order.
+- **From the next episode not watched** starts at the first episode, in the channel's order, that is not watched. Before, it took the first not played in Jellyfin's order.
 
 ## What is new in 0.2.1
 
 Added:
 
-- **Choose the hours a suggestion fills:** Suggest a schedule asks for the hours to fill on weekdays and at the weekend, such as 18:00 to 23:00, and fills them one programme after another, leaving out one that would run past the end. The hours are remembered for each channel.
+- **Choose the hours a suggestion fills:** Suggest a schedule asks for the hours to fill on weekdays and at weekends, such as 18:00 to 23:00. It fills them one programme after another and leaves out one that would run past the end. The hours are remembered for each channel.
 
 Changed:
 
@@ -170,8 +171,8 @@ Changed:
 
 Added:
 
-- **Choose from your library:** a slide-out lists every series, film, collection, playlist, genre and decade in Jellyfin, with search; tick several and add them to a channel at once. Needs Starboard 0.24.0.
-- **A holding slide:** a picture or short video with Back soon or a countdown to the next programme, looping at the end of each break until the next programme starts.
+- **Choose from your library:** a slide-out lists every series, film, collection, playlist, genre and decade in Jellyfin, with search. Tick several and add them to a channel at once. Needs Starboard 0.24.0.
+- **A holding slide:** a picture or short video with Back soon or a countdown to the next programme. It loops at the end of each break until the next programme starts.
 - **Music for promos:** upload music for the station or one channel. A channel with music but no pack promo gets plain promos on its colour.
 - **Jellyfin's guide:** the Guide page says when Jellyfin last read the guide, and **Refresh Jellyfin's guide** asks it to read it again.
 - **Suggest a schedule asks what to make it from:** Watch history, General watch history, All TV, All films or TV and Films.
@@ -190,19 +191,19 @@ Fixed:
 
 Added:
 
-- **Your own channels:** name the station and each channel, with its number, logo and colour, and fill it from series, films, collections, playlists, genres or decades, in order or shuffled, with episodes of a series in a row.
-- **Schedule grid:** place films and series at set times on a week's grid, by dragging or with buttons and the keyboard; copy a day; stripe a series across weekdays; choose where a series starts; suggest a week from watch history.
+- **Your own channels:** name the station and each channel, with its number, logo and colour. Fill it from series, films, collections, playlists, genres or decades, in order or shuffled, with episodes of a series in a row.
+- **Schedule grid:** place films and series at set times on a week's grid, by dragging or with buttons and the keyboard. Copy a day, stripe a series across weekdays, choose where a series starts, or suggest a week from watch history.
 - **In Jellyfin's Live TV, first:** numbered from 1 in your order, with a 7-day guide of titles, episode names, synopses, pictures and New or Repeat. Tuning in joins part way through, as on television.
-- **Breaks:** idents, Jellyfin's trailers, your own clips, and Coming up next and Later cards with the programme's picture, title, date and time and a short synopsis.
-- **Broadcast pack:** your own branding from a zip made from the template: the on-screen logo, the logo with its music, idents in a random order, transitions, and Coming up next and promo backgrounds. Every file is checked first. Or try the example pack.
-- **Promos:** made in quiet hours from short clips of a programme coming up, a music bed from the pack and its day and time from the schedule, kept and replaced as the settings say, and shown on your other channels too.
+- **Breaks:** idents, Jellyfin's trailers, your own clips, and Coming up next and Later cards. The cards show the programme's picture, title, date, time and a short synopsis.
+- **Broadcast pack:** your own branding from a zip made from the template. It holds the on-screen logo, the logo with its music, idents in a random order, transitions, and Coming up next and promo backgrounds. Every file is checked first. Or try the example pack.
+- **Promos:** the plug-in makes them in quiet hours from short clips of a programme coming up. They use a music bed from the pack and the day and time from the schedule. It keeps and replaces them as the settings say, and shows them on your other channels too.
 - **Downloads:** the template, with pack.json, its schema and a README, and placement guides for the Coming up next card, the promo and the on-screen logo.
-- **On-screen logo:** the channel's logo or name in a corner you choose, with its size, opacity, a clock, a New, Repeat or Live label and a backing plate, for the station or each channel, with a preview.
+- **On-screen logo:** the channel's logo or name in a corner you choose. You set its size and opacity, and can add a clock, a New, Repeat or Live label and a backing plate. This works for the station or each channel, with a preview.
 - **Light:** nothing runs until someone chooses a channel, viewers of a channel share one stream, and it stops 30 seconds after the last one leaves.
 
 ## How it updates
 
-Before an update, Create your own TV channel stops any channel playing, so the update never cuts a conversion short; anyone watching can choose the channel again after it. Your channels, idents, clips, logos, broadcast packs and promos stay in its folder. Select **Roll back to** on its tab to go back to the version before.
+Before an update, Create your own TV channel stops any channel playing, so the update never cuts a conversion short. Anyone watching can choose the channel again afterwards. Your channels, idents, clips, logos, broadcast packs and promos stay in its folder. Select **Roll back to** on its tab to go back to the version before.
 
 ## Find out more
 

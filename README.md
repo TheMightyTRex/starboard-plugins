@@ -34,8 +34,8 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 
 | Plug-in | What it does |
 |---|---|
-| [Create your own TV channel](https://themightytrex.github.io/starboard-plugins/help/plugins/tv-station/index.html) | Your own TV channels in Jellyfin's Live TV, made from your films and series, with your own broadcast pack: on-screen logo, idents, transitions, Coming up next cards and promos. Nothing streams until a channel is chosen. |
-| [Direct play](https://themightytrex.github.io/starboard-plugins/help/plugins/direct-play/index.html) | Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play: one file at a time, in the hours you choose. |
+| [Create your own TV channel](https://themightytrex.github.io/starboard-plugins/help/plugins/tv-station/index.html) | Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos. Nothing streams until a channel is chosen. |
+| [Direct play](https://themightytrex.github.io/starboard-plugins/help/plugins/direct-play/index.html) | Makes your films and series play directly on the devices you choose, so Jellyfin does not convert them as they play. It works on one file at a time, in the hours you choose. |
 | [Library clean-up](https://themightytrex.github.io/starboard-plugins/help/plugins/library-cleanup/index.html) | Moves films and series everyone has watched, or nobody has watched for a long time, to the holding folder, so your disks do not fill up. It never deletes, and each can be put back. Needs Starboard 0.19.0. |
 | [Library health](https://themightytrex.github.io/starboard-plugins/help/plugins/library-health/index.html) | Films and series in Jellyfin with no poster, no description or no year, so you can fix them. |
 | [Most watched](https://themightytrex.github.io/starboard-plugins/help/plugins/most-watched/index.html) | The films and series most people watched in Jellyfin in the last week. |
@@ -65,7 +65,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 |---|---|
 | [Ad blocking](https://themightytrex.github.io/starboard-plugins/help/plugins/dns-blocking/index.html) | How many adverts and trackers Pi-hole or AdGuard Home blocked today. |
 | [Line speed](https://themightytrex.github.io/starboard-plugins/help/plugins/line-speed/index.html) | Tests your internet download speed once a night, outside download hours, and keeps a week of results. |
-| [Uptime and status](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat, with 90 days of response times, certificates, maintenance windows and a status page. Takes over Outside services, and needs Starboard with plug-in API 1.17. |
+| [Uptime and status](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat. It keeps 90 days of response times, and has certificates, maintenance windows and a status page. Takes over Outside services, and needs Starboard with plug-in API 1.17. |
 | [Remote access](https://themightytrex.github.io/starboard-plugins/help/plugins/remote-access/index.html) | Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router. |
 
 ### Home
@@ -80,7 +80,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 
 | Plug-in | What it does |
 |---|---|
-| [Audio description](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description/index.html) | Finds and tags films and series in Jellyfin with a described sound track for blind and partially sighted people, plays it for the people who choose it, and prefers releases with one in Reelix. |
+| [Audio description](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description/index.html) | Finds films and series in Jellyfin that have a described sound track for blind and partially sighted people, and tags them. Plays it for people who choose it. Prefers releases with one. |
 | [Audio description tracks](https://themightytrex.github.io/starboard-plugins/help/plugins/audio-description-tracks/index.html) | Adds a description track you already have, such as one from AudioVault, to its film or episode in Jellyfin, after checking that the lengths match. |
 
 ### Appearance

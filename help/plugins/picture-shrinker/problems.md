@@ -27,7 +27,7 @@ q2: What does the card say?
 3. If it stopped soon after an update, select **Roll back to** and the version you had. Read [Updates](updates.md).
 4. Still failing: go to **System**, then **Logs**, and find its name.
 
-It stops answering when it cannot read and change Jellyfin's metadata folder. If the **Space saved** page says "Jellyfin's metadata folder is not there", check Jellyfin is installed in **Settings**, then **Apps**, then deactivate and activate Picture shrinker.
+It stops answering when it cannot read and change Jellyfin's metadata folder. If the **Space saved** page says "Jellyfin's metadata folder is not there", check Jellyfin is installed in **Settings**, then **Apps**. Then deactivate and activate Picture shrinker.
 
 ## Update it or update Starboard
 
@@ -39,7 +39,7 @@ Your Starboard's plug-in API is outside what this version of Picture shrinker wo
 ## Check when it runs
 
 - The card says when it runs next, such as "Next run tomorrow at 03:30". Change **When to shrink** to run it at another time, or select **Shrink now**.
-- A picture already as small as the sizes you set is only opened, never written, so a run can save little once most pictures are shrunk.
+- The plug-in only opens a picture that is already as small as the sizes you set. It never writes it. So a run can save little once most pictures are shrunk.
 - Only posters and photos of people are shrunk. Backdrops, logos and other pictures are left alone.
 - A run stops itself after 115 minutes. The **Space saved** page says "Stopped at its time limit; the next run carries on".
 
@@ -51,7 +51,7 @@ Your Starboard's plug-in API is outside what this version of Picture shrinker wo
 ## Check the pictures it could not read
 
 1. On Picture shrinker's tab, open **Space saved**.
-2. Open **Could not read**: each picture has the reason, such as a format it leaves as it is or a new picture that did not pass its check.
+2. Open **Could not read**. Each picture has a reason, such as a format it leaves as it is or a new picture that did not pass its check.
 3. Those pictures are left as they were, so nothing is lost. Jellyfin can download them again if you choose **Refresh metadata** for that film or series in Jellyfin.
 
 ## Report a problem

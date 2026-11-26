@@ -19,7 +19,7 @@ Starboard lists these before you add it, each with its risk.
 
 What it runs:
 
-- **main:** reaches your home network and the internet, to run the checks, and answers on a port of this computer for the status page and heartbeat addresses. It can use its own folder in Starboard's data (`data/plugins/outside-services`).
+- **main:** reaches your home network and the internet, to run the checks. It also answers on a port of this computer for the status page and heartbeat addresses. It can use its own folder in Starboard's data (`data/plugins/outside-services`).
 
 Like every plug-in, it runs read only, as a user that is not root, with no extra rights. Its image is pinned by digest, so what you approved is what runs.
 
@@ -39,7 +39,7 @@ Measured on 20 November 2026 with 7 checks: about 17 MB of memory and under 0.1%
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json

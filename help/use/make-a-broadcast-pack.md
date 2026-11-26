@@ -3,7 +3,7 @@
 
 # Make a broadcast pack
 
-A broadcast pack is your own branding for the channels in [Create your own TV channel](../../tv-station/README.md): the on-screen logo, the logo with its music, idents, the Coming up next card, promos, their music, and transitions. It is one folder of files with set names and a `pack.json`, uploaded as a zip. This page is its specification.
+A broadcast pack is your own branding for the channels in [Create your own TV channel](../../tv-station/README.md). It covers the on-screen logo, the logo with its music, idents and the Coming up next card. It also covers promos and their music, and transitions. It is one folder of files with set names and a `pack.json`. You upload it as a zip. This page is its specification.
 
 ## When would you use it
 
@@ -16,18 +16,18 @@ A broadcast pack is your own branding for the channels in [Create your own TV ch
 In Starboard, go to **Settings**, then **Plug-ins**, then **Create your own TV channel**, then **Broadcast pack**. Under **Downloads**:
 
 - **The template** has every folder, a `pack.json` to fill in, `pack.schema.json` (the machine-checked rules for `pack.json`) and a README with this specification in short.
-- **Placement guides** for the Coming up next card, the promo and the on-screen logo are 1920 by 1080 pictures that mark the clip area, each text field with its size and place, and the safe areas. With a pack in use, the guides are drawn on its own backgrounds.
-- **The example pack** is Example TV, a made-up channel drawn in code by the plug-in. Activate **Try the example pack** first, and it is made.
+- **Placement guides** for the Coming up next card, the promo and the on-screen logo are 1920 by 1080 pictures. They mark the clip area, each text field with its size and place, and the safe areas. With a pack in use, the plug-in draws the guides on the pack's own backgrounds.
+- **The example pack** is Example TV, a made-up channel that the plug-in draws in code. Activate **Try the example pack** first, and the plug-in makes it.
 
 ## Step by step
 
-1. **Download the template.** In **Broadcast pack**, under **Downloads**, select **The template: folders, pack.json, its schema and a README**. It is a zip with one folder, `broadcast-pack`, holding `pack.json`, `pack.schema.json`, `README.txt`, a folder for each kind of file with a `what-goes-here.txt` in it, and a placement guide in `logo`, `coming-next` and `promo`.
+1. **Download the template.** In **Broadcast pack**, under **Downloads**, select **The template: folders, pack.json, its schema and a README**. It is a zip with one folder, `broadcast-pack`. The folder holds `pack.json`, `pack.schema.json` and `README.txt`. It also has a folder for each kind of file, each with a `what-goes-here.txt` in it, and a placement guide in `logo`, `coming-next` and `promo`.
 2. **Unzip it,** and rename the folder if you like: the name of the folder is not used.
 3. **Make the on-screen logo,** `logo/dog.png`, the one file every pack needs: a PNG with a transparent background, 256 pixels tall or more. Keep it simple and light, as it sits on every programme. The logo placement guide marks where it sits in each corner.
-4. **Make the backgrounds** for the Coming up next card and the promo, 1920 by 1080, a still or a loop of 2 to 60 seconds. Open the placement guide in each folder in your picture or video editor as a layer over your design, and leave the clip area and the text fields clear: the plug-in draws into them.
+4. **Make the backgrounds** for the Coming up next card and the promo, 1920 by 1080, a still or a loop of 2 to 60 seconds. Open the placement guide in each folder in your picture or video editor, as a layer over your design. Leave the clip area and the text fields clear, because the plug-in draws into them.
 5. **Add the moving pieces you want:** idents, bumpers, the logo with music, transitions and music beds for the promos, each named as [The folder](#the-folder) says. Leave out any you do not want.
-6. **Fill in `pack.json`:** the pack's name, its colours, and the list of each kind of file. Take out of `pack.json` any file you did not make: the template lists `logo/logo-with-music.mp4`, `ident01.mp4`, `ident02.mp4` and `wipe01.webm`, and a file named there that is not in the folder stops the pack being used. Move a box only when your design needs it.
-7. **Zip the folder** and upload it, as [Use a broadcast pack](use-a-broadcast-pack.md) says. When the check finds a problem, the pack in use stays, and **The last pack checked** lists each problem: [What each problem means](#what-each-problem-means) says how to put it right.
+6. **Fill in `pack.json`:** the pack's name, its colours, and the list of each kind of file. Take out of `pack.json` any file you did not make. The template lists `logo/logo-with-music.mp4`, `ident01.mp4`, `ident02.mp4` and `wipe01.webm`. If a file is named there but is not in the folder, the plug-in will not use the pack. Move a box only when your design needs it.
+7. **Zip the folder** and upload it, as [Use a broadcast pack](use-a-broadcast-pack.md) says. When the check finds a problem, the pack in use stays. **The last pack checked** lists each problem, and [What each problem means](#what-each-problem-means) says how to put it right.
 8. **Check it on a channel:** on the channel's page, select **Preview a frame** and **Preview a Coming up next card**. Then watch the channel in Jellyfin's Live TV for a break.
 
 ## The placement guides
@@ -71,8 +71,8 @@ A README, `pack.schema.json`, `placement.png` files and an `examples` folder may
 ## Sizes, lengths and sound
 
 - **Pictures** are 1920 by 1080 pixels at 25 frames a second. Another 16:9 size is scaled to fit; a picture that is not 16:9 is fitted inside with black bars, and the check says so. Under 320 by 180 or over 3840 by 2160 is refused.
-- **Safe areas:** keep every word inside the title safe area, 5% in from each edge (96 pixels at the sides and 54 at the top and bottom). Keep anything that moves inside the action safe area, 3.5% in. Some televisions cut the edges of the picture.
-- **Sound** plays at -23 LUFS (EBU R 128), with peaks under -1 dBTP. The plug-in measures each file when the pack is checked and brings it to -23 LUFS, by up to 12 dB, so a quiet ident is not lost after a loud programme.
+- **Safe areas:** keep every word inside the title safe area. It is 5% in from each edge (96 pixels at the sides and 54 at the top and bottom). Keep anything that moves inside the action safe area, 3.5% in. Some televisions cut the edges of the picture.
+- **Sound** plays at -23 LUFS (EBU R 128), with peaks under -1 dBTP. The plug-in measures each file when it checks the pack and brings it to -23 LUFS, by up to 12 dB. So a quiet ident is not lost after a loud programme.
 - **Transitions** cut at their middle: at that moment the picture should be covered, so the change from programme to break is hidden. A transition plays its first half over the end of one and its second half over the start of the next.
 
 ## pack.json
@@ -131,7 +131,7 @@ Every position is a box, `[left, top, right, bottom]`, in pixels of 1920 by 1080
 | **Synopsis** | A short synopsis, on up to 3 lines |
 | **Channel name** | The channel it is on |
 
-The words are made as large as the box allows, on as many lines as the field has, and smaller when they need more. For more control, give a field an object in place of the box: `{"box": [140, 330, 940, 470], "colour": "#FFFFFF", "align": "left", "lines": 2}`, where `align` is `left`, `centre` or `right` and `lines` is 1 to 4.
+The words are made as large as the box allows, on as many lines as the field has, and smaller when they need more. For more control, give a field an object instead of the box. For example: `{"box": [140, 330, 940, 470], "colour": "#FFFFFF", "align": "left", "lines": 2}`. Here `align` is `left`, `centre` or `right`, and `lines` is 1 to 4.
 
 Leave the clip area and the text fields clear in your backgrounds: the plug-in draws into them. Put the heading in a **Heading** field, not in the background, so Later cards can say Later.
 
@@ -162,9 +162,9 @@ Timing stays exact: a thing comes on from its start and is gone by its end, so a
 
 - **The on-screen logo** is `logo/dog.png`, at the size and in the corner the on-screen logo settings say. A channel's own logo, added on its page, is used in its place.
 - **Animation**, when `pack.json` has it, is used for every thing the settings leave at **The broadcast pack's, or none**.
-- **Each break** between programmes (0.5.0) opens with a bumper, then promos, trailers and clips (up to the number chosen), then one of your extra videos, then the holding slide (or Later and Coming up next cards drawn on your background), and ends with one ident with its music immediately before the new programme. A break inside a programme is a bumper, promos and clips, an extra video, the holding slide with Back soon, and a bumper.
+- **Each break** between programmes (0.5.0) runs in this order. It opens with a bumper. Then come promos, trailers and clips (up to the number chosen), then one of your extra videos. Then comes the holding slide (or Later and Coming up next cards drawn on your background). It ends with one ident with its music, right before the new programme. A break inside a programme is a bumper, promos and clips, an extra video, the holding slide with Back soon, and a bumper.
 - **Transitions** play at each cut between a programme and a break, chosen at random, the same one on both sides of the cut.
-- **Promos** are made in quiet hours, one at a time at the lowest priority and never while anyone is watching: a few short clips of a programme coming up in the clip area, a music bed from `promo/music`, and its title, day and time and channel. Each channel keeps the number the settings say; old ones are replaced. They play on their own channel and, unless you deactivate it, on your other channels.
+- **Promos** are made in quiet hours, one at a time at the lowest priority, and never while anyone is watching. Each promo has a few short clips of a programme coming up in the clip area. It also has a music bed from `promo/music`, and its title, day, time and channel. Each channel keeps the number the settings say; old ones are replaced. They play on their own channel and, unless you deactivate it, on your other channels.
 
 ## The upload, and what is checked
 
@@ -174,7 +174,18 @@ The station has one pack, which every channel uses, and each channel can have it
 2. In **Broadcast pack**, select **Upload a pack** and choose the zip. For one channel, open it in **Channels** and select **Upload its own pack**.
 3. The plug-in checks it before anything in it is used, as [What each problem means](#what-each-problem-means) says. When it passes, it is in use at once, and anything to change is listed under **The last pack checked**. When it does not, the pack in use stays, and each problem is listed there.
 
-The checks: the zip is at most 60 MB, the most Starboard takes, and at most 400 MB and 150 files unpacked; every name is one in the table; no file is a link or has a path outside the pack's folder; no file is packed far smaller than it is; `pack.json` passes `pack.schema.json`, and each box is inside the picture; every file is read with FFmpeg's `ffprobe` for its type, size, length and sound; the logo has transparent parts; each transition has transparency. Nothing in a pack is ever run.
+The checks are these:
+
+- The zip is at most 60 MB, the most Starboard takes. Unpacked, it is at most 400 MB and 150 files.
+- Every name is one in the table.
+- No file is a link or has a path outside the pack's folder.
+- No file is packed far smaller than it is.
+- `pack.json` passes `pack.schema.json`, and each box is inside the picture.
+- FFmpeg's `ffprobe` reads every file for its type, size, length and sound.
+- The logo has transparent parts.
+- Each transition has transparency.
+
+Nothing in a pack is ever run.
 
 ## What each problem means
 

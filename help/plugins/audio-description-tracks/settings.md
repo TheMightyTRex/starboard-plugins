@@ -28,7 +28,7 @@ These are on Audio description tracks' tab.
 - Name each file as the film and its year, such as `Dune (2021).mp3`, or a series with its episode, such as `Slow Horses S01E03.mp3`.
 - Uploads on **Description tracks to add** can be up to 60 MB. Put a larger file in the audio-description folder in your media folder instead.
 - MP3, M4A, M4B, AAC, MKA, Opus, Ogg, FLAC and WAV files work, and so does a zip of them, as AudioVault gives series.
-- A track is added next to the film as a file such as `Dune (2021).Audio Description.eng.mka`, with the flag that marks it as audio description, and is never the sound track that plays first. The film's own file is not changed.
+- A track is added next to the film as a file such as `Dune (2021).Audio Description.eng.mka`, with the flag that marks it as audio description. It is never the sound track that plays first. The film's own file is not changed.
 - Nothing is ever deleted. Files move to the **Confirmed**, **Taken off** and **Unzipped** folders inside the audio-description folder, and you delete them there when you like.
 - Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 

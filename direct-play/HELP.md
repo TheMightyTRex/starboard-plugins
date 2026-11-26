@@ -1,7 +1,7 @@
 # Direct play
 
 Direct play makes your films and series play directly on the devices you watch on. When a device cannot play a file
-as it is, Jellyfin has to convert it while you watch, which uses a lot of your server's processor and can make the
+as it is, Jellyfin has to convert it while you watch. This uses much of your server's processor and can make the
 picture stop and start. Direct play fixes those files once, one at a time, at quiet times, so they play directly
 from then on.
 
@@ -12,14 +12,14 @@ It is a recommended plug-in in Starboard's catalogue. Starboard never adds it by
 Direct play checks the films in your movies folder and the series in your tv folder. For each file a device you
 chose cannot play directly, it does one of these:
 
-- **Repackage as MKV:** the file is in an old kind of container, such as AVI. The picture and sound are copied into
+- **Repackage as MKV:** the file is in an old kind of container, such as AVI. It copies the picture and sound into
   an MKV file, without converting them.
-- **Add a playable sound track:** none of the file's sound tracks plays on all your devices, such as a film with DTS
-  sound and a Roku. A Dolby Digital or AAC track is added, and the original track is kept beside it.
-- **Shrink:** the file is H.264 at a very high bitrate. It is converted again at the same picture quality, so it
-  takes less space. It is kept as it was when the new file would not be at least a tenth smaller.
+- **Add a playable sound track:** none of the file's sound tracks plays on all your devices. An example is a film with DTS
+  sound and a Roku. It adds a Dolby Digital or AAC track and keeps the original track beside it.
+- **Shrink:** the file is H.264 at a very high bitrate. It converts the file again at the same picture quality, so it
+  takes less space. It keeps the file as it was when the new file would not be at least a tenth smaller.
 - **Convert to H.264:** the picture is in an old format, such as DivX, Xvid, MPEG-2 or WMV, or it is larger than
-  your devices show. It is converted to H.264, which every device plays.
+  your devices show. It converts the file to H.264, which every device plays.
 
 Each new file is checked before it replaces the original: its length, its picture, its first sound track and that
 sound and picture start together. If anything is wrong, the original stays as it was, and the file is listed under
@@ -68,13 +68,13 @@ The file being converted always finishes, so work can run past the end of the ho
 
 ### More
 
-- **Convert HEVC to H.264:** deactivated when you add it. HEVC files are left alone unless you activate it, and then
+- **Convert HEVC to H.264:** deactivated when you add it. It leaves HEVC files alone unless you activate it, and then
   only when none of your devices plays HEVC. H.264 files are larger, so this uses more space.
 - **Keep the originals:** deactivated when you add it. When activated, each original moves to a
   `.direct-play-originals` folder in your movies or tv folder instead of being replaced. Delete them there yourself
   when you are happy with the new files. No space is saved until you do.
-- **Card updates every:** how often the Direct play card on your dashboard shows the progress while a file is
-  converted: 10 seconds, 30 seconds, 1 minute or 5 minutes. 30 seconds when you add it. The card does not update
+- **Card updates every:** how often the Direct play card on your dashboard shows progress while a file is
+  converted. The choices are 10 seconds, 30 seconds, 1 minute or 5 minutes. 30 seconds when you add it. The card does not update
   while the browser tab is in the background.
 
 ## The card on your dashboard
@@ -91,13 +91,13 @@ do**, and when it next runs. The card shows only while the plug-in is active.
 
 The **Space saved by Direct play** card shows only the space saved.
 
-Each card's band shows the Direct play logo, the plug-in's name and a status: **Converting**,
-**Waiting**, **Paused**, **Done** or **Needs setting up** when no device is chosen. Beside it is when the card last
+Each card's band shows the Direct play logo, the plug-in's name and a status. The status is **Converting**,
+**Waiting**, **Paused**, **Done** or, when no device is chosen, **Needs setting up**. Beside it is when the card last
 changed, such as **2 minutes ago**.
 
 ## The Files page
 
-In **Settings**, **Plug-ins**, **Direct play**, **Files** lists every file in tables: **Converting now**, **Still to
+In **Settings**, **Plug-ins**, **Direct play**, **Files** lists every file in tables. The tables are **Converting now**, **Still to
 do**, **Not fixed** with the reason, and **Left alone**, such as HEVC files. The top of the page says how many files
 are fixed, how much space is saved and which file was fixed last.
 

@@ -1,19 +1,21 @@
 # Picture shrinker
 
 Shrinks the posters and photos of people Jellyfin keeps, so they take less space. Posters become 900 pixels tall and
-photos of cast and crew 400 pixels wide, both settings. Each picture is checked before it replaces the one Jellyfin
+photos of cast and crew 400 pixels wide, both settings. It checks each picture before it replaces the one Jellyfin
 saved. It runs on the schedule you choose, at the lowest priority.
 
 A Starboard plug-in by TheMightyTRexUK, MIT licence. Its rules are those of a one-off shrink of a Jellyfin server's
 pictures on 14 November 2026, now kept in `rules.json` (rules 1.1).
 
-**A version for Jellyfin itself** runs on any Jellyfin 10.11 or 12 server, with or without Starboard: it is in
+**A version for Jellyfin itself** runs on any Jellyfin 10.11 or 12 server, with or without Starboard. You find it in
 [TheMightyTRex/jellyfin-plugins](https://github.com/TheMightyTRex/jellyfin-plugins/tree/main/picture-shrinker), the
-one repository for every Jellyfin plug-in by TheMightyTRexUK, whose address is
+one repository for every Jellyfin plug-in by TheMightyTRexUK. Its address is
 `https://raw.githubusercontent.com/TheMightyTRex/jellyfin-plugins/main/manifest.json`.
-Both follow the same `rules.json` and shared test pictures; its [SYNC.md](https://github.com/TheMightyTRex/jellyfin-plugins/blob/main/picture-shrinker/SYNC.md)
-says what must match and how to change a rule (`tools/sync_picture_rules.py` copies the rules here). When the Jellyfin
-version is installed, this one stays idle and says so on its card, so the two never shrink the same pictures.
+Both follow the same `rules.json` and shared test pictures.
+
+Its [SYNC.md](https://github.com/TheMightyTRex/jellyfin-plugins/blob/main/picture-shrinker/SYNC.md)
+says what must match and how to change a rule (`tools/sync_picture_rules.py` copies the rules here). When you install
+the Jellyfin version, this one stays idle and says so on its card, so the two never shrink the same pictures.
 
 Read [HELP.md](HELP.md) for how to use it.
 
@@ -32,45 +34,49 @@ Read [HELP.md](HELP.md) for how to use it.
 
 Every type is shrunk when you add it (**Shrink all picture types**); deactivate that to choose types one by one.
 
-A picture already that small is only opened, never written.
+The plug-in only opens a picture that is already that small. It never writes it.
 
-Each picture is written to a hidden file beside it (JPEG at **Quality** 85, progressive; PNG and WebP stay PNG and
-WebP), opened again and decoded in full, checked for its size and format, and swapped in only when it is smaller than
-the original. Jellyfin never reads a half-written file. A picture that cannot be read is left as it is and listed on
-the **Space saved** page.
+The plug-in writes each picture to a hidden file beside it (JPEG at **Quality** 85, progressive; PNG and WebP stay PNG
+and WebP). It then opens the file again, decodes it in full and checks its size and format. It swaps the file in only
+when it is smaller than the original.
+
+Jellyfin never reads a half-written file. If a picture cannot be read, the
+plug-in leaves it as it is and lists it on the **Space saved** page.
 
 ## The backup
 
-**Original pictures** has no default: you choose **Keep a backup copy of each original** or **Shrink without a
-backup** after you add it, and again after the update to 1.2.0 (rules 1.2). Nothing is shrunk until you choose, and the
-card says **Choose a backup**. A backup you already have is kept whatever you choose.
+**Original pictures** has no default. You choose **Keep a backup copy of each original** or **Shrink without a
+backup**. You choose after you add it, and again after the update to 1.2.0 (rules 1.2). It shrinks nothing until you choose, and the
+card says **Choose a backup**.
 
-With a backup, each original is copied once, before its first shrink, to `originals` in the plug-in's own folder,
-keeping its place under `library` or `People`. A copy already there is never replaced. If the copy fails, or the disk
-would have less than 100 MB free, the picture is not shrunk and the run says why.
+It keeps a backup you already have, whatever you choose.
+
+With a backup, the plug-in copies each original once, before its first shrink. The copy goes to `originals` in the
+plug-in's own folder and keeps its place under `library` or `People`. It never replaces a copy already there. If the
+copy fails, or the disk would have less than 100 MB free, it does not shrink the picture and the run says why.
 
 - **Restore original pictures** in its actions puts every original back and keeps the backup.
 - **Delete backup** in its actions removes the backup for good, after asking. Restore can then no longer put those
-  pictures back; the shrunk pictures stay. It removes only the pictures in the backup folder and is refused while a
+  pictures back; the shrunk pictures stay. It removes only the pictures in the backup folder. It is refused while a
   run is going.
-- **Space saved** shows the pictures now, the backup and the space saved, measured when the page opens; the cards show
-  the figures kept after the last run or action.
-- **Saved by type** and the **Space saved by type** card show the space each type of picture saved, counted as each
-  run goes, so nothing is scanned to show them.
+- **Space saved** shows the pictures now, the backup and the space saved. It measures them when the page opens. The
+  cards show the figures kept after the last run or action.
+- **Saved by type** and the **Space saved by type** card show the space each type of picture saved. The plug-in counts
+  these as each run goes, so it scans nothing to show them.
 
 The first run may need almost as much free space as the pictures take now.
 
 ## Start again
 
-Two actions clear everything and have Jellyfin download pictures again at full size. Each deletes the backup and the
-records of what was shrunk, keeps the choice in **Original pictures**, is refused while a run is going, and changes
-nothing if Jellyfin does not answer.
+Two actions clear everything and have Jellyfin download pictures again at full size. Each one deletes the backup and the
+records of what was shrunk. Each keeps the choice in **Original pictures**. Each refuses to run while a run is going,
+and changes nothing if Jellyfin does not answer.
 
 - **Start again: the pictures it shrinks** moves each poster, backdrop and photo of a person aside, to a hidden
-  `.<name>.picture-shrinker-old` beside it, and asks Jellyfin to refresh that film, series or person with every
-  picture checked again and nothing replaced, so Jellyfin downloads the missing one. A check every 10 minutes, only
-  while pictures are waiting, deletes the old one once Jellyfin has a new one, and puts it back after 24 hours without
-  one, so a poster you added yourself is never lost.
+  `.<name>.picture-shrinker-old` beside it. It then asks Jellyfin to refresh that film, series or person with every
+  picture checked again and nothing replaced, so Jellyfin downloads the missing one. While pictures are waiting, the
+  plug-in checks every 10 minutes. It deletes the old picture once Jellyfin has a new one. It puts the old one back after
+  24 hours without a new one, so you never lose a poster you added yourself.
 - **Start again: every picture** asks Jellyfin to refresh each library and each person with every picture replaced,
   backdrops and logos included.
 
@@ -91,19 +97,19 @@ A run stops itself after 115 minutes, and the next one carries on: pictures alre
 ## What it may do
 
 - It reads and changes Jellyfin's metadata folder: the posters, photos and details Jellyfin saved
-  (`jellyfin:metadata`, medium risk). It changes only the picture types chosen in What to shrink (posters, backdrops,
-  thumbnails, logos, banners, disc art, clear art and photos of people), as the owner of Jellyfin's files.
+  (`jellyfin:metadata`, medium risk). It changes only the picture types chosen in What to shrink, as the owner of Jellyfin's files. The types are posters,
+  backdrops, thumbnails, logos, banners, disc art, clear art and photos of people.
 - It uses Jellyfin's key (`jellyfin:key`, on the home network) to read Jellyfin's libraries and its list of plug-ins,
-  at most every 10 minutes, to stay idle when the Jellyfin version is installed, and for Start again, to have Jellyfin
-  download pictures again. No media file is touched.
-- It runs one small container, with 128 MB of memory and half a processor at most; its work runs at nice 19 and in
+  at most every 10 minutes. It does this to stay idle when the Jellyfin version is installed. It also uses the key for
+  Start again, to have Jellyfin download pictures again. It touches no media file.
+- It runs one small container, with 128 MB of memory and half a processor at most. Its work runs at nice 19 and in
   the idle disk class.
 
 ## How much it uses
 
-Measured on 15 November 2026 against the Jellyfin version, one at a time, on a sample of 540 made-up pictures (300
-posters at 2,000 by 3,000 pixels and 240 photos at 1,365 by 2,048, 776.3 MB), with backup activated in both. This one
-ran as Starboard runs it (128 MB, half a processor); the Jellyfin version in a throwaway Jellyfin 10.11.11.
+We measured on 15 November 2026, testing each version in turn. The sample was 540 made-up pictures (776.3 MB).
+It had 300 posters at 2,000 by 3,000 pixels and 240 photos at 1,365 by 2,048. Both used backup. This plug-in ran as
+Starboard runs it (128 MB, half a processor). The Jellyfin version ran in a throwaway Jellyfin 10.11.11.
 
 | What | Jellyfin version | Starboard version (this plug-in) |
 |---|---|---|
@@ -118,7 +124,7 @@ ran as Starboard runs it (128 MB, half a processor); the Jellyfin version in a t
 | Jellyfin's answers during the run | `/System/Info` every 2 seconds: median 25 ms, slowest 68 ms (at rest: 30 ms and 59 ms) | Not affected (a separate container) |
 
 Both work at the lowest priority. At rest both are small (about 13 to 15 MB). The Jellyfin version uses slightly
-less processor time and less memory during a run; the Starboard version keeps its memory apart from Jellyfin's, so a
+less processor time and less memory during a run. The Starboard version keeps its memory apart from Jellyfin's, so a
 problem in it can never slow Jellyfin.
 
 ## Updating

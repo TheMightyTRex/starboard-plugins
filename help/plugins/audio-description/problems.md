@@ -96,7 +96,7 @@ If Starboard says "That person is not in Jellyfin any more. Reload the page", re
 **Play the described track** asks the person's app to change the sound track, with Jellyfin's own command. Not every Jellyfin app accepts it.
 
 1. Open **Play the described track** on Audio description's tab, and check the person is activated.
-2. Read the last line of the page's introduction. "does not accept the command to change the sound track" names an app that does not: in that app, choose the described track in the player.
+2. Read the last line of the page's introduction. "does not accept the command to change the sound track" names an app that does not. In that app, choose the described track in the player.
 3. The change comes within about half a minute of the start, when Starboard notices the film playing. A title with no described track, or one already playing it, is left as it is.
 
 ## Idle beside the Jellyfin version
@@ -111,7 +111,7 @@ On **Titles with audio description**, each film and episode links to its page in
 2. Under **Your library**, enter the address you open Jellyfin at in **Jellyfin address for links**, such as http://192.0.2.10:8096, and save.
 3. Open **Titles with audio description** again. Each title now has a link such as "Open Harbour Lights (2019) in Jellyfin".
 
-A link that opens Jellyfin's home page instead of the title means the address is for another Jellyfin, or the title has gone since the last check. Select **Check for described titles now**.
+A link that opens Jellyfin's home page instead of the title means the address is for another Jellyfin. Or the title has gone since the last check. Select **Check for described titles now**.
 
 ## Report a problem
 

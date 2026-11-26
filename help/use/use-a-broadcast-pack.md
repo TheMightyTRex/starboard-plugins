@@ -3,7 +3,7 @@
 
 # Use a broadcast pack
 
-A broadcast pack gives the channels in [Create your own TV channel](../../tv-station/README.md) your own branding: the logo in the corner of the picture, the logo with its music, idents, bumpers, transitions, the Coming up next card and promos with their music. This page says how to add one to the station or to one channel, replace it, remove it, and try the example pack. To make one, use [Make a broadcast pack](make-a-broadcast-pack.md).
+A broadcast pack gives the channels in [Create your own TV channel](../../tv-station/README.md) your own branding. That covers the logo in the corner of the picture, the logo with its music, idents, bumpers and transitions. It also covers the Coming up next card and promos with their music. This page says how to add one to the station or to one channel, replace it, remove it, and try the example pack. To make one, use [Make a broadcast pack](make-a-broadcast-pack.md).
 
 ## When would you use it
 
@@ -13,16 +13,16 @@ A broadcast pack gives the channels in [Create your own TV channel](../../tv-sta
 
 ## Before you start
 
-- Create your own TV channel is added in Starboard, with at least one channel. Its pages are in **Settings**, then **Plug-ins**, then **Create your own TV channel**.
-- A pack is one zip of up to 60 MB, made from the template. Nothing in a pack is ever run: its pictures and sounds are only read by FFmpeg.
+- You have added Create your own TV channel in Starboard, with at least one channel. Its pages are in **Settings**, then **Plug-ins**, then **Create your own TV channel**.
+- A pack is one zip of up to 60 MB, made from the template. Nothing in a pack is ever run. FFmpeg only reads its pictures and sounds.
 
 ## Try the example pack
 
-The example pack, Example TV, is a made-up channel drawn in code by the plug-in: a logo, the logo with music, 3 idents, a Coming up next card, a promo with 2 music beds and 3 transitions. It holds nothing of anyone else's.
+The example pack, Example TV, is a made-up channel that the plug-in draws in code. It has a logo, the logo with music, 3 idents, a Coming up next card, a promo with 2 music beds and 3 transitions. It holds nothing of anyone else's.
 
 1. Go to **Broadcast pack**.
 2. Under **The station's pack**, activate **Try the example pack**.
-3. The first time, it is made at the lowest priority, which takes about 2 minutes while no channel is playing. The row says **Being made**, then **In use**.
+3. The first time, the plug-in makes it at the lowest priority. This takes about 2 minutes while no channel is playing. The row says **Being made**, then **In use**.
 4. Every channel without a pack of its own now uses it. Open a channel and select **Preview a frame** or **Preview a Coming up next card**, or watch a channel in Jellyfin's Live TV.
 
 ![A made-up landscape with the Example TV logo in the corner of the picture](../images/tv-station/dog-default.jpg)
@@ -31,7 +31,7 @@ The example pack, Example TV, is a made-up channel drawn in code by the plug-in:
 
 To stop trying it, deactivate **Try the example pack**. The channels go back to the station's own pack, or to none.
 
-To start your own pack from it, under **Downloads**, select **The example pack, as a zip**, unzip it, change its files, and upload it as your own.
+To start your own pack from it, go to **Downloads** and select **The example pack, as a zip**. Unzip it, change its files, and upload it as your own.
 
 ## Add a pack for every channel
 
@@ -40,21 +40,21 @@ To start your own pack from it, under **Downloads**, select **The example pack, 
 3. The pack is checked before anything in it is used. When it passes, **Station's pack** shows its name and its logo, and every channel without a pack of its own uses it at once. Anything to change is listed under **The last pack checked**.
 4. When it does not pass, the pack in use stays, and each problem is listed under **The last pack checked**. [What each problem means](make-a-broadcast-pack.md#what-each-problem-means) says how to put each right.
 
-Promos made with the old pack stop showing at once, and are made again with the new one in the next quiet hour, or when you select **Make promos now**.
+Promos made with the old pack stop showing at once. The plug-in makes them again with the new pack in the next quiet hour, or when you select **Make promos now**.
 
 ## Give one channel its own pack
 
 1. Go to **Channels** and open the channel.
-2. On the **On-screen logo and branding** card, select **Upload its own pack**, and choose the zip. It is checked in the same way.
+2. On the **On-screen logo and branding** card, select **Upload its own pack**, and choose the zip. The plug-in checks it the same way.
 3. In **Broadcast pack** on the same card, choose **Its own pack**.
 
-The other choices for **Broadcast pack** on a channel are **The station's pack**, the one it starts with, and **No pack**, for a channel with no branding: its own logo or name in the corner, plain Coming up next cards, and plain promos when there is music for promos. **Each channel's pack**, on the **Broadcast pack** page, lists which pack each channel uses.
+A channel's **Broadcast pack** has two other choices. **The station's pack** is the one it starts with. **No pack** is for a channel with no branding. It shows its own logo or name in the corner, plain Coming up next cards, and plain promos when there is music for promos. **Each channel's pack**, on the **Broadcast pack** page, lists which pack each channel uses.
 
-A channel's own logo, added with **Add logo** on the same card, is used in place of the pack's logo, with the rest of the pack.
+A channel's own logo, added with **Add logo** on the same card, takes the place of the pack's logo. The channel keeps the rest of the pack.
 
 ## Replace a pack
 
-Upload the new zip in the same place: **Upload a pack** for the station, or **Upload its own pack** for a channel. The new pack is checked first and takes the old one's place only when it passes, so a pack with a problem never leaves the channels with nothing.
+Upload the new zip in the same place: **Upload a pack** for the station, or **Upload its own pack** for a channel. The plug-in checks the new pack first. It takes the old one's place only when it passes, so a pack with a problem never leaves the channels with nothing.
 
 To change one file, such as a new ident, change it in your copy of the pack's folder, zip the folder again and upload it.
 
