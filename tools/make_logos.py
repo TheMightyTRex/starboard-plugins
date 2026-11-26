@@ -43,6 +43,9 @@ LOGOS = {
     "calibre-web": ("#6b3b1d", "A book in a browser window",
                     f'<rect x="9" y="11" width="30" height="26" rx="3" {S}/><path d="M9 17.5h30" {S}/>'
                     f'<path d="M24 23.5c-2.2-1.5-5.2-1.8-8-1.2v9.6c2.8-.6 5.8-.3 8 1.2 2.2-1.5 5.2-1.8 8-1.2v-9.6c-2.8-.6-5.8-.3-8 1.2z" fill="{W}"/>'),
+    "calibre-library": ("#4a5d23", "Two books side by side with a plus sign",
+                        f'<rect x="8" y="12" width="9" height="24" rx="1.5" fill="{W}"/><rect x="19" y="12" width="9" height="24" rx="1.5" fill="{W}"/>'
+                        f'<path d="M35 18v12M29 24h12" {S}/>'),
     "direct-play": ("#1f5f99", "A play symbol on a screen",
                     f'<rect x="8" y="11" width="32" height="22" rx="3" {S}/><path d="M21 16.5v11l9-5.5z" fill="{W}"/><path d="M17 38h14" {S}/>'),
     "disk-forecast": ("#3d4f63", "A partly full disk",

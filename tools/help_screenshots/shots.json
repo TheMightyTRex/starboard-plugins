@@ -846,6 +846,148 @@
       "topic": "dashboard-card",
       "page": "dashboard.html",
       "plugin": "immich"
+    },
+    {
+      "plugin": "calibre-library",
+      "phase": "absent",
+      "file": "install-1-catalogue.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const rows = [...document.querySelectorAll('li')].filter((x) => x.textContent.includes('Calibre library maker') && x.querySelector('button')).sort((a, b) => a.textContent.length - b.textContent.length); const row = rows[0]; row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=lc] button",
+          "step": 2,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "The Catalogue, with Install\u2026 beside Calibre library maker (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "plugin": "calibre-web",
+      "phase": "absent",
+      "file": "install-1-catalogue.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const rows = [...document.querySelectorAll('li')].filter((x) => x.textContent.includes('Calibre-Web') && x.querySelector('button')).sort((a, b) => a.textContent.length - b.textContent.length); const row = rows[0]; row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=lc] button",
+          "step": 2,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "The Catalogue under Apps you can add, with Install\u2026 beside Calibre-Web (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html"
+    },
+    {
+      "plugin": "calibre-library",
+      "phase": "present",
+      "file": "make-1-plan.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; await w(2000); await tab('Make a Calibre library from your books'); const r = [...document.querySelectorAll('main li')].filter((x) => x.textContent.includes('What Make the library will do')).sort((a, b) => a.textContent.length - b.textContent.length)[0]; r.dataset.shot = 'plan'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=plan]",
+          "step": 1,
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [
+        1
+      ],
+      "alt": "Calibre library maker's page, with What Make the library will do, the number of books, the room needed and the time (step 1), outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=calibre-library"
+    },
+    {
+      "plugin": "calibre-library",
+      "phase": "present",
+      "file": "make-2-button.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; await w(2000); await tab('Actions'); const b = [...document.querySelectorAll('main button')].find((x) => x.textContent.trim() === 'Make the library'); b.dataset.shot = 'go'; b.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=go]",
+          "step": 2,
+          "side": "right",
+          "tail": 80
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "Calibre library maker's Actions, with Make the library (step 2) outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=calibre-library"
+    },
+    {
+      "plugin": "calibre-library",
+      "phase": "present",
+      "file": "make-3-books.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; await w(2000); await tab('Make a Calibre library from your books'); const r = [...document.querySelectorAll('main li')].filter((x) => x.textContent.includes('Your books folder')).sort((a, b) => a.textContent.length - b.textContent.length)[0]; r.dataset.shot = 'books'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=books]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Calibre library maker's page, with Your books folder, the number of book files found, outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=calibre-library"
+    },
+    {
+      "plugin": "calibre-web",
+      "phase": "present",
+      "file": "first-sign-in-1.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; await w(2000); await tab('Its first sign-in'); const b = [...document.querySelectorAll('main button')].find((x) => x.textContent.includes('Show the password')); b.dataset.shot = 'show'; b.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=show]",
+          "step": 2,
+          "side": "right",
+          "tail": 80
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "Calibre-Web's Its first sign-in, with Show the password\u2026 (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugin.html?id=calibre-web"
+    },
+    {
+      "plugin": "calibre-web",
+      "phase": "present",
+      "file": "first-sign-in-2.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const tab = async (t) => { const x = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t); if (x) { x.click(); await w(1200); } }; await w(2000); await tab('Its first sign-in'); const b = [...document.querySelectorAll('main button')].find((x) => x.textContent.includes('Show the password')); b.click(); await w(1500); const pw = document.querySelector('dialog input[type=password], [role=dialog] input[type=password], #side-panel input[type=password]'); pw.value = 'example-password'; pw.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "Show it once",
+          "step": 3,
+          "side": "top",
+          "tail": 70
+        }
+      ],
+      "steps": [
+        3
+      ],
+      "alt": "The Show the first sign-in dialog, with Your Starboard password filled in and Show it once (step 3) outlined",
+      "topic": "install",
+      "page": "settings-plugin.html?id=calibre-web"
     }
   ]
 }

@@ -12,12 +12,14 @@ q: What does its tab say?
 q2: What is wrong?
   Its page does not open -> 3
   It finds no books -> 4
+  I do not have its password -> 6
   It will not upload or edit books -> 5
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
 3: Open its page #open-its-page
 4: Point it at your library #point-it-at-your-library
 5: Add books with Calibre #add-books-with-calibre
+6: Get a new password #get-a-new-password
 ```
 
 ## Start it again
@@ -47,18 +49,27 @@ Calibre-Web's page is on your home network, at this computer's address and the p
 
 ## Point it at your library
 
-Calibre-Web finds books only in the `books` folder of your media folder, where a Calibre library keeps `metadata.db`.
+Calibre-Web finds books only in a Calibre library: a folder with `metadata.db` in it. A folder of book files is not one.
 
-1. Check that the `books` folder in your media folder has `metadata.db` in it. If your library is somewhere else, move it there with Calibre.
-2. In Calibre-Web's admin settings, find **Location of Calibre database**.
-3. Enter `/media/books` and save.
+1. Check whether `books-library` in your media folder has `metadata.db`. If it does, deactivate Calibre-Web and activate it again: Starboard sets the library at its start.
+2. If not, and `books` has no `metadata.db` either, make a library with [Calibre library maker](../calibre-library/install.md). Read [Your books](your-books.md).
+3. If your own Calibre library is somewhere else, move it into `books` with Calibre, or enter `/media/books` as **Location of Calibre database** in Calibre-Web's admin settings.
 
 ## Add books with Calibre
 
-Starboard gives Calibre-Web the books folder read only, so it can never change your library. Uploading, editing details and deleting books in Calibre-Web do not work, by design.
+Starboard gives Calibre-Web the books folders read only, so it can never change your books. Uploading, editing details and deleting books in Calibre-Web are off, by design.
 
-1. Add or change books with Calibre itself, in the same library.
-2. Calibre-Web shows the changes when it next reads the library.
+1. Add new books to your books folder, then run [Calibre library maker](../calibre-library/install.md) again: it adds only what is new.
+2. Or add and change books with Calibre itself, in the same library.
+3. Calibre-Web shows the changes when it next reads the library.
+
+## Get a new password
+
+Starboard shows Calibre-Web's first password once. If it is lost:
+
+1. Go to **Settings**, then **Plug-ins**, then **Calibre-Web**, and select **Remove Calibre-Web**.
+2. Choose **Move it to the holding folder**, enter your Starboard password and select **Remove**.
+3. Add Calibre-Web again from the **Catalogue**. It makes a new password, which **Its first sign-in** shows once. Your books and your library are not touched.
 
 ## Report a problem
 

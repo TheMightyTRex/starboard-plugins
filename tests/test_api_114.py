@@ -62,7 +62,8 @@ class Collection(unittest.TestCase):
                  "ups-power": ">=1.17 <2.0",  # UPS and power 0.1.0: the sparkline card and alerts:send, API 1.17
                  "immich": ">=1.17 <2.0",  # Immich 0.1.0: written against API 1.17 like the plug-ins before it
                  "backups-watch": ">=1.17 <2.0",  # Backups watch 0.1.0: the sparkline card and alerts:send, API 1.17
-                 "outside-services": ">=1.17 <2.0"}  # Uptime and status 2.0.0: the sparkline card and alerts:send, API 1.17
+                 "outside-services": ">=1.17 <2.0",  # Uptime and status 2.0.0: the sparkline card and alerts:send, API 1.17
+                 "calibre-web": ">=1.20 <2.0"}  # Calibre-Web 1.2.0: first_sign_in, the password Starboard shows once, API 1.20
         for pid in IDS:
             m = manifest(pid)
             self.assertEqual(m["starboard_api"], newer.get(pid, ">=1.14 <2.0"), pid)

@@ -97,6 +97,34 @@ def screen(key, held, off):
             "items": [{**h, "state": "off", "state_label": "In holding", "actions": ["restore"]} for h in held]}
 
 
+def made_up_library_screen():
+    """Calibre library maker's own screen function, over a made-up books folder of 836 files (498 MB, nothing real is
+    read), as it draws before a first run."""
+    import tempfile
+    sys.path.insert(0, str(HERE / "tests"))
+    import helpers
+    app = helpers.load("calibre-library")
+    books = pathlib.Path(app._tmp.name) / "books"
+    for i in range(836):
+        f = books / f"Author {i % 120:03d}" / f"Book {i:03d}.epub"
+        f.parent.mkdir(parents=True, exist_ok=True)
+        with open(f, "wb") as out:
+            out.truncate(595_000)
+    app.SOURCE, app.LIBRARY = str(books), str(books.parent / "books-library")
+    app.free_space = lambda: 8_600_000_000_000
+    real = plugin_custom.call
+
+    def call(data_dir_, pid, key, body=None, opener=None):
+        if pid != "calibre-library":
+            return real(data_dir_, pid, key, body, opener)
+        out = plugin_custom.clean(app.screen())
+        if body is not None:
+            out["said"] = "This is example data, so nothing was copied"
+        return out
+    plugin_custom.call = call
+    app._keep_alive = app  # the temporary folder lives as long as the server
+
+
 def cleanup(data_dir):
     if absent:
         return
@@ -107,6 +135,14 @@ def cleanup(data_dir):
         plugins_admin.install(data_dir, json.loads(json.dumps(MANIFEST)), "/nonexistent-media")
         plugins_admin.keep_logo(data_dir, PLUGIN, plugin_logo.clean((HERE / PLUGIN / "logo.svg").read_bytes(), "logo.svg"))
         plugins_admin.set_state(data_dir, PLUGIN, "enabled")
+    if MANIFEST.get("first_sign_in"):  # plug-in API 1.20: the app has set its password, so Starboard offers to show it (DASH-590)
+        spec = MANIFEST["first_sign_in"]
+        where = pathlib.Path(plugins_admin.folder(data_dir, PLUGIN))
+        plugins_admin.secrets_for(data_dir, PLUGIN, MANIFEST)
+        (where / "data" / pathlib.Path(spec["ready_file"]).parent).mkdir(parents=True, exist_ok=True)
+        (where / "data" / spec["ready_file"]).write_text("done\n")
+    if PLUGIN == "calibre-library":
+        made_up_library_screen()
     if PLUGIN != "library-cleanup":
         real_ask = plugin_watch._ask
         plugin_watch._ask = lambda pid, main, path: "ok" if pid == PLUGIN else real_ask(pid, main, path)

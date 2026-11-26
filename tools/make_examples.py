@@ -154,6 +154,7 @@ KINDS["direct-play"] = "Jellyfin"  # hand-made, its own image with ffmpeg (DASH-
 KINDS["picture-shrinker"] = "Jellyfin"  # hand-made, its own image with Pillow (DASH-432); not recommended, never added by itself
 KINDS["library-cleanup"] = "Jellyfin"  # hand-made, its own image (DASH-406, plug-in API 1.15); not recommended, never added by itself
 KINDS["philips-hue"] = "Home"  # hand-made, its own image (20 November 2026, plug-in API 1.16); not recommended, never added by itself
+KINDS["calibre-library"] = "Books"  # hand-made, its own image with Calibre (DASH-590); not recommended, never added by itself
 KINDS["tv-station"] = "Jellyfin"  # hand-made, its own image with FFmpeg (DASH-477); not recommended, never added by itself
 # Recommended (DASH-425, owner 14 November 2026: "its recommended in the catalogue"): a few plug-ins that suit most
 # servers, shown first in Starboard's Catalogue (plug-in API 1.14). Never installed by default: adding stays a choice.
