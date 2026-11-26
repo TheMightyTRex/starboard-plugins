@@ -12,10 +12,12 @@ COPY disk-forecast/app.py /app/disk-forecast/
 COPY dns-blocking/app.py /app/dns-blocking/
 COPY download-summary/app.py /app/download-summary/
 COPY home-assistant/app.py /app/home-assistant/
+COPY immich/app.py /app/immich/
 COPY library-health/app.py /app/library-health/
 COPY line-speed/app.py /app/line-speed/
 COPY most-watched/app.py /app/most-watched/
 COPY notifications/app.py /app/notifications/
+COPY ups-power/app.py /app/ups-power/
 COPY vpn-check/app.py /app/vpn-check/
 COPY watch-stats/app.py /app/watch-stats/
 COPY watching-now/app.py /app/watching-now/

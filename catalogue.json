@@ -295,6 +295,23 @@
    ]
   },
   {
+   "id": "immich",
+   "name": "Immich",
+   "description": "Photo and video counts, storage used and the job queue of your Immich server on cards.",
+   "kind": "Photos",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "network:lan"
+   ],
+   "version": "0.1.0",
+   "starboard_api": ">=1.17 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/immich/starboard-plugin.json",
+   "published": false,
+   "recommended": false,
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5JbW1pY2ggbG9nbzwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiMzYTRmYjAiLz48cmVjdCB4PSI4IiB5PSIxMSIgd2lkdGg9IjMyIiBoZWlnaHQ9IjI2IiByeD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMzEiIGN5PSIxOSIgcj0iMyIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik05IDMzbDktOSA2IDYgNS01IDEwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
+   "logo_alt": "Immich logo"
+  },
+  {
    "id": "jellystat",
    "name": "Jellystat",
    "description": "Jellystat, the full watch statistics app for Jellyfin, with its own PostgreSQL database, kept apart from the main install. Opens on its own web page.",
@@ -860,6 +877,24 @@
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5DcmVhdGUgeW91ciBvd24gVFYgY2hhbm5lbCBsb2dvPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzZhM2Q5YSIvPjxwYXRoIGQ9Ik0xOCA5bDYgNiA2LTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cmVjdCB4PSI3IiB5PSIxNSIgd2lkdGg9IjM0IiBoZWlnaHQ9IjIzIiByeD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHJlY3QgeD0iMzAiIHk9IjE5IiB3aWR0aD0iNyIgaGVpZ2h0PSI0IiByeD0iMSIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPgo=",
    "logo_alt": "Create your own TV channel logo"
+  },
+  {
+   "id": "ups-power",
+   "name": "UPS and power",
+   "description": "Load, battery and time left of your UPS on a card, and an alert when the mains power is lost, read from NUT or PeaNUT.",
+   "kind": "System",
+   "author": "TheMightyTRexUK",
+   "permissions": [
+    "network:lan",
+    "alerts:send"
+   ],
+   "version": "0.1.0",
+   "starboard_api": ">=1.17 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/ups-power/starboard-plugin.json",
+   "published": false,
+   "recommended": false,
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5VUFMgYW5kIHBvd2VyIGxvZ288L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjOWE0ZDBiIi8+PHJlY3QgeD0iOSIgeT0iMTYiIHdpZHRoPSIyOCIgaGVpZ2h0PSIxOCIgcng9IjMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNNDEgMjJ2NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTI0LjUgMTlsLTYgOGg2bC0yIDYgNy05aC02eiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPgo=",
+   "logo_alt": "UPS and power logo"
   },
   {
    "id": "uptime-kuma",
