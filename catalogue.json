@@ -359,7 +359,7 @@
     "network:lan",
     "network:port"
    ],
-   "version": "1.1.1",
+   "version": "1.1.2",
    "starboard_api": ">=1.14 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/kavita/starboard-plugin.json",
    "published": true,
@@ -368,11 +368,11 @@
    "logo_alt": "Kavita logo",
    "versions": [
     {
-     "version": "1.1.1",
+     "version": "1.1.2",
      "starboard_api": ">=1.14 <2.0",
-     "released": "2026-11-17",
+     "released": "2026-11-26",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/kavita/starboard-plugin.json",
-     "changelog": "Clearer words: its description spells out OPDS, the Open Publication Distribution System. Logo description: where its logo stands on its own, a screen reader says \"Kavita logo\", the plug-in's name, instead of a description of the symbol."
+     "changelog": "Making the first account: a fresh install now gets a sign-in key long enough for Kavita, so making the first account no longer ends with \"400 Error, Something went wrong when registering user\". If that happened to you, its Problems help topic has the short repair."
     },
     {
      "version": "1.0.0",
