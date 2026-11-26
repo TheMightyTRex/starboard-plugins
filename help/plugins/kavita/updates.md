@@ -1,16 +1,23 @@
 # Kavita: Updates
 
-Kavita 1.1.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Kavita 1.1.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.2 | 1.14 or later | 26 November 2026 |
 | 1.1.1 | 1.14 or later | 17 November 2026 |
 | 1.1.0 | 1.14 or later | 15 November 2026 |
 | 1.0.0 | 1.13 or later | 13 November 2026 |
 
 The catalogue offers each Starboard the newest version it can run, so an older Starboard keeps an earlier version.
+
+## What is new in 1.1.2
+
+Fixed:
+
+- **Making the first account:** a fresh install now gets a sign-in key long enough for Kavita, so making the first account no longer ends with "400 Error, Something went wrong when registering user". If that happened to you, [Problems](problems.md) has the short repair.
 
 ## What is new in 1.1.1
 

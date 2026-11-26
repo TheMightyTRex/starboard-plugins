@@ -56,7 +56,7 @@ Kavita's tab shows its address on your home network, with **Open**. Anyone on yo
 
 1. On Kavita's tab, select **Activate** if it is not active yet.
 2. In **Its web page**, select **Open Kavita**.
-3. Make the first account. It is Kavita's admin, so give it a strong password.
+3. Make the first account. Whoever makes the first account becomes Kavita's admin, and Kavita does not make a password for you, so choose a strong one of your own and keep it in a password manager.
 4. In Kavita, add a library for `/media/books`.
 5. Add a library for `/media/comics`.
 

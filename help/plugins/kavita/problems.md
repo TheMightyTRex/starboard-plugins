@@ -13,6 +13,7 @@ q2: What is wrong?
   Its page will not open -> 3
   Books or comics are missing -> 4
   An e-reader app cannot connect -> 5
+  Making the first account fails with a 400 error -> 7
   There are two Kavitas -> 6
 1: Start it again #start-it-again
 2: Update it or update Starboard #update-it-or-update-starboard
@@ -20,6 +21,7 @@ q2: What is wrong?
 4: Add the libraries #add-the-libraries
 5: Connect a reading app #connect-a-reading-app
 6: Keep one Kavita #keep-one-kavita
+7: Repair the first account #repair-the-first-account
 ```
 
 ## Start it again
@@ -66,6 +68,17 @@ The main install can also add Kavita, in **Install apps**, **Ebooks**. With both
 
 1. Choose the one you want to keep.
 2. Remove the other. For the plug-in, read [Install](install.md).
+
+## Repair the first account
+
+Kavita 1.1.1 and earlier made a sign-in key that was too short for Kavita, so making the first account ended with "400 Error, Something went wrong when registering user". Version 1.1.2 makes a long enough key for a new install. An install made before it keeps the short key, because Starboard never writes over a file Kavita keeps in its own folder, so it needs one repair.
+
+1. Update Kavita to 1.1.2. Read [Updates](updates.md).
+2. On Kavita's tab, select **Deactivate**.
+3. In Starboard's data folder, open `plugins/kavita/app` and move `appsettings.json` out of it, to a folder of your own. Starboard writes a new one with a long key the next time it starts.
+4. Select **Activate** and make the first account again.
+
+No account or library was made by the failed attempt, so nothing else needs to be reset. If you had already made accounts, they stay: only people signed in at the time are signed out.
 
 ## Report a problem
 
