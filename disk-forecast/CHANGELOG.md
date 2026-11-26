@@ -1,15 +1,20 @@
 # Changelog
 
+## 1.1.5 (26 November 2026)
+
+### Changed
+- Plainer wording in the text and help pages. How it works has not changed.
+
 ## 1.1.4 (19 November 2026)
 
 ### Changed
-- Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
+- Reaches Starboard on any network: with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder. So it works on its own closed network too. An older Starboard works as before.
 
 ## 1.1.3 (17 November 2026)
 
 ### Changed
 - Clearer words: the band says Filling fast, and the card says when each disk fills.
-- Logo description: where its logo stands on its own, a screen reader says "Disk forecast logo", the plug-in's name, instead of a description of the symbol.
+- Logo description: a screen reader says "Disk forecast logo", the plug-in's name, instead of a description of the symbol.
 
 ## 1.1.2 (17 November 2026)
 
@@ -19,7 +24,7 @@
 ## 1.1.1 (16 November 2026)
 
 ### Changed
-- Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.
+- Lighter at rest: it wakes about once a minute while nothing asks it anything, not twice a second. It writes nothing to its folder when a run goes well.
 - Starts faster: its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## 1.1.0 (15 November 2026)

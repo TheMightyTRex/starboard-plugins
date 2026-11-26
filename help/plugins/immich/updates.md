@@ -6,13 +6,14 @@ Immich 0.1.0 is the first version. It needs Starboard with plug-in API 1.17 or l
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.1.1 | 1.17 or later | Not released yet |
 | 0.1.0 | 1.17 or later | 25 November 2026 |
 
 ## What is new in 0.1.0
 
 Added:
 
-- **Three cards for Immich:** how many photos and videos, where the space goes and how full the disk is, and what the job queues are doing.
+- **Three cards for Immich:** how many photos and videos, where the space goes and how full the disk is. The third shows what the job queues are doing.
 - **Failed jobs** are said on the jobs card, so a stuck queue does not hide.
 - **Light:** it runs only when a card asks, keeps each answer for a minute, and rests five minutes after; nothing at rest.
 - **You choose** the address and an API key with only the permissions it needs.

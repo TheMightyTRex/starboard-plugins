@@ -31,9 +31,9 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- Once an hour, in a background job, it asks Starboard's API for `system` with its own key and reads each disk's label (or mount or name), used and total.
+- Once an hour, in a background job, it asks Starboard's API for `system` with its own key. It reads each disk's label (or mount or name), used and total.
 - It keeps one reading a day for each disk, the last 35 days, in `/data/history.json`.
-- `GET /card` compares the newest reading with the oldest for each disk. The status is `problem` under 14 days, `warning` under 60 days and `ok` otherwise, set with `band()` from `sbplugin.py`, with `updated` as when `history.json` last changed.
+- `GET /card` compares the newest reading with the oldest for each disk. The status is `problem` under 14 days, `warning` under 60 days and `ok` otherwise. `band()` from `sbplugin.py` sets it. `updated` is when `history.json` last changed.
 - Before it has any reading, the card is `waiting` with the label "Measuring", or `problem` with the last error from the background job.
 - It declares no update steps, so Starboard stops it, updates it and starts it again.
 

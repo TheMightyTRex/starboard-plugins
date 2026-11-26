@@ -4,7 +4,7 @@ VPN check adds 1 card you can put on your dashboard. Each starts with a band: VP
 
 ## VPN
 
-Shows the public address and place your downloads come from through your VPN, and how long the answer took, such as "198.51.100.23 in Amsterdam, NL, 120 ms". It asks ipinfo.io, through the VPN, every 15 minutes or as often as **Check every** says.
+Shows the public address and place your downloads come from through your VPN. It also shows how long the answer took, such as "198.51.100.23 in Amsterdam, NL, 120 ms". It asks ipinfo.io, through the VPN, every 15 minutes or as often as **Check every** says.
 
 - **How often it updates:** once a minute while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:** 198.51.100.23 in the Netherlands

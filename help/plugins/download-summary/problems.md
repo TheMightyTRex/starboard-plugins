@@ -45,7 +45,7 @@ It counts only what moves in Starboard's download queue.
 
 ## Read the words under the number
 
-**Problem** means it could not read the queue the last time it tried, and the words under the number say what went wrong, in place of the week's total.
+**Problem** means it could not read the queue the last time it tried. The words under the number say what went wrong, in place of the week's total.
 
 1. Check that **Activity**, then **Downloads** opens and shows the queue.
 2. Wait a minute: the words go when a reading works again.
@@ -58,7 +58,7 @@ The totals are what it saw move, so they can be lower than what your apps say.
 
 - It counts from when it first finds a download, not what was done before.
 - It reads once a minute, so the last minute of a download that finishes and leaves the queue may be missed.
-- While it is deactivated or stopped, it reads nothing. When it starts again, a download still in the queue is counted for the day it starts again, and one that finished in between is not counted.
+- While it is deactivated or stopped, it reads nothing. When it starts again, it counts a download still in the queue for the day it starts again. It does not count one that finished in between.
 - The day starts at midnight on your server's clock, and this week means today and the 6 days before it.
 
 ## Report a problem

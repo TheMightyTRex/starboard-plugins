@@ -35,7 +35,7 @@ for Jellyfin in its official catalogue. Add it in Starboard's **Settings**, **Je
 **Dashboard**, **Plugins**, **Catalogue**, then restart Jellyfin. It counts from then on, and keeps its own history
 inside Jellyfin's data, so nothing else needs a database.
 
-Without it, this plug-in says so on its tables and its **Watch statistics source** card, and shows what Jellyfin knows
+Without it, this plug-in says so on its tables and its **Watch statistics source** card. It then shows what Jellyfin knows
 itself: each person's last play of each title, with no device or time watched.
 
 ## In place of Jellystat
@@ -45,11 +45,11 @@ This plug-in rests when nobody is using it, and uses about 14 MB for a few secon
 
 ## Updating
 
-Before an update, it finishes any check or message it is part way through and starts no new one, so the update never cuts one short (plug-in API 1.14). What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.
+Before an update, it finishes any check or message it is part way through and starts no new one. So the update never cuts one short (plug-in API 1.14). What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.
 
 ## Add it
 
-Needs Starboard with plug-in API 1.14 or later, and Jellyfin added in **Settings**, then **Apps**; a Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **Jellyfin**. Or, under **Add one from elsewhere**, give this address:
+Needs Starboard with plug-in API 1.14 or later, and Jellyfin added in **Settings**, then **Apps**. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **Jellyfin**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/watch-stats/starboard-plugin.json`
 

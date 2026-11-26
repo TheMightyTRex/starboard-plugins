@@ -62,7 +62,7 @@ Secret settings are never shown again, so enter the whole value again, select **
 
 ## Check the address
 
-"it could not be reached" or "the address or chat was not found" means it got no answer, or the service did not know the address or chat.
+"it could not be reached" means it got no answer. "the address or chat was not found" means the service did not know the address or chat.
 
 - **Email:** check **Email server**, **Port** and **Security**. Your email service says which to use: usually STARTTLS on port 587, or SSL on port 465.
 - **Telegram:** check **Telegram chat**, one chat id a line, and send your bot a message first, so it may write to you.
@@ -86,9 +86,9 @@ When the card says a message was sent but nobody saw it:
 
 - Check that kind is activated under **What to send**. A deactivated kind is not sent and not listed.
 - For email, check the junk or spam folder of each address in **Send email to**.
-- For the person who asked, check **Tell the person who asked too** is activated, and that their line under **People** uses the name they use in Reelix or Seerr, such as `Sam, sam@example.com` or `Sam, telegram 123456`.
-- If nothing arrives at night, check **Hold alerts that are not urgent in quiet hours**: held messages go as one summary at the hour in **Quiet hours end at**. Select **Send what quiet hours held now** to send it at once. Urgent ones go at once unless **Still send urgent ones** is deactivated.
-- For New this week, it is sent on the day and at the hour in **When to send New this week**, and only when **New this week** is activated. By default it goes by email alone, so activate **Send by email** too. A week with nothing new sends nothing. Select **Send New this week now** to try it.
+- For the person who asked, check that **Tell the person who asked too** is activated. Check that their line under **People** uses the name they use in Reelix or Seerr, such as `Sam, sam@example.com` or `Sam, telegram 123456`.
+- If nothing arrives at night, check **Hold alerts that are not urgent in quiet hours**. Held messages go as one summary at the hour in **Quiet hours end at**. Select **Send what quiet hours held now** to send it at once. Urgent messages go at once unless **Still send urgent ones** is deactivated.
+- New this week goes on the day and at the hour in **When to send New this week**, only when **New this week** is activated. By default it goes by email alone, so activate **Send by email** too. A week with nothing new sends nothing. Select **Send New this week now** to try it.
 
 ## Report a problem
 

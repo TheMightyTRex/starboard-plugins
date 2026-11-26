@@ -49,7 +49,7 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- Starboard runs it: each event is a `POST /events`, and New this week is a job on the schedule in `weekly_when` that sends only when `send_weekly` is activated, and not twice within 20 hours. The container rests 5 minutes after the last one (`start: when_needed`).
+- Starboard runs it. Each event is a `POST /events`. New this week is a job on the schedule in `weekly_when`, and it sends only when `send_weekly` is activated, and not twice within 20 hours. The container rests 5 minutes after the last one (`start: when_needed`).
 - `POST /events` answers at once and sends in the background, because Starboard waits 3 seconds and tries again once. The same event sent twice within 10 minutes is sent once.
 - `item.added` is not sent: it is kept in `/data/week.json`, 8 days at most, for New this week, with the title, series, type and year only. New this week also reads Starboard's `recent`, what the download apps imported. It lists films, episodes by series, albums and books, 40 of each at most, and leaves out series, pictures and everything else.
 - One message at a time. The last 20 results are kept in `/data/log.json`, cleaned of every secret first, for both cards.

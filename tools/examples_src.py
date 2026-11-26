@@ -33,8 +33,14 @@ RELEASED_112 = "2026-11-17"
 RELEASED_113 = "2026-11-17"
 RELEASED_114 = "2026-11-19"
 SOCKET_114 = ["**Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in "
-              "its own folder, so it works on its own closed network too. An older Starboard works as before."]
+              "its own folder. So it works on its own closed network too. An older Starboard works as before."]
 FIRST = "2026-11-12"
+# A text-only patch (26 November 2026, DASH-593): each example whose words changed has its own next patch version and
+# one "changes" entry, whatever the shared version is. The image and its pinned digest are not touched.
+TEXT_PATCH = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking", "home-assistant",
+              "download-summary", "disk-forecast", "notifications", "backups-watch", "ups-power", "immich", "watch-stats"}
+TEXT_PATCH_DATE = "2026-11-26"
+TEXT_PATCH_CHANGE = "Plainer wording in the text and help pages. How it works has not changed."
 
 
 def changes_for(pid, m):
@@ -48,14 +54,14 @@ def changes_for(pid, m):
         added.append("**Updates safely:** before an update it finishes what it is doing and starts nothing new.")
     if any(c.get("refresh_seconds") for c in m.get("cards") or []):
         added.append("**Kept up to date:** its card is asked every 30 seconds while the dashboard is open.")
-    light = ["**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.", "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."]
+    light = ["**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second. It writes nothing to its folder when a run goes well.", "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."]
     fixed = (["**Large libraries:** it asks Jellyfin a page of 500 titles at a time, so a large library no longer makes the check "
               "fail."] if pid == "library-health" else [])
     v111 = {"version": VERSION_111, "date": RELEASED_111, "changed": light, **({"fixed": fixed} if fixed else {})}
     v112 = {"version": VERSION_112, "date": RELEASED_112, **({"fixed": JELLYFIN_12} if pid in CALLS_JELLYFIN else {"changed": SHARED_ONLY})}
     v114 = {"version": VERSION, "date": RELEASED_114, "changed": SOCKET_114}
     newest = {"version": VERSION_113, "date": RELEASED_113, "changed": WORDS_113.get(pid, []) + [
-        f"**Logo description:** where its logo stands on its own, a screen reader says \"{m['name']} logo\", the plug-in's name, "
+        f"**Logo description:** a screen reader says \"{m['name']} logo\", the plug-in's name, "
         "instead of a description of the symbol."]}
     if m.get("_own_changes"):  # a plug-in made after the shared helper's versions has only its own history (Backups watch 0.1.0)
         return m["changes"]
@@ -74,7 +80,7 @@ SHARED_ONLY = ["**Shared helper:** the helper every example shares sends Jellyfi
 
 # 1.1.3 (design system audit, 17 November 2026): what changed in each example's words.
 WORDS_113 = {
-    "vpn-check": ["**Clearer words:** the hint and the card's example use addresses kept for examples, and the hint says the card "
+    "vpn-check": ["**Clearer words:** the hint and the card's example use addresses kept for examples. The hint says the card "
                   "says Problem, not what colour it turns."],
     "line-speed": ["**Clearer words:** **Test now** asks \"Download a test file now? It uses some of any data allowance.\" Before the "
                    "first test, the band says **Scheduled** and the card says when the next test is."],
@@ -553,8 +559,7 @@ EXAMPLES["notifications"] = ({
         "**Quiet hours:** choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. "
         "An app that stops answering, a full disk and a disk change still go at once. Deactivated until you activate it."]},
     "_before": [{"version": "1.3.0", "date": "2026-11-22", "added": [
-        "**New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books, with "
-        "titles and years only and no pictures. You choose the day and the hour, and it can go by email alone or by every "
+        "**New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, and no pictures. You choose the day and the hour, and it can go by email alone or by every "
         "way you activated."],
         "changed": [
         "**Deactivated at first:** New this week is now deactivated until you activate it under What to send. "
@@ -583,7 +588,7 @@ EXAMPLES["notifications"] = ({
          "choices": [{"value": "email", "label": "Email only"}, {"value": "all", "label": "Every way I activated"}]},
         {"key": "starboard_address", "label": "Starboard's address, for links", "type": "address", "group": "What to send",
          "hint": "Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address."},
-        _switch("quiet_on", "Hold alerts that are not urgent in quiet hours", "A request ready, a failed download, an app back or an update ready wait, and one summary goes when the quiet hours end. Deactivated until you activate it.", "Quiet hours", False),
+        _switch("quiet_on", "Hold alerts that are not urgent in quiet hours", "A request ready, a failed download, an app back or an update ready wait. One summary goes when the quiet hours end. Deactivated until you activate it.", "Quiet hours", False),
         {"key": "quiet_from", "label": "Quiet hours start at", "type": "schedule", "default": {"every": "day", "time": "22:00"},
          "group": "Quiet hours", "hint": "Choose every day. Only the hour counts."},
         {"key": "quiet_until", "label": "Quiet hours end at", "type": "schedule", "default": {"every": "day", "time": "07:00"},
@@ -652,13 +657,13 @@ the last one. A message takes about a second and 14 MB of memory while it runs.
 
 ## Secrets
 
-Passwords, tokens, keys and the webhook addresses are secret settings: Starboard never shows them again, and the
+Passwords, tokens, keys and the webhook addresses are secret settings. Starboard never shows them again, and the
 plug-in never writes them to its log, its card or its folder. A failed message says only which channel failed and why,
 in words such as "it refused the sign-in or token".
 
 ## Per person
 
-Under **People**, give one line for each person who asks for things: the name they use in Reelix or Seerr, a comma,
+Under **People**, give one line for each person who asks for things. Write the name they use in Reelix or Seerr, a comma,
 then their email address, or `telegram` and their chat id. When their request is ready, they hear too.
 
 ## Signal
@@ -691,7 +696,7 @@ EXAMPLES["backups-watch"] = ({
         _switch("self_signed", "Accept a self-signed certificate", "For a Kopia server that makes its own certificate. Only on your own network.", "The backup tool", False),
         {"key": "overdue_hours", "label": "Overdue after", "type": "number", "unit": "hours", "default": 36, "min": 1, "max": 1440,
          "group": "Alerts", "hint": "How many hours without a good run count as overdue. 36 suits a nightly backup."},
-        _switch("alerts", "Send alerts through Starboard", "Once when a backup is overdue or failed, and once when it is fine again, to where Starboard sends its own alerts.", "Alerts"),
+        _switch("alerts", "Send alerts through Starboard", "Sends one alert when a backup is overdue or failed, and one when it is fine again, to where Starboard sends its own alerts.", "Alerts"),
     ],
     "actions": [{"id": "check", "label": "Check now", "path": "/check"}],
     "cards": [{"id": "status", "title": "Backups", "type": "status", "path": "/card", "refresh_minutes": 60,
@@ -739,7 +744,7 @@ EXAMPLES["ups-power"] = ({
          "hint": "For PeaNUT only, when it asks for a sign-in. Leave empty otherwise."},
         {"key": "password", "label": "Password", "type": "secret", "group": "The UPS",
          "hint": "PeaNUT's password. Starboard never shows it again."},
-        _switch("alerts", "Send alerts through Starboard", "Once when the mains power is lost, when the battery is low, when it needs replacing or when the UPS cannot be reached, and once when each is over, to where Starboard sends its own alerts.", "Alerts"),
+        _switch("alerts", "Send alerts through Starboard", "Sends one alert when the mains power is lost, the battery is low, it needs replacing or the UPS cannot be reached. Sends one more when each is over, to where Starboard sends its own alerts.", "Alerts"),
         {"key": "low_percent", "label": "Low battery at", "type": "number", "unit": "%", "default": 30, "min": 0, "max": 99, "group": "Alerts",
          "hint": "On battery, a charge at or under this counts as low. 0 leaves it to the UPS's own low battery flag."},
         {"key": "low_minutes", "label": "Low battery under", "type": "number", "unit": "minutes", "default": 5, "min": 0, "max": 600, "group": "Alerts",
@@ -756,8 +761,8 @@ EXAMPLES["ups-power"] = ({
                                       {"title": "Battery", "points": [100, 100, 100, 100, 100], "unit": "%", "detail": "Latest 100%"}],
                            "note": "One point every 5 minutes for the last 8 hours.", "status": "ok", "updated": 1794694110}}],
     "changes": [{"version": "0.1.0", "date": "2026-11-25", "added": [
-        "**One card for your UPS:** on mains power or on battery, the battery charge, the time left and the load, with the voltage and power used in a list.",
-        "**Alerts:** once when the mains power is lost, when the battery is low, when it needs replacing and when the UPS cannot be reached, and once when each is over, through Starboard.",
+        "**One card for your UPS:** it says whether you are on mains power or battery, and shows the battery charge, the time left and the load. A list has the voltage and power used.",
+        "**Alerts:** through Starboard, once when the mains power is lost, the battery is low, it needs replacing or the UPS cannot be reached. You get one more when each is over.",
         "**NUT or PeaNUT:** it reads NUT's own protocol, or PeaNUT's web address; you choose, and the UPS if there is more than one.",
         "**Light:** one small question a minute, about 32 MB of memory at most, and a short history kept for the sparkline."]}],
     "_readme": """## What it reads
@@ -800,7 +805,7 @@ EXAMPLES["immich"] = ({
               {"id": "jobs", "title": "Immich jobs", "type": "status", "path": "/jobs", "refresh_minutes": 1,
                "example": {"state": "ok", "text": "Working: Thumbnails, Smart search. 340 waiting.", "status": "working", "status_label": "Working", "updated": 1794694110}}],
     "changes": [{"version": "0.1.0", "date": "2026-11-25", "added": [
-        "**Three cards for Immich:** how many photos and videos, where the space goes and how full the disk is, and what the job queues are doing.",
+        "**Three cards for Immich:** the photos and videos, where the space goes, how full the disk is, and what the job queues are doing.",
         "**Failed jobs** are said on the jobs card, so a stuck queue does not hide.",
         "**Light:** it runs only when a card asks, keeps each answer for a minute, and rests five minutes after; nothing at rest.",
         "**You choose** the address and an API key with only the permissions it needs."]}],
@@ -857,7 +862,7 @@ for Jellyfin in its official catalogue. Add it in Starboard's **Settings**, **Je
 **Dashboard**, **Plugins**, **Catalogue**, then restart Jellyfin. It counts from then on, and keeps its own history
 inside Jellyfin's data, so nothing else needs a database.
 
-Without it, this plug-in says so on its tables and its **Watch statistics source** card, and shows what Jellyfin knows
+Without it, this plug-in says so on its tables and its **Watch statistics source** card. It then shows what Jellyfin knows
 itself: each person's last play of each title, with no device or time watched.
 
 ## In place of Jellystat

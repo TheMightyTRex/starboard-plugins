@@ -33,7 +33,7 @@ Each image is pinned by digest in the manifest:
 
 - Each time the card is asked, `app.py` asks Jellyfin for `/Sessions?ActiveWithinSeconds=120` through `jellyfin()` in `sbplugin.py`, and lists each session that has something playing. It keeps nothing, so it needs no folder.
 - The card's status comes from `band()`: `running` with how many are watching, or `idle` when nobody is.
-- Without a Jellyfin key, `jellyfin()` raises "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps", and the card answers 502 with that message.
+- Without a Jellyfin key, `jellyfin()` raises "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps". The card answers 502 with that message.
 
 ## Find out more
 

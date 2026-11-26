@@ -45,7 +45,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 ### Add it by its address
 
-On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**, then select **What it does** and carry on from step 3:
+On the **Catalogue** page, under **Add one from elsewhere**, paste this into **The plug-in's manifest address**. Then select **What it does** and carry on from step 3:
 
 ```text
 https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/immich/starboard-plugin.json
@@ -57,7 +57,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 1. Go to **Settings**, then **Plug-ins**, then **Immich**.
 2. Under **Remove**, select **Remove Immich**.
-3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**, where you can put it back or delete it for good.
+3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
 Its container stops and goes, and its API key stops working. Immich and your photos are not touched.

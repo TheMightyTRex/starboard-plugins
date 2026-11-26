@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "line-speed",
  "name": "Line speed",
- "version": "1.1.4",
+ "version": "1.1.5",
  "description": "Tests your internet download speed once a night, outside download hours, and keeps a week of results.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -111,10 +111,17 @@
  },
  "changes": [
   {
+   "version": "1.1.5",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
+  {
    "version": "1.1.4",
    "date": "2026-11-19",
    "changed": [
-    "**Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
+    "**Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder. So it works on its own closed network too. An older Starboard works as before."
    ]
   },
   {
@@ -122,7 +129,7 @@
    "date": "2026-11-17",
    "changed": [
     "**Clearer words:** **Test now** asks \"Download a test file now? It uses some of any data allowance.\" Before the first test, the band says **Scheduled** and the card says when the next test is.",
-    "**Logo description:** where its logo stands on its own, a screen reader says \"Line speed logo\", the plug-in's name, instead of a description of the symbol."
+    "**Logo description:** a screen reader says \"Line speed logo\", the plug-in's name, instead of a description of the symbol."
    ]
   },
   {
@@ -136,7 +143,7 @@
    "version": "1.1.1",
    "date": "2026-11-16",
    "changed": [
-    "**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.",
+    "**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second. It writes nothing to its folder when a run goes well.",
     "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
    ]
   },

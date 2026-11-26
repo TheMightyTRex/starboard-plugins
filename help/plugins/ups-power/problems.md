@@ -27,7 +27,7 @@ q2: What does it say after NUT or PeaNUT?
 ## Check the address
 
 1. For NUT, check the address and port (3493 unless you changed it) from another computer: `upsc ups@192.0.2.10` lists the variables when it works.
-2. NUT must listen on an address other computers can reach: in `upsd.conf`, `LISTEN 0.0.0.0 3493` (or your server's address), then restart `upsd`. Where Starboard and NUT run on the same computer, use the computer's own address on your network, not `localhost`: UPS and power runs in its own container.
+2. NUT must listen on an address other computers can reach: in `upsd.conf`, `LISTEN 0.0.0.0 3493` (or your server's address), then restart `upsd`. Where Starboard and NUT run on the same computer, use the computer's own address on your network, not `localhost`. UPS and power runs in its own container.
 3. For PeaNUT, open its address in a browser on another computer. It shows its page.
 4. Check **Read the UPS through** matches the program at that address.
 
@@ -59,7 +59,7 @@ NUT lists each UPS by the name in `ups.conf`. Leave **UPS name** empty to use th
 ## Things this version does not do
 
 - **Pause heavy jobs on battery:** not possible yet. A plug-in cannot pause Starboard's own jobs. The card and the alert tell you; NUT's `upsmon` shuts the server down.
-- **Tried against a real UPS:** not yet. This version was tested with a made-up NUT server that follows NUT's text protocol and with recorded PeaNUT answers that follow its README. If your setup answers differently, the card says "Cannot read it" or shows no figures: tell us on the Discord support server or in an issue.
+- **Tried against a real UPS:** not yet. We tested this version with a made-up NUT server that follows NUT's text protocol, and with recorded PeaNUT answers that follow its README. If your setup answers differently, the card says "Cannot read it" or shows no figures. Tell us on the Discord support server or in an issue.
 
 ## Find out more
 

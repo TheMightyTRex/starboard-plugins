@@ -33,9 +33,9 @@ Each image is pinned by digest in the manifest:
 ## How it works
 
 - It runs inside the `gluetun` container's network (`"network": "vpn"`), on port 7791.
-- A background job asks `https://ipinfo.io/json` every **Check every** minutes, read once when it starts, and keeps the address, country, city, how long it took and when in `/data/last.json`.
+- A background job asks `https://ipinfo.io/json` every **Check every** minutes, read once when it starts. It keeps the address, country, city, how long it took and when in `/data/last.json`.
 - `POST /check` (the **Check now** button) does the same at once and answers with what it found.
-- `GET /card` compares the address with **Your home's public address**, read at each refresh. The status is `protected`, `warning` when the last check that worked is older than 3 times **Check every**, or `problem` when the home address shows, set with `band()` from `sbplugin.py`. Before its first check it is `waiting`, or `problem` with the last error.
+- `GET /card` compares the address with **Your home's public address**, read at each refresh. `band()` from `sbplugin.py` sets the status. It is `protected`, `warning` when the last check that worked is older than 3 times **Check every**, or `problem` when the home address shows. Before its first check it is `waiting`, or `problem` with the last error.
 - It declares no update steps, so Starboard stops it, updates it and starts it again.
 
 ## Find out more

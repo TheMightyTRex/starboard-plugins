@@ -4,7 +4,7 @@ Home Assistant adds 1 card you can put on your dashboard. It starts with a band:
 
 ## Home
 
-Shows the things in **What to show** in one sentence: each one's name in Home Assistant, its state and any unit, such as "Front door: closed. Lounge: 20.5 °C". It shows the first 8.
+Shows the things in **What to show** in one sentence. Each one has its name in Home Assistant, its state and any unit, such as "Front door: closed. Lounge: 20.5 °C". It shows the first 8.
 
 - **How often it updates:** once a minute while the dashboard is open. Each time, it asks Home Assistant for the state of each one. Nothing is asked while the browser tab is hidden.
 - **Example:** Front door: closed. Lounge: 20.5 °C

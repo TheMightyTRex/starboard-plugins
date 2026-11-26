@@ -4,7 +4,9 @@ Watching now adds 1 card you can put on your dashboard. Each starts with a band:
 
 ## Watching now
 
-Shows a short list, up to 10 lines: one line for each person playing something in Jellyfin, from the sessions Jellyfin saw in the last 2 minutes. Each line has the film or episode, then who is watching, on which device, how far through they are, and "paused" when they have paused it. An episode shows its series, season and episode number, such as "S01E02".
+Shows a short list, up to 10 lines. Each line is one person playing something in Jellyfin, from the sessions Jellyfin saw in the last 2 minutes. A line has the film or episode, who is watching, on which device and how far through they are. It says "paused" when they have paused it.
+
+An episode shows its series, season and episode number, such as "S01E02".
 
 - **How often it updates:** every 30 seconds while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
 - **Example:**
@@ -19,7 +21,7 @@ Shows a short list, up to 10 lines: one line for each person playing something i
 
 Someone who has paused is still counted as watching: their line ends with "paused".
 
-If Watching now cannot ask Jellyfin, the card shows what went wrong instead of a list, such as "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps". Read [Problems](problems.md).
+If Watching now cannot ask Jellyfin, the card shows what went wrong instead of a list. An example is "Starboard has no Jellyfin key to give yet: add Jellyfin in Settings, Apps". Read [Problems](problems.md).
 
 ## Add it to your dashboard
 
