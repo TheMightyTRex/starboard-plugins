@@ -87,6 +87,16 @@ def settings(first, password=""):
         con.close()
 
 
+def let_starboard_look():
+    """Starboard runs as another user and cannot open this folder (it is 700, for the user Calibre-Web runs as), so it
+    could not tell that the password was set. 711 lets it check that one named file is there, and nothing more: the
+    plug-in's own folder above this one is closed to everyone but Starboard."""
+    try:
+        os.chmod(CONFIG, 0o711)
+    except OSError:
+        pass
+
+
 def stop(words):
     print("Starboard: " + words, flush=True)
     sys.exit(1)
@@ -112,8 +122,11 @@ def main():
             stop("Calibre-Web was not started: its settings could not be written (" + type(err).__name__ + ").")
         with open(DONE, "w") as marker:
             marker.write("done\n")
+        let_starboard_look()
         print("Starboard: Calibre-Web is set up. Its first sign-in is on the plug-in's page in Starboard.", flush=True)
     else:
+        if os.path.exists(DONE):
+            let_starboard_look()  # Starboard makes the folder 700 again each time it starts the plug-in
         try:
             settings(False)
         except sqlite3.Error as err:

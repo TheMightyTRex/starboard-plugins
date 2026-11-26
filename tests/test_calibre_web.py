@@ -157,6 +157,16 @@ class StartUp(unittest.TestCase):
         self.assertNotIn("secret-value-xyz", " ".join(calls[0][0][1]))
         self.assertTrue(os.path.exists(self.mod.DONE))
 
+    def test_starboard_can_check_the_done_file_but_not_list_the_folder(self):
+        """Starboard runs as another user and Calibre-Web's data folder is 700, so without this it could not tell that the
+        password was set (found on the real install's permissions, 26 November 2026)."""
+        os.chmod(self.config, 0o700)
+        make_app_db(self.db)
+        open(self.mod.DONE, "w").close()
+        with mock.patch.object(self.mod.os, "execv", lambda *a: None), contextlib.redirect_stdout(io.StringIO()):
+            self.mod.main()
+        self.assertEqual(os.stat(self.config).st_mode & 0o777, 0o711)
+
     def test_it_starts_calibre_web_itself_on_an_old_install_with_no_password(self):
         make_app_db(self.db)
         calls = []
