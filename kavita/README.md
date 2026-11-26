@@ -14,6 +14,19 @@ People who read comics, manga and books, in the browser or in an e-reader app th
 1. Activate it, choose **Open Kavita** and make the first account. The first account made is its admin, so choose a strong password.
 2. Add libraries for `/media/books` and `/media/comics`. It reads them only, so Kavita cannot change or delete a file. Its sign-in key is made for this install.
 
+## Read on your phone
+
+These apps work well with Kavita. Other people make them, and we have not tested them with your library. Each one needs your Kavita address and your **Auth key**. Kavita shows both under your user settings, on the **3rd Party Clients** tab, with a copy button. Read [Kavita's page on the Auth key and OPDS address](https://wiki.kavitareader.com/guides/user-settings/3rdpartyclients/).
+
+- **Android: KOReader.** Add an OPDS catalogue and paste the address from the **3rd Party Clients** tab. Get it from [KOReader's site](https://koreader.rocks/) or [F-Droid](https://f-droid.org/packages/org.koreader.launcher.fdroid/). [Kavita's KOReader guide](https://wiki.kavitareader.com/guides/3rdparty/koreader/) has the steps.
+- **Android: Kover.** An unofficial app made for Kavita. Get it from [its project page](https://github.com/rodonisi/kover) or [its releases](https://github.com/rodonisi/kover/releases).
+- **iPhone and iPad: [Sutra](https://apps.apple.com/app/id6780096864).** A free reader that uses OPDS and keeps your page in step with Kavita. It needs iOS 17.
+- **iPhone and iPad, comics and manga: [Komic](https://apps.apple.com/dk/app/id6744676973).** It needs your Auth key. Away from home it needs an `https` address.
+
+Kavita's wiki lists more apps under [other apps made for Kavita](https://wiki.kavitareader.com/guides/3rdparty/kavita-dedicated).
+
+In Starboard, the same list is under **Read on your phone** on this plug-in's page and in **Settings**, **Apps**, **Manage apps**.
+
 ## What it may do
 
 - It can read: Files in your media folder under books (read only).

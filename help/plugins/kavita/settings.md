@@ -12,6 +12,10 @@ Kavita has no buttons on its tab. Its tab shows its state, its versions, **Its w
 - The main install can also add Kavita, in **Install apps**, **Ebooks**. Use one or the other.
 - Everything it keeps stays when you update or deactivate it, and when you remove it, it stays in its folder.
 
+## Read on your phone
+
+KOReader and Kover for Android, and Sutra and Komic for iPhone and iPad, work with Kavita. Each needs your Kavita address and your **Auth key**, which Kavita shows under your user settings, on the **3rd Party Clients** tab. The list with links is under **Read on your phone** on Kavita's tab in Starboard, and in the plug-in's overview.
+
 ## Find out more
 
 - [Install](install.md)
