@@ -40,7 +40,7 @@ Starboard sends it these events: `request.available`, `download.failed`, `app.do
 
 ### Quiet hours
 
-- **Hold alerts that are not urgent in quiet hours**: A request ready, a failed download, an app back or an update ready wait, and one summary goes when the quiet hours end. Deactivated until you activate it.
+- **Hold alerts that are not urgent in quiet hours**: A request ready, a failed download, an app back or an update ready wait. One summary goes when the quiet hours end. Deactivated until you activate it.
 - **Quiet hours start at**: Choose every day. Only the hour counts.
 - **Quiet hours end at**: Choose every day. The summary is sent at this hour.
 - **Still send urgent ones**: An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Deactivate it to hold them too.
@@ -103,13 +103,13 @@ the last one. A message takes about a second and 14 MB of memory while it runs.
 
 ## Secrets
 
-Passwords, tokens, keys and the webhook addresses are secret settings: Starboard never shows them again, and the
+Passwords, tokens, keys and the webhook addresses are secret settings. Starboard never shows them again, and the
 plug-in never writes them to its log, its card or its folder. A failed message says only which channel failed and why,
 in words such as "it refused the sign-in or token".
 
 ## Per person
 
-Under **People**, give one line for each person who asks for things: the name they use in Reelix or Seerr, a comma,
+Under **People**, give one line for each person who asks for things. Write the name they use in Reelix or Seerr, a comma,
 then their email address, or `telegram` and their chat id. When their request is ready, they hear too.
 
 ## Signal
@@ -120,11 +120,11 @@ and that number. Otherwise leave Signal deactivated.
 
 ## Updating
 
-Before an update, it finishes any check or message it is part way through and starts no new one, so the update never cuts one short (plug-in API 1.14). What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.
+Before an update, it finishes any check or message it is part way through and starts no new one. So the update never cuts one short (plug-in API 1.14). What changed in each version is in [CHANGELOG.md](CHANGELOG.md), and Starboard shows it before you update.
 
 ## Add it
 
-Needs Starboard with plug-in API 1.16 or later; a Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
+Needs Starboard with plug-in API 1.16 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/notifications/starboard-plugin.json`
 

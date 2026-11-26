@@ -61,7 +61,7 @@ A title you fixed in Jellyfin is still listed. The cards show the last check, an
 ## Read what the card says
 
 - **No answer from** and its name: it did not answer in 3 seconds. Check that it is **Active** on its tab, then wait a minute.
-- **Problem** on the card: the words under the number say what went wrong. A message about a connection or a time-out means Jellyfin did not answer: check Jellyfin is running and its address in **Settings**, then **Apps**, is right. Fix that, then select **Check now** on its tab.
+- **Problem** on the card: the words under the number say what went wrong. A message about a connection or a time-out means Jellyfin did not answer. Check that Jellyfin is running and that its address in **Settings**, then **Apps**, is right. Fix that, then select **Check now** on its tab.
 
 ## Report a problem
 

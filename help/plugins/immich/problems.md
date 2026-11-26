@@ -31,7 +31,7 @@ q2: What does it say after Immich?
 
 1. Open the address in a browser on another computer. Immich shows its sign-in page.
 2. Leave `/api` off the end: the plug-in adds it.
-3. Where Starboard and Immich run on the same computer, use the computer's own address on your network, not `localhost`: the plug-in runs in its own container.
+3. Where Starboard and Immich run on the same computer, use the computer's own address on your network, not `localhost`. The plug-in runs in its own container.
 
 ## Read what needs attention
 

@@ -33,9 +33,9 @@ Each image is pinned by digest in the manifest:
 
 ## How it works
 
-- `app.py` counts once an hour with `every()` from `sbplugin.py`, starting 5 seconds after it starts. For each Jellyfin user it asks for up to 200 films and episodes marked as played, newest first, and keeps those played within **Over the last** (`days`).
+- `app.py` counts once an hour with `every()` from `sbplugin.py`, starting 5 seconds after it starts. For each Jellyfin user it asks for up to 200 films and episodes marked as played, newest first. It keeps those played within **Over the last** (`days`).
 - Titles are ranked by how many people watched them, then by plays. The top 10 are kept in `/data/top.json`, and the card reads that file, so the card never waits on Jellyfin.
-- The card's status comes from `band()`: `ok` with a list, `idle` with no list and no error, `problem` with no list and the last error from `last_error()`.
+- `band()` sets the card's status. It is `ok` with a list, `idle` with no list and no error, and `problem` with no list and the last error from `last_error()`.
 
 ## Find out more
 

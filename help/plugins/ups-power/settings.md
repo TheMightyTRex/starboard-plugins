@@ -1,6 +1,6 @@
 # UPS and power: Settings
 
-UPS and power's settings are on its own tab: go to **Settings**, then **Plug-ins**, then **UPS and power**. Starboard draws them and keeps them; secrets are never shown again once saved.
+The settings for UPS and power are on its own tab: go to **Settings**, then **Plug-ins**, then **UPS and power**. Starboard draws them and keeps them; secrets are never shown again once saved.
 
 ## The UPS
 

@@ -4,7 +4,7 @@ Most watched adds 1 card you can put on your dashboard. Each starts with a band:
 
 ## Most watched
 
-Shows a short list, up to 10 lines: the films and series watched by the most people over the days set in **Over the last**, most people first. Each line says how many people watched it and how many plays it had. A series counts as one title, with each episode watched counted as a play.
+Shows a short list, up to 10 lines. It lists the films and series watched by the most people over the days set in **Over the last**, most people first. Each line says how many people watched it and how many plays it had. A series counts as one title, with each episode watched counted as a play.
 
 - **How often it updates:** Most watched counts once an hour, and the card is asked once a minute while the dashboard is open. Nothing is asked while the browser tab is hidden.
 - **Example:**

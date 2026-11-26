@@ -1,11 +1,12 @@
 # Notifications: Updates
 
-Notifications 1.4.0 is the latest version. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0); an older Starboard keeps 1.1.3.
+Notifications 1.4.1 is the latest version. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0); an older Starboard keeps 1.1.3.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.4.1 | 1.16 or later | Not released yet |
 | 1.4.0 | 1.16 or later | 25 November 2026 |
 | 1.3.0 | 1.16 or later | 22 November 2026 |
 | 1.2.0 | 1.16 or later | 19 November 2026 |
@@ -28,7 +29,7 @@ Added:
 
 Added:
 
-- **New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only and no pictures. You choose the day and the hour, and it can go by email alone or by every way you activated.
+- **New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, with no pictures. You choose the day and the hour. It can go by email alone or by every way you activated.
 
 Changed:
 
@@ -38,20 +39,20 @@ Changed:
 
 Added:
 
-- **Disk changes:** a message whenever a disk is erased, added to the pool or taken out of it, however it was asked for, so an erase you did not start reaches you at once. Needs Starboard with plug-in API 1.16 or later; an older Starboard keeps 1.1.3.
+- **Disk changes:** a message whenever a disk is erased, added to the pool or taken out of it, however it was asked for. So an erase you did not start reaches you at once. It needs Starboard with plug-in API 1.16 or later. An older Starboard keeps 1.1.3.
 
 ## What is new in 1.1.4
 
 Changed:
 
-- **Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
+- **Reaches Starboard on any network:** with Starboard 0.23.0 or later, it calls Starboard through a socket in its own folder. So it works on its own closed network too. An older Starboard works as before.
 
 ## What is new in 1.1.3
 
 Changed:
 
-- **Clearer words:** each channel's switch says what to enter before you activate it, the band says **Not sent**, and a message about an event it does not know says "Starboard has an alert. Open Starboard for the details."
-- **Logo description:** where its logo stands on its own, a screen reader says "Notifications logo", the plug-in's name, instead of a description of the symbol.
+- **Clearer words:** each channel's switch says what to enter before you activate it. The band says **Not sent**. A message about an event it does not know says "Starboard has an alert. Open Starboard for the details."
+- **Logo description:** when its logo stands alone, a screen reader says "Notifications logo", the plug-in's name, instead of a description of the symbol.
 
 ## What is new in 1.1.2
 
@@ -63,7 +64,7 @@ Changed:
 
 Changed:
 
-- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.
+- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second. It writes nothing to its folder when a run goes well.
 - **Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## What is new in 1.1.0
@@ -83,7 +84,7 @@ Changed:
 Added:
 
 - **Seven ways to send:** email, Telegram, Discord, Signal (through signal-cli-rest-api), Pushover, ntfy and Apprise-style webhooks, each with a Test button.
-- **What it sends:** a request ready to watch (to the person who asked too), a failed download, an app down and back, a disk nearly full, an update ready, and New this week.
+- **What it sends:** a request ready to watch (to the person who asked too), a failed download, an app down and back up, a disk nearly full, an update ready and New this week.
 - Plain words with no meaning in symbols, and links with words before them.
 - Rests between messages: Starboard's events and its daily job wake it, so it uses no memory while idle.
 

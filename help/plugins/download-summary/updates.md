@@ -1,11 +1,12 @@
 # Download summary: Updates
 
-Download summary 1.1.4 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Download summary 1.1.5 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.1.5 | 1.14 or later | Not released yet |
 | 1.1.4 | 1.14 or later | 19 November 2026 |
 | 1.1.3 | 1.14 or later | 17 November 2026 |
 | 1.1.2 | 1.14 or later | 17 November 2026 |
@@ -19,14 +20,14 @@ The catalogue offers each Starboard the newest version it can run, so an older S
 
 Changed:
 
-- **Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before.
+- **Reaches Starboard on any network:** with Starboard 0.23.0 or later, it calls Starboard through a socket in its own folder. So it works on its own closed network too. An older Starboard works as before.
 
 ## What is new in 1.1.3
 
 Changed:
 
 - **Clearer words:** its description says it counts the download queue in Starboard.
-- **Logo description:** where its logo stands on its own, a screen reader says "Download summary logo", the plug-in's name, instead of a description of the symbol.
+- **Logo description:** when its logo stands alone, a screen reader says "Download summary logo", the plug-in's name, instead of a description of the symbol.
 
 ## What is new in 1.1.2
 
@@ -38,7 +39,7 @@ Changed:
 
 Changed:
 
-- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.
+- **Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second. It writes nothing to its folder when a run goes well.
 - **Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time.
 
 ## What is new in 1.1.0

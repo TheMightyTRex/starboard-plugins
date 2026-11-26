@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "watch-stats",
  "name": "Watch statistics",
- "version": "1.1.4",
+ "version": "1.1.5",
  "description": "What was watched, by whom and when, and the top titles, from Jellyfin's Playback Reporting, with no second database.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -161,10 +161,17 @@
  },
  "changes": [
   {
+   "version": "1.1.5",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
+  {
    "version": "1.1.4",
    "date": "2026-11-19",
    "changed": [
-    "**Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder, so it works on its own closed network too. An older Starboard works as before."
+    "**Reaches Starboard on any network:** with Starboard 0.23.0 or later it calls Starboard through a socket in its own folder. So it works on its own closed network too. An older Starboard works as before."
    ]
   },
   {
@@ -172,7 +179,7 @@
    "date": "2026-11-17",
    "changed": [
     "**Clearer words:** **Read the figures again now** is now **Check now**, as on the other plug-ins.",
-    "**Logo description:** where its logo stands on its own, a screen reader says \"Watch statistics logo\", the plug-in's name, instead of a description of the symbol."
+    "**Logo description:** a screen reader says \"Watch statistics logo\", the plug-in's name, instead of a description of the symbol."
    ]
   },
   {
@@ -186,7 +193,7 @@
    "version": "1.1.1",
    "date": "2026-11-16",
    "changed": [
-    "**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second, and writes nothing to its folder when a run goes well.",
+    "**Lighter at rest:** it wakes about once a minute while nothing asks it anything, not twice a second. It writes nothing to its folder when a run goes well.",
     "**Starts faster:** its image comes with Python's modules already compiled, so a start takes about a quarter of the processor time."
    ]
   },

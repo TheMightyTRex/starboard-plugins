@@ -22,7 +22,7 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
 ## Add it
 
-Needs Starboard with plug-in API 1.14 or later; a Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **Network**. Or, under **Add one from elsewhere**, give this address:
+Needs Starboard with plug-in API 1.14 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **Network**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/dns-blocking/starboard-plugin.json`
 

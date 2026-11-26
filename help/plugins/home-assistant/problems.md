@@ -49,7 +49,7 @@ The plug-in asked Home Assistant and got no usable answer, or did not answer Sta
 1. Open **Home Assistant's address** in your browser, and check Home Assistant opens.
 2. Check each id in **What to show** is exactly as Home Assistant shows it. One wrong id stops the whole card.
 3. If the token was deleted in Home Assistant, make a new one and paste it in **Long-lived access token**. A saved token is never shown, so pasting it again is the only way to be sure.
-4. If Home Assistant is slow to answer, show fewer things: it asks for each one in turn, and Starboard waits only 3 seconds for the card.
+4. If Home Assistant is slow to answer, show fewer things. It asks for each one in turn, and Starboard waits only 3 seconds for the card.
 5. Select **Save**, then wait a minute for the card to ask again.
 
 ## Change the warning states

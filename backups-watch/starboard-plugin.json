@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "backups-watch",
  "name": "Backups watch",
- "version": "0.1.0",
+ "version": "0.1.1",
  "description": "The last run, size and failures of your Backrest or Kopia backups on a card, and an alert when one is overdue.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -101,7 +101,7 @@
    "label": "Send alerts through Starboard",
    "type": "switch",
    "default": true,
-   "hint": "Once when a backup is overdue or failed, and once when it is fine again, to where Starboard sends its own alerts.",
+   "hint": "Sends one alert when a backup is overdue or failed, and one when it is fine again, to where Starboard sends its own alerts.",
    "group": "Alerts"
   }
  ],
@@ -195,6 +195,13 @@
   "alt": "Backups watch logo"
  },
  "changes": [
+  {
+   "version": "0.1.1",
+   "date": "2026-11-26",
+   "changed": [
+    "Plainer wording in the text and help pages. How it works has not changed."
+   ]
+  },
   {
    "version": "0.1.0",
    "date": "2026-11-22",

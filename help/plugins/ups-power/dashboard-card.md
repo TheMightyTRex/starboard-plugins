@@ -13,7 +13,7 @@ Shows one line: on mains power or on battery, with the battery charge, the time 
 
 ## UPS details
 
-Shows the UPS's name and model, its status, the battery charge, the time left, the load, the voltage in and out and the power used, whichever it reports, and the last time the power switched.
+Shows the UPS's name and model, its status, the battery charge, the time left, the load, and the voltage in and out. It also shows the power used and the last time the power switched. It shows whichever of these the UPS reports.
 
 - **How often it updates:** every 5 minutes while the dashboard is open.
 - **Example:**

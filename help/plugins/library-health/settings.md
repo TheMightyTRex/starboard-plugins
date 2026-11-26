@@ -6,7 +6,7 @@ Library health has no settings of its own.
 
 These are on Library health's tab.
 
-- **Check now** checks every film and series in Jellyfin straight away, without waiting for the next check, and says how many titles there are to fix, such as "4 titles to fix of 1,240".
+- **Check now** checks every film and series in Jellyfin straight away, without waiting for the next check. It says how many titles there are to fix, such as "4 titles to fix of 1,240".
 
 ## Things to note
 

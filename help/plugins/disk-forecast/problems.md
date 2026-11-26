@@ -58,7 +58,7 @@ Your Starboard's plug-in API is outside what this version of Disk forecast works
 2. Make room on it, or add space. Read [Check free space and what is using it, in Starboard's help](https://themightytrex.github.io/starboard/help/topics/check-storage.html).
 3. Wait for the next reading, within an hour.
 
-The forecast compares with the oldest day it kept, up to 35 days back, so a big download some weeks ago can bring the date forward.
+The forecast compares with the oldest day it kept, up to 35 days back. So a big download some weeks ago can bring the date forward.
 
 ## Read the error
 

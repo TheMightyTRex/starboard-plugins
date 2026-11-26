@@ -35,7 +35,8 @@ The image is the shared examples image. Until it is built and pinned by digest, 
 ## How it works
 
 - It has no timer and no job: Starboard asks a card, the container wakes, asks Immich, and rests after 5 minutes with nothing to do. Each answer is kept in memory for a minute, so the three cards of one dashboard make one set of requests. Nothing is written to `/data`.
-- **Immich's API,** with the key in the `x-api-key` header: `GET /api/server/statistics` (`photos`, `videos`, `usage`, `usagePhotos`, `usageVideos`, `usageByUser`), `GET /api/server/storage` (`diskSizeRaw`, `diskUseRaw`, `diskAvailableRaw`, `diskUsagePercentage`) and `GET /api/queues` (a list of `name`, `isPaused` and `statistics`). On a 404, an older Immich is asked `GET /api/jobs` instead (`jobCounts` and `queueStatus` for each queue).
+- **Immich's API,** with the key in the `x-api-key` header: `GET /api/server/statistics` (`photos`, `videos`, `usage`, `usagePhotos`, `usageVideos`, `usageByUser`), `GET /api/server/storage` (`diskSizeRaw`, `diskUseRaw`, `diskAvailableRaw`, `diskUsagePercentage`) and `GET /api/queues` (a list of `name`, `isPaused` and `statistics`).
+  On a 404, it asks an older Immich `GET /api/jobs` instead (`jobCounts` and `queueStatus` for each queue).
 - The shapes are from Immich's OpenAPI description (`open-api/immich-openapi-specs.json`). It was not tried against a real server: the tests use a made-up Immich that answers as that description says.
 - The key is read from the settings each time and is never written to `/data`, a card or an error.
 - The storage card's limits, 90% and 98%, are the same as Starboard's own disk card.

@@ -6,6 +6,7 @@ Backups watch 0.1.0 is the first version. It needs Starboard with plug-in API 1.
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.1.1 | 1.17 or later | Not released yet |
 | 0.1.0 | 1.17 or later | 22 November 2026 |
 
 ## What is new in 0.1.0
