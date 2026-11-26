@@ -24,6 +24,10 @@ Calibre-Web's tab, in **Settings**, then **Plug-ins**, then **Calibre-Web**, has
 - Calibre-Web keeps its users and choices in its own folder in Starboard's data, `data/plugins/calibre-web`.
 - Its settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
 
+## Read on your phone
+
+KOReader and Calibre-Web-Companion for Android, and Readest for iPhone and iPad, work with Calibre-Web. The list with links is under **Read on your phone** on this plug-in's page in Starboard, and in the plug-in's overview. KOReader needs the address of Calibre-Web followed by `/opds`.
+
 ## Find out more
 
 - [Install](install.md)
