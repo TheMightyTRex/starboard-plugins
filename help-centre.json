@@ -335,7 +335,7 @@
             "question": "What does its tab say?",
             "answers": [
               {
-                "label": "Needs setting up, Did not start, Failed or Not supported",
+                "label": "Needs setting up, Did not start, Failed or Needs an update",
                 "to": "fix/a-plug-in-is-not-working.md"
               },
               {
