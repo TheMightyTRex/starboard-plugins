@@ -13,7 +13,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-calibre-library:1.0.0",
+   "image": "ghcr.io/themightytrex/starboard-plugin-calibre-library@sha256:ae2e0c2ba6c2a16e9d1d7f67c7bc2c5ad46e916ca4c98b3180e9ec493466753a",
    "port": 8080,
    "volumes": [
     "data",
