@@ -42,7 +42,8 @@ CMD ["python3", "/app/app.py"]
 WORDS = {"network:vpn": "runs inside your VPN", "network:lan": "reaches your home network and the internet",
          "jellyfin:key": "uses Jellyfin's key, which Starboard keeps", "downloads:read": "reads what is downloading",
          "system:read": "reads processor, memory and disk use", "appearance:styles": "adds styles to Display",
-         "media:read": "reads your library", "apps:read": "reads your apps and whether they answer"}
+         "media:read": "reads your library", "apps:read": "reads your apps and whether they answer",
+         "power:hold": "asks Starboard to hold its heavy jobs and downloads while the computer runs on battery"}
 
 
 def readme(pid, m, extra=""):

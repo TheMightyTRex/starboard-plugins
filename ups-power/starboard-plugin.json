@@ -2,21 +2,22 @@
  "manifest_version": 1,
  "id": "ups-power",
  "name": "UPS and power",
- "version": "0.1.1",
+ "version": "0.2.0",
  "description": "Load, battery and time left of your UPS on a card, and an alert when the mains power is lost, read from NUT or PeaNUT.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/ups-power",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.17 <2.0",
+ "starboard_api": ">=1.24 <2.0",
  "permissions": [
   "network:lan",
-  "alerts:send"
+  "alerts:send",
+  "power:hold"
  ],
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:1847222d614acd79c76ded222c0d3fed82ff438f42444bb5e0ce66861c69d038",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.9",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -95,6 +96,14 @@
    "default": true,
    "hint": "Sends one alert when the mains power is lost, the battery is low, it needs replacing or the UPS cannot be reached. Sends one more when each is over, to where Starboard sends its own alerts.",
    "group": "Alerts"
+  },
+  {
+   "key": "hold",
+   "label": "Hold Starboard's heavy jobs on battery",
+   "type": "switch",
+   "default": true,
+   "hint": "While the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs.",
+   "group": "Heavy jobs"
   },
   {
    "key": "low_percent",
@@ -224,6 +233,17 @@
   "alt": "UPS and power logo"
  },
  "changes": [
+  {
+   "version": "0.2.0",
+   "date": "2026-11-27",
+   "added": [
+    "**Heavy jobs held on battery:** while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can deactivate this in Settings.",
+    "**The card says so:** the Power card says when Starboard's heavy jobs are held."
+   ],
+   "changed": [
+    "It needs Starboard 0.40.0 or later (plug-in API 1.24). It asks for one more permission: to hold Starboard's heavy jobs."
+   ]
+  },
   {
    "version": "0.1.1",
    "date": "2026-11-26",

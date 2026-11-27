@@ -59,7 +59,7 @@ class Collection(unittest.TestCase):
                  "tv-station": ">=1.15 <2.0",  # DASH-477: a title for each card size, new in plug-in API 1.15
                  "notifications": ">=1.16 <2.0",  # Notifications 1.2.0: the disk.changed event, new in plug-in API 1.16
                  "philips-hue": ">=1.16 <2.0",  # Philips Hue: schedules and the bridge's address in plain text boxes, new in plug-in API 1.16
-                 "ups-power": ">=1.17 <2.0",  # UPS and power 0.1.0: the sparkline card and alerts:send, API 1.17
+                 "ups-power": ">=1.24 <2.0",  # UPS and power 0.2.0: power:hold, API 1.24 (0.1.0 used the sparkline card and alerts:send, API 1.17)
                  "immich": ">=1.17 <2.0",  # Immich 0.1.0: written against API 1.17 like the plug-ins before it
                  "single-sign-on": ">=1.21 <2.0",  # Single sign-on 0.1.0: the switch key and needs_plugins checks, API 1.21
                  "backups-watch": ">=1.17 <2.0",  # Backups watch 0.1.0: the sparkline card and alerts:send, API 1.17

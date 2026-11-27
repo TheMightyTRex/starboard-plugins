@@ -16,6 +16,7 @@ Starboard lists these before you add it, each with its risk.
 |---|---|
 | Reach other computers on your home network, and the internet (`network:lan`) | Medium |
 | Send alerts through Starboard (`alerts:send`) | Low |
+| Hold Starboard's heavy jobs and downloads while on battery (`power:hold`) | Low |
 
 What it runs:
 

@@ -58,10 +58,18 @@ NUT lists each UPS by the name in `ups.conf`. Leave **UPS name** empty to use th
 
 ## Things this version does not do
 
-- **Pause heavy jobs on battery:** not possible yet. A plug-in cannot pause Starboard's own jobs. The card and the alert tell you; NUT's `upsmon` shuts the server down.
+- **Shut the server down:** this plug-in holds Starboard's heavy jobs on battery, but it does not shut anything down. NUT's `upsmon` does that.
 - **Tried against a real UPS:** not yet. We tested this version with a made-up NUT server that follows NUT's text protocol, and with recorded PeaNUT answers that follow its README. If your setup answers differently, the card says "Cannot read it" or shows no figures. Tell us on the Discord support server or in an issue.
 
 ## Find out more
 
 - [Settings](settings.md)
 - [Dashboard card](dashboard-card.md)
+
+## Starboard's jobs are not held on battery
+
+1. Check that **Hold Starboard's heavy jobs on battery** is activated in the settings.
+2. Check that Starboard is version 0.40.0 or later. An older Starboard does not know this part, and the plug-in is not offered to it.
+3. Check that you approved the permission to hold heavy jobs when you installed or updated the plug-in.
+4. Open **Downloads**. While the hold lasts, the page says why downloads are paused. The log in **System** says when a hold starts and ends.
+5. A hold ends by itself after 5 minutes if this plug-in stops asking. Once the mains power is back, it lets go at once.
