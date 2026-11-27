@@ -14,6 +14,22 @@ import make_examples  # noqa: E402
 DIGEST = "@sha256:" + "0123456789abcdef" * 4
 
 
+class ReplacesOrAdds(unittest.TestCase):
+    """DASH-585 (plug-in API 1.23): every catalogue entry says in one plain line what it replaces or adds to."""
+
+    def test_every_entry_has_one_line(self):
+        with open(os.path.join(ROOT, "catalogue.json"), encoding="utf-8") as f:
+            rows = json.load(f)["plugins"]
+        for e in rows:
+            line = e.get("replaces_or_adds", "")
+            self.assertTrue(0 < len(line) <= 140, e["id"])
+            self.assertNotRegex(line, r"[\r\n<>`]", e["id"])
+            self.assertRegex(line, r"^(Adds to|Replaces|Stands alone)", e["id"])
+
+    def test_a_plug_in_with_no_line_stops_the_build(self):
+        self.assertTrue(set(make_examples.NOTES) >= {e["id"] for e in json.load(open(os.path.join(ROOT, "catalogue.json"), encoding="utf-8"))["plugins"]})
+
+
 class PublishedRule(unittest.TestCase):
     def test_no_containers_is_published(self):
         self.assertTrue(make_examples.published({"id": "styles"}))
