@@ -1,6 +1,6 @@
 [Help centre](../README.md) · Developers · reference
 <!-- help: dev / build -->
-<!-- plugin-api: 1.21 -->
+<!-- plugin-api: 1.23 -->
 
 # Plug-in API 1.15 for the collection
 
@@ -12,6 +12,15 @@ Starboard's help has the full references.
 
 - You want to change a plug-in here, or add one, and need to know what it must do.
 - You are bringing a plug-in of your own up to 1.14, 1.15, 1.16 or 1.17.
+
+## What plug-in API 1.23 added
+
+- `power:hold` and `POST /api/v1/plugin/hold`: a plug-in may ask Starboard to hold its heavy automatic jobs, scheduled backups and downloads, for example while the computer runs on battery. The hold ends by itself after 10 minutes unless the plug-in asks again, and what was held starts afterwards. UPS and power 0.2.0 uses it. Read [Holding heavy jobs](https://themightytrex.github.io/starboard/help/developers/plugin-api-reference.html#holding-heavy-jobs-api-123).
+- The `time` setting type: one time of day, such as `22:00`, in a time box.
+
+## What plug-in API 1.22 added
+
+- `starboard_tested` and `capabilities`: a plug-in names the newest plug-in API it was tested with, and the optional parts of Starboard it needs or uses. No plug-in here uses them yet.
 
 ## What plug-in API 1.21 added
 

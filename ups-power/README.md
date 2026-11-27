@@ -8,6 +8,7 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
 - It reaches your home network and the internet.
 - It alerts:send.
+- It asks Starboard to hold its heavy jobs and downloads while the computer runs on battery.
 - It runs one small container (32 MB of memory at most).
 
 ## On the dashboard
@@ -33,6 +34,10 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 - **Low battery at**: On battery, a charge at or under this counts as low. 0 leaves it to the UPS's own low battery flag.
 - **Low battery under**: On battery, a time left at or under this counts as low. 0 leaves it to the UPS's own flag.
 
+### Heavy jobs
+
+- **Hold Starboard's heavy jobs on battery**: While the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs.
+
 ## What it reads
 
 - **NUT:** the Network UPS Tools server (`upsd`, port 3493), with its text protocol: `LIST UPS`, then `LIST VAR <ups>`. It
@@ -45,8 +50,11 @@ before relying on it.
 
 ## Heavy jobs on battery
 
-A plug-in cannot pause Starboard's own heavy jobs, so this version only tells you: the card says **On battery** and an alert
-goes out. Pausing them needs a new plug-in permission in Starboard.
+While the UPS is on battery, this plug-in asks Starboard once a minute to hold its heavy work for 5 minutes: its background
+jobs, scheduled backups, other plug-ins' scheduled jobs and downloads. When the mains power is back it lets them go at
+once, and what was held starts again. If this plug-in stops, Starboard ends the hold by itself within 5 minutes. A job you
+start yourself still runs. It uses the permission `power:hold` (plug-in API 1.23, Starboard 0.40.0). The setting **Hold
+Starboard's heavy jobs on battery** is where you deactivate it.
 
 ## Updating
 
@@ -54,7 +62,7 @@ Before an update, it finishes any check or message it is part way through and st
 
 ## Add it
 
-Needs Starboard with plug-in API 1.17 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
+Needs Starboard with plug-in API 1.23 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/ups-power/starboard-plugin.json`
 

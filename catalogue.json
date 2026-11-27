@@ -389,11 +389,11 @@
    "logo_alt": "Kavita logo",
    "versions": [
     {
-     "version": "1.1.3",
+     "version": "1.1.4",
      "starboard_api": ">=1.14 <2.0",
      "released": "2026-11-26",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/kavita/starboard-plugin.json",
-     "changelog": "Plainer wording in the text and help pages. How it works has not changed."
+     "changelog": "The help names four phone apps that work with Kavita: KOReader, Kover, Sutra and Komic."
     },
     {
      "version": "1.0.0",
@@ -665,7 +665,7 @@
      "starboard_api": ">=1.17 <2.0",
      "released": "2026-11-26",
      "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/outside-services/starboard-plugin.json",
-     "changelog": "Plainer wording in the text and help pages. How it works has not changed."
+     "changelog": "Plainer wording in the text and help pages. How it works has not changed. The copy of the design system's styles is current, with every theme and the latest components."
     },
     {
      "version": "1.1.4",
@@ -922,12 +922,13 @@
    "author": "TheMightyTRexUK",
    "permissions": [
     "network:lan",
-    "alerts:send"
+    "alerts:send",
+    "power:hold"
    ],
-   "version": "0.1.1",
-   "starboard_api": ">=1.17 <2.0",
+   "version": "0.2.0",
+   "starboard_api": ">=1.23 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/ups-power/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5VUFMgYW5kIHBvd2VyIGxvZ288L3RpdGxlPjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjExIiBmaWxsPSIjOWE0ZDBiIi8+PHJlY3QgeD0iOSIgeT0iMTYiIHdpZHRoPSIyOCIgaGVpZ2h0PSIxOCIgcng9IjMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNNDEgMjJ2NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTI0LjUgMTlsLTYgOGg2bC0yIDYgNy05aC02eiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPgo=",
    "logo_alt": "UPS and power logo"

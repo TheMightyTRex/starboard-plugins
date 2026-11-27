@@ -238,6 +238,86 @@ class Alerts(unittest.TestCase):
         self.assertEqual(len(calls), 1)
 
 
+class HeavyJobs(unittest.TestCase):
+    """DASH-572: on battery the plug-in asks Starboard to hold its heavy jobs, and lets them go when the mains is back."""
+
+    def setUp(self):
+        self.a = app()
+        self.posts = []
+        self.status = 200
+        self.a._post_starboard = lambda path, body: self.posts.append((path, body)) or self.status
+        self.battery = self.a.summarise("ups", ON_BATTERY)
+        self.mains = self.a.summarise("ups", ONLINE)
+
+    def test_on_battery_it_asks_each_minute_for_five_minutes(self):
+        self.a.hold(self.battery)
+        self.a.hold(self.battery)
+        self.assertEqual(self.posts, [("plugin/hold", {"on": True, "reason": "On battery", "minutes": 5})] * 2)
+        self.assertIs(self.a.remember("held"), True)
+        self.assertIn("heavy jobs are held", self.held_card())
+
+    def held_card(self):
+        self.a.keep("state", {"ups": self.battery, "checked": time.time(), "history": [], "events": []})
+        return self.a.card()["text"]
+
+    def test_when_the_mains_is_back_it_lets_go_once(self):
+        self.a.hold(self.battery)
+        self.posts.clear()
+        self.a.hold(self.mains)
+        self.a.hold(self.mains)
+        self.assertEqual(self.posts, [("plugin/hold", {"on": False})])
+        self.assertIs(self.a.remember("held"), False)
+
+    def test_on_mains_and_never_held_it_says_nothing(self):
+        self.a.hold(self.mains)
+        self.a.hold(None)
+        self.a.hold({"known": False, "on_battery": False})
+        self.assertEqual(self.posts, [])
+
+    def test_the_switch_turns_it_off_and_lets_go_what_was_held(self):
+        self.a.hold(self.battery)
+        self.posts.clear()
+        self.a._set(hold=False)
+        self.a.hold(self.battery)
+        self.assertEqual(self.posts, [("plugin/hold", {"on": False})])
+        self.posts.clear()
+        self.a.hold(self.battery)
+        self.assertEqual(self.posts, [])
+
+    def test_a_failed_post_is_tried_again_next_minute(self):
+        def broken(path, body):
+            raise OSError("no route")
+        self.a._post_starboard = broken
+        self.a.hold(self.battery)
+        self.assertFalse(self.a.remember("held", False))
+        self.a._post_starboard = lambda path, body: self.posts.append((path, body)) or 200
+        self.a.hold(self.battery)
+        self.assertEqual(len(self.posts), 1)
+        self.assertIs(self.a.remember("held"), True)
+
+    def test_a_starboard_without_the_hold_is_asked_again_after_an_hour(self):
+        self.status = 404
+        self.a.hold(self.battery)
+        self.a.hold(self.battery)
+        self.assertEqual(len(self.posts), 1)
+        self.assertFalse(self.a.remember("held", False))
+        self.a.STATE["hold_api"]["at"] -= 3601
+        self.a.hold(self.battery)
+        self.assertEqual(len(self.posts), 2)
+
+    def test_a_check_holds_while_on_battery_and_releases_when_it_is_over(self):
+        n = FakeNut(ON_BATTERY)
+        try:
+            self.a._set(host=f"127.0.0.1:{n.port}")
+            self.a.check(NOW)
+            self.assertEqual(self.posts[-1][1]["on"], True)
+            n.variables = ONLINE
+            self.a.check(NOW + 60)
+            self.assertEqual(self.posts[-1][1], {"on": False})
+        finally:
+            n.stop()
+
+
 class Cards(unittest.TestCase):
     def test_a_check_is_kept_and_the_cards_read_it(self):
         a = app()
@@ -323,10 +403,13 @@ class StarboardChecks(unittest.TestCase):
 class Manifest(unittest.TestCase):
     def test_it_asks_once_a_minute_and_is_light(self):
         m = manifest("ups-power")
-        self.assertEqual(m["version"], "0.1.1")
+        self.assertEqual(m["version"], "0.2.0")
+        self.assertEqual(m["starboard_api"], ">=1.23 <2.0")  # power:hold is plug-in API 1.23
         self.assertEqual(m["containers"][0].get("start", "always"), "always")
         self.assertLessEqual(m["resources"]["main"]["memory"], 48)
         self.assertIn("alerts:send", m["permissions"])
+        self.assertIn("power:hold", m["permissions"])
+        self.assertTrue(next(x for x in m["settings"] if x["key"] == "hold")["default"])
         self.assertIn("network:lan", m["permissions"])
         self.assertEqual([s["key"] for s in m["settings"] if s["type"] == "secret"], ["password"])
         self.assertEqual({c["type"] for c in m["cards"]}, {"status", "list", "sparkline"})

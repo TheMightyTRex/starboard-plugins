@@ -25,6 +25,12 @@ The settings for UPS and power are on its own tab: go to **Settings**, then **Pl
 
 ![UPS and power's Alerts settings, with Low battery at outlined](../../images/ups-power/settings-2-alerts.png)
 
+## Heavy jobs
+
+| Setting | What it does | Default |
+|---|---|---|
+| **Hold Starboard's heavy jobs on battery** | While the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. Activated or deactivated. | Activated |
+
 ## Buttons
 
 - **Check now** asks the UPS straight away, instead of waiting for the next minute. It says whether the UPS is on mains power or on battery, and its charge.

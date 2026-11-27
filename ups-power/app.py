@@ -11,7 +11,10 @@ How each is read (from their own documentation; neither was tried against a real
 - PeaNUT: GET <address>/api/v1/devices/<ups> (or /api/v1/devices for the first one), with HTTP Basic sign-in when it is on.
   Its answer is NUT's variables, flat (battery.charge) or nested (battery: {charge}); both are read.
 
-Pausing heavy jobs while on battery is not here: a plug-in cannot pause Starboard's jobs (see the help).
+Heavy jobs on battery (plug-in API 1.23, permission power:hold): while the UPS is on battery it asks Starboard, once a
+minute, to hold its heavy jobs and downloads for 5 minutes; when mains power is back, or the setting is turned off, it
+lets them go at once. A Starboard that does not know the permission answers 404, which is said on the card and tried
+again each hour. If this plug-in stops, Starboard ends the hold by itself within 5 minutes.
 """
 import base64
 import http.client
@@ -27,7 +30,8 @@ import urllib.request
 import sbplugin as sb
 from sbplugin import band, keep, remember, serve, setting
 
-STATE = {"alerts_api": None, "failures": 0}
+STATE = {"alerts_api": None, "hold_api": None, "failures": 0}
+HOLD_MINUTES = 5
 HOUR = 3600
 SAMPLE_EVERY = 300  # a point on the history every 5 minutes
 HISTORY = 96  # 8 hours of points
@@ -321,6 +325,36 @@ def alert(want, now):
         keep("raised", raised)
 
 
+# Heavy jobs on battery ----------------------------------------------------------------------------------------
+
+def hold_missing():
+    """True when Starboard said it does not know the hold (older than plug-in API 1.23, or the permission not approved),
+    in the last hour."""
+    api = STATE.get("hold_api")
+    return bool(api and api.get("missing") and time.time() - api["at"] < HOUR)
+
+
+def hold(u):
+    """Holds Starboard's heavy jobs while on battery, and lets them go when that is over. What was asked is kept, so a
+    restart while on battery lets them go if the mains power came back meanwhile."""
+    want = setting("hold", True) is True and bool(u) and bool(u.get("known")) and bool(u.get("on_battery"))
+    held = bool(remember("held", False))
+    if not want and not held:
+        return
+    if hold_missing():
+        return
+    body = {"on": True, "reason": "On battery", "minutes": HOLD_MINUTES} if want else {"on": False}
+    try:
+        status = _post_starboard("plugin/hold", body)
+    except (OSError, http.client.HTTPException):
+        return
+    STATE["hold_api"] = {"missing": status in (403, 404, 405), "at": time.time()}
+    if 200 <= status < 300 and held != want:
+        keep("held", want)
+    elif STATE["hold_api"]["missing"] and held:
+        keep("held", False)  # nothing to let go of: Starboard does not know the hold
+
+
 # The job and what is kept --------------------------------------------------------------------------------------
 
 def check(now=None):
@@ -347,6 +381,7 @@ def check(now=None):
         events.append({"at": int(now), "what": "Switched to battery" if u["on_battery"] else "Mains power came back"})
     keep("state", {"ups": u, "history": hist, "events": events[-10:], "checked": now})
     alert(problems(u), now)
+    hold(u)
     return {"said": f"{u['name']}: {'on battery' if u['on_battery'] else 'on mains power'}" + (f", battery {u['charge']:.0f}%" if u["charge"] is not None else "")}
 
 
@@ -394,7 +429,8 @@ def card():
     if "low" in bad:
         return band({"state": "problem", "text": f"Low battery on {u['name']}: {tail}."[:160]}, "problem", s["checked"], "Low battery")
     if u["on_battery"]:
-        return band({"state": "problem", "text": f"On battery power: {tail}."[:160]}, "problem", s["checked"], "On battery")
+        held = " Starboard's heavy jobs are held." if remember("held", False) else ""
+        return band({"state": "problem", "text": f"On battery power: {tail}.{held}"[:160]}, "problem", s["checked"], "On battery")
     if u["replace"]:
         return band({"state": "warning", "text": f"On mains power, but the battery needs replacing: {tail}."[:160]}, "warning", s["checked"], "Replace the battery")
     if not u["known"]:

@@ -38,7 +38,7 @@ FIRST = "2026-11-12"
 # A text-only patch (26 November 2026, DASH-593): each example whose words changed has its own next patch version and
 # one "changes" entry, whatever the shared version is. The image and its pinned digest are not touched.
 TEXT_PATCH = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking", "home-assistant",
-              "download-summary", "disk-forecast", "notifications", "backups-watch", "ups-power", "immich", "watch-stats"}
+              "download-summary", "disk-forecast", "notifications", "backups-watch", "immich", "watch-stats"}
 TEXT_PATCH_DATE = "2026-11-26"
 TEXT_PATCH_CHANGE = "Plainer wording in the text and help pages. How it works has not changed."
 
@@ -524,13 +524,13 @@ serve({"/card": card})
 # 1.2.3 (17 November 2026, design system audit): the examples whose app.py changed name this tag until it is built and
 # pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
 # manifest.
-IMAGE_VERSION = "1.2.8"  # 1.2.8 (27 November 2026, DASH-589): Single sign-on is in the Dockerfile and names this tag until it is built and pinned. 1.2.7 (26 November 2026, DASH-517, DASH-518): UPS and power and Immich are in the Dockerfile; their manifests name this tag until it is built and pinned
+IMAGE_VERSION = "1.2.9"  # 1.2.9 (27 November 2026, DASH-572): UPS and power holds Starboard's heavy jobs on battery. 1.2.8 (27 November 2026, DASH-589): Single sign-on is in the Dockerfile and names this tag until it is built and pinned. 1.2.7 (26 November 2026, DASH-517, DASH-518): UPS and power and Immich are in the Dockerfile; their manifests name this tag until it is built and pinned
 # 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
 # Built again under the same tag for Audio description 1.3.0 (pull request 9) and pinned on 17 November 2026
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = {"single-sign-on"}
+NEW_IN_IMAGE = {"single-sign-on", "ups-power"}  # ups-power: 0.2.0 holds Starboard's heavy jobs on battery (DASH-572)
 # 1.2.7 was built from 152366e (UPS and power 0.1.0 and Immich 0.1.0 app.py included) and pinned on 26 November 2026
 # (sha256:d31add45f768...), checked by listing /app in the pinned image, so both run from it and are published.
 # 1.2.6 was built from 0a0be8a (Notifications 1.4.0 and Backups watch 0.1.0's app.py included) and pinned on 25 November 2026
@@ -724,10 +724,10 @@ Problems page before relying on it.
 
 # 14. UPS and power (DASH-517) -------------------------------------------------------------------------------------
 EXAMPLES["ups-power"] = ({
-    "name": "UPS and power", "version": "0.1.0",
+    "name": "UPS and power", "version": "0.2.0",
     "description": "Load, battery and time left of your UPS on a card, and an alert when the mains power is lost, read from NUT or PeaNUT.",
-    "starboard_api": ">=1.17 <2.0", "_own_changes": True,
-    "permissions": ["network:lan", "alerts:send"],
+    "starboard_api": ">=1.23 <2.0", "_own_changes": True,
+    "permissions": ["network:lan", "alerts:send", "power:hold"],
     "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"]}],
     "resources": {"main": {"memory": 32, "cpus": 0.1}}, "health": "/health",
     "settings": [
@@ -745,6 +745,7 @@ EXAMPLES["ups-power"] = ({
         {"key": "password", "label": "Password", "type": "secret", "group": "The UPS",
          "hint": "PeaNUT's password. Starboard never shows it again."},
         _switch("alerts", "Send alerts through Starboard", "Sends one alert when the mains power is lost, the battery is low, it needs replacing or the UPS cannot be reached. Sends one more when each is over, to where Starboard sends its own alerts.", "Alerts"),
+        _switch("hold", "Hold Starboard's heavy jobs on battery", "While the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs.", "Heavy jobs"),
         {"key": "low_percent", "label": "Low battery at", "type": "number", "unit": "%", "default": 30, "min": 0, "max": 99, "group": "Alerts",
          "hint": "On battery, a charge at or under this counts as low. 0 leaves it to the UPS's own low battery flag."},
         {"key": "low_minutes", "label": "Low battery under", "type": "number", "unit": "minutes", "default": 5, "min": 0, "max": 600, "group": "Alerts",
@@ -760,7 +761,12 @@ EXAMPLES["ups-power"] = ({
                "example": {"series": [{"title": "Load", "points": [21, 23, 22, 40, 23], "unit": "%", "detail": "Latest 23%"},
                                       {"title": "Battery", "points": [100, 100, 100, 100, 100], "unit": "%", "detail": "Latest 100%"}],
                            "note": "One point every 5 minutes for the last 8 hours.", "status": "ok", "updated": 1794694110}}],
-    "changes": [{"version": "0.1.0", "date": "2026-11-25", "added": [
+    "changes": [{"version": "0.2.0", "date": "2026-11-27", "added": [
+        "**Heavy jobs held on battery:** while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can deactivate this in Settings.",
+        "**The card says so:** the Power card says when Starboard's heavy jobs are held."],
+        "changed": ["It needs Starboard 0.40.0 or later (plug-in API 1.23). It asks for one more permission: to hold Starboard's heavy jobs."]},
+        {"version": "0.1.1", "date": "2026-11-26", "changed": ["Plainer wording in the text and help pages. How it works has not changed."]},
+        {"version": "0.1.0", "date": "2026-11-25", "added": [
         "**One card for your UPS:** it says whether you are on mains power or battery, and shows the battery charge, the time left and the load. A list has the voltage and power used.",
         "**Alerts:** through Starboard, once when the mains power is lost, the battery is low, it needs replacing or the UPS cannot be reached. You get one more when each is over.",
         "**NUT or PeaNUT:** it reads NUT's own protocol, or PeaNUT's web address; you choose, and the UPS if there is more than one.",
@@ -777,8 +783,11 @@ before relying on it.
 
 ## Heavy jobs on battery
 
-A plug-in cannot pause Starboard's own heavy jobs, so this version only tells you: the card says **On battery** and an alert
-goes out. Pausing them needs a new plug-in permission in Starboard.
+While the UPS is on battery, this plug-in asks Starboard once a minute to hold its heavy work for 5 minutes: its background
+jobs, scheduled backups, other plug-ins' scheduled jobs and downloads. When the mains power is back it lets them go at
+once, and what was held starts again. If this plug-in stops, Starboard ends the hold by itself within 5 minutes. A job you
+start yourself still runs. It uses the permission `power:hold` (plug-in API 1.23, Starboard 0.40.0). The setting **Hold
+Starboard's heavy jobs on battery** is where you deactivate it.
 """,
 }, "file")
 
