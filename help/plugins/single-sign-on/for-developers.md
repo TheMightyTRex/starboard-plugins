@@ -1,6 +1,6 @@
 # Single sign-on: For developers
 
-How Single sign-on is built, for anyone who wants to change it or make one like it. It is MIT, by TheMightyTRexUK, and works with plug-in API `>=1.17 <2.0`. This is stage 1 of single sign-on in Starboard: the provider itself is not in it yet.
+How Single sign-on is built, for anyone who wants to change it or make one like it. It is MIT, by TheMightyTRexUK, and works with plug-in API `>=1.21 <2.0`. This is stage 1 of single sign-on in Starboard: the provider itself is not in it yet.
 
 ## Its files
 

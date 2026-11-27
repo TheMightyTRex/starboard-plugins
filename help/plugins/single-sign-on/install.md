@@ -6,7 +6,7 @@ This is the first version. It holds an on and off switch and the Tailscale name 
 
 ## Before you begin
 
-- Starboard with plug-in API 1.17 or later (Starboard 0.26.0 or later).
+- Starboard with plug-in API 1.21 or later.
 - The Tailscale name of your server, such as `starboard.tail1234.ts.net`. Read [Settings](settings.md) for where to find it and why you set it only once.
 - Your Starboard password. Adding and removing a plug-in ask for it.
 

@@ -8,7 +8,7 @@
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/single-sign-on",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.17 <2.0",
+ "starboard_api": ">=1.21 <2.0",
  "permissions": [],
  "containers": [
   {
@@ -78,6 +78,7 @@
    }
   }
  ],
+ "switch": "enabled",
  "logo": {
   "file": "logo.svg",
   "alt": "Single sign-on logo"
@@ -87,7 +88,7 @@
    "version": "0.1.0",
    "date": "2026-11-27",
    "added": [
-    "**An on and off switch:** off means nothing runs for single sign-on.",
+    "**An on and off switch:** off means nothing runs for single sign-on. If other plug-ins need it, Starboard names them and asks before it deactivates them too (plug-in API 1.21).",
     "**The provider's address:** the Tailscale name of your server, checked, and kept the first time it is valid, because passkeys are tied to it for ever.",
     "**A warning if the name changes:** the card says passkeys made at the old name will not work, and Use the new address asks before it changes.",
     "**No provider yet:** this version only holds the settings. It makes no network call and starts only when a card asks."

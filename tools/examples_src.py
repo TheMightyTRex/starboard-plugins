@@ -826,7 +826,7 @@ help's Problems page before relying on it.
 EXAMPLES["single-sign-on"] = ({
     "name": "Single sign-on", "version": "0.1.0",
     "description": "One sign-in for your apps and the people who use them. This first version holds the on and off switch and the Tailscale name the provider will live at.",
-    "starboard_api": ">=1.17 <2.0", "_own_changes": True,
+    "starboard_api": ">=1.21 <2.0", "_own_changes": True, "switch": "enabled",
     "permissions": [],
     "containers": [{"name": "main", "image": "", "port": 8080, "volumes": ["data"], "start": "when_needed",
                     "idle_stop_minutes": 5}],
@@ -844,7 +844,7 @@ EXAMPLES["single-sign-on"] = ({
                "example": {"state": "ok", "text": "The provider will live at https://starboard.tail1234.ts.net. Passkeys will be tied to this address. The provider is not in this version yet.",
                            "status": "waiting", "status_label": "Waiting for provider", "updated": 1794694110}}],
     "changes": [{"version": "0.1.0", "date": "2026-11-27", "added": [
-        "**An on and off switch:** off means nothing runs for single sign-on.",
+        "**An on and off switch:** off means nothing runs for single sign-on. If other plug-ins need it, Starboard names them and asks before it deactivates them too (plug-in API 1.21).",
         "**The provider's address:** the Tailscale name of your server, checked, and kept the first time it is valid, because passkeys are tied to it for ever.",
         "**A warning if the name changes:** the card says passkeys made at the old name will not work, and Use the new address asks before it changes.",
         "**No provider yet:** this version only holds the settings. It makes no network call and starts only when a card asks."]}],

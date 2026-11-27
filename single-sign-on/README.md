@@ -34,7 +34,7 @@ Starboard stays the one page you use and the one list of people (Settings, Peopl
 
 ## Add it
 
-Needs Starboard with plug-in API 1.17 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
+Needs Starboard with plug-in API 1.21 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/single-sign-on/starboard-plugin.json`
 

@@ -1,6 +1,6 @@
 [Help centre](../README.md) · Developers · reference
 <!-- help: dev / build -->
-<!-- plugin-api: 1.20 -->
+<!-- plugin-api: 1.21 -->
 
 # Plug-in API 1.15 for the collection
 
@@ -12,6 +12,10 @@ Starboard's help has the full references.
 
 - You want to change a plug-in here, or add one, and need to know what it must do.
 - You are bringing a plug-in of your own up to 1.14, 1.15, 1.16 or 1.17.
+
+## What plug-in API 1.21 added
+
+- `needs_plugins` and `switch`: a plug-in may list the plug-ins it needs, and name its own main switch. Deactivating a plug-in, or saving its switch as inactive, asks first when other active plug-ins need it, names them in plain words, and deactivates them too on a yes. Single sign-on 0.1.0 uses `switch`. Read the [manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html#plug-ins-that-need-another-plug-in-needs_plugins-and-switch).
 
 ## What plug-in API 1.20 added
 

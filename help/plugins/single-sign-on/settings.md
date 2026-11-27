@@ -13,6 +13,10 @@ Its settings are on its own tab: go to **Settings**, then **Plug-ins**, then **S
 
 ![Single sign-on's settings, with This server's Tailscale name outlined](../../images/single-sign-on/settings-2-name.png)
 
+## When other plug-ins need it
+
+If another plug-in needs Single sign-on, Starboard asks before you deactivate it or save its switch as inactive. The question names those plug-ins and says they will be deactivated too. Nothing is deleted, and you can activate each again. Choose **Cancel** to leave everything as it is.
+
 ## Passkeys are tied to the address for ever
 
 A passkey is made for one web address. A passkey made at `starboard.tail1234.ts.net` does not work at any other address, and Starboard cannot move it. If the address changes, every person makes their passkeys again.

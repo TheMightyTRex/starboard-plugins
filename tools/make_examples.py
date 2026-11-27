@@ -118,7 +118,7 @@ def main():
             m["update"] = UPDATE_STEPS[pid]
         order = ["manifest_version", "id", "name", "version", "description", "author", "licence", "homepage", "support_url",
                  "starboard_api", "permissions", "needs", "containers", "resources", "health", "settings", "setup_required",
-                 "actions", "cards", "events", "jobs", "styles", "notices", "update", "logo", "changes"]
+                 "actions", "cards", "events", "jobs", "styles", "notices", "update", "switch", "logo", "changes"]
         m = {k: m[k] for k in order if k in m}
         # One shared image for every example (12 November 2026): pinned by digest once GitHub has built it.
         for c in m.get("containers") or []:
