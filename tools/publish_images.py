@@ -145,7 +145,16 @@ def main(argv):
         digest, revision = registry(t["repo"], t["tag"])
         label = f"{t['name']} ({t['repo']}:{t['tag']})"
         if not digest or not DIGEST.match(digest):
-            print(f"{label}: not built yet")
+            # A version bumped for words, help or a manifest change builds no new image (the image workflows run only when
+            # the image's own files change), so its tag never exists. When the digest already pinned came from the same
+            # files, there is nothing to build and nothing to pin (DASH-592).
+            _, had = registry(t["repo"], have) if DIGEST.match(have) else (None, None)
+            if had and same_files(had, t["paths"]):
+                print(f"{label}: no new image needed; the pinned image {have[:19]} was built from {had[:7]} and its files are unchanged")
+            elif have:
+                print(f"{label}: not built yet; the files changed since the pinned image was built, so the image workflow must run")
+            else:
+                print(f"{label}: not built yet")
         elif digest == have:
             print(f"{label}: already pinned")
         elif not revision:

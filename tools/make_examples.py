@@ -235,6 +235,50 @@ def versions(pid, m):
          "manifest_sha256": old["sha256"]}]}
 
 
+# What each plug-in replaces or adds to (DASH-585, plug-in API 1.23): one plain line, up to 140 characters, shown on Starboard's
+# Catalogue card and in the warning before install. A manifest may carry the same line in `replaces_or_adds`; the manifest's is used
+# when it has one, so a plug-in moves the line into its manifest the next time it changes. Each line says what the plug-in really does.
+NOTES = {
+    "audio-description": "Adds to Jellyfin and Reelix: finds described sound tracks, plays them for people who choose it, and prefers releases that have one.",
+    "audio-description-tracks": "Adds to Jellyfin: attaches a description track you already have to its film or episode.",
+    "backups-watch": "Adds to Starboard: a dashboard card and an alert for your Backrest or Kopia backups. Replaces nothing.",
+    "calibre-library": "Adds to Calibre-Web: makes the Calibre library it opens, from your books folder. Your books are never changed.",
+    "calibre-web": "Stands alone: a separate book reader app. It reads your books folder and never changes it.",
+    "checkrr": "Adds to Reelix and Jellyfin: reports damaged files each Sunday night. It never deletes, moves or replaces one.",
+    "direct-play": "Adds to Jellyfin: stops it converting files as they play, one file at a time.",
+    "disk-forecast": "Adds to Starboard: a dashboard card that says when each disk will fill. Replaces nothing.",
+    "dns-blocking": "Adds to Starboard: a dashboard card from Pi-hole or AdGuard Home. Replaces nothing.",
+    "download-summary": "Adds to Starboard: a dashboard card with what you downloaded, from the queue it already sees.",
+    "home-assistant": "Adds to Starboard: a dashboard sentence from the Home Assistant things you choose.",
+    "immich": "Adds to Starboard: dashboard cards from your Immich server. Immich itself stays as it is.",
+    "jellystat": "Adds to Jellyfin: a separate watch statistics app with its own database. Replaces nothing.",
+    "kavita": "Stands alone: a separate reader for comics, manga and books. It never changes your folders.",
+    "library-cleanup": "Adds to Jellyfin and Reelix: moves watched or unwatched films and series to the holding folder. It never deletes.",
+    "library-health": "Adds to Jellyfin: lists films and series with no poster, description or year.",
+    "line-speed": "Adds to Starboard: a nightly internet speed test, outside download hours.",
+    "maintainerr": "Adds to Jellyfin: a separate app with clean-up rules. It changes nothing until you give it a rule.",
+    "most-watched": "Adds to Jellyfin: a dashboard card with what most people watched this week.",
+    "navidrome": "Stands alone: a separate music server for Subsonic apps. It never changes your music folder.",
+    "notifications": "Adds to Starboard: sends its events to email, Telegram, Discord and more. Starboard's own alerts stay.",
+    "outside-services": "Adds to Starboard: checks things outside this server. Starboard's own app checks stay.",
+    "philips-hue": "Adds to Starboard: controls your Hue lights through the Hue bridge on your home network. Nothing goes to the Hue cloud.",
+    "picture-shrinker": "Adds to Jellyfin: shrinks the posters and photos of people it keeps, with or without a backup of each original.",
+    "remote-access": "Adds to Starboard, Jellyfin and Audiobookshelf: reach them away from home through Tailscale or Cloudflare Tunnel.",
+    "seerr": "Adds to Jellyfin: a requests page. Reelix already has requests, so most people do not need it.",
+    "single-sign-on": "Adds to Starboard: one sign-in for your apps. This first version holds only the switch and the Tailscale name.",
+    "styles": "Adds to Starboard: more styles in Display. The styles that come with Starboard stay.",
+    "tdarr": "Adds to your library: a separate app that converts files to save space in quiet hours.",
+    "themearr": "Adds to Jellyfin and Reelix: a theme tune in each film's folder. It needs a RapidAPI key.",
+    "tv-station": "Adds to Jellyfin: your own TV channels in Live TV, made from your films and series.",
+    "ups-power": "Adds to Starboard: a dashboard card and an alert for your UPS, read from NUT or PeaNUT.",
+    "uptime-kuma": "Adds to Starboard: a separate app for more status checks. Starboard's own checks stay.",
+    "vpn-check": "Adds to Starboard: shows the address and country your VPN gives. Replaces nothing.",
+    "watch-stats": "Adds to Jellyfin: what was watched, by whom and when, from Playback Reporting. No second database.",
+    "watching-now": "Adds to Jellyfin: a dashboard card of who is watching now.",
+    "wizarr": "Adds to Jellyfin: a separate app that makes invitation links for new Jellyfin users."
+}
+
+
 def write_catalogue():
     rows = []
     for pid in sorted(os.listdir(ROOT)):
@@ -246,6 +290,10 @@ def write_catalogue():
                      "author": m["author"], "permissions": m["permissions"], "version": m["version"], "starboard_api": m["starboard_api"],
                      "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
                      "published": published(m), "recommended": pid in RECOMMENDED})
+        note = m.get("replaces_or_adds") or NOTES.get(pid)
+        if not note:
+            raise ValueError(f"{pid}: add a line to NOTES in tools/make_examples.py saying what it replaces or adds to")
+        rows[-1]["replaces_or_adds"] = note
         rows[-1].update(logo_fields(pid, m))
         rows[-1].update(versions(pid, m))
         if pid in REST:
