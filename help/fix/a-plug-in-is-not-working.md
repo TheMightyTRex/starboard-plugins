@@ -13,7 +13,7 @@ step: Open its tab | Settings, then Plug-ins, then its name
 q: What does its state say?
   Needs setting up -> 1
   Did not start or Failed -> q2
-  Not supported -> 3
+  Needs an update -> 3
   Active, but a card is wrong -> a-card-says-no-answer.md
 q2: Did it stop soon after an update?
   Yes -> 4

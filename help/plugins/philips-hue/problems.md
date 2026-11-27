@@ -6,7 +6,7 @@ Find what is wrong with Philips Hue from what its tab or its cards say, then fol
 title: Find your answer
 start: Philips Hue is not working as it should
 q: What does its tab say?
-  Failed or Not supported -> 1
+  Failed or Needs an update -> 1
   Active, but something is wrong -> q2
 q2: What is wrong?
   Pairing does not find the bridge -> 2
@@ -32,7 +32,7 @@ q2: What is wrong?
 
 1. On its tab, read the message under its state: it says why it stopped.
 2. Select **Try again**.
-3. If it says **Not supported**, your Starboard's plug-in API is older than 1.16: update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
+3. If it says **Needs an update**, your Starboard's plug-in API is older than 1.16: update Starboard. Read [Update Starboard](https://themightytrex.github.io/starboard/help/topics/update-starboard.html).
 4. Still failing: go to **System**, then **Logs**, and find its name.
 
 ## Give the bridge's address

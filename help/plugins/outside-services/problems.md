@@ -7,7 +7,7 @@ title: Find your answer
 start: Uptime and status is not working as it should
 q: What does its tab say?
   Failed or Not answering -> 1
-  Not supported -> 2
+  Needs an update -> 2
   Active, but something is wrong -> q2
 q2: What is wrong?
   Add a check says what to change -> 3
