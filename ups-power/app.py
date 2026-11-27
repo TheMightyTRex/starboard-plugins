@@ -11,7 +11,7 @@ How each is read (from their own documentation; neither was tried against a real
 - PeaNUT: GET <address>/api/v1/devices/<ups> (or /api/v1/devices for the first one), with HTTP Basic sign-in when it is on.
   Its answer is NUT's variables, flat (battery.charge) or nested (battery: {charge}); both are read.
 
-Heavy jobs on battery (plug-in API 1.23, permission power:hold): while the UPS is on battery it asks Starboard, once a
+Heavy jobs on battery (plug-in API 1.24, permission power:hold): while the UPS is on battery it asks Starboard, once a
 minute, to hold its heavy jobs and downloads for 5 minutes; when mains power is back, or the setting is turned off, it
 lets them go at once. A Starboard that does not know the permission answers 404, which is said on the card and tried
 again each hour. If this plug-in stops, Starboard ends the hold by itself within 5 minutes.
@@ -328,7 +328,7 @@ def alert(want, now):
 # Heavy jobs on battery ----------------------------------------------------------------------------------------
 
 def hold_missing():
-    """True when Starboard said it does not know the hold (older than plug-in API 1.23, or the permission not approved),
+    """True when Starboard said it does not know the hold (older than plug-in API 1.24, or the permission not approved),
     in the last hour."""
     api = STATE.get("hold_api")
     return bool(api and api.get("missing") and time.time() - api["at"] < HOUR)

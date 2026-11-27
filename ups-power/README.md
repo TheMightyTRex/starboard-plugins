@@ -53,7 +53,7 @@ before relying on it.
 While the UPS is on battery, this plug-in asks Starboard once a minute to hold its heavy work for 5 minutes: its background
 jobs, scheduled backups, other plug-ins' scheduled jobs and downloads. When the mains power is back it lets them go at
 once, and what was held starts again. If this plug-in stops, Starboard ends the hold by itself within 5 minutes. A job you
-start yourself still runs. It uses the permission `power:hold` (plug-in API 1.23, Starboard 0.40.0). The setting **Hold
+start yourself still runs. It uses the permission `power:hold` (plug-in API 1.24, Starboard 0.40.0). The setting **Hold
 Starboard's heavy jobs on battery** is where you deactivate it.
 
 ## Updating
@@ -62,7 +62,7 @@ Before an update, it finishes any check or message it is part way through and st
 
 ## Add it
 
-Needs Starboard with plug-in API 1.23 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
+Needs Starboard with plug-in API 1.24 or later. A Starboard with an older plug-in API is offered the version before. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**, and find it under **System**. Or, under **Add one from elsewhere**, give this address:
 
 `https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/ups-power/starboard-plugin.json`
 

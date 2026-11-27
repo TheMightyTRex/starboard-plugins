@@ -726,7 +726,7 @@ Problems page before relying on it.
 EXAMPLES["ups-power"] = ({
     "name": "UPS and power", "version": "0.2.0",
     "description": "Load, battery and time left of your UPS on a card, and an alert when the mains power is lost, read from NUT or PeaNUT.",
-    "starboard_api": ">=1.23 <2.0", "_own_changes": True,
+    "starboard_api": ">=1.24 <2.0", "_own_changes": True,
     "permissions": ["network:lan", "alerts:send", "power:hold"],
     "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"]}],
     "resources": {"main": {"memory": 32, "cpus": 0.1}}, "health": "/health",
@@ -764,7 +764,7 @@ EXAMPLES["ups-power"] = ({
     "changes": [{"version": "0.2.0", "date": "2026-11-27", "added": [
         "**Heavy jobs held on battery:** while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can deactivate this in Settings.",
         "**The card says so:** the Power card says when Starboard's heavy jobs are held."],
-        "changed": ["It needs Starboard 0.40.0 or later (plug-in API 1.23). It asks for one more permission: to hold Starboard's heavy jobs."]},
+        "changed": ["It needs Starboard 0.40.0 or later (plug-in API 1.24). It asks for one more permission: to hold Starboard's heavy jobs."]},
         {"version": "0.1.1", "date": "2026-11-26", "changed": ["Plainer wording in the text and help pages. How it works has not changed."]},
         {"version": "0.1.0", "date": "2026-11-25", "added": [
         "**One card for your UPS:** it says whether you are on mains power or battery, and shows the battery charge, the time left and the load. A list has the voltage and power used.",
@@ -786,7 +786,7 @@ before relying on it.
 While the UPS is on battery, this plug-in asks Starboard once a minute to hold its heavy work for 5 minutes: its background
 jobs, scheduled backups, other plug-ins' scheduled jobs and downloads. When the mains power is back it lets them go at
 once, and what was held starts again. If this plug-in stops, Starboard ends the hold by itself within 5 minutes. A job you
-start yourself still runs. It uses the permission `power:hold` (plug-in API 1.23, Starboard 0.40.0). The setting **Hold
+start yourself still runs. It uses the permission `power:hold` (plug-in API 1.24, Starboard 0.40.0). The setting **Hold
 Starboard's heavy jobs on battery** is where you deactivate it.
 """,
 }, "file")

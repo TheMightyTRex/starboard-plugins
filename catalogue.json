@@ -926,7 +926,7 @@
     "power:hold"
    ],
    "version": "0.2.0",
-   "starboard_api": ">=1.23 <2.0",
+   "starboard_api": ">=1.24 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/ups-power/starboard-plugin.json",
    "published": false,
    "recommended": false,

@@ -7,7 +7,7 @@
 - The card says so: the Power card says when Starboard's heavy jobs are held.
 
 ### Changed
-- It needs Starboard 0.40.0 or later (plug-in API 1.23). It asks for one more permission: to hold Starboard's heavy jobs.
+- It needs Starboard 0.40.0 or later (plug-in API 1.24). It asks for one more permission: to hold Starboard's heavy jobs.
 
 ## 0.1.1 (26 November 2026)
 
