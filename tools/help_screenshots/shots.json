@@ -1148,24 +1148,6 @@
       "topic": "dashboard-card",
       "page": "dashboard.html",
       "plugin": "single-sign-on"
-    },
-    {
-      "plugin": "single-sign-on",
-      "phase": "present",
-      "file": "settings-3-actions.png",
-      "height": 1000,
-      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); const t = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === 'Single sign-on'); if (t) { t.click(); await w(1200); } const b = [...document.querySelectorAll('button')].find((x) => x.textContent.trim() === 'Check the name'); b.dataset.shot = 'x'; b.scrollIntoView({ block: 'center' }); await w(500);",
-      "marks": [
-        {
-          "t": "$[data-shot=x]",
-          "side": "top",
-          "tail": 60
-        }
-      ],
-      "steps": [],
-      "alt": "Single sign-on's actions, with Check the name outlined",
-      "topic": "settings",
-      "page": "settings-plugin.html?id=single-sign-on"
     }
   ]
 }
