@@ -9,14 +9,20 @@ real server, see the help). The key needs the permissions server.statistics, ser
 older Immich that has no /api/queues):
 - GET /api/server/statistics: photos, videos, usage, usagePhotos, usageVideos, usageByUser.
 - GET /api/server/storage: diskSizeRaw, diskUseRaw, diskAvailableRaw, diskUsagePercentage.
+The job queues page (DASH-578) also changes queues, with a key that has queue.update (job.create on an older Immich):
+- PUT /api/queues/<name> {"isPaused": true or false} pauses or resumes a queue; DELETE /api/queues/<name>/jobs {"failed": true}
+  clears its failed jobs. On an older Immich, PUT /api/jobs/<name> {"command": "pause" | "resume" | "clear-failed", "force": false}.
+  Neither was tried against a real server.
 - GET /api/queues: a list of {name, isPaused, statistics: {active, waiting, failed, delayed, paused, completed}}; on an older
   Immich, GET /api/jobs: {name: {jobCounts: {...}, queueStatus: {isActive, isPaused}}}.
 """
 import http.client
+import json
 import os
 import re
 import time
 import urllib.error
+import urllib.parse
 
 import sbplugin as sb
 from sbplugin import band, serve, setting
@@ -194,7 +200,82 @@ def jobs():
     return band({"state": "ok", "text": "Nothing is waiting. Every queue is idle."}, "idle")
 
 
-ROUTES = {"/library": library, "/storage": disk, "/jobs": jobs}
+# The job queues page (DASH-578) -------------------------------------------------------------------------------------
+
+def _send(method, path, body):
+    key = str(setting("api_key", "") or "")
+    return sb.fetch(_base() + "/api" + path, {"x-api-key": key}, data=body, method=method, timeout=10, limit=64 * 1024)
+
+
+def _change(name, command):
+    """pause, resume or clear-failed for one queue, through /api/queues, or /api/jobs on an Immich from before it."""
+    q = urllib.parse.quote(name, safe="")
+    try:
+        if command == "clear-failed":
+            return _send("DELETE", f"/queues/{q}/jobs", {"failed": True})
+        return _send("PUT", f"/queues/{q}", {"isPaused": command == "pause"})
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            raise
+    return _send("PUT", f"/jobs/{q}", {"command": command, "force": False})
+
+
+def _screen_item(name, active, waiting, failed, paused):
+    bits = [f"{count(active)} working", f"{count(waiting)} waiting"] + ([f"{count(failed)} failed"] if failed else [])
+    label = "Paused" if paused else "Failed jobs" if failed else "Working" if active else "Idle"
+    item = {"id": name, "title": NAMES.get(name, name)[:120], "detail": ", ".join(bits), "on": not paused, "actions": ["toggle"],
+            "state": "warning" if paused or failed else "ok", "state_label": label}
+    if failed:
+        item["choice"] = {"label": "Failed jobs", "value": "", "options": [["", "Leave them"], ["clear", "Clear failed jobs"]]}
+    return item
+
+
+def screen(said=None):
+    """The queues as a list Starboard draws: a switch to pause or resume each, and a choice to clear its failed jobs."""
+    n = _setup()
+    if n:
+        return {"type": "list", "title": "Job queues", "items": [], "intro": n["text"]}
+    try:
+        q = read_queues()
+    except Exception as e:  # noqa: BLE001 - said on the page
+        return {"type": "list", "title": "Job queues", "items": [], "intro": f"Immich did not answer: {_why(e)}"[:400]}
+    out = {"type": "list", "title": "Job queues",
+           "intro": "Each switch pauses or resumes one queue. Starboard asks Immich only when this page is open. "
+                    "Your API key needs the permission queue.update (job.create on an older Immich) to change a queue.",
+           "items": [_screen_item(*x) for x in q]}
+    if said:
+        out["said"] = said[:200]
+    return out
+
+
+def act(body):
+    n = _setup()
+    if n:
+        raise ValueError(n["text"])
+    action, name, value = str(body.get("action", "")), str(body.get("id", "")), str(body.get("value", ""))
+    queues_now = {x[0]: x for x in read_queues()}
+    if name not in queues_now:
+        raise ValueError("Immich has no such queue")
+    if action == "toggle":
+        pause = not queues_now[name][4]
+        command, said = ("pause", "Paused") if pause else ("resume", "Resumed")
+    elif action == "choose" and value == "clear":
+        command, said = "clear-failed", "Cleared the failed jobs of"
+    elif action == "choose" and value == "":
+        return screen()
+    else:
+        raise ValueError("Choose pause, resume or clear failed jobs")
+    try:
+        _change(name, command)
+    except urllib.error.HTTPError as e:
+        if e.code in (401, 403):
+            raise ValueError("Immich refused. Give the API key the permission queue.update (job.create on an older Immich)") from None
+        raise ValueError(_why(e)) from None
+    CACHE.clear()
+    return screen(f"{said} {NAMES.get(name, name)}")
+
+
+ROUTES = {"/library": library, "/storage": disk, "/jobs": jobs, "/screen/queues": screen, ("POST", "/screen/queues"): act}
 
 if __name__ == "__main__":
     serve(ROUTES, port=int(os.environ.get("PORT", 8080)))

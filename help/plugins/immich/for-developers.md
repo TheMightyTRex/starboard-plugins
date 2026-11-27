@@ -41,6 +41,8 @@ The image is the shared examples image. Until it is built and pinned by digest, 
 - The key is read from the settings each time and is never written to `/data`, a card or an error.
 - The storage card's limits, 90% and 98%, are the same as Starboard's own disk card.
 
+- **Job queues page:** a `custom` setting, `queues`, at `/screen/queues`. `GET` draws one row for each queue; `POST` takes `toggle` (pause or resume) and `choose` with `clear` (clear failed jobs). Immich is asked with `PUT /api/queues/<name>` and `DELETE /api/queues/<name>/jobs`, or `PUT /api/jobs/<name>` on an older Immich. Not tried against a real Immich.
+
 ## Find out more
 
 - [The plug-in collection's developer pages](../../developers/plug-in-api.md)

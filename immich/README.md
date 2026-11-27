@@ -1,6 +1,6 @@
 # Immich
 
-Photo and video counts, storage used and the job queue of your Immich server on cards.
+Photo and video counts, storage used and the job queues of your Immich server on cards, and a page to pause, resume and clear them.
 
 An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
@@ -15,10 +15,14 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 - **Immich storage**: a list card.
 - **Immich jobs**: a status card.
 
+## In its section of Settings, Plug-ins
+
+- **Job queues**: a table to read.
+
 ## Settings
 
 - **Immich's address**: Such as http://192.0.2.10:2283, without /api on the end.
-- **API key**: Made in Immich under Account settings, API keys. Give it only the permissions server.statistics, server.storage and queue.read (job.read for an older Immich). Starboard never shows it again.
+- **API key**: Made in Immich under Account settings, API keys. Give it the permissions server.statistics, server.storage and queue.read (job.read for an older Immich), and queue.update (job.create) to pause, resume or clear queues from Starboard. Starboard never shows it again.
 
 ## What it reads
 
@@ -28,7 +32,9 @@ Immich's own API, with your API key in the `x-api-key` header, read only:
 - `GET /api/server/storage`: how full the disk Immich keeps its library on is.
 - `GET /api/queues` (or `GET /api/jobs` on an Immich from before it): each job queue's active, waiting and failed jobs.
 
-It never changes anything in Immich. It was not tried against a real server when this version was written: read the
+The cards never change anything in Immich. The job queues page changes a queue only when you use its switch or its choice,
+with `PUT /api/queues/<name>` (`isPaused`) and `DELETE /api/queues/<name>/jobs` (`failed`), or `PUT /api/jobs/<name>` on an
+older Immich. It was not tried against a real server when this version was written: read the
 help's Problems page before relying on it.
 
 ## Add it

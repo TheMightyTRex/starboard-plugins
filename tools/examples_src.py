@@ -38,7 +38,7 @@ FIRST = "2026-11-12"
 # A text-only patch (26 November 2026, DASH-593): each example whose words changed has its own next patch version and
 # one "changes" entry, whatever the shared version is. The image and its pinned digest are not touched.
 TEXT_PATCH = {"vpn-check", "line-speed", "watching-now", "most-watched", "library-health", "dns-blocking", "home-assistant",
-              "download-summary", "disk-forecast", "notifications", "backups-watch", "immich", "watch-stats"}
+              "download-summary", "disk-forecast", "notifications", "backups-watch", "watch-stats"}
 TEXT_PATCH_DATE = "2026-11-26"
 TEXT_PATCH_CHANGE = "Plainer wording in the text and help pages. How it works has not changed."
 
@@ -524,13 +524,13 @@ serve({"/card": card})
 # 1.2.3 (17 November 2026, design system audit): the examples whose app.py changed name this tag until it is built and
 # pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
 # manifest.
-IMAGE_VERSION = "1.2.9"  # 1.2.9 (27 November 2026, DASH-572): UPS and power holds Starboard's heavy jobs on battery. 1.2.8 (27 November 2026, DASH-589): Single sign-on is in the Dockerfile and names this tag until it is built and pinned. 1.2.7 (26 November 2026, DASH-517, DASH-518): UPS and power and Immich are in the Dockerfile; their manifests name this tag until it is built and pinned
+IMAGE_VERSION = "1.2.10"  # 1.2.10 (27 November 2026, DASH-578): Immich has a job queues page. 1.2.9 (27 November 2026, DASH-572): UPS and power holds Starboard's heavy jobs on battery. 1.2.8 (27 November 2026, DASH-589): Single sign-on is in the Dockerfile and names this tag until it is built and pinned. 1.2.7 (26 November 2026, DASH-517, DASH-518): UPS and power and Immich are in the Dockerfile; their manifests name this tag until it is built and pinned
 # 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
 # Built again under the same tag for Audio description 1.3.0 (pull request 9) and pinned on 17 November 2026
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = {"single-sign-on", "ups-power"}  # ups-power: 0.2.0 holds Starboard's heavy jobs on battery (DASH-572)
+NEW_IN_IMAGE = {"single-sign-on", "ups-power", "immich"}  # ups-power: 0.2.0 holds Starboard's heavy jobs on battery (DASH-572)
 # 1.2.7 was built from 152366e (UPS and power 0.1.0 and Immich 0.1.0 app.py included) and pinned on 26 November 2026
 # (sha256:d31add45f768...), checked by listing /app in the pinned image, so both run from it and are published.
 # 1.2.6 was built from 0a0be8a (Notifications 1.4.0 and Backups watch 0.1.0's app.py included) and pinned on 25 November 2026
@@ -793,8 +793,8 @@ Starboard's heavy jobs on battery** is where you deactivate it.
 
 # 15. Immich (DASH-518) ---------------------------------------------------------------------------------------------
 EXAMPLES["immich"] = ({
-    "name": "Immich", "version": "0.1.0",
-    "description": "Photo and video counts, storage used and the job queue of your Immich server on cards.",
+    "name": "Immich", "version": "0.2.0",
+    "description": "Photo and video counts, storage used and the job queues of your Immich server on cards, and a page to pause, resume and clear them.",
     "starboard_api": ">=1.17 <2.0", "_own_changes": True,
     "permissions": ["network:lan"],
     "containers": [{"name": "main", "image": "", "port": 8080, "network": "lan", "volumes": ["data"], "start": "when_needed",
@@ -804,7 +804,9 @@ EXAMPLES["immich"] = ({
         {"key": "address", "label": "Immich's address", "type": "address", "group": "Immich", "required": True,
          "hint": "Such as http://192.0.2.10:2283, without /api on the end."},
         {"key": "api_key", "label": "API key", "type": "secret", "group": "Immich", "required": True,
-         "hint": "Made in Immich under Account settings, API keys. Give it only the permissions server.statistics, server.storage and queue.read (job.read for an older Immich). Starboard never shows it again."},
+         "hint": "Made in Immich under Account settings, API keys. Give it the permissions server.statistics, server.storage and queue.read (job.read for an older Immich), and queue.update (job.create) to pause, resume or clear queues from Starboard. Starboard never shows it again."},
+        {"key": "queues", "label": "Job queues", "type": "custom", "choices": "/screen/queues", "group": "Immich",
+         "hint": "Pause or resume each queue, and clear its failed jobs, without opening Immich. Changing a queue needs the permission queue.update on the API key."},
     ],
     "cards": [{"id": "library", "title": "Immich library", "type": "stat", "path": "/library", "format": "number", "refresh_minutes": 5,
                "example": {"value": 48210, "label": "photos and videos", "note": "44,870 photos, 3,340 videos, 412.6 GB", "status": "ok", "updated": 1794694110}},
@@ -813,7 +815,12 @@ EXAMPLES["immich"] = ({
                                      {"title": "The disk Immich is on", "detail": "1.2 TB used of 4.0 TB (30%), 2.8 TB free"}], "status": "ok", "updated": 1794694110}},
               {"id": "jobs", "title": "Immich jobs", "type": "status", "path": "/jobs", "refresh_minutes": 1,
                "example": {"state": "ok", "text": "Working: Thumbnails, Smart search. 340 waiting.", "status": "working", "status_label": "Working", "updated": 1794694110}}],
-    "changes": [{"version": "0.1.0", "date": "2026-11-25", "added": [
+    "changes": [{"version": "0.2.0", "date": "2026-11-27", "added": [
+        "**A page for the job queues:** in Settings, Plug-ins, Immich, each queue has a switch to pause or resume it and a choice to clear its failed jobs, so you do not need Immich's own pages, which are hard to use with a keyboard or a screen reader.",
+        "**Only when open:** Starboard asks Immich for the queues only while the page is open."],
+        "changed": ["To pause, resume or clear a queue, give the API key the permission queue.update (job.create on an older Immich). The cards work as before without it."]},
+        {"version": "0.1.1", "date": "2026-11-26", "changed": ["Plainer wording in the text and help pages. How it works has not changed."]},
+        {"version": "0.1.0", "date": "2026-11-25", "added": [
         "**Three cards for Immich:** the photos and videos, where the space goes, how full the disk is, and what the job queues are doing.",
         "**Failed jobs** are said on the jobs card, so a stuck queue does not hide.",
         "**Light:** it runs only when a card asks, keeps each answer for a minute, and rests five minutes after; nothing at rest.",
@@ -826,7 +833,9 @@ Immich's own API, with your API key in the `x-api-key` header, read only:
 - `GET /api/server/storage`: how full the disk Immich keeps its library on is.
 - `GET /api/queues` (or `GET /api/jobs` on an Immich from before it): each job queue's active, waiting and failed jobs.
 
-It never changes anything in Immich. It was not tried against a real server when this version was written: read the
+The cards never change anything in Immich. The job queues page changes a queue only when you use its switch or its choice,
+with `PUT /api/queues/<name>` (`isPaused`) and `DELETE /api/queues/<name>/jobs` (`failed`), or `PUT /api/jobs/<name>` on an
+older Immich. It was not tried against a real server when this version was written: read the
 help's Problems page before relying on it.
 """,
 }, "file")
