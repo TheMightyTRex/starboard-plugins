@@ -302,7 +302,12 @@ class Quiet(unittest.TestCase):
         self.assertIn("Held", out["said"])
         self.assertEqual(self.calls, [])
         self.assertEqual(len(self.app.remember("held")), 1)
-        self.assertIn("1 held", self.app.card()["text"] if self.app.in_quiet() else "1 held")
+        # The card is read at a fixed time, so the test gives the same answer at any hour (DASH-592: it failed when the
+        # computer's own clock was inside the quiet hours, as the GitHub runner's was at midnight UTC).
+        with mock.patch.object(self.app.time, "time", return_value=at(23, 30)):
+            self.assertIn("1 held", self.app.card()["text"])
+        with mock.patch.object(self.app.time, "time", return_value=at(12)):
+            self.assertNotIn("held", self.app.card()["text"])
 
     def test_an_urgent_alert_still_goes_at_once(self):
         for name in ("app.down", "disk.nearly_full", "disk.changed"):

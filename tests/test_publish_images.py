@@ -1,5 +1,7 @@
 """tools/publish_images.py: pins a built image only when it was built from the files there now (17 November 2026)."""
+import contextlib
 import glob
+import io
 import os
 import re
 import subprocess
@@ -110,6 +112,30 @@ class Pinning(unittest.TestCase):
         self.assertEqual(self.run_main(D1, None, True), "")
         self.assertEqual(self.run_main(None, None, True), "")
         self.assertEqual(self.run_main(D1, "abc1234", True), D1)
+
+    def said(self, tag_found, pinned_revision, same):
+        """What main says when the version's tag is not in the registry but a digest is pinned (DASH-592)."""
+        pi.pin(self.t, D2)
+        def reg(repo, ref):
+            return (None, None) if ref == self.t["tag"] else (ref, pinned_revision)
+        out = io.StringIO()
+        with mock.patch.object(pi, "targets", return_value=[self.t]), mock.patch.object(pi, "registry", side_effect=reg), \
+             mock.patch.object(pi, "same_files", return_value=same), contextlib.redirect_stdout(out):
+            pi.main([])
+        return out.getvalue(), pi.pinned(self.t)
+
+    def test_a_version_bumped_for_words_needs_no_new_image(self):
+        text, kept = self.said(False, "abc1234", True)
+        self.assertIn("no new image needed", text)
+        self.assertNotIn("not built yet", text)
+        self.assertEqual(kept, D2)
+
+    def test_a_changed_file_since_the_pinned_image_is_still_reported(self):
+        text, kept = self.said(False, "abc1234", False)
+        self.assertIn("not built yet", text)
+        self.assertEqual(kept, D2)
+        text, _ = self.said(False, None, True)
+        self.assertIn("not built yet", text)
 
     def test_same_files_compares_with_git(self):
         head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()

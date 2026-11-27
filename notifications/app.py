@@ -481,11 +481,11 @@ def card():
     if not active():
         return band({"state": "warning", "text": "No channel is active. Activate one in Settings, Plug-ins, Notifications."},
                     "needs_setup", label="No channel active")
-    if not real:
-        return band({"state": "ok", "text": f"Ready to send by {', '.join(CHANNELS[c] for c in active())}. Nothing sent yet."}, "ready")
     held = len(remember("held", []) or [])
     if held and in_quiet():
         return band({"state": "ok", "text": f"Quiet hours. {held} held until they end."}, "ok", label="Quiet hours")
+    if not real:
+        return band({"state": "ok", "text": f"Ready to send by {', '.join(CHANNELS[c] for c in active())}. Nothing sent yet."}, "ready")
     last = real[-1]
     when = time.strftime("%a %H:%M", time.localtime(last["at"]))
     if last["failed"]:

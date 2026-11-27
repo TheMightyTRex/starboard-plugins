@@ -588,6 +588,11 @@ def main():
                 break
             except OSError:
                 time.sleep(0.25)
+        else:  # DASH-592: ups-power once refused every request in the first full run and left no word why; say what the container said
+            state = subprocess.run(["docker", "inspect", "-f", "{{.State.Status}} exit {{.State.ExitCode}}", name], capture_output=True, text=True).stdout.strip()
+            said = subprocess.run(["docker", "logs", "--tail", "5", name], capture_output=True, text=True)
+            print(f"  {pid}: /health did not answer in 10 seconds; the container is {state or 'not there'}: "
+                  f"{(said.stdout + said.stderr).strip()[-300:] or 'it said nothing'}")
         for post in ([POSTS[pid]] if isinstance(POSTS.get(pid), str) else POSTS.get(pid) or []):
             path, body = (post, None) if isinstance(post, str) else post
             try:
