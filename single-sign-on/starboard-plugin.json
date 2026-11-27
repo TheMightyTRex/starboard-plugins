@@ -1,0 +1,97 @@
+{
+ "manifest_version": 1,
+ "id": "single-sign-on",
+ "name": "Single sign-on",
+ "version": "0.1.0",
+ "description": "One sign-in for your apps and the people who use them. This first version holds the on and off switch and the Tailscale name the provider will live at.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/single-sign-on",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.17 <2.0",
+ "permissions": [],
+ "containers": [
+  {
+   "name": "main",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.8",
+   "port": 8080,
+   "volumes": [
+    "data"
+   ],
+   "start": "when_needed",
+   "idle_stop_minutes": 5,
+   "env": {
+    "EXAMPLE": "single-sign-on"
+   }
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 32,
+   "cpus": 0.1
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "enabled",
+   "label": "Use single sign-on",
+   "type": "switch",
+   "default": false,
+   "group": "Single sign-on",
+   "hint": "Leave it off on a server only you use. Off means nothing runs for it. To stop the plug-in completely, deactivate it in Settings, Plug-ins, Manage."
+  },
+  {
+   "key": "tailscale_name",
+   "label": "This server's Tailscale name",
+   "type": "text",
+   "group": "Single sign-on",
+   "hint": "Such as starboard.tail1234.ts.net, found in Tailscale's admin page under Machines. Set it once. Passkeys are tied to this address for ever: if it changes, every passkey stops working and has to be made again. Tailscale needs MagicDNS and HTTPS certificates activated."
+  }
+ ],
+ "actions": [
+  {
+   "id": "check",
+   "label": "Check the name",
+   "path": "/check"
+  },
+  {
+   "id": "use-new-address",
+   "label": "Use the new address",
+   "path": "/use-new-address",
+   "confirm": "The provider keeps the first Tailscale name it was given, because passkeys are tied to it. Use the name now in the settings instead? Passkeys made at the old name will not work at the new one."
+  }
+ ],
+ "cards": [
+  {
+   "id": "status",
+   "title": "Single sign-on",
+   "type": "status",
+   "path": "/card",
+   "refresh_minutes": 5,
+   "example": {
+    "state": "ok",
+    "text": "The provider will live at https://starboard.tail1234.ts.net. Passkeys will be tied to this address. The provider is not in this version yet.",
+    "status": "waiting",
+    "status_label": "Waiting for provider",
+    "updated": 1794694110
+   }
+  }
+ ],
+ "logo": {
+  "file": "logo.svg",
+  "alt": "Single sign-on logo"
+ },
+ "changes": [
+  {
+   "version": "0.1.0",
+   "date": "2026-11-27",
+   "added": [
+    "**An on and off switch:** off means nothing runs for single sign-on.",
+    "**The provider's address:** the Tailscale name of your server, checked, and kept the first time it is valid, because passkeys are tied to it for ever.",
+    "**A warning if the name changes:** the card says passkeys made at the old name will not work, and Use the new address asks before it changes.",
+    "**No provider yet:** this version only holds the settings. It makes no network call and starts only when a card asks."
+   ]
+  }
+ ]
+}

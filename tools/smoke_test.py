@@ -149,6 +149,8 @@ POSTS = {"picture-shrinker": "/jobs/shrink", "vpn-check": "/check", "line-speed"
          "watch-stats": "/refresh", "remote-access": "/test", "audio-description": "/jobs/scan",
          "audio-description-tracks": "/jobs/look"}
 SETTINGS["audio-description"] = {"audiovault_links": True}
+SETTINGS["single-sign-on"] = {"enabled": True, "tailscale_name": "starboard.tail1234.ts.net"}  # DASH-589: a name, so the card says Waiting for provider
+POSTS["single-sign-on"] = "/check"
 # App plug-ins with a helper in the official Python image (17 November 2026): the helper runs against stand-ins for
 # Themearr's and Checkrr's own APIs here, as it would against the app beside it. Run by app_helpers() below.
 ANSWERS.update({

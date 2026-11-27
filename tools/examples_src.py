@@ -524,13 +524,13 @@ serve({"/card": card})
 # 1.2.3 (17 November 2026, design system audit): the examples whose app.py changed name this tag until it is built and
 # pinned; the others run unchanged code, so they keep the pinned 1.2.2 image. Audio description names it in its own
 # manifest.
-IMAGE_VERSION = "1.2.7"  # 1.2.7 (26 November 2026, DASH-517, DASH-518): UPS and power and Immich are in the Dockerfile; their manifests name this tag until it is built and pinned
+IMAGE_VERSION = "1.2.8"  # 1.2.8 (27 November 2026, DASH-589): Single sign-on is in the Dockerfile and names this tag until it is built and pinned. 1.2.7 (26 November 2026, DASH-517, DASH-518): UPS and power and Immich are in the Dockerfile; their manifests name this tag until it is built and pinned
 # 1.2.3 built and pinned on 17 November 2026 (sha256:c4e1d651a52c...): every example runs from the pinned image again.
 # Built again under the same tag for Audio description 1.3.0 (pull request 9) and pinned on 17 November 2026
 # (sha256:26c490dec620...).
 # 1.2.4 (22 November 2026, DASH-514): Notifications 1.3.0's app.py is not in the pinned image, so its manifest names this
 # tag, and the catalogue lists it as coming soon, until GitHub builds it and its digest is pinned in tools/examples-digest.txt.
-NEW_IN_IMAGE = set()
+NEW_IN_IMAGE = {"single-sign-on"}
 # 1.2.7 was built from 152366e (UPS and power 0.1.0 and Immich 0.1.0 app.py included) and pinned on 26 November 2026
 # (sha256:d31add45f768...), checked by listing /app in the pinned image, so both run from it and are published.
 # 1.2.6 was built from 0a0be8a (Notifications 1.4.0 and Backups watch 0.1.0's app.py included) and pinned on 25 November 2026
@@ -819,6 +819,48 @@ Immich's own API, with your API key in the `x-api-key` header, read only:
 
 It never changes anything in Immich. It was not tried against a real server when this version was written: read the
 help's Problems page before relying on it.
+""",
+}, "file")
+
+# 16. Single sign-on (DASH-589, stage 1): the skeleton of the sign-in provider -----------------------------------------------
+EXAMPLES["single-sign-on"] = ({
+    "name": "Single sign-on", "version": "0.1.0",
+    "description": "One sign-in for your apps and the people who use them. This first version holds the on and off switch and the Tailscale name the provider will live at.",
+    "starboard_api": ">=1.17 <2.0", "_own_changes": True,
+    "permissions": [],
+    "containers": [{"name": "main", "image": "", "port": 8080, "volumes": ["data"], "start": "when_needed",
+                    "idle_stop_minutes": 5}],
+    "resources": {"main": {"memory": 32, "cpus": 0.1}}, "health": "/health",
+    "settings": [
+        {"key": "enabled", "label": "Use single sign-on", "type": "switch", "default": False, "group": "Single sign-on",
+         "hint": "Leave it off on a server only you use. Off means nothing runs for it. To stop the plug-in completely, deactivate it in Settings, Plug-ins, Manage."},
+        {"key": "tailscale_name", "label": "This server's Tailscale name", "type": "text", "group": "Single sign-on",
+         "hint": "Such as starboard.tail1234.ts.net, found in Tailscale's admin page under Machines. Set it once. Passkeys are tied to this address for ever: if it changes, every passkey stops working and has to be made again. Tailscale needs MagicDNS and HTTPS certificates activated."},
+    ],
+    "actions": [{"id": "check", "label": "Check the name", "path": "/check"},
+                {"id": "use-new-address", "label": "Use the new address", "path": "/use-new-address",
+                 "confirm": "The provider keeps the first Tailscale name it was given, because passkeys are tied to it. Use the name now in the settings instead? Passkeys made at the old name will not work at the new one."}],
+    "cards": [{"id": "status", "title": "Single sign-on", "type": "status", "path": "/card", "refresh_minutes": 5,
+               "example": {"state": "ok", "text": "The provider will live at https://starboard.tail1234.ts.net. Passkeys will be tied to this address. The provider is not in this version yet.",
+                           "status": "waiting", "status_label": "Waiting for provider", "updated": 1794694110}}],
+    "changes": [{"version": "0.1.0", "date": "2026-11-27", "added": [
+        "**An on and off switch:** off means nothing runs for single sign-on.",
+        "**The provider's address:** the Tailscale name of your server, checked, and kept the first time it is valid, because passkeys are tied to it for ever.",
+        "**A warning if the name changes:** the card says passkeys made at the old name will not work, and Use the new address asks before it changes.",
+        "**No provider yet:** this version only holds the settings. It makes no network call and starts only when a card asks."]}],
+    "_readme": """## What this version does
+
+It holds the settings that the sign-in provider will use, and nothing else. There is no provider in it yet, so nothing signs in
+through it, and it makes no network call.
+
+- **Use single sign-on** is off until you activate it. Leave it off on a server only you use.
+- **This server's Tailscale name** is the address the provider will live at, such as `starboard.tail1234.ts.net`. Set it once.
+  **Passkeys are tied to this address for ever.** A passkey made at one address does not work at another, so changing the
+  name later means making every passkey again.
+- The first valid name is kept in the plug-in's own folder. If the setting later differs, the card says so and keeps the first
+  name until you choose **Use the new address**.
+
+Starboard stays the one page you use and the one list of people (Settings, People). The provider will work behind it.
 """,
 }, "file")
 
