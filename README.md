@@ -67,6 +67,7 @@ Starboard shows these first in the Catalogue, with a Recommended chip. It never 
 | [Line speed](https://themightytrex.github.io/starboard-plugins/help/plugins/line-speed/index.html) | Tests your internet download speed once a night, outside download hours, and keeps a week of results. |
 | [Uptime and status](https://themightytrex.github.io/starboard-plugins/help/plugins/outside-services/index.html) | Checks your router, NAS, websites and more by address, port, ping, DNS or heartbeat. It keeps 90 days of response times, and has certificates, maintenance windows and a status page. Takes over Outside services, and needs Starboard with plug-in API 1.17. |
 | [Remote access](https://themightytrex.github.io/starboard-plugins/help/plugins/remote-access/index.html) | Starboard, Jellyfin and Audiobookshelf away from home through Tailscale or Cloudflare Tunnel, with no port opened on your router. |
+| [Single sign-on](https://themightytrex.github.io/starboard-plugins/help/plugins/single-sign-on/index.html) | One sign-in for your apps and the people who use them. This first version holds the on and off switch and the Tailscale name the provider will live at, and has no provider yet. Needs Starboard with plug-in API 1.17. Coming soon. |
 
 ### Home
 

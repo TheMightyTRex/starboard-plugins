@@ -789,6 +789,21 @@
    }
   },
   {
+   "id": "single-sign-on",
+   "name": "Single sign-on",
+   "description": "One sign-in for your apps and the people who use them. This first version holds the on and off switch and the Tailscale name the provider will live at.",
+   "kind": "System",
+   "author": "TheMightyTRexUK",
+   "permissions": [],
+   "version": "0.1.0",
+   "starboard_api": ">=1.21 <2.0",
+   "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/single-sign-on/starboard-plugin.json",
+   "published": false,
+   "recommended": false,
+   "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5TaW5nbGUgc2lnbi1vbiBsb2dvPC90aXRsZT48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHJ4PSIxMSIgZmlsbD0iIzJmNGY4ZiIvPjxjaXJjbGUgY3g9IjE3IiBjeT0iMjQiIHI9IjciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yNCAyNGgxNU0zNCAyNHY2TTM5IDI0djUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
+   "logo_alt": "Single sign-on logo"
+  },
+  {
    "id": "styles",
    "name": "Styles",
    "description": "22 accessible styles for Display: 17 change every part of Starboard (cards, buttons, tabs, menus), checked for contrast.",

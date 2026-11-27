@@ -120,6 +120,8 @@ LOGOS = {
     "ups-power": ("#9a4d0b", "A battery with a lightning bolt",
                   f'<rect x="9" y="16" width="28" height="18" rx="3" {s(3)}/><path d="M41 22v6" {s(3.5)}/>'
                   f'<path d="M24.5 19l-6 8h6l-2 6 7-9h-6z" fill="{W}"/>'),
+    "single-sign-on": ("#2f4f8f", "A key",
+                       f'<circle cx="17" cy="24" r="7" {S}/><path d="M24 24h15M34 24v6M39 24v5" {s(3.5)}/>'),
     "immich": ("#3a4fb0", "A photograph with a sun and hills",
                f'<rect x="8" y="11" width="32" height="26" rx="3" {S}/><circle cx="31" cy="19" r="3" fill="{W}"/>'
                f'<path d="M9 33l9-9 6 6 5-5 10 10" {s(3)}/>'),

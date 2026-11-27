@@ -61,6 +61,7 @@ class Collection(unittest.TestCase):
                  "philips-hue": ">=1.16 <2.0",  # Philips Hue: schedules and the bridge's address in plain text boxes, new in plug-in API 1.16
                  "ups-power": ">=1.17 <2.0",  # UPS and power 0.1.0: the sparkline card and alerts:send, API 1.17
                  "immich": ">=1.17 <2.0",  # Immich 0.1.0: written against API 1.17 like the plug-ins before it
+                 "single-sign-on": ">=1.21 <2.0",  # Single sign-on 0.1.0: the switch key and needs_plugins checks, API 1.21
                  "backups-watch": ">=1.17 <2.0",  # Backups watch 0.1.0: the sparkline card and alerts:send, API 1.17
                  "outside-services": ">=1.17 <2.0",  # Uptime and status 2.0.0: the sparkline card and alerts:send, API 1.17
                  "calibre-web": ">=1.20 <2.0"}  # Calibre-Web 1.2.0: first_sign_in, the password Starboard shows once, API 1.20

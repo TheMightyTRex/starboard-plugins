@@ -988,6 +988,166 @@
       "alt": "The Show the first sign-in dialog, with Your Starboard password filled in and Show it once (step 3) outlined",
       "topic": "install",
       "page": "settings-plugin.html?id=calibre-web"
+    },
+    {
+      "phase": "absent",
+      "file": "install-1-catalogue.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(1500); const rows = [...document.querySelectorAll('li')].filter((x) => x.textContent.includes('Single sign-on') && x.querySelector('button')).sort((a, b) => a.textContent.length - b.textContent.length); const row = rows[0]; row.dataset.shot = 'lc'; row.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=lc] button",
+          "step": 2,
+          "side": "left",
+          "tail": 90
+        }
+      ],
+      "steps": [
+        2
+      ],
+      "alt": "The Catalogue under System, with Install\u2026 beside Single sign-on (step 2) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "single-sign-on"
+    },
+    {
+      "phase": "absent",
+      "file": "install-2-what-it-may-do.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Single sign-on')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const li = [...document.querySelectorAll('#side-panel li')].find((x) => /Nothing beyond|permission/i.test(x.textContent)) || document.querySelector('#side-panel li'); li.dataset.shot = 'media'; li.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "$#side-panel li[data-shot=media]",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        3
+      ],
+      "alt": "The Install Single sign-on? slide-out, with its list of what it may do (step 3) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "single-sign-on"
+    },
+    {
+      "phase": "absent",
+      "file": "install-3-password.png",
+      "height": 900,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); const row = [...document.querySelectorAll('main li.row')].find((x) => x.textContent.includes('Single sign-on')); row.dataset.shot = 'lc'; row.querySelector('button').click(); await w(2500); const pw = document.querySelector('#side-panel input[type=password]'); pw.value = 'example-password'; pw.closest('.field')?.scrollIntoView({ block: 'center' }); await w(400);",
+      "marks": [
+        {
+          "t": "Install Single sign-on",
+          "step": 4,
+          "side": "top",
+          "tail": 70
+        }
+      ],
+      "steps": [
+        4
+      ],
+      "alt": "The foot of the install slide-out, with Your Starboard password filled in and Install Single sign-on (step 4) outlined",
+      "topic": "install",
+      "page": "settings-plugins-catalogue.html",
+      "plugin": "single-sign-on"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-1-add.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(Single sign-on)'))); s.value = [...s.options].find((o) => o.textContent.includes('(Single sign-on)')).value; s.dataset.shot = 'add'; window.scrollTo(0, 0); await w(300);",
+      "after": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const b = btn('Cancel'); if (b) b.click();",
+      "marks": [
+        {
+          "t": "$[data-shot=add]",
+          "step": 2,
+          "side": "bottom",
+          "tail": 60
+        },
+        {
+          "t": "Save",
+          "step": 3,
+          "side": "bottom",
+          "tail": 60
+        }
+      ],
+      "steps": [
+        2,
+        3
+      ],
+      "alt": "Edit dashboard, with Single sign-on library (Single sign-on) chosen in Add a card (step 2) and Save (step 3) outlined",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "single-sign-on"
+    },
+    {
+      "plugin": "single-sign-on",
+      "phase": "present",
+      "file": "settings-1-switch.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); const t = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === 'Single sign-on'); if (t) { t.click(); await w(1200); } const f = document.querySelector('#pl-single-sign-on-enabled'); const r = f.closest('.field, .setting, li, fieldset') || f; r.dataset.shot = 'x'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=x]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Single sign-on's settings, with Use single sign-on outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=single-sign-on"
+    },
+    {
+      "plugin": "single-sign-on",
+      "phase": "present",
+      "file": "settings-2-name.png",
+      "height": 1000,
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); const t = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === 'Single sign-on'); if (t) { t.click(); await w(1200); } const f = document.querySelector('#pl-single-sign-on-tailscale_name'); const r = f.closest('.field, .setting, li, fieldset') || f; r.dataset.shot = 'x'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "marks": [
+        {
+          "t": "$[data-shot=x]",
+          "side": "bottom",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "Single sign-on's settings, with This server's Tailscale name outlined",
+      "topic": "settings",
+      "page": "settings-plugin.html?id=single-sign-on"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-2-light.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(Single sign-on)'))); s.value = [...s.options].find((o) => o.textContent.includes('(Single sign-on)')).value; s.dispatchEvent(new Event('change', { bubbles: true })); await w(1000); btn('Save').click(); await w(3000); const card = document.querySelector('[data-card=\"plugin:single-sign-on:status\"]'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The Single sign-on card in the light theme: the band with its logo and Waiting for provider, and the address",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "single-sign-on"
+    },
+    {
+      "phase": "present",
+      "file": "dashboard-card-3-dark.png",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); await w(1500); const card = document.querySelector('[data-card=\"plugin:single-sign-on:status\"]'); document.documentElement.setAttribute('data-theme', 'dark'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "marks": [
+        {
+          "t": "$[data-shot=card]",
+          "side": "right",
+          "tail": 70
+        }
+      ],
+      "steps": [],
+      "alt": "The Single sign-on card in the dark theme: the same band and address",
+      "topic": "dashboard-card",
+      "page": "dashboard.html",
+      "plugin": "single-sign-on"
     }
   ]
 }

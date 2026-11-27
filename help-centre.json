@@ -220,7 +220,8 @@
           "remote-access",
           "dns-blocking",
           "line-speed",
-          "outside-services"
+          "outside-services",
+          "single-sign-on"
         ]
       },
       {
@@ -316,6 +317,9 @@
       },
       "immich": {
         "icon": "image"
+      },
+      "single-sign-on": {
+        "icon": "key-round"
       }
     }
   },

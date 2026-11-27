@@ -118,7 +118,7 @@ def main():
             m["update"] = UPDATE_STEPS[pid]
         order = ["manifest_version", "id", "name", "version", "description", "author", "licence", "homepage", "support_url",
                  "starboard_api", "permissions", "needs", "containers", "resources", "health", "settings", "setup_required",
-                 "actions", "cards", "events", "jobs", "styles", "notices", "update", "logo", "changes"]
+                 "actions", "cards", "events", "jobs", "styles", "notices", "update", "switch", "logo", "changes"]
         m = {k: m[k] for k in order if k in m}
         # One shared image for every example (12 November 2026): pinned by digest once GitHub has built it.
         for c in m.get("containers") or []:
@@ -152,7 +152,7 @@ def main():
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
          "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Appearance", "styles": "Appearance",
-         "notifications": "System", "watch-stats": "Jellyfin", "backups-watch": "System", "ups-power": "System", "immich": "Photos"}
+         "notifications": "System", "watch-stats": "Jellyfin", "backups-watch": "System", "ups-power": "System", "immich": "Photos", "single-sign-on": "System"}
 KINDS["audio-description"] = "Accessibility"  # hand-made, not from examples_src (DASH-399)
 KINDS["audio-description-tracks"] = "Accessibility"  # hand-made, its own image with ffmpeg (DASH-410)
 KINDS["direct-play"] = "Jellyfin"  # hand-made, its own image with ffmpeg (DASH-425)
