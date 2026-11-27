@@ -1135,7 +1135,7 @@
     {
       "phase": "present",
       "file": "dashboard-card-3-dark.png",
-      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); btn('Edit dashboard').click(); await w(800); const s = [...document.querySelectorAll('select')].find((x) => [...x.options].some((o) => o.textContent.includes('(Single sign-on)'))); s.value = [...s.options].find((o) => o.textContent.includes('(Single sign-on)')).value; s.dispatchEvent(new Event('change', { bubbles: true })); await w(1000); btn('Save').click(); await w(3000); const card = document.querySelector('[data-card=\"plugin:single-sign-on:status\"]'); document.documentElement.setAttribute('data-theme', 'dark'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); await w(1500); await w(1500); const card = document.querySelector('[data-card=\"plugin:single-sign-on:status\"]'); document.documentElement.setAttribute('data-theme', 'dark'); card.dataset.shot = 'card'; card.scrollIntoView({ block: 'center' }); await w(600);",
       "marks": [
         {
           "t": "$[data-shot=card]",
@@ -1154,16 +1154,16 @@
       "phase": "present",
       "file": "settings-3-actions.png",
       "height": 1000,
-      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); const t = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === 'Single sign-on'); if (t) { t.click(); await w(1200); } const h = [...document.querySelectorAll('h2')].find((x) => /Actions/.test(x.textContent)); const r = h.closest('section') || h; r.dataset.shot = 'x'; r.scrollIntoView({ block: 'center' }); await w(500);",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); await w(2000); const t = [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === 'Single sign-on'); if (t) { t.click(); await w(1200); } const b = [...document.querySelectorAll('button')].find((x) => x.textContent.trim() === 'Check the name'); b.dataset.shot = 'x'; b.scrollIntoView({ block: 'center' }); await w(500);",
       "marks": [
         {
           "t": "$[data-shot=x]",
-          "side": "bottom",
-          "tail": 70
+          "side": "top",
+          "tail": 60
         }
       ],
       "steps": [],
-      "alt": "Single sign-on's actions, with Check the name and Use the new address outlined",
+      "alt": "Single sign-on's actions, with Check the name outlined",
       "topic": "settings",
       "page": "settings-plugin.html?id=single-sign-on"
     }

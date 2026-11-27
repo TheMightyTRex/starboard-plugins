@@ -25,7 +25,7 @@ So choose the name once, and keep it:
 - The plug-in keeps the first valid name in its own folder. If the setting later differs, the card says **Name changed** and keeps the first name. Passkeys made at one address do not work at another.
 - **Use the new address** (under **Actions**) asks first, then keeps the name now in the settings. Use it only to start again. No provider exists in this version, so no passkey is lost yet.
 
-![Single sign-on's actions, with Check the name and Use the new address outlined](../../images/single-sign-on/settings-3-actions.png)
+![Single sign-on's actions, with Check the name outlined](../../images/single-sign-on/settings-3-actions.png)
 
 ## Good to know
 
