@@ -329,16 +329,16 @@
   {
    "id": "immich",
    "name": "Immich",
-   "description": "Photo and video counts, storage used and the job queue of your Immich server on cards.",
+   "description": "Photo and video counts, storage used and the job queues of your Immich server on cards, and a page to pause, resume and clear them.",
    "kind": "Photos",
    "author": "TheMightyTRexUK",
    "permissions": [
     "network:lan"
    ],
-   "version": "0.1.1",
+   "version": "0.2.0",
    "starboard_api": ">=1.17 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/immich/starboard-plugin.json",
-   "published": true,
+   "published": false,
    "recommended": false,
    "replaces_or_adds": "Adds to Starboard: dashboard cards from your Immich server. Immich itself stays as it is.",
    "logo": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByb2xlPSJpbWciPjx0aXRsZT5JbW1pY2ggbG9nbzwvdGl0bGU+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiMzYTRmYjAiLz48cmVjdCB4PSI4IiB5PSIxMSIgd2lkdGg9IjMyIiBoZWlnaHQ9IjI2IiByeD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMzEiIGN5PSIxOSIgcj0iMyIgZmlsbD0iI2ZmZmZmZiIvPjxwYXRoIGQ9Ik05IDMzbDktOSA2IDYgNS01IDEwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",

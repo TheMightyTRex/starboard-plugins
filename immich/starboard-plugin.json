@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "immich",
  "name": "Immich",
- "version": "0.1.1",
- "description": "Photo and video counts, storage used and the job queue of your Immich server on cards.",
+ "version": "0.2.0",
+ "description": "Photo and video counts, storage used and the job queues of your Immich server on cards, and a page to pause, resume and clear them.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/immich",
@@ -15,7 +15,7 @@
  "containers": [
   {
    "name": "main",
-   "image": "ghcr.io/themightytrex/starboard-plugin-examples@sha256:1847222d614acd79c76ded222c0d3fed82ff438f42444bb5e0ce66861c69d038",
+   "image": "ghcr.io/themightytrex/starboard-plugin-examples:1.2.10",
    "port": 8080,
    "network": "lan",
    "volumes": [
@@ -50,7 +50,15 @@
    "type": "secret",
    "group": "Immich",
    "required": true,
-   "hint": "Made in Immich under Account settings, API keys. Give it only the permissions server.statistics, server.storage and queue.read (job.read for an older Immich). Starboard never shows it again."
+   "hint": "Made in Immich under Account settings, API keys. Give it the permissions server.statistics, server.storage and queue.read (job.read for an older Immich), and queue.update (job.create) to pause, resume or clear queues from Starboard. Starboard never shows it again."
+  },
+  {
+   "key": "queues",
+   "label": "Job queues",
+   "type": "custom",
+   "choices": "/screen/queues",
+   "group": "Immich",
+   "hint": "Pause or resume each queue, and clear its failed jobs, without opening Immich. Changing a queue needs the permission queue.update on the API key."
   }
  ],
  "cards": [
@@ -114,6 +122,17 @@
   "alt": "Immich logo"
  },
  "changes": [
+  {
+   "version": "0.2.0",
+   "date": "2026-11-27",
+   "added": [
+    "**A page for the job queues:** in Settings, Plug-ins, Immich, each queue has a switch to pause or resume it and a choice to clear its failed jobs, so you do not need Immich's own pages, which are hard to use with a keyboard or a screen reader.",
+    "**Only when open:** Starboard asks Immich for the queues only while the page is open."
+   ],
+   "changed": [
+    "To pause, resume or clear a queue, give the API key the permission queue.update (job.create on an older Immich). The cards work as before without it."
+   ]
+  },
   {
    "version": "0.1.1",
    "date": "2026-11-26",

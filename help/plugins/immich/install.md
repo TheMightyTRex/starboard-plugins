@@ -20,7 +20,7 @@ What it runs:
 
 - **main:** reaches your home network. It can use its own folder in Starboard's data (`data/plugins/immich`). It rests after 5 minutes with nothing to do, and Starboard wakes it when a card asks.
 
-Like every plug-in, it runs read only, as a user that is not root, with no extra rights. It only reads from Immich: it never uploads, changes or deletes a photo, album or setting.
+Like every plug-in, it runs read only, as a user that is not root, with no extra rights. It never uploads, changes or deletes a photo, album or setting. The cards only read. The **Job queues** page can pause, resume or clear the failed jobs of a queue, but only when you choose to, and only if the API key has the permission queue.update.
 
 ## Memory and processor
 

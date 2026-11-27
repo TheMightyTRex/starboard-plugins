@@ -46,9 +46,15 @@ Open the plug-in's tab, enter Immich's address and the API key, select **Save**,
 
 An error answer means Immich was reached but could not answer. Open Immich's own page, and check it has finished starting and that its database is running.
 
+## Job queues do not change
+
+1. Check that the API key has the permission queue.update (job.create on an older Immich). Without it, Starboard says Immich refused.
+2. Open the page again: it asks Immich each time it opens, so it shows the queues as they are now.
+3. Immich can start a queue again by itself, for example after a restart or an update. Reload the page to find its state.
+
 ## Things this version does not do
 
-- **Anything but reading:** it never changes Immich.
+- **Anything but queues:** the cards only read. It changes only the queues you pause, resume or clear on the **Job queues** page.
 - **Tried against a real Immich:** not yet. This version was tested with a made-up Immich that answers as Immich's published API description says. If your Immich answers differently, the card says "Cannot read it" or shows nothing: tell us on the Discord support server or in an issue.
 
 ## Find out more

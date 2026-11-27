@@ -28,6 +28,9 @@ class Immich:
     def __init__(self, **over):
         self.answers = {"/api/server/statistics": STATS, "/api/server/storage": STORAGE, "/api/queues": QUEUES, **over}
         self.seen = []
+        self.changes = []
+        self.refuse = 0
+        self.missing = set()
         me = self
 
         class H(BaseHTTPRequestHandler):
@@ -43,6 +46,17 @@ class Immich:
                 self.send_header("Content-Length", str(len(raw)))
                 self.end_headers()
                 self.wfile.write(raw)
+            def _change(self):
+                n = int(self.headers.get("Content-Length") or 0)
+                me.changes.append((self.command, self.path, json.loads(self.rfile.read(n) or b"{}"), self.headers.get("x-api-key")))
+                code = me.refuse if me.refuse and self.path not in me.missing else 404 if self.path in me.missing else 200
+                raw = b"{}"
+                self.send_response(code)
+                self.send_header("Content-Length", str(len(raw)))
+                self.end_headers()
+                self.wfile.write(raw)
+
+            do_PUT = do_DELETE = _change
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), H)
         threading.Thread(target=self.server.serve_forever, daemon=True).start()
         self.url = f"http://127.0.0.1:{self.server.server_address[1]}"
@@ -176,10 +190,88 @@ class StarboardChecks(unittest.TestCase):
                 self.assertTrue(cards.clean(kind, {k: v for k, v in getattr(a, {"library": "library", "storage": "disk", "jobs": "jobs"}[name])().items()}), name)
 
 
+BUSY = [{"name": "thumbnailGeneration", "isPaused": False, "statistics": {**IDLE, "active": 2, "waiting": 300}},
+        {"name": "smartSearch", "isPaused": True, "statistics": {**IDLE, "waiting": 40, "failed": 3}},
+        {"name": "library", "isPaused": False, "statistics": IDLE}]
+
+
+class QueuesPage(unittest.TestCase):
+    """DASH-578: pause, resume and clear failed jobs from the plug-in's own page (a made-up Immich, never a real one)."""
+
+    def setUp(self):
+        self.srv = Immich(**{"/api/queues": BUSY})
+        self.addCleanup(self.srv.stop)
+        self.a = app(self.srv)
+
+    def test_each_queue_is_a_row_with_a_switch_and_its_state_in_words(self):
+        out = self.a.screen()
+        self.assertEqual(out["type"], "list")
+        rows = {r["id"]: r for r in out["items"]}
+        self.assertEqual(rows["thumbnailGeneration"]["detail"], "2 working, 300 waiting")
+        self.assertEqual((rows["thumbnailGeneration"]["on"], rows["thumbnailGeneration"]["state_label"]), (True, "Working"))
+        self.assertEqual((rows["smartSearch"]["on"], rows["smartSearch"]["state_label"]), (False, "Paused"))
+        self.assertIn("3 failed", rows["smartSearch"]["detail"])
+        self.assertEqual(rows["smartSearch"]["choice"]["options"][1], ["clear", "Clear failed jobs"])
+        self.assertNotIn("choice", rows["library"])
+        self.assertEqual(rows["library"]["state_label"], "Idle")
+        self.assertTrue(all(r["actions"] == ["toggle"] for r in rows.values()))
+
+    def test_the_page_passes_starboards_check(self):
+        got = starboard_cleaners()
+        if not got:
+            self.skipTest("Starboard's source is not on this computer")
+        _, custom = got
+        self.assertTrue(custom.clean(self.a.screen())["items"])
+
+    def test_the_switch_pauses_a_running_queue_and_resumes_a_paused_one(self):
+        out = self.a.act({"action": "toggle", "id": "thumbnailGeneration"})
+        self.assertEqual(self.srv.changes[-1], ("PUT", "/api/queues/thumbnailGeneration", {"isPaused": True}, "k-secret-123"))
+        self.assertEqual(out["said"], "Paused Thumbnails")
+        out = self.a.act({"action": "toggle", "id": "smartSearch"})
+        self.assertEqual(self.srv.changes[-1][:3], ("PUT", "/api/queues/smartSearch", {"isPaused": False}))
+        self.assertEqual(out["said"], "Resumed Smart search")
+
+    def test_clearing_failed_jobs_is_asked_for_by_name_only(self):
+        out = self.a.act({"action": "choose", "id": "smartSearch", "value": "clear"})
+        self.assertEqual(self.srv.changes[-1][:3], ("DELETE", "/api/queues/smartSearch/jobs", {"failed": True}))
+        self.assertIn("Cleared the failed jobs of Smart search", out["said"])
+        n = len(self.srv.changes)
+        self.a.act({"action": "choose", "id": "smartSearch", "value": ""})  # Leave them: nothing is sent
+        self.assertEqual(len(self.srv.changes), n)
+
+    def test_an_unknown_queue_or_action_is_refused_and_nothing_is_sent(self):
+        for body in ({"action": "toggle", "id": "../users"}, {"action": "toggle", "id": "nope"}, {"action": "remove", "id": "library"},
+                     {"action": "choose", "id": "library", "value": "empty-everything"}):
+            with self.assertRaises(ValueError):
+                self.a.act(body)
+        self.assertEqual(self.srv.changes, [])
+
+    def test_a_key_without_the_permission_is_told_in_words(self):
+        self.srv.refuse = 403
+        with self.assertRaises(ValueError) as e:
+            self.a.act({"action": "toggle", "id": "library"})
+        self.assertIn("queue.update", str(e.exception))
+
+    def test_an_older_immich_uses_the_jobs_route(self):
+        self.srv.missing = {"/api/queues/library", "/api/queues/smartSearch/jobs"}
+        self.a.act({"action": "toggle", "id": "library"})
+        self.assertEqual(self.srv.changes[-1][:3], ("PUT", "/api/jobs/library", {"command": "pause", "force": False}))
+        self.a.act({"action": "choose", "id": "smartSearch", "value": "clear"})
+        self.assertEqual(self.srv.changes[-1][:3], ("PUT", "/api/jobs/smartSearch", {"command": "clear-failed", "force": False}))
+
+    def test_without_setup_or_an_answer_the_page_says_so(self):
+        self.assertIn("Enter Immich's address", load("immich", {}).screen()["intro"])
+        down = app(Immich(**{"/api/queues": 503, "/api/jobs": 503}))
+        self.assertIn("Immich did not answer", down.screen()["intro"])
+        with self.assertRaises(ValueError):
+            load("immich", {}).act({"action": "toggle", "id": "library"})
+
+
 class Manifest(unittest.TestCase):
     def test_it_runs_only_when_asked_and_is_light(self):
         m = manifest("immich")
-        self.assertEqual(m["version"], "0.1.1")
+        self.assertEqual(m["version"], "0.2.0")
+        self.assertEqual(next(x for x in m["settings"] if x["key"] == "queues")["choices"], "/screen/queues")
         self.assertEqual(m["containers"][0]["start"], "when_needed")
         self.assertNotIn("jobs", m)
         self.assertEqual(m["permissions"], ["network:lan"])

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 (27 November 2026)
+
+### Added
+- A page for the job queues: in Settings, Plug-ins, Immich, each queue has a switch to pause or resume it and a choice to clear its failed jobs, so you do not need Immich's own pages, which are hard to use with a keyboard or a screen reader.
+- Only when open: Starboard asks Immich for the queues only while the page is open.
+
+### Changed
+- To pause, resume or clear a queue, give the API key the permission queue.update (job.create on an older Immich). The cards work as before without it.
+
 ## 0.1.1 (26 November 2026)
 
 ### Changed
