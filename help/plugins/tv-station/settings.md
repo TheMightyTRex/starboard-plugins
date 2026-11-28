@@ -464,6 +464,17 @@ On a channel's **Holding slide and promos** card, **Promos** says how its promos
 
 This page is for a computer. It is not made for phones. In Starboard, open **Settings**, **Plug-ins**, **Create your own TV channel**, then **Choose a style for my channel**, and select **Choose a style for my channel**. It opens in a new tab. Nothing is sent anywhere: the plug-in checks your files and makes the branding on your own server.
 
+### Make a style here
+
+Use this when you have no files of your own. It is the first choice on the page, and it takes four steps.
+
+1. **Choose a style.** Clean, Evening, Retro, Bold or Plain. Each card says in a line what it draws.
+2. **Name and colours.** Enter your channel's name (up to 40 characters) and choose two colours. Add a logo if you have one: a PNG with a clear background. With none, the name is drawn as the logo. Three pictures show how it will turn out: a short title clip, the Coming up next card and a bumper. They change when you change a choice, and nothing is made as video yet. The words are black or white. If they would be hard to read on a colour, that colour is made a little darker or lighter, so the words reach 7 to 1. **Make the clips with no movement** holds every clip still, for people who ask for it.
+3. **Make the style.** It makes 4 short title clips, 2 bumpers, the Coming up next card background, the coming-up trailer background and the logo. It takes about a minute. It uses one processor thread at the lowest priority, makes one thing at a time, and stops at once if anyone starts to watch a channel.
+4. **Use the style.** Use it for every channel without a pack of its own, or for one channel only.
+
+The styles and what they draw are free to use under the MIT licence, and the pack says so in LICENCE.txt. Nothing flashes: no clip moves faster than a half second fade or a one second slide.
+
 ### Import a kit
 
 Use this when you made your title clips, logo or cards in Canva, Figma, Descript, Adobe Express or another tool. Export them as video or picture files, or put them in a zip, then follow the five steps.
