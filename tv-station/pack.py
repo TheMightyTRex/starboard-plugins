@@ -30,6 +30,7 @@ import time
 import zipfile
 
 import dog
+import flash
 
 W, H, FPS = 1920, 1080, 25
 TITLE_SAFE = (96, 54, 1824, 1026)  # 5% in from each edge (EBU R 95 graphics safe)
@@ -61,7 +62,7 @@ NAMES = [
     (r"transitions/[A-Za-z0-9_-]{1,40}\.(webm|mov)", "transition"),
 ]
 # Files a pack may carry for the people making it, which are never used.
-IGNORED = [r"(README|readme|LICENCE|LICENSE)(\.(txt|md))?", r"pack\.schema\.json", r"([a-z-]+/)?placement\.png",
+IGNORED = [r"(README|readme|LICENCE|LICENSE)(\.(txt|md))?", r"kit\.json", r"pack\.schema\.json", r"([a-z-]+/)?placement\.png",
            r"([a-z-]+/){0,2}what-goes-here\.txt", r"examples/[^/]{1,80}"]
 JUNK = re.compile(r"(^|/)(__MACOSX|\.DS_Store|Thumbs\.db|desktop\.ini|\._[^/]*)(/|$)")
 # Lengths in seconds: (shortest, longest).
@@ -463,6 +464,8 @@ def check(folder):
             _size_notes(rel, v, problems, notes)
         item = {"path": rel, "dur": round(info["duration"], 2), "has_audio": info["audio"], "gain": 0.0,
                 "still": bool(v) and v.get("codec_name") in ("png", "mjpeg"), "codec": (v or {}).get("codec_name", "")}
+        if v and not item["still"] and (said := flash.words(flash.check(os.path.join(folder, rel)))):  # 0.10.0: a plain warning, never a stop
+            notes.append(f"{rel}: {said}")
         if info["audio"] and role in ("sting", "ident", "music"):
             lufs = loudness(os.path.join(folder, rel))
             item["lufs"] = lufs

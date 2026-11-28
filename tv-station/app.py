@@ -27,7 +27,9 @@ import animate
 import breakgrid
 import breaks
 import dog
+import draw
 import filelist
+import flash
 import grid
 import guide
 import library
@@ -36,13 +38,14 @@ import played
 import promo
 import speak
 import sbplugin
+import stylepage
 import schedule
 import stream
 import three_d
 import titles
 import tv_words
 
-VERSION = "0.9.0"
+VERSION = "0.10.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -2036,7 +2039,8 @@ def add_clip_file(holder, role, name, length, rfile):
     cid = hashlib.sha256(base.encode()).hexdigest()[:10]
     holder[role] = [c for c in holder.get(role) or [] if c["id"] != cid] + [
         {"id": cid, "src": f"file:{base}", "dur": round(dur, 2), "title": base, "role": role, "has_audio": has_audio, "audio": None}]
-    return f"Added {base}, {round(dur)} seconds"
+    warn = flash.words(flash.check(path)) if has_video else ""  # 0.10.0: said, never refused
+    return f"Added {base}, {round(dur)} seconds" + (f". Warning: {warn}" if warn else "")
 
 
 def channels_file(name, item, length, rfile):
@@ -3066,6 +3070,23 @@ def files_page(said=None):
     return out
 
 
+def styles_page(said=None):
+    """Starboard's page for styles: a link to the plug-in's own page Choose a style for my channel, which opens in a new tab."""
+    s, base = state(), address()
+    item = {"id": "styles", "title": "Choose a style for my channel", "group": "Styles", "state": "ok", "state_label": "Ready",
+            "detail": "Add the video and picture files you made in Canva, Figma or another tool, or a zip of them, and turn them into your channel's branding."}
+    if base:
+        item["link"] = {"url": f"{base}/t/{s['token']}/style", "label": "Choose a style for my channel"}
+    else:
+        item["detail"] = NO_ADDRESS
+    out = {"type": "list", "title": "Styles", "items": [item],
+           "intro": ("This page is for a computer screen. It is not made for phones. Choose Choose a style for my channel: it opens in a new tab. "
+                     "Nothing is sent anywhere: the files are checked and the branding is made on your own server.")}
+    if said:
+        out["said"] = said[:200]
+    return out
+
+
 def file_sizes():
     """What each file in the plug-in's clips folder weighs and when it was added: {name: (bytes, seconds since 1970)}."""
     out = {}
@@ -3179,11 +3200,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(200, {"ok": True, "ffmpeg": stream.has_ffmpeg()})
             if p == "/card":
                 return self._json(200, card())
-            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule", "/animation", "/grids", "/files"):
+            if p in ("/channels", "/clips", "/guide", "/pack", "/schedule", "/animation", "/grids", "/files", "/styles"):
                 if not self._keyed():
                     return self._json(403, {"error": "Only Starboard may open this"})
                 return self._json(200, {"/channels": channels_page, "/clips": clips_page, "/guide": guide_page, "/pack": pack_page,
-                                        "/schedule": schedule_page, "/animation": animation_page, "/grids": grids_page, "/files": files_page}[p]())
+                                        "/schedule": schedule_page, "/animation": animation_page, "/grids": grids_page, "/files": files_page,
+                                        "/styles": styles_page}[p]())
             if p == "/":
                 self._learn()
                 s = state()
@@ -3258,6 +3280,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._breaks_get(rest, query)
         if rest == "files" or rest.startswith("files/"):
             return self._files_get(rest, query)
+        if rest == "style" or rest.startswith("style/"):
+            return self._style_get(rest, query)
         m = re.match(r"^download/([a-z-]+\.(png|zip))$", rest)
         if m:
             data, kind, filename = download(m.group(1), query)
@@ -3345,6 +3369,33 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(200, files_state({k: v[0] for k, v in query.items() if v}))
         return self._json(404, {"error": "Not found"})
 
+    def _style_get(self, rest, query):
+        """The style page's own page (0.10.0), its script, styles and font, and the answer it reads."""
+        static = {"style": ("style.html", "text/html; charset=utf-8"), "style/style.js": ("style.js", "text/javascript; charset=utf-8"),
+                  "style/style.css": ("style.css", "text/css; charset=utf-8"), "style/tokens.css": ("ds-tokens.css", "text/css; charset=utf-8"),
+                  "style/components.css": ("ds-components.css", "text/css; charset=utf-8"),
+                  "style/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2")}
+        if rest in static:
+            name, kind = static[rest]
+            with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), name), "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", kind)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'none'")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(data)
+            return None
+        one = {k: (v or [""])[0] for k, v in query.items()}
+        if rest == "style/api/state":
+            try:
+                return self._json(200, stylepage.overview(one.get("kit", "")))
+            except ValueError:
+                return self._json(200, stylepage.overview(""))
+        return self._json(404, {"error": "Not found"})
+
     def _stream(self, cid):
         s = state()
         ch = find(s, cid)
@@ -3356,6 +3407,7 @@ class Handler(BaseHTTPRequestHandler):
         if _example["making"]:
             return self._json(503, {"error": "The example pack is being made, which takes a minute or two. Choose the channel again then"})
         promo.stop()  # a promo being made gives way at once: nothing is made while anyone watches
+        draw.stop()  # and so does a style being made (0.10.0)
         breaks.stop()  # and so does a search for breaks inside programmes (0.4.0)
         three_d.stop()  # and a check for 3D films (0.5.5)
         try:
@@ -3425,6 +3477,18 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(200, files_op(self._body()))
                 except filelist.ListError as e:
                     return self._json(400, {"error": str(e)})
+            m = re.match(r"^/t/([A-Za-z0-9_-]+)/style/api/(op|upload)$", p)
+            if m:
+                if not secrets.compare_digest(m.group(1), state()["token"]):
+                    return self._json(404, {"error": "Not found"})
+                if m.group(2) == "upload":
+                    q = urllib.parse.parse_qs(url.query)
+                    with sbplugin.working("a file being added"):
+                        return self._json(200, stylepage.upload((q.get("kit") or [""])[0], (q.get("name") or [""])[0],
+                                                                int(self.headers.get("Content-Length") or 0), self.rfile))
+                if (self.headers.get("Content-Type") or "").split(";")[0] != "application/json":
+                    return self._json(415, {"error": "Send JSON"})
+                return self._json(200, stylepage.op(self._body()))
             m = re.match(r"^/t/([A-Za-z0-9_-]+)/breaks/api/op$", p)
             if m:
                 if not secrets.compare_digest(m.group(1), state()["token"]):
@@ -3480,6 +3544,10 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(400, {"error": f"{e}"[:200]})
         except Exception as e:  # noqa: BLE001 - Starboard shows the sentence
             return self._json(502, {"error": f"{e}"[:200]})
+
+
+stylepage.bind(state=lambda: state(), save=lambda s: save(s), lock=_lock, pack_dir=lambda n: pack_dir(n),
+               drop_pack=lambda n: _packs.pop(n, None), playing=lambda: _streams.playing())
 
 
 def _safe(fn):
