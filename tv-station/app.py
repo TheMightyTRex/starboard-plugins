@@ -1581,7 +1581,7 @@ def channel_rows(s, ch, cfg, base, now):
                 "None yet, so breaks end on Coming up next cards. ") + "It loops after the coming-up trailers until the next programme starts.")
     row("holding-own", "Its own waiting screen: " + (holding_words(ch["holding"]) if ch.get("holding") else "none yet"), g,
         actions=["attach", "detach"] if ch.get("holding") else ["attach"], state="ok" if ch.get("holding") else "unknown",
-        state_label="Ready" if ch.get("holding") else "Add one", detail="A picture, or a video of up to 120 seconds that loops. The station's is in Short title clips, clips and music.",
+        state_label="Ready" if ch.get("holding") else "Add one", detail="A picture, or a video of up to 120 seconds that loops. The station's is in What plays between programmes.",
         attach={"label": "Upload a waiting screen", "field": "Waiting screen", "detach_label": "Remove the waiting screen", "hint": "A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB",
                 "accept": ",".join(HOLDING_TYPES)})
     st_words = dog.HOLDING_WORDS.get(s.get("holding_words") or "countdown")
@@ -1594,7 +1594,7 @@ def channel_rows(s, ch, cfg, base, now):
     kept = [p for p in s.get("promos") or [] if p.get("cid") == cid]
     how = ("Made in quiet hours with its branding." if design and design.get("name") != "Plain" else
            "Made in quiet hours on its colour, with your music." if design else
-           "To have coming-up trailers, upload music for them here or in Short title clips, clips and music, or use a pack with a coming-up trailer.")
+           "To have coming-up trailers, upload music for them here or in What plays between programmes, or use a pack with a coming-up trailer.")
     row("promos", f"Coming-up trailers: {len(kept)} kept" if design else "Coming-up trailers: none yet", g, state="ok" if design else "off",
         state_label="Made in quiet hours" if design else "None", detail=how)
     for m in ch.get("music") or []:
@@ -2124,62 +2124,83 @@ def _explain(out, s, page):
 
 
 def clips_page(said=None):
+    """What plays between programmes, in the order a person thinks of it (0.10.0, DASH-642): short title clips, clips, music,
+    the waiting screen, then the advanced things. No group called Add: each group has its own add row."""
     s = state()
     sh = s["shared"]
     items = []
-    groups = {"idents": "The station's short title clips", "clips": "The station's clips", "extras": "Your own short videos for the breaks", "psa": "Public messages"}
-    for role in ("idents", "clips", "extras", "psa"):
+    no_file = "The file name is not shown."
+    empty = not (sh.get("idents") or sh.get("clips") or s.get("music") or s.get("holding") or sh.get("extras") or sh.get("psa"))
+    if empty:
+        using = s.get("station_pack") == "example"
+        items.append({"id": "use-example", "title": "Use the example files", "group": "Start here", "on": using, "actions": ["toggle"],
+                      "state": "ok" if using else "unknown", "state_label": "In use" if using else "Not used",
+                      "detail": "Adds ready-made branding with 3 short title clips, a logo with music and a Coming up next card. You can stop using it any time."})
+
+    def listed(role, group):
         for c in sh.get(role) or []:
             items.append({"id": f"{role}:{c['id']}", "title": c["title"][:120], "detail": f"{round(c['dur'])} seconds",
-                          "group": groups[role], "actions": ["remove"], "state": "ok", "state_label": "Ready"})
-    items.append({"id": "add:extras", "title": "Add a short video of your own for the breaks", "group": "Your own short videos for the breaks", "actions": ["attach"],
-                  "state": "unknown", "state_label": "Add one",
-                  "detail": "As many as you like. One plays at random after the coming-up trailers in each break, on every channel that uses the station's.",
-                  "attach": {"label": "Upload a short video of your own", "field": "Short video of your own", "accept": ",".join(CLIP_TYPES),
-                             "hint": "A video of up to 10 minutes and 90 MB. Choose a file: names are not used here"}})
-    items.append({"id": "add:psa", "title": "Add a public message", "group": "Public messages", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
-                  "detail": "A public service announcement every channel can use in the grids. A video with sound, up to 10 minutes and 90 MB.",
-                  "attach": {"label": "Upload a public message", "field": "Public message", "accept": ",".join(CLIP_TYPES),
-                             "hint": "A video with a picture and a sound track, up to 10 minutes and 90 MB. Choose a file: names are not used here"}})
-    for role, label in (("idents", "Add the station's short title clips"), ("clips", "Add the station's clips")):
-        items.append({"id": f"add:{role}", "title": label, "group": "Add", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
-                      "attach": {"label": label, "field": "Name", "hint": "A video up to 60 MB, or the name of a Jellyfin collection or folder",
-                                 "accept": ",".join(CLIP_TYPES)}})
-    # The holding slide (0.2.0): every channel's, unless it has its own.
-    h = s.get("holding")
-    items.append({"id": "holding", "title": "The station's waiting screen: " + (holding_words(h) if h else "none yet"), "group": "Waiting screen",
-                  "state": "ok" if h else "unknown", "state_label": "In use" if h else "None yet",
-                  "detail": ("Loops at the end of each break, after the coming-up trailers, until the next programme starts, on every channel without its own. "
-                             if h else "Upload a picture or a short video, and it loops at the end of each break until the next programme starts. ")[:200],
-                  "actions": ["attach", "detach"] if h else ["attach"],
-                  "attach": {"label": "Upload a waiting screen", "field": "Waiting screen", "accept": ",".join(HOLDING_TYPES), "detach_label": "Remove the waiting screen",
-                             "hint": "A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Choose a file: names are not used here"}})
-    items.append({"id": "holding-words", "title": "Words on the waiting screen", "group": "Waiting screen", "state": "ok", "state_label": "Saved",
-                  "detail": "A countdown says Next programme in 4:32 with the programme's name, and reaches 0:00 as it starts. Each channel can choose its own.",
-                  "choice": _choice("Words", s.get("holding_words") or "countdown", dog.HOLDING_WORDS)})
-    # Music for promos (0.2.0)
-    items.append({"id": "music-use", "title": "Music the coming-up trailers use", "group": "Music for coming-up trailers", "state": "ok", "state_label": "Saved",
-                  "detail": "A channel's own music comes first, then this. Coming-up trailers are made in quiet hours, so a change shows in the next ones.",
+                          "group": group, "actions": ["remove"], "state": "ok", "state_label": "Ready"})
+
+    g = "Short title clips"
+    listed("idents", g)
+    items.append({"id": "add:idents", "title": "Add a short title clip", "group": g, "actions": ["attach"], "state": "unknown", "state_label": "Add one",
+                  "detail": "A few seconds of video with your station name, played between programmes.",
+                  "attach": {"label": "Add a short title clip", "field": "Name", "hint": f"A video up to 60 MB, or the name of a Jellyfin collection or folder. {no_file}",
+                             "accept": ",".join(CLIP_TYPES)}})
+    g = "Clips"
+    listed("clips", g)
+    items.append({"id": "add:clips", "title": "Add a clip", "group": g, "actions": ["attach"], "state": "unknown", "state_label": "Add one",
+                  "detail": "A short video of a film or series, played in a break after the short title clip.",
+                  "attach": {"label": "Add a clip", "field": "Name", "hint": f"A video up to 60 MB, or the name of a Jellyfin collection or folder. {no_file}",
+                             "accept": ",".join(CLIP_TYPES)}})
+    g = "Music"
+    items.append({"id": "music-use", "title": "Music the coming-up trailers use", "group": g, "state": "ok", "state_label": "Saved",
+                  "detail": "A channel's own music comes first, then this. A change shows in the next coming-up trailers.",
                   "choice": _choice("Music", s.get("music_use") or "both", MUSIC_USE)})
     for m in s.get("music") or []:
-        items.append({"id": f"music:{m['id']}", "title": m["title"][:120], "group": "Music for coming-up trailers", "actions": ["remove"], "state": "ok",
+        items.append({"id": f"music:{m['id']}", "title": m["title"][:120], "group": g, "actions": ["remove"], "state": "ok",
                       "state_label": "Ready", "detail": f"{round(m.get('dur') or 0)} seconds, played at the same loudness as the rest"})
-    items.append({"id": "add:music", "title": "Add music for coming-up trailers", "group": "Music for coming-up trailers", "actions": ["attach"], "state": "unknown",
-                  "state_label": "Add one", "detail": "With music here, a channel without a pack coming-up trailer gets plain coming-up trailers on its colour.",
+    items.append({"id": "add:music", "title": "Add music", "group": g, "actions": ["attach"], "state": "unknown", "state_label": "Add one",
+                  "detail": "Quiet music under the coming-up trailers. With music here, a channel without branding of its own still gets trailers.",
                   "attach": {"label": "Upload music", "field": "Music", "accept": ",".join(MUSIC_TYPES),
-                             "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB. Choose a file: names are not used here"}})
-    # Background loops for promos (0.3.0)
+                             "hint": f"An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB. {no_file}"}})
+    g = "Waiting screen"
+    h = s.get("holding")
+    items.append({"id": "holding", "title": "The station's waiting screen: " + (holding_words(h) if h else "none yet"), "group": g,
+                  "state": "ok" if h else "unknown", "state_label": "In use" if h else "None yet",
+                  "detail": ("Loops at the end of each break until the next programme starts, on every channel without its own."
+                             if h else "A picture or short video that loops, with a countdown, until the next programme starts.")[:200],
+                  "actions": ["attach", "detach"] if h else ["attach"],
+                  "attach": {"label": "Upload a waiting screen", "field": "Waiting screen", "accept": ",".join(HOLDING_TYPES),
+                             "detach_label": "Remove the waiting screen",
+                             "hint": f"A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. {no_file}"}})
+    items.append({"id": "holding-words", "title": "Words on the waiting screen", "group": g, "state": "ok", "state_label": "Saved",
+                  "detail": "A countdown says Next programme in 4:32 with the programme's name. Each channel can choose its own.",
+                  "choice": _choice("Words", s.get("holding_words") or "countdown", dog.HOLDING_WORDS)})
+    g = "More: your own short videos"
+    listed("extras", g)
+    items.append({"id": "add:extras", "title": "Add a short video of your own", "group": g, "actions": ["attach"], "state": "unknown", "state_label": "Add one",
+                  "detail": "One plays at random after the coming-up trailers in each break, on every channel that uses the station's.",
+                  "attach": {"label": "Upload a short video of your own", "field": "Short video of your own", "accept": ",".join(CLIP_TYPES),
+                             "hint": f"A video of up to 10 minutes and 90 MB. {no_file}"}})
+    g = "More: public messages"
+    listed("psa", g)
+    items.append({"id": "add:psa", "title": "Add a public message", "group": g, "actions": ["attach"], "state": "unknown", "state_label": "Add one",
+                  "detail": "A short video with a message, such as a safety tip. Every channel can use it in a break layout.",
+                  "attach": {"label": "Upload a public message", "field": "Public message", "accept": ",".join(CLIP_TYPES),
+                             "hint": f"A video with a picture and a sound track, up to 10 minutes and 90 MB. {no_file}"}})
+    g = "More: background loops"
     for b in s.get("promo_backgrounds") or []:
-        items.append({"id": f"back:{b['id']}", "title": b["title"][:120], "group": "Background loops for coming-up trailers", "actions": ["remove"],
+        items.append({"id": f"back:{b['id']}", "title": b["title"][:120], "group": g, "actions": ["remove"],
                       "state": "ok", "state_label": "Ready", "detail": f"{back_words(b).capitalize()}. Each coming-up trailer chooses one at random"})
-    items.append({"id": "add:back", "title": "Add a background loop for coming-up trailers", "group": "Background loops for coming-up trailers", "actions": ["attach"],
+    items.append({"id": "add:back", "title": "Add a background loop for coming-up trailers", "group": g, "actions": ["attach"],
                   "state": "unknown", "state_label": "Add one",
-                  "detail": "Used with each channel's own and its pack's. Leave the clip area and the words' places clear: the pack's promo/placement.png shows where.",
+                  "detail": "A picture or video behind the words of each trailer. Keep the middle and the places for words clear.",
                   "attach": {"label": "Upload a background loop", "field": "Background loop", "accept": ",".join(BACK_TYPES),
-                             "hint": "A video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080, up to 90 MB. Choose a file: names are not used here"}})
-    out = {"type": "list", "title": "Short title clips, clips and music", "items": items,
-           "intro": ("Short title clips, clips, the waiting screen and music for coming-up trailers that every channel can use. Each channel chooses whether "
-                     "to use these, its own or both.")}
+                             "hint": f"A video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080, up to 90 MB. {no_file}"}})
+    out = {"type": "list", "title": "What plays between programmes", "items": items,
+           "intro": "Everything here plays between programmes on every channel. Each channel can use these, its own, or both."}
     _explain(out, s, "clips")
     if said:
         out["said"] = said[:200]
@@ -2188,6 +2209,8 @@ def clips_page(said=None):
 
 def clips_post(body):
     action, rid, value = body.get("action"), str(body.get("id") or ""), body.get("value")
+    if action == "toggle" and rid == "use-example":  # the empty page's Use the example files: the example branding, as in Branding
+        return clips_page((pack_post({"action": "toggle", "id": "example"}) or {}).get("said"))
     with _lock:
         s = state()
         if action == "dismiss" and explain.dismiss(s, rid):

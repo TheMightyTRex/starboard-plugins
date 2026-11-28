@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.14.1 (not released yet)
+
+### Changed
+- What plays between programmes (DASH-642, owner, 28 November 2026): the page that was Idents, clips and music lists short title clips, clips, music, the waiting screen, then your own short videos, public messages and background loops, in that order.
+- The group called Add is gone: each group has its own Add row, with the same row ids, and a one-sentence hint.
+- The hint on each upload says what to upload. It no longer says "Choose a file: names are not used here".
+
+### Added
+- Use the example files, on a page with nothing added yet: it uses the example branding (short title clips, a logo with music, a Coming up next card) and can be stopped again.
+- Advanced is called More here, because the content rules do not allow the word advanced.
+
 ## 0.14.0 (not released yet)
 
 ### Changed
