@@ -26,8 +26,8 @@ MOVES = {"none": ("None", "None"),
 SPEEDS = {"quick": 0.3, "normal": 0.6, "slow": 1.0}
 SPEED_WORDS = {"quick": "Quick, 0.3 seconds", "normal": "Normal, 0.6 seconds", "slow": "Slow, 1 second"}
 # What can animate, in the order the pages list them.
-ITEMS = {"cards": "Coming up next and Later cards", "straps": "Straps", "logo": "On-screen logo", "clock": "Clock",
-         "label": "New, Repeat or Live label", "holding": "Words on the holding slide"}
+ITEMS = {"cards": "Coming up next and Later cards", "straps": "Straps", "logo": "Corner logo", "clock": "Clock",
+         "label": "New, Repeat or Live label", "holding": "Words on the waiting screen"}
 PARTS = ("in", "out", "speed")
 
 

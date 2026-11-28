@@ -144,8 +144,8 @@ class InCards(App):
         for it in page["items"]:
             if it["group"] not in groups:
                 groups.append(it["group"])
-        self.assertEqual(groups, ["Name and number", "What it shows", "Breaks", "On-screen logo and branding", "Animation",
-                                  "Holding slide and promos", "Today and tomorrow", "Played on this channel"])
+        self.assertEqual(groups, ["Name and number", "What it shows", "Breaks", "Corner logo and branding", "Animation",
+                                  "Waiting screen and coming-up trailers", "Today and tomorrow", "Played on this channel"])
         for g in groups:
             self.assertTrue(page["hints"][g].endswith("."), g)
             self.assertLessEqual(len(g), 40)

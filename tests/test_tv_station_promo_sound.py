@@ -184,7 +184,7 @@ class BackgroundLoops(App):
         self.assertEqual([c["value"] for c in keys["promo_seconds"]["choices"]], ["", "10", "15", "20", "30", "45", "60"])
         self.assertTrue(keys["promo_sound"]["default"])
         for k in ("promo_seconds", "promo_clips", "promo_sound", "promo_music_level"):
-            self.assertEqual(keys[k]["group"], "Promos")
+            self.assertEqual(keys[k]["group"], "Coming-up trailers")
 
 
 @unittest.skipUnless(FFMPEG, "ffmpeg is not installed here")

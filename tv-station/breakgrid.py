@@ -42,16 +42,16 @@ GRID_WORDS = {"between": "In between programmes", "inside": "Breaks"}
 
 # kind -> (words on the page, takes a number of times, what it is)
 KINDS = {
-    "bumper": ("Bumper", True, "A very short version of the ident with no music, from the broadcast pack."),
-    "promo": ("Promo", True, "A promo, a trailer or one of your clips, chosen at random. Each plays once at most in a break."),
-    "adverts": ("Adverts", True, "One of your extra videos, chosen at random."),
-    "ident": ("Ident", True, "An ident, with its music."),
-    "other_promo": ("Other channel promo", True, "A promo for a programme on one of your other channels."),
-    "coming_promo": ("Coming soon promo", True, "A Coming soon promo for a programme on this channel."),
-    "psa": ("PSA", True, "A public service announcement: one of your own videos with sound, chosen at random."),
-    "holding": ("Holding countdown", False, "The holding slide with the time to the programme's start. It takes the time that is left, "
+    "bumper": ("Very short title clip", True, "A short version of the short title clip, with no music, from the branding."),
+    "promo": ("Coming-up trailer", True, "A coming-up trailer or one of your clips, chosen at random. Each plays once at most in a break."),
+    "adverts": ("Your own short videos", True, "One of your own short videos, chosen at random."),
+    "ident": ("Short title clip", True, "A short title clip, with its music."),
+    "other_promo": ("Trailer for another channel", True, "A coming-up trailer for a programme on one of your other channels."),
+    "coming_promo": ("Coming soon trailer", True, "A Coming soon trailer for a programme on this channel."),
+    "psa": ("Public message", True, "A short video with a message, such as a safety tip, with sound. One is chosen at random."),
+    "holding": ("Waiting screen countdown", False, "The waiting screen with the time to the programme's start. It takes the time that is left, "
                                            "and the clock counts through anything that plays after it."),
-    "back_soon": ("Back soon", False, "The holding slide with Back soon. It takes the time that is left."),
+    "back_soon": ("Back soon", False, "The waiting screen with Back soon. It takes the time that is left."),
 }
 ELASTIC = ("holding", "back_soon")  # one at most in a column: they take the time the rest leaves
 ORDER = tuple(KINDS)
@@ -173,7 +173,7 @@ def default_between(ch):
 
 def default_inside(ch):
     """A break inside a programme as it has been since 0.5.0: a bumper, promos, trailers and clips, one extra video,
-    the holding slide with Back soon, and a bumper."""
+    the waiting screen with Back soon, and a very short title clip."""
     n = max(1, min(MOST_TIMES, int(ch.get("per_break") or 3)))
     col = [{"kind": "bumper", "times": 1}, {"kind": "promo", "times": n}, {"kind": "adverts", "times": 1},
            {"kind": "back_soon", "times": 1}, {"kind": "bumper", "times": 1}]
@@ -239,7 +239,7 @@ def _room(col, item, skip=None):
     if len(rest) >= MOST_ITEMS:
         raise GridError(f"A column holds at most {MOST_ITEMS} items")
     if item["kind"] in ELASTIC and any(x["kind"] in ELASTIC for x in rest):
-        raise GridError("A column has one holding slide at most: it takes the time that is left")
+        raise GridError("A column has one waiting screen at most: it takes the time that is left")
 
 
 def apply(grid, op):
@@ -301,7 +301,7 @@ def apply(grid, op):
             if not KINDS[col[i]["kind"]][1]:
                 raise GridError(f"{KINDS[col[i]['kind']][0]} has no number of times: it is shown once")
             if op.get("times") == FIT and col[i]["kind"] != "adverts":
-                raise GridError("Only Adverts can be set to Fit")
+                raise GridError("Only Your own short videos can be set to Fill the time exactly")
             col[i] = clean_item({"kind": col[i]["kind"], "times": op.get("times")})
     elif kind == "length":
         c = _col(g, op.get("column"))
@@ -334,7 +334,7 @@ def column_words(grid, c):
 
 def minimum_seconds(column, shortest):
     """The least time a column's fixed items take: each item with a number of times, as many times as it says, at the
-    shortest clip of its kind (`shortest`: kind -> seconds, missing when there is none). Fit takes nothing: it only fills
+    shortest clip of its kind (`shortest`: kind -> seconds, missing when there is none). Fill the time exactly takes nothing: it only fills
     what is left. The holding items take what is left, so they count nothing."""
     total = 0.0
     for it in column:

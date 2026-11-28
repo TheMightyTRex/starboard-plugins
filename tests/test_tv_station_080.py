@@ -269,7 +269,7 @@ class TheChannelPage(App):
         cid = self.channel("Comedy", episodes("a", 6, 1500))
         st = self.app.breaks_state(cid)
         self.assertFalse(st["grids"][0]["saved"])
-        self.assertEqual([i["name"] for i in st["grids"][0]["columns"][0]["items"]], ["Bumper", "Promo", "Adverts", "Holding countdown", "Ident"])
+        self.assertEqual([i["name"] for i in st["grids"][0]["columns"][0]["items"]], ["Very short title clip", "Coming-up trailer", "Your own short videos", "Waiting screen countdown", "Short title clip"])
         self.assertNotIn("grids", self.app.break_options(self.app.find(self.app.state(), cid), {"cards": True}))
         st = self.app.breaks_op({"cid": cid, "grid": "inside", "op": {"op": "mode", "mode": "time"}})
         g = st["grids"][1]

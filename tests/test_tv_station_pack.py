@@ -185,7 +185,7 @@ class ExamplePack(unittest.TestCase):
         for item in p["idents"] + p["music"] + [p["sting"]]:
             self.assertLessEqual(abs(item["gain"]), 1.0, f"{item['path']} is made at -23 LUFS")
         self.assertTrue(any("scaled to the picture" in n for n in self.got["notes"]), "another size is scaled, and said so")
-        self.assertIn("3 idents", pack.summary(p))
+        self.assertIn("3 short title clips", pack.summary(p))
 
     def test_its_pack_json_passes_the_schema(self):
         self.assertEqual(pack.validate(json.load(open(os.path.join(self.folder, "pack.json")))), [])
@@ -318,8 +318,8 @@ class Breaks(unittest.TestCase):
 
     def test_a_promo_is_shown_only_before_its_programme(self):
         a = self.sched.airing(NOW)
-        soon = {"id": "p1", "dur": 15, "title": "Promo: soon", "src": "promo:aaaa", "airs": a["end"] + 3600, "role": "promo"}
-        gone = {"id": "p2", "dur": 15, "title": "Promo: gone", "src": "promo:bbbb", "airs": a["start"] - 60, "role": "promo"}
+        soon = {"id": "p1", "dur": 15, "title": "Coming-up trailer: soon", "src": "promo:aaaa", "airs": a["end"] + 3600, "role": "promo"}
+        gone = {"id": "p2", "dur": 15, "title": "Coming-up trailer: gone", "src": "promo:bbbb", "airs": a["start"] - 60, "role": "promo"}
         got = set()
         t = NOW
         for _ in range(20):
@@ -461,9 +461,9 @@ class CrossChannel(unittest.TestCase):
         app, s = self.setup()
         a = s["channels"][0]
         got = {c["title"] for c in app.clips_for(s, a)["fillers"]}
-        self.assertEqual(got, {"Promo: X", "Promo: Y"}, "its own and the other channel's, not a channel off air")
+        self.assertEqual(got, {"Coming-up trailer: X", "Coming-up trailer: Y"}, "its own and the other channel's, not a channel off air")
         app, s = self.setup({"promo_other": False})
-        self.assertEqual({c["title"] for c in app.clips_for(s, s["channels"][0])["fillers"]}, {"Promo: X"})
+        self.assertEqual({c["title"] for c in app.clips_for(s, s["channels"][0])["fillers"]}, {"Coming-up trailer: X"})
 
     def test_a_promo_is_a_file_in_the_plug_ins_folder(self):
         app, s = self.setup()
@@ -524,7 +524,7 @@ class PacksInTheApp(unittest.TestCase):
             open(p, "wb").write(data)
             pack.unpack(p, os.path.join(d, "out"))
             said = pack.check(os.path.join(d, "out"))["problems"]
-        self.assertIn("logo/dog.png is missing: every pack has the on-screen logo", said)
+        self.assertIn("logo/dog.png is missing: every pack has the corner logo", said)
 
 
 @unittest.skipUnless(HAS_FFMPEG, "ffmpeg is not installed here")

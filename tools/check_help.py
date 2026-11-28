@@ -37,7 +37,7 @@ RULES = [
     (r"\b(activate|activates|activated|activating|activation|deactivate|deactivates|deactivated|deactivating|deactivation)\b",
      "activate or deactivate (use turn on or turn off)"),  # owner decision, 28 November 2026
     (r"\b(switch|switches|switched|switching) (it |them |this |that )?(on|off)\b", "switch on or off (use turn on or turn off)"),
-    (r"(?<!home )(?<!no )(?<!a )\bscreen\b(?! reader)(?! or keyboard)", "screen (use page)"),
+    (r"(?<!home )(?<!no )(?<!a )(?<!waiting )(?<!Waiting )(?<!computer )(?<!narrow )\bscreen\b(?! reader)(?! or keyboard)", "screen (use page)"),
     (r"\b(top right|top left|bottom right|bottom left|on the left|on the right|scroll down|scroll up)\b", "a position"),
     (r"(?<!\[)!(?!\[)", "an exclamation mark"),
     (r"\b(click here|read more)\b", "a vague link"),
@@ -63,6 +63,8 @@ ALLOWED = [(f, w, RENAMED) for f, w in [
     ("picture-shrinker/starboard-plugin.json", "**Just shrink, with no backup** is now"),
     ("help/plugins/picture-shrinker/updates.md", "**Just shrink, with no backup** is now"),
 ]]
+# "Computer screen" and "narrow screen" are the owner's words for the desktop-only notice (28 November 2026).
+# "Waiting screen" (tv-station, DASH-641) is the television picture shown while the next programme waits, not a page of the app.
 # Create your own TV channel (tv-station, DASH-477): "on-screen logo" is the name of the logo a channel draws on the television picture (the DOG),
 # and the corner it sits in is a corner of that picture, not a place on a page.
 ALLOWED += [(f, w, "the television picture, not a page") for f in

@@ -28,6 +28,7 @@ import breakgrid
 import breaks
 import dog
 import draw
+import explain
 import filelist
 import flash
 import grid
@@ -68,7 +69,7 @@ BACK_LONGEST = 60  # seconds: a background loop's video
 HOLDING_LONGEST = 120  # seconds: a holding slide's video loops (owner, 19 November 2026: 120 seconds and 90 MB)
 HOLDING_MOST = 90 * 1024 * 1024  # bytes: Starboard 0.24.1 and later pass files of up to 100 MB
 MUSIC_USE = {"both": "Your music and the pack's", "mine": "Only your music", "pack": "Only the pack's music"}
-HOLDING_MODES = {"": "The station's holding slide", "own": "Its own holding slide", "none": "No holding slide"}
+HOLDING_MODES = {"": "The station's waiting screen", "own": "Its own waiting screen", "none": "No waiting screen"}
 COLOURS = {"0x1f5f99": "Blue", "0x2e7d32": "Green", "0xb3261e": "Red", "0x6a3d9a": "Purple", "0xb35c00": "Orange",
            "0x00695c": "Teal", "0xad1457": "Pink", "0x455a64": "Grey", "0x8d6e00": "Gold", "0x1a237e": "Navy"}
 START_ON = {"0": "Back to back", "15": "On the quarter hour", "30": "On the half hour", "60": "On the hour"}
@@ -84,7 +85,7 @@ THREE_D_FILE = "three_d.json"  # films looked at for 3D in quiet hours (0.5.5)
 THREE_D_MOST = 60  # films looked at in one quiet-hours run
 TITLES_FILE = "titles.json"  # titles and descriptions in the station's language, kept per item and language (0.6.0)
 TITLES_AHEAD = 3 * 3600  # programmes on a channel being watched airing this soon are asked for in that language
-ROLES = {"idents": "Ident", "clips": "Clip", "trailers": "Trailer", "extras": "Extra video", "psa": "PSA"}
+ROLES = {"idents": "Short title clip", "clips": "Clip", "trailers": "Trailer", "extras": "Short video of your own", "psa": "Public message"}
 PER_BREAK = {"2": "Up to 2", "3": "Up to 3", "4": "Up to 4", "6": "Up to 6"}  # promos, trailers and clips in a break (0.5.0)
 EXTRA_MOST = 90 * 1024 * 1024  # bytes: an extra video for the breaks (0.5.0)
 _lock = threading.RLock()
@@ -290,7 +291,7 @@ def three_d_job(now=None, limit_seconds=40 * 60, most=None):
     if not leave_out_3d():
         return {"said": "Leave out 3D films is off, so films are not checked"}
     if not _promo_lock.acquire(blocking=False):
-        return {"said": "Promos are being made, so the check for 3D films waits for the next quiet hour"}
+        return {"said": "Coming-up trailers are being made, so the check for 3D films waits for the next quiet hour"}
     try:
         return _three_d_run(limit_seconds, most or THREE_D_MOST)
     finally:
@@ -606,7 +607,7 @@ def promo_clips(s, ch, cfg=None):
             continue
         if not promo.current(p, designs):  # made with a pack the channel no longer uses (0.5.1): not shown, made again
             continue
-        out.append({"id": f"promo-{p['id']}", "src": f"promo:{p['id']}", "dur": float(p.get("dur") or 15), "title": f"Promo: {p.get('title')}",
+        out.append({"id": f"promo-{p['id']}", "src": f"promo:{p['id']}", "dur": float(p.get("dur") or 15), "title": f"Coming-up trailer: {p.get('title')}",
                     "has_audio": True, "airs": float(p.get("airs") or 0), "role": "promo", "cid": p["cid"]})
     return out
 
@@ -963,7 +964,7 @@ def breaks_job(now=None, limit_seconds=40 * 60, most=12):
     the programmes they air in the next 48 hours, one at a time at the lowest priority, at most `most` in a run, and
     never while anyone is watching."""
     if not _promo_lock.acquire(blocking=False):
-        return {"said": "Promos are being made, so the search for breaks waits for the next quiet hour"}
+        return {"said": "Coming-up trailers are being made, so the search for breaks waits for the next quiet hour"}
     try:
         return _breaks_run(now, limit_seconds, most)
     finally:
@@ -1133,7 +1134,7 @@ def preview(cid, kind="programme", at=None):
                 "promo": [c for c in got["fillers"] if c.get("role") == "promo" and c.get("cid") == cid] or
                          [c for c in got["fillers"] if c.get("role") == "promo"]}[kind]
         if not pool:
-            raise LookupError({"ident": "No idents yet", "sting": "No logo with music in the pack", "promo": "No promos yet"}[kind])
+            raise LookupError({"ident": "No short title clips yet", "sting": "No logo with music in the pack", "promo": "No coming-up trailers yet"}[kind])
         clip = pool[int(now) % len(pool)]
         seek = min(clip["dur"] * 0.55, clip["dur"] - 0.5)
         piece = {"kind": "clip", "clip": clip, "role": kind, "start": now - seek, "end": now - seek + clip["dur"], "airing": a}
@@ -1143,7 +1144,7 @@ def preview(cid, kind="programme", at=None):
     elif kind == "holding":
         h = holding_for(s, ch)
         if not h:
-            raise LookupError("No holding slide yet")
+            raise LookupError("No waiting screen yet")
         nxt = sched_of(ch).airing(a["end"]) or a
         piece = {"kind": "holding", "holding": h, "start": now, "end": now + 272, "airing": nxt}
     else:
@@ -1165,12 +1166,12 @@ ANIM_DETAIL = {
     "cards": "The words, the bar and the programme's picture on each card, over its background: on as the card starts, off by its end.",
     "straps": "The programme's name as it starts, and Up next during the end credits: on as each starts, off by its end.",
     "logo": "As a programme starts and ends, when it shows only during programmes or with cards; and when it appears after the opening.",
-    "clock": "With the on-screen logo: as a programme starts and ends, when it shows only then.",
+    "clock": "With the corner logo: as a programme starts and ends, when it shows only then.",
     "label": "New, Repeat or Live: on as the programme starts, off at 2 minutes.",
     "holding": "Back soon or the countdown: on as the slide starts, off by the time the next programme starts."}
 PREVIEW_SECONDS = {"straps": 8.0}  # the start strap shows for 8 seconds; everything else for 5
-PACK_ANIM = "The broadcast pack's, or none"
-PACK_SPEED = "The broadcast pack's, or normal"
+PACK_ANIM = "The branding's, or none"
+PACK_SPEED = "The branding's, or normal"
 
 
 def anim_words(item, part, value):
@@ -1229,7 +1230,7 @@ def set_anim(holder, key, value):
         holder[k] = v
     else:
         raise ValueError("That is not one of the choices")
-    words = anim_words(item, part, v) if v in allowed else ("the station's choice" if v == "" else "the broadcast pack's choice")
+    words = anim_words(item, part, v) if v in allowed else ("the station's choice" if v == "" else "the branding's choice")
     return f"{animate.ITEMS[item]}, {('coming on' if part == 'in' else 'going off' if part == 'out' else 'speed')}: {words}. Saved"
 
 
@@ -1318,8 +1319,8 @@ def animation_page(said=None):
     p = station_pack(s)
     out = {"type": "list", "title": "Animation", "items": items,
            "intro": ("How each thing drawn over the picture comes on and goes off, for every channel unless it has its own choice. "
-                     + ("The station's broadcast pack, " + p["name"] + ", chooses for anything left at The broadcast pack's. " if p and p.get("animation")
-                        else "Anything left at The broadcast pack's has no animation, unless the station's broadcast pack chooses one. ")
+                     + ("The station's branding, " + p["name"] + ", chooses for anything left at The branding's. " if p and p.get("animation")
+                        else "Anything left at The branding's has no animation, unless the station's branding chooses one. ")
                      + "Each preview opens a few seconds of it in a new tab.")}
     if said:
         out["said"] = said[:200]
@@ -1399,12 +1400,12 @@ def can(what):
 # channels section into smaller cards and look at making it easier to understand once you select the channel").
 CARDS = (("Name and number", "Its name and number in Jellyfin's Live TV, whether it is on air, and its colour."),
          ("What it shows", "The series, films, collections, playlists, genres and decades it plays. Choose from your library to add several at once."),
-         ("Breaks", "What plays between programmes: when programmes start, how long the break is, idents, trailers and your clips."),
-         ("On-screen logo and branding", "The logo in the corner, the straps and cards, and the broadcast pack they come from. "
+         ("Breaks", "What plays between programmes: when programmes start, how long the break is, short title clips, trailers and your clips."),
+         ("Corner logo and branding", "The logo in the corner, the title bars and cards, and the branding they come from. "
                                          "Each one follows the station's setting until you choose another."),
-         ("Animation", "How the cards, straps, on-screen logo, clock, label and holding slide words come on and go off. "
+         ("Animation", "How the cards, title bars, corner logo, clock, label and waiting screen words come on and go off. "
                        "Each one follows the station's choice until you choose another."),
-         ("Holding slide and promos", "The slide that loops at the end of a break until the next programme starts, and the music for its promos."),
+         ("Waiting screen and coming-up trailers", "The slide that loops at the end of a break until the next programme starts, and the music for its coming-up trailers."),
          ("Today and tomorrow", "What it shows in the next 24 hours, worked out from what it shows and its breaks."),
          ("Played on this channel", "What it has played to someone watching, which From the next episode not watched can count as watched. "
                                     "Jellyfin's own watched marks are never changed."))
@@ -1441,7 +1442,7 @@ def channel_rows(s, ch, cfg, base, now):
         attach={"label": "Change number", "field": "Number", "hint": "A whole number from 1 to 9999. Leave it empty to number by its place.",
                 "value": str(ch.get("number_set") or "")})
     row("colour", "Colour", g, choice=_choice("Colour", ch.get("colour"), COLOURS),
-        detail="On its cards, its made logo and plain promos. Words always say what each thing is, so the colour is never the only sign.")
+        detail="On its cards, its made logo and plain coming-up trailers. Words always say what each thing is, so the colour is never the only sign.")
 
     # What it shows
     g = "What it shows"
@@ -1466,11 +1467,11 @@ def channel_rows(s, ch, cfg, base, now):
     # edit in the schedule grid"): a week from this channel's own series and films, kept as an unsaved suggestion.
     draft = grid_doc(cid, "draft") is not None
     grid_link = {"url": f"{base}/t/{s['token']}/grid?channel={cid}", "label": f"Open the schedule grid for {ch['name']}"} if base else None
-    row("initial", "Create initial schedule", g, actions=["attach"], state="unknown" if not draft else "ok",
+    row("initial", "Plan the week for me", g, actions=["attach"], state="unknown" if not draft else "ok",
         state_label="Waiting to be saved" if draft else "Make one",
         detail=("Made: open the schedule grid to change it, then save it. " if draft else "") +
                "Fills the hours you give with this channel's series and films: series on weekdays, films at the weekend.",
-        attach={"label": "Create initial schedule", "field": "Hours to fill", "value": initial_hours_words(ch),
+        attach={"label": "Plan the week for me", "field": "Hours to fill", "value": initial_hours_words(ch),
                 "hint": "Weekdays 18:00 to 23:00, weekends 12:00 to 23:00, on the quarter hour"},
         **({"link": grid_link} if grid_link else {}))
 
@@ -1481,7 +1482,7 @@ def channel_rows(s, ch, cfg, base, now):
     row("break_seconds", "Break between programmes", g, choice=_choice("Break", ch.get("break_seconds"), BREAKS),
         detail="Added after each programme. With programmes on the half hour, the break also fills the rest of the slot.")
     row("mid_break_seconds", "Breaks inside programmes", g, choice=_choice("Breaks inside", str(ch.get("mid_break_seconds") or 0), MID_BREAKS),
-        detail="Where a programme fades to black for its adverts, found in quiet hours. Their time comes from the break after it.")
+        detail="Where a programme fades to black for its own short videos, found in quiet hours. Their time comes from the break after it.")
     how_now, per_30, per_film = place_choice(ch)
     row("place_how", "Where breaks go inside a programme", g, choice=_choice("Where", how_now, PLACE_HOW),
         detail="Found once for each programme, in quiet hours. A break with no place found goes to its set time.")
@@ -1499,47 +1500,47 @@ def channel_rows(s, ch, cfg, base, now):
             **({"link": {"url": f"{base}/t/{s['token']}/breaks?channel={cid}&grid={which}",
                          "label": f"Open the {GRID_LINK[which]} grid for {ch['name']}"}} if base else {}))
     both = {"none": "None", "own": "This channel's", "shared": "The station's", "both": "This channel's and the station's"}
-    row("idents", "Idents", g, choice=_choice("Idents", ch.get("idents"), both))
-    row("ident_order", "Idents play", g, choice=_choice("Idents play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
+    row("idents", "Short title clips", g, choice=_choice("Short title clips", ch.get("idents"), both))
+    row("ident_order", "Short title clips play", g, choice=_choice("Short title clips play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
     row("trailers", "Trailers", g, choice=_choice("Trailers", "on" if ch.get("trailers") else "off", {"off": "None", "on": "Trailers of its films, from Jellyfin"}))
     row("clips", "Your clips", g, choice=_choice("Clips", ch.get("clips"), both))
-    row("per_break", "Promos and clips in each break", g, choice=_choice("In each break", str(ch.get("per_break") or 3), PER_BREAK),
-        detail="Each plays once at most, in a random order, after the bumper. The holding slide fills the rest of the break.")
-    row("extras", "Extra videos", g, choice=_choice("Extra videos", ch.get("extras") or "both", both),
-        detail="One plays at random after the promos in each break, when it fits.")
+    row("per_break", "Coming-up trailers and clips in each break", g, choice=_choice("In each break", str(ch.get("per_break") or 3), PER_BREAK),
+        detail="Each plays once at most, in a random order, after the very short title clip. The waiting screen fills the rest of the break.")
+    row("extras", "Your own short videos", g, choice=_choice("Your own short videos", ch.get("extras") or "both", both),
+        detail="One plays at random after the coming-up trailers in each break, when it fits.")
     own = ch.get("own") or {}
     for role in ("idents", "clips", "extras", "psa"):
         for c in own.get(role) or []:
             row(f"clip-{c['id']}", f"{ROLES[role]}: {c['title']}", g, detail=f"{round(c['dur'])} seconds", actions=["remove"], state_label="Ready")
-    row("add-ident", "Add an ident", g, actions=["attach"], state="unknown", state_label="Add one",
-        attach={"label": "Add an ident", "field": "Ident", "hint": "A short video, up to 60 MB, or the name of a Jellyfin collection of them",
+    row("add-ident", "Add a short title clip", g, actions=["attach"], state="unknown", state_label="Add one",
+        attach={"label": "Add a short title clip", "field": "Short title clip", "hint": "A short video, up to 60 MB, or the name of a Jellyfin collection of them",
                 "accept": ",".join(CLIP_TYPES)})
     row("add-clip", "Add a clip", g, actions=["attach"], state="unknown", state_label="Add one",
         attach={"label": "Add a clip", "field": "Clip", "hint": "A trailer or clip, up to 60 MB, or the name of a Jellyfin collection of them",
                 "accept": ",".join(CLIP_TYPES)})
-    row("psa", "PSAs", g, choice=_choice("PSAs", ch.get("psa") or "both", both),
-        detail="Public service announcements for the grids' PSA item: this channel's, the station's or both.")
-    row("add-psa", "Add a PSA", g, actions=["attach"], state="unknown", state_label="Add one",
+    row("psa", "Public messages", g, choice=_choice("Public messages", ch.get("psa") or "both", both),
+        detail="Public service announcements for the Public message item in the break layouts: this channel's, the station's or both.")
+    row("add-psa", "Add a public message", g, actions=["attach"], state="unknown", state_label="Add one",
         detail="A video with sound, up to 10 minutes and 90 MB. It is checked when it is added.",
-        attach={"label": "Upload a PSA", "field": "PSA", "hint": "A video with a picture and a sound track, up to 10 minutes and 90 MB",
+        attach={"label": "Upload a public message", "field": "Public message", "hint": "A video with a picture and a sound track, up to 10 minutes and 90 MB",
                 "accept": ",".join(CLIP_TYPES)})
-    row("add-extra", "Add an extra video", g, actions=["attach"], state="unknown", state_label="Add one",
-        detail="As many as you like. One plays at random after the promos in each break.",
-        attach={"label": "Upload an extra video", "field": "Extra video", "hint": "A video of up to 10 minutes and 90 MB",
+    row("add-extra", "Add a short video of your own", g, actions=["attach"], state="unknown", state_label="Add one",
+        detail="As many as you like. One plays at random after the coming-up trailers in each break.",
+        attach={"label": "Upload a short video of your own", "field": "Short video of your own", "hint": "A video of up to 10 minutes and 90 MB",
                 "accept": ",".join(CLIP_TYPES)})
 
     # On-screen logo and branding
-    g = "On-screen logo and branding"
+    g = "Corner logo and branding"
     st = dog.resolve(cfg, None)
     own_dog = ch.get("dog") or {}
     yesno = {"true": "Yes", "false": "No"}
-    for key, label, options in (("kind", "On-screen logo", dog.KINDS), ("corner", "Corner", dog.CORNERS),
+    for key, label, options in (("kind", "Corner logo", dog.KINDS), ("corner", "Corner", dog.CORNERS),
                                 ("size", "Size", {"small": "Small", "medium": "Medium", "large": "Large"}),
                                 ("margin", "Distance from the edge", {"small": "Close", "medium": "Inside the safe area", "large": "Further in"}),
                                 ("opacity", "Opacity", {str(p): f"{p}%" for p in (40, 50, 60, 70, 80, 90, 100)}),
                                 ("when", "When it shows", dog.WHEN),
                                 ("fade_in", "Fades in after the opening", {"0": "No, at once", "30": "After 30 seconds", "60": "After 1 minute", "120": "After 2 minutes"}),
-                                ("clock", "Clock", yesno), ("label", "Label", dog.LABELS), ("plate", "Backing plate", yesno),
+                                ("clock", "Clock", yesno), ("label", "Label", dog.LABELS), ("plate", "Dark box behind the logo", yesno),
                                 ("strap_start", "Programme name at the start", yesno), ("strap_end", "Up next during the end credits", yesno),
                                 ("cards", "Coming up next and Later cards", yesno)):
         dv = st[key]
@@ -1551,12 +1552,12 @@ def channel_rows(s, ch, cfg, base, now):
         actions=["attach", "detach"] if own_logo(cid) else ["attach"],
         **({"image": img} if (img := logo_thumb(logo_file(cid, channel_pack(s, ch)) or made_logo(ch), f"{ch['name']}'s logo")) else {}),
         attach={"label": "Add logo", "field": "Logo", "detach_label": "Remove the logo", "hint": "A PNG with a clear background, at least 256 pixels tall", "accept": ".png"})
-    row("pack", "Broadcast pack", g, choice=_choice("Broadcast pack", ch.get("pack") or "", PACK_MODES),
-        detail=f"Now {pack_words(s, ch)}. A pack gives the on-screen logo, idents, transitions, the Coming up next card and promos.")
+    row("pack", "Branding", g, choice=_choice("Branding", ch.get("pack") or "", PACK_MODES),
+        detail=f"Now {pack_words(s, ch)}. A pack gives the corner logo, short title clips, transitions, the Coming up next card and coming-up trailers.")
     own_pk = load_pack(f"ch-{cid}")
     row("pack-own", f"Its own pack: {own_pk['name']}" if own_pk else "Its own pack: none yet", g,
         actions=["attach", "detach"] if own_pk else ["attach"], detail=pack.summary(own_pk) if own_pk else
-        "For branding of its own: a zip made from the template, in Broadcast pack. Then choose Its own pack.",
+        "For branding of its own: a zip made from the template, in Branding. Then choose Its own pack.",
         attach={"label": "Upload its own pack", "field": "Pack", "detach_label": "Remove its pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"})
     prev = {"detail": "Opens a frame as it would be drawn now, with these settings."}
     if base:
@@ -1572,41 +1573,41 @@ def channel_rows(s, ch, cfg, base, now):
     items += anim_rows(s, ch, base, "Animation")
 
     # Holding slide and promos
-    g = "Holding slide and promos"
+    g = "Waiting screen and coming-up trailers"
     h = holding_for(s, ch)
     mode = ch.get("holding_mode") or ""
-    row("holding_mode", "Holding slide", g, choice=_choice("Holding slide", mode, HOLDING_MODES),
+    row("holding_mode", "Waiting screen", g, choice=_choice("Waiting screen", mode, HOLDING_MODES),
         detail=(f"Now {holding_words(ch.get('holding') if mode == 'own' and ch.get('holding') else s.get('holding'))}. " if h else
-                "None yet, so breaks end on Coming up next cards. ") + "It loops after the promos until the next programme starts.")
-    row("holding-own", "Its own holding slide: " + (holding_words(ch["holding"]) if ch.get("holding") else "none yet"), g,
+                "None yet, so breaks end on Coming up next cards. ") + "It loops after the coming-up trailers until the next programme starts.")
+    row("holding-own", "Its own waiting screen: " + (holding_words(ch["holding"]) if ch.get("holding") else "none yet"), g,
         actions=["attach", "detach"] if ch.get("holding") else ["attach"], state="ok" if ch.get("holding") else "unknown",
-        state_label="Ready" if ch.get("holding") else "Add one", detail="A picture, or a video of up to 120 seconds that loops. The station's is in Idents, clips and music.",
-        attach={"label": "Upload a holding slide", "field": "Holding slide", "detach_label": "Remove the slide", "hint": "A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB",
+        state_label="Ready" if ch.get("holding") else "Add one", detail="A picture, or a video of up to 120 seconds that loops. The station's is in Short title clips, clips and music.",
+        attach={"label": "Upload a waiting screen", "field": "Waiting screen", "detach_label": "Remove the waiting screen", "hint": "A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB",
                 "accept": ",".join(HOLDING_TYPES)})
     st_words = dog.HOLDING_WORDS.get(s.get("holding_words") or "countdown")
-    row("holding_words", "Words on the slide", g, choice=_choice("Words", ch.get("holding_words") or "", dog.HOLDING_WORDS, st_words),
+    row("holding_words", "Words on the waiting screen", g, choice=_choice("Words", ch.get("holding_words") or "", dog.HOLDING_WORDS, st_words),
         detail="A countdown says Next programme in 4:32 with the programme's name, and reaches 0:00 as it starts.")
     if base and h:
-        row("preview-holding", "Preview the holding slide", g, state="unknown", state_label="Preview",
-            link={"url": f"{base}/t/{s['token']}/preview/{cid}.png?kind=holding", "label": f"Preview the holding slide on {ch['name']}"})
+        row("preview-holding", "Preview the waiting screen", g, state="unknown", state_label="Preview",
+            link={"url": f"{base}/t/{s['token']}/preview/{cid}.png?kind=holding", "label": f"Preview the waiting screen on {ch['name']}"})
     design = promo_design(s, ch)
     kept = [p for p in s.get("promos") or [] if p.get("cid") == cid]
-    how = ("Made in quiet hours with its broadcast pack." if design and design.get("name") != "Plain" else
+    how = ("Made in quiet hours with its branding." if design and design.get("name") != "Plain" else
            "Made in quiet hours on its colour, with your music." if design else
-           "To have promos, upload music for them here or in Idents, clips and music, or use a pack with a promo.")
-    row("promos", f"Promos: {len(kept)} kept" if design else "Promos: none yet", g, state="ok" if design else "off",
+           "To have coming-up trailers, upload music for them here or in Short title clips, clips and music, or use a pack with a coming-up trailer.")
+    row("promos", f"Coming-up trailers: {len(kept)} kept" if design else "Coming-up trailers: none yet", g, state="ok" if design else "off",
         state_label="Made in quiet hours" if design else "None", detail=how)
     for m in ch.get("music") or []:
-        row(f"music-{m['id']}", f"Music: {m['title']}", g, detail=f"{round(m.get('dur') or 0)} seconds. Used for this channel's promos.",
+        row(f"music-{m['id']}", f"Music: {m['title']}", g, detail=f"{round(m.get('dur') or 0)} seconds. Used for this channel's coming-up trailers.",
             actions=["remove"], state_label="Ready")
     for b in ch.get("promo_backgrounds") or []:
-        row(f"back-{b['id']}", f"Background loop: {b['title']}", g, detail=f"{back_words(b).capitalize()}. Each promo chooses one at random.",
+        row(f"back-{b['id']}", f"Background loop: {b['title']}", g, detail=f"{back_words(b).capitalize()}. Each coming-up trailer chooses one at random.",
             actions=["remove"], state_label="Ready")
-    row("add-back", "Add a background loop for its promos", g, actions=["attach"], state="unknown", state_label="Add one",
-        detail="Used with the station's and the pack's, one chosen at random for each promo. Leave the clip area and the words' places clear.",
+    row("add-back", "Add a background loop for its coming-up trailers", g, actions=["attach"], state="unknown", state_label="Add one",
+        detail="Used with the station's and the pack's, one chosen at random for each coming-up trailer. Leave the clip area and the words' places clear.",
         attach={"label": "Upload a background loop", "field": "Background loop", "accept": ",".join(BACK_TYPES),
                 "hint": "A video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080, up to 90 MB"})
-    row("add-music", "Add music for its promos", g, actions=["attach"], state="unknown", state_label="Add one",
+    row("add-music", "Add music for its coming-up trailers", g, actions=["attach"], state="unknown", state_label="Add one",
         detail="Its own music, used in place of the station's. " + MUSIC_USE.get(s.get("music_use") or "both", "") + " are used.",
         attach={"label": "Upload music", "field": "Music", "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB",
                 "accept": ",".join(MUSIC_TYPES)})
@@ -1672,7 +1673,7 @@ def channels_page(said=None, now=None, only=None):
         return out
     out = {"type": "list", "title": "Channels", "intro": (f"{station_name(cfg)}: {sbplugin.plural(len(s['channels']), 'channel')}. "
                                                           "Open a channel to change it. Each of its cards is one part of it: its name, what it shows, "
-                                                          "its breaks, its on-screen logo, its holding slide and promos, and its programmes."),
+                                                          "its breaks, its corner logo, its waiting screen and coming-up trailers, and its programmes."),
            "add": {"label": "Add a channel", "hint": "Its name, such as Comedy. Up to 40 characters", "placeholder": "Channel name"},
            "menus": menus, "items": items, "hints": dict(CARDS)}
     if can("cards"):
@@ -1680,8 +1681,10 @@ def channels_page(said=None, now=None, only=None):
     if said:
         out["said"] = said[:200]
     err = sbplugin.last_error()
-    if err:
-        out["notices"] = [{"id": "error", "tone": "warning", "title": "The last refresh did not finish", "text": err, "dismiss": True}]
+    out["notices"] = ([{"id": "error", "tone": "warning", "title": "The last refresh did not finish", "text": err, "dismiss": True}] if err else []) \
+        + explain.notices(s, "channels")
+    if not out["notices"]:
+        del out["notices"]
     return out
 
 
@@ -1811,7 +1814,10 @@ def channels_post(body, now=None):
             save(s)
             return channels_page(f"Added {ch['name']}. Open it to add a series, film, collection or playlist", now)
         if action == "dismiss":
-            sbplugin.clear_error()
+            if explain.dismiss(s, rid):
+                save(s)
+            else:
+                sbplugin.clear_error()
             return channels_page(None, now)
         cid, _, key = rid.partition(":")
         ch = find(s, cid)
@@ -1872,7 +1878,7 @@ def channels_post(body, now=None):
             drop_holding(ch.pop("holding", None))
             if ch.get("holding_mode") == "own":
                 ch["holding_mode"] = ""
-            said = "Its own holding slide is removed: it uses the station's" + ("" if s.get("holding") else ", and there is none, so breaks end on cards")
+            said = "Its own waiting screen is removed: it uses the station's" + ("" if s.get("holding") else ", and there is none, so breaks end on cards")
         elif key.startswith("music-") and action == "remove":
             ch["music"] = drop_music(ch.get("music"), key[6:])
             said = "Removed the music"
@@ -1958,7 +1964,7 @@ def choose(ch, key, value):
         return f"{ch['name']} now uses {HOLDING_MODES[v].lower()}"
     elif key == "holding_words" and (v == "" or v in dog.HOLDING_WORDS):
         ch["holding_words"] = v
-        return "Saved: " + (dog.HOLDING_WORDS[v] if v else "the station's words") + " on the holding slide"
+        return "Saved: " + (dog.HOLDING_WORDS[v] if v else "the station's words") + " on the waiting screen"
     elif key.startswith("anim-"):
         return set_anim(ch.setdefault("dog", {}), key, v)
     elif key == "count_played" and v in ("on", "off"):
@@ -2033,7 +2039,7 @@ def add_clip_file(holder, role, name, length, rfile):
     if not has_video or dur <= 0:
         raise ValueError(f"{base} has no picture FFmpeg can read")
     if role == "psa" and not has_audio:
-        raise ValueError(f"{base} has no sound track: a PSA needs one")
+        raise ValueError(f"{base} has no sound track: a public message needs one")
     if dur > 600:
         raise ValueError(f"{base} is over 10 minutes: too long for a break")
     cid = hashlib.sha256(base.encode()).hexdigest()[:10]
@@ -2076,13 +2082,13 @@ def channels_file(name, item, length, rfile):
                 raise ValueError("That channel has gone")
             if key == "holding-own":
                 ch["holding"], ch["holding_mode"] = got, "own"
-                said = f"{got['title']} is {ch['name']}'s holding slide. It loops after the promos until the next programme starts"
+                said = f"{got['title']} is {ch['name']}'s waiting screen. It loops after the coming-up trailers until the next programme starts"
             elif key == "add-back":
                 ch["promo_backgrounds"] = backs
-                said += f". {ch['name']}'s promos use it from the next quiet hour"
+                said += f". {ch['name']}'s coming-up trailers use it from the next quiet hour"
             else:
                 ch["music"] = tracks
-                said += f". {ch['name']}'s promos use it from the next quiet hour"
+                said += f". {ch['name']}'s coming-up trailers use it from the next quiet hour"
             save(s)
         return channels_page(said, only=cid if can("partial") else None)
     with _lock:
@@ -2110,63 +2116,71 @@ def channels_file(name, item, length, rfile):
     return channels_page(said, only=cid if can("partial") else None)
 
 
+def _explain(out, s, page):
+    """Adds the one-time explainers for a page to its notices (explain.py)."""
+    got = explain.notices(s, page)
+    if got:
+        out["notices"] = (out.get("notices") or []) + got
+
+
 def clips_page(said=None):
     s = state()
     sh = s["shared"]
     items = []
-    groups = {"idents": "The station's idents", "clips": "The station's clips", "extras": "Extra videos for the breaks", "psa": "PSAs"}
+    groups = {"idents": "The station's short title clips", "clips": "The station's clips", "extras": "Your own short videos for the breaks", "psa": "Public messages"}
     for role in ("idents", "clips", "extras", "psa"):
         for c in sh.get(role) or []:
             items.append({"id": f"{role}:{c['id']}", "title": c["title"][:120], "detail": f"{round(c['dur'])} seconds",
                           "group": groups[role], "actions": ["remove"], "state": "ok", "state_label": "Ready"})
-    items.append({"id": "add:extras", "title": "Add an extra video for the breaks", "group": "Extra videos for the breaks", "actions": ["attach"],
+    items.append({"id": "add:extras", "title": "Add a short video of your own for the breaks", "group": "Your own short videos for the breaks", "actions": ["attach"],
                   "state": "unknown", "state_label": "Add one",
-                  "detail": "As many as you like. One plays at random after the promos in each break, on every channel that uses the station's.",
-                  "attach": {"label": "Upload an extra video", "field": "Extra video", "accept": ",".join(CLIP_TYPES),
+                  "detail": "As many as you like. One plays at random after the coming-up trailers in each break, on every channel that uses the station's.",
+                  "attach": {"label": "Upload a short video of your own", "field": "Short video of your own", "accept": ",".join(CLIP_TYPES),
                              "hint": "A video of up to 10 minutes and 90 MB. Choose a file: names are not used here"}})
-    items.append({"id": "add:psa", "title": "Add a PSA", "group": "PSAs", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
+    items.append({"id": "add:psa", "title": "Add a public message", "group": "Public messages", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
                   "detail": "A public service announcement every channel can use in the grids. A video with sound, up to 10 minutes and 90 MB.",
-                  "attach": {"label": "Upload a PSA", "field": "PSA", "accept": ",".join(CLIP_TYPES),
+                  "attach": {"label": "Upload a public message", "field": "Public message", "accept": ",".join(CLIP_TYPES),
                              "hint": "A video with a picture and a sound track, up to 10 minutes and 90 MB. Choose a file: names are not used here"}})
-    for role, label in (("idents", "Add the station's idents"), ("clips", "Add the station's clips")):
+    for role, label in (("idents", "Add the station's short title clips"), ("clips", "Add the station's clips")):
         items.append({"id": f"add:{role}", "title": label, "group": "Add", "actions": ["attach"], "state": "unknown", "state_label": "Add one",
                       "attach": {"label": label, "field": "Name", "hint": "A video up to 60 MB, or the name of a Jellyfin collection or folder",
                                  "accept": ",".join(CLIP_TYPES)}})
     # The holding slide (0.2.0): every channel's, unless it has its own.
     h = s.get("holding")
-    items.append({"id": "holding", "title": "The station's holding slide: " + (holding_words(h) if h else "none yet"), "group": "Holding slide",
+    items.append({"id": "holding", "title": "The station's waiting screen: " + (holding_words(h) if h else "none yet"), "group": "Waiting screen",
                   "state": "ok" if h else "unknown", "state_label": "In use" if h else "None yet",
-                  "detail": ("Loops at the end of each break, after the promos, until the next programme starts, on every channel without its own. "
+                  "detail": ("Loops at the end of each break, after the coming-up trailers, until the next programme starts, on every channel without its own. "
                              if h else "Upload a picture or a short video, and it loops at the end of each break until the next programme starts. ")[:200],
                   "actions": ["attach", "detach"] if h else ["attach"],
-                  "attach": {"label": "Upload a holding slide", "field": "Holding slide", "accept": ",".join(HOLDING_TYPES), "detach_label": "Remove the slide",
+                  "attach": {"label": "Upload a waiting screen", "field": "Waiting screen", "accept": ",".join(HOLDING_TYPES), "detach_label": "Remove the waiting screen",
                              "hint": "A PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Choose a file: names are not used here"}})
-    items.append({"id": "holding-words", "title": "Words on the slide", "group": "Holding slide", "state": "ok", "state_label": "Saved",
+    items.append({"id": "holding-words", "title": "Words on the waiting screen", "group": "Waiting screen", "state": "ok", "state_label": "Saved",
                   "detail": "A countdown says Next programme in 4:32 with the programme's name, and reaches 0:00 as it starts. Each channel can choose its own.",
                   "choice": _choice("Words", s.get("holding_words") or "countdown", dog.HOLDING_WORDS)})
     # Music for promos (0.2.0)
-    items.append({"id": "music-use", "title": "Music the promos use", "group": "Music for promos", "state": "ok", "state_label": "Saved",
-                  "detail": "A channel's own music comes first, then this. Promos are made in quiet hours, so a change shows in the next ones.",
+    items.append({"id": "music-use", "title": "Music the coming-up trailers use", "group": "Music for coming-up trailers", "state": "ok", "state_label": "Saved",
+                  "detail": "A channel's own music comes first, then this. Coming-up trailers are made in quiet hours, so a change shows in the next ones.",
                   "choice": _choice("Music", s.get("music_use") or "both", MUSIC_USE)})
     for m in s.get("music") or []:
-        items.append({"id": f"music:{m['id']}", "title": m["title"][:120], "group": "Music for promos", "actions": ["remove"], "state": "ok",
+        items.append({"id": f"music:{m['id']}", "title": m["title"][:120], "group": "Music for coming-up trailers", "actions": ["remove"], "state": "ok",
                       "state_label": "Ready", "detail": f"{round(m.get('dur') or 0)} seconds, played at the same loudness as the rest"})
-    items.append({"id": "add:music", "title": "Add music for promos", "group": "Music for promos", "actions": ["attach"], "state": "unknown",
-                  "state_label": "Add one", "detail": "With music here, a channel without a pack promo gets plain promos on its colour.",
+    items.append({"id": "add:music", "title": "Add music for coming-up trailers", "group": "Music for coming-up trailers", "actions": ["attach"], "state": "unknown",
+                  "state_label": "Add one", "detail": "With music here, a channel without a pack coming-up trailer gets plain coming-up trailers on its colour.",
                   "attach": {"label": "Upload music", "field": "Music", "accept": ",".join(MUSIC_TYPES),
                              "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB. Choose a file: names are not used here"}})
     # Background loops for promos (0.3.0)
     for b in s.get("promo_backgrounds") or []:
-        items.append({"id": f"back:{b['id']}", "title": b["title"][:120], "group": "Background loops for promos", "actions": ["remove"],
-                      "state": "ok", "state_label": "Ready", "detail": f"{back_words(b).capitalize()}. Each promo chooses one at random"})
-    items.append({"id": "add:back", "title": "Add a background loop for promos", "group": "Background loops for promos", "actions": ["attach"],
+        items.append({"id": f"back:{b['id']}", "title": b["title"][:120], "group": "Background loops for coming-up trailers", "actions": ["remove"],
+                      "state": "ok", "state_label": "Ready", "detail": f"{back_words(b).capitalize()}. Each coming-up trailer chooses one at random"})
+    items.append({"id": "add:back", "title": "Add a background loop for coming-up trailers", "group": "Background loops for coming-up trailers", "actions": ["attach"],
                   "state": "unknown", "state_label": "Add one",
                   "detail": "Used with each channel's own and its pack's. Leave the clip area and the words' places clear: the pack's promo/placement.png shows where.",
                   "attach": {"label": "Upload a background loop", "field": "Background loop", "accept": ",".join(BACK_TYPES),
                              "hint": "A video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080, up to 90 MB. Choose a file: names are not used here"}})
-    out = {"type": "list", "title": "Idents, clips and music", "items": items,
-           "intro": ("Idents, clips, the holding slide and music for promos that every channel can use. Each channel chooses whether "
+    out = {"type": "list", "title": "Short title clips, clips and music", "items": items,
+           "intro": ("Short title clips, clips, the waiting screen and music for coming-up trailers that every channel can use. Each channel chooses whether "
                      "to use these, its own or both.")}
+    _explain(out, s, "clips")
     if said:
         out["said"] = said[:200]
     return out
@@ -2176,6 +2190,9 @@ def clips_post(body):
     action, rid, value = body.get("action"), str(body.get("id") or ""), body.get("value")
     with _lock:
         s = state()
+        if action == "dismiss" and explain.dismiss(s, rid):
+            save(s)
+            return clips_page()
         role, _, cid = rid.partition(":")
         if action == "remove" and role in ("idents", "clips", "extras", "psa"):
             s["shared"][role] = [c for c in s["shared"].get(role) or [] if c["id"] != cid]
@@ -2192,13 +2209,13 @@ def clips_post(body):
             raise ValueError("Choose a file, then Upload")
         elif action == "detach" and rid == "holding":
             drop_holding(s.pop("holding", None))
-            said = "The station's holding slide is removed. Breaks end on Coming up next cards, unless a channel has its own slide"
+            said = "The station's waiting screen is removed. Breaks end on Coming up next cards, unless a channel has its own waiting screen"
         elif action == "choose" and rid == "holding-words" and str(value) in dog.HOLDING_WORDS:
             s["holding_words"] = str(value)
-            said = f"Words on the slide: {dog.HOLDING_WORDS[str(value)]}. Saved"
+            said = f"Words on the waiting screen: {dog.HOLDING_WORDS[str(value)]}. Saved"
         elif action == "choose" and rid == "music-use" and str(value) in MUSIC_USE:
             s["music_use"] = str(value)
-            said = f"Music the promos use: {MUSIC_USE[str(value)]}. Saved"
+            said = f"Music the coming-up trailers use: {MUSIC_USE[str(value)]}. Saved"
         else:
             raise ValueError("That cannot be changed here")
         save(s)
@@ -2212,21 +2229,21 @@ def clips_file(name, item, length, rfile):
             s = state()
             s["holding"] = got
             save(s)
-        return clips_page(f"{got['title']} is the station's holding slide. It loops at the end of each break until the next programme starts")
+        return clips_page(f"{got['title']} is the station's waiting screen. It loops at the end of each break until the next programme starts")
     if item == "add:back":
         backs, said = add_background(state().get("promo_backgrounds"), "station", name, length, rfile)
         with _lock:
             s = state()
             s["promo_backgrounds"] = backs
             save(s)
-        return clips_page(said + ". Promos use it from the next quiet hour")
+        return clips_page(said + ". Coming-up trailers use it from the next quiet hour")
     if item == "add:music":
         tracks, said = add_music(state().get("music"), "station", name, length, rfile)
         with _lock:
             s = state()
             s["music"] = tracks
             save(s)
-        return clips_page(said + ". Promos use it from the next quiet hour")
+        return clips_page(said + ". Coming-up trailers use it from the next quiet hour")
     role = item.partition(":")[2]
     if role not in ("idents", "clips", "extras", "psa"):
         raise ValueError("That row takes no file")
@@ -2382,7 +2399,7 @@ def pack_page(said=None):
     title = f"Station's pack: {sp['name']}" + (" (the example pack)" if using_example else "") if sp else "Station's pack: none yet"
     detail = (pack.summary(sp) + (f". Made {sp['made']}" if sp.get("made") else "") + ". Used by every channel without its own."
               if sp else "Upload a zip made from the template: every channel uses it unless it has its own, or none.")
-    pic = logo_thumb(os.path.join(sp["folder"], sp["dog"]), f"The on-screen logo in {sp['name']}") if sp and sp.get("dog") else None
+    pic = logo_thumb(os.path.join(sp["folder"], sp["dog"]), f"The corner logo in {sp['name']}") if sp and sp.get("dog") else None
     items.append({"id": "station", "title": title[:120], "detail": detail[:200], "group": "The station's pack", **({"image": pic} if pic else {}),
                   "state": "ok" if sp else "unknown", "state_label": "In use" if sp else "None yet",
                   "actions": ["attach", "detach"] if sp and not using_example else ["attach"],
@@ -2393,7 +2410,7 @@ def pack_page(said=None):
         ex_state, ex_label, ex_detail = "problem", "Not made", f"The example pack was not made: {_example['error']}"
     else:
         ex_state, ex_label = ("ok", "In use") if using_example else ("off", "Not in use")
-        ex_detail = ("Example TV, made in code: a logo, the logo with music, 3 idents, a Coming up next card, a promo with 2 music beds "
+        ex_detail = ("Example TV, made in code: a logo, the logo with music, 3 short title clips, a Coming up next card, a coming-up trailer with 2 background tracks "
                      "and 3 transitions. " + ("Turn off to go back to your own pack, or none." if using_example else
                                               "Turn on to use it for every channel without its own pack."))
     items.append({"id": "example", "title": "Try the example pack", "detail": ex_detail[:200], "group": "The station's pack",
@@ -2412,8 +2429,8 @@ def pack_page(said=None):
     pk = "?pack=" + (s.get("station_pack") or "") if sp else ""
     downloads = [("template", "The template: folders, pack.json, its schema and a README", "template.zip"),
                  ("coming-next", "Placement guide: Coming up next card", f"placement-coming-next.png{pk}"),
-                 ("promo", "Placement guide: promo", f"placement-promo.png{pk}"),
-                 ("logo", "Placement guide: on-screen logo", "placement-logo.png")]
+                 ("promo", "Placement guide: coming-up trailer", f"placement-promo.png{pk}"),
+                 ("logo", "Placement guide: corner logo", "placement-logo.png")]
     if load_pack("example"):
         downloads.append(("example-zip", "The example pack, as a zip", "example-pack.zip"))
     for key, words, path in downloads:
@@ -2434,20 +2451,21 @@ def pack_page(said=None):
                       "state_label": "Not made yet", "detail": "Turn on Try the example pack first, and it is made."})
     names = {c["id"]: c["name"] for c in s["channels"]}
     for p in sorted(s.get("promos") or [], key=lambda x: x.get("airs") or 0):
-        items.append({"id": f"promo-{p['id']}", "title": f"{p.get('title')}: {dog.day_time_words(p['airs'])}"[:120], "group": "Promos kept",
+        items.append({"id": f"promo-{p['id']}", "title": f"{p.get('title')}: {dog.day_time_words(p['airs'])}"[:120], "group": "Coming-up trailers kept",
                       "detail": f"On {names.get(p['cid'], 'a channel')}. Made {day_hm(p['made'])}. {round(p.get('dur') or 0)} seconds"[:200],
                       "state": "ok", "state_label": "Ready"})
     if not s.get("promos"):
-        items.append({"id": "promo-none", "title": "No promos yet", "group": "Promos kept", "state": "unknown", "state_label": "None",
-                      "detail": ("Promos are made in quiet hours, for channels whose pack has a promo background, while nobody is watching."
-                                 if truthy(settings().get("promos"), True) else "Making promos is off in the settings.")})
+        items.append({"id": "promo-none", "title": "No coming-up trailers yet", "group": "Coming-up trailers kept", "state": "unknown", "state_label": "None",
+                      "detail": ("Coming-up trailers are made in quiet hours, for channels whose pack has a coming-up trailer background, while nobody is watching."
+                                 if truthy(settings().get("promos"), True) else "Making coming-up trailers is off in the settings.")})
     for ch in numbered(s):
         items.append({"id": f"ch-{ch['id']}", "title": f"{ch['number']}  {ch['name']}: {pack_words(s, ch)}"[:120], "group": "Each channel's pack",
                       "detail": "Change it in Channels, on the channel's page, under Channel.", "state": "ok" if channel_pack(s, ch) else "off",
                       "state_label": "Uses a pack" if channel_pack(s, ch) else "No pack"})
-    out = {"type": "list", "title": "Broadcast pack", "items": items,
-           "intro": ("Your own branding for the channels: the on-screen logo, idents, the logo with music, Coming up next and promo backgrounds, "
-                     "music for the promos, and transitions. Upload a zip made from the template, or try the example pack.")}
+    out = {"type": "list", "title": "Branding", "items": items,
+           "intro": ("Your own branding for the channels: the corner logo, short title clips, the logo with music, Coming up next and coming-up trailer backgrounds, "
+                     "music for the coming-up trailers, and transitions. Upload a zip made from the template, or try the example pack.")}
+    _explain(out, s, "pack")
     if said:
         out["said"] = said[:200]
     return out
@@ -2483,7 +2501,13 @@ def pack_post(body):
                 save(s)
         return pack_page("The station's pack is no longer in use. A copy is kept in the plug-in's folder until the next is removed")
     if action == "dismiss":
-        sbplugin.keep("pack_check", None)
+        if rid.startswith(explain.PREFIX):
+            with _lock:
+                s = state()
+                explain.dismiss(s, rid)
+                save(s)
+        else:
+            sbplugin.keep("pack_check", None)
         return pack_page()
     raise ValueError("That cannot be changed here")
 
@@ -2552,12 +2576,12 @@ def promos_job(now=None, limit_seconds=40 * 60):
     """In quiet hours, from Starboard's quiet-hours job: old promos replaced, new ones made, one at a time."""
     cfg = settings()
     if not truthy(cfg.get("promos"), True):
-        return {"said": "Making promos is off"}
+        return {"said": "Making coming-up trailers is off"}
     if not _promo_lock.acquire(blocking=False):
-        return {"said": "Promos are being made already"}
+        return {"said": "Coming-up trailers are being made already"}
     try:
         if someone_watching():
-            return {"said": "Someone is watching, so promos wait for the next quiet hour"}
+            return {"said": "Someone is watching, so coming-up trailers wait for the next quiet hour"}
         keep, days = promo_settings(cfg)
         now = time.time() if now is None else now
         s = state()
@@ -3044,7 +3068,7 @@ def grids_page(said=None):
     if not items:
         items.append({"id": "none", "title": "No channels yet", "group": "Each channel's grids", "state": "unknown", "state_label": "None",
                       "detail": "Add a channel in Channels first."})
-    out = {"type": "list", "title": "Break grids", "items": items,
+    out = {"type": "list", "title": "Break layouts", "items": items,
            "intro": ("Two grids for each channel: In between programmes, what plays after a programme before the next one starts, and Breaks, "
                      "what plays in a break inside a programme. Choose Open the grid under a channel: it opens in a new tab. Choose how a break "
                      "picks its column (Random, Sequence, Day of week, or Morning, afternoon and evening), then drag items into the columns, "
@@ -3058,7 +3082,7 @@ def files_page(said=None):
     """Starboard's page for the file lists: a link to the plug-in's own page, which opens in a new tab."""
     s, base = state(), address()
     item = {"id": "files", "title": "File lists", "group": "Files", "state": "ok", "state_label": "Ready",
-            "detail": "Every ident, promo clip, advert and PSA in one list that can be searched, sorted and filtered, with several files added to a channel or taken off it together."}
+            "detail": "Every short title clip, coming-up trailer clip, own short video and Public message in one list that can be searched, sorted and filtered, with several files added to a channel or taken off it together."}
     if base:
         item["link"] = {"url": f"{base}/t/{s['token']}/files", "label": "Open the file lists"}
     else:
@@ -3525,7 +3549,7 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(200, breaks_job())
             if p == "/actions/promos":
                 threading.Thread(target=lambda: _safe(promos_job), daemon=True).start()
-                return self._json(200, {"said": "Making promos one at a time, at the lowest priority, unless someone is watching"})
+                return self._json(200, {"said": "Making coming-up trailers one at a time, at the lowest priority, unless someone is watching"})
             if p == "/actions/example":
                 if load_pack("example") and state().get("station_pack") == "example":
                     return self._json(200, {"said": "The example pack is in use already"})

@@ -7,7 +7,7 @@ Add Create your own TV channel from Starboard's **Catalogue**, where it is liste
 - Starboard with plug-in API 1.15 or later.
 - Jellyfin added in Starboard, in **Settings**, then **Apps**, with its API key. Create your own TV channel reads your films and series from Jellyfin and plays them from there.
 - Your Starboard password. Adding and removing a plug-in ask for it.
-- A computer with a desktop browser. Setting up channels, the schedule grid and the broadcast pack are made for a computer. On a phone or tablet, the grid tells you to use a computer. The dashboard card works anywhere.
+- A computer with a desktop browser. Setting up channels, the schedule grid and the branding are made for a computer. On a phone or tablet, the grid tells you to use a computer. The dashboard card works anywhere.
 
 ## What it may do
 
@@ -29,7 +29,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 - **main:** 768 MB of memory and 2 processor cores at most.
 
-We measured it on 17 November 2026. At rest it used 16.4 MiB of memory and no measurable processor (0.00%). While one channel played at 720p with its on-screen logo, it used about 140 MiB and 0.9 of a processor core. Each channel being watched adds about the same again.
+We measured it on 17 November 2026. At rest it used 16.4 MiB of memory and no measurable processor (0.00%). While one channel played at 720p with its corner logo, it used about 140 MiB and 0.9 of a processor core. Each channel being watched adds about the same again.
 
 ## Add it
 
@@ -62,7 +62,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**. The holding folder is listed in **System**, **Clean up**, where you can put it back or delete it for good.
 4. Enter your Starboard password and select **Remove**.
 
-Its container stops and goes. Nothing is deleted: its channels, idents, clips and logos stay in its folder. In Jellyfin, go to **Dashboard**, then **Live TV**, and remove the tuner and the guide with the station's address. If you do not, its channels stay in the list with nothing to play.
+Its container stops and goes. Nothing is deleted: its channels, short title clips, clips and logos stay in its folder. In Jellyfin, go to **Dashboard**, then **Live TV**, and remove the tuner and the guide with the station's address. If you do not, its channels stay in the list with nothing to play.
 
 To stop it for a while instead, select **Turn off** on its tab: its settings and folder are kept.
 

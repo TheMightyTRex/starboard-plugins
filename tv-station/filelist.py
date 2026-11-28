@@ -12,7 +12,7 @@ A row is {"key", "role", "id", "title", "dur", "size", "added", "audio", "held",
            that have it in their own list
   used_by  the ids of the channels that play it, from what each has chosen (own, the station's, both or none)
 """
-KINDS = {"idents": "Ident", "clips": "Promo clip", "extras": "Adverts", "psa": "PSA"}
+KINDS = {"idents": "Ident", "clips": "Coming-up trailer clip", "extras": "Adverts", "psa": "PSA"}
 SORTS = {"name": "Name", "length": "Length", "added": "Date added", "size": "Size"}
 SCOPES = {"all": "All channels", "this": "This channel", "unused": "Not used by any channel"}
 LENGTHS = {"any": "Any length", "short": "Too short (under 5 seconds)", "long": "Too long (over 2 minutes)"}

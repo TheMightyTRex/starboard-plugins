@@ -83,3 +83,6 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .col .len { margin: var(--space-2) 0; }
 .col .small { font-size: .85em; }
 .col .warning { margin: var(--space-2) 0; padding: var(--space-2) var(--space-3); border: 2px solid var(--status-warning-fg); border-radius: 6px; background: var(--status-warning-bg); color: var(--status-warning-fg); }
+
+.desktop-note { display: none; margin: 0; padding: .75rem 1rem; border: 2px solid currentColor; font-weight: 600; }
+@media (max-width: 47.99rem) { .desktop-note { display: block; } }

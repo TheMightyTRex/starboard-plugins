@@ -12,7 +12,7 @@ It makes, at 1920 by 1080 and 25 frames a second (--small: 480 by 270, for the t
     idents/ident01.mp4 to 03     three idents, 5 to 6 seconds, each with its own tune
     coming-next/background.mp4   a 10 second loop, with the clip area framed and the fields left clear
     promo/background.mp4         a 15 second loop, the same
-    promo/music/music01.m4a, 02  two 20 second music beds
+    promo/music/music01.m4a, 02  two 20 second pieces of background music
     transitions/wipe01.webm, wipe02.webm, sting01.webm   with transparency (VP9 with alpha)
     coming-next/placement.png, promo/placement.png       where the clip and each field go
 
@@ -76,7 +76,7 @@ TUNES = {
     "ident03": notes([(0.3, 220.0), (0.7, 261.63), (1.1, 329.63), (1.5, 440.0), (2.4, 329.63), (2.8, 440.0)], 2.8) + "+" + pad([110.0, 164.81]),
 }
 BEDS = {
-    # A pulse in A minor, and a lighter one in F major, each 20 seconds: music beds for the promos.
+    # A pulse in A minor, and a lighter one in F major, each 20 seconds: pieces of background music for the promos.
     "music01": "0.12*sin(2*PI*110*t)*(0.55+0.45*sin(2*PI*2*t))+0.06*sin(2*PI*164.81*t)+0.05*sin(2*PI*220*t)*(0.5+0.5*sin(PI*t))"
                "+0.05*sin(2*PI*261.63*t)*gt(mod(t,1),0.5)*exp(-6*mod(t,0.5))",
     "music02": "0.10*sin(2*PI*174.61*t)*(0.6+0.4*sin(2*PI*1.5*t))+0.06*sin(2*PI*261.63*t)+0.05*sin(2*PI*349.23*t)*exp(-4*mod(t,0.75))"
@@ -217,7 +217,7 @@ class Maker:
             json.dump(doc, f, indent=1)
             f.write("\n")
         with open(self.p("README.txt"), "w", encoding="utf-8") as f:
-            f.write("Example TV: a made-up channel's broadcast pack, made in code by Create your own TV channel.\n"
+            f.write("Example TV: a made-up channel's branding, made in code by Create your own TV channel.\n"
                     "Free to use and change. Every picture and sound in it was made by example_pack.py, with FFmpeg.\n\n" + pack.README)
         for part, folder in (("coming_next", "coming-next"), ("promo", "promo")):
             bg = self.t(f"{part}.png")
