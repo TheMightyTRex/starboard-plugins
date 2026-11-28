@@ -48,7 +48,7 @@ class TheFitItem(unittest.TestCase):
         g = breakgrid.apply(g, {"op": "add", "kind": "promo", "column": 0})
         with self.assertRaises(breakgrid.GridError):
             breakgrid.apply(g, {"op": "times", "column": 0, "index": 1, "times": "fit"})
-        self.assertEqual(breakgrid.item_words(g["columns"][0][0]), "Adverts, fit")
+        self.assertEqual(breakgrid.item_words(g["columns"][0][0]), "Your own short videos, fit")
 
     def test_the_break_length_of_a_column(self):
         g = breakgrid.new_grid(count=3)

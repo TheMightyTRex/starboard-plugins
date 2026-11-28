@@ -54,7 +54,7 @@ class NotShown(App):
         self.app.promo_design = lambda s, ch: LATE
         ch = self.app.find(self.app.state(), cid)
         shown = [c["title"] for c in self.app.promo_clips(self.app.state(), ch, {})]
-        self.assertEqual(shown, ["Promo: New", "Promo: Before 0.5.1"])
+        self.assertEqual(shown, ["Coming-up trailer: New", "Coming-up trailer: Before 0.5.1"])
 
 
 if __name__ == "__main__":

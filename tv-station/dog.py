@@ -25,7 +25,7 @@ for _item in animate.ITEMS:
         DEFAULTS[animate.key(_item, _part)] = ""
 ANIM_FALLBACK = {"in": "none", "out": "none", "speed": "normal"}
 KINDS = {"channel_logo": "The channel's logo", "channel_name": "The channel's name", "station_name": "The station's name",
-         "none": "No on-screen logo"}
+         "none": "No corner logo"}
 CORNERS = {"top_right": "Top right", "top_left": "Top left", "bottom_right": "Bottom right", "bottom_left": "Bottom left"}
 SIZES = {"small": 0.06, "medium": 0.085, "large": 0.12}  # of the picture's height
 MARGINS = {"small": 0.025, "medium": 0.05, "large": 0.075}  # medium: inside a television's safe area

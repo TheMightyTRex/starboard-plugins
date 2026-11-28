@@ -129,7 +129,7 @@
       }, text: "Use the standard order again" }));
     }
     sec.append(row, el("p", { class: "hint", id: `modehelp-${w}`, text: modeHelp + (g.unused_items ? ` ${plural(g.unused_items, "item", "items")} in columns this mode does not use ${g.unused_items === 1 ? "is" : "are"} kept, and come back if you change the mode.` : "") }),
-      el("p", { class: "hint", id: `fit-help-${w}`, text: "Fit, for Adverts, adds as many whole adverts as the break has room for. It never cuts an advert or another item short. The Holding countdown, which comes last, makes up the rest of the time." }),
+      el("p", { class: "hint", id: `fit-help-${w}`, text: "Fill the time exactly, for your own short videos, adds as many whole short videos of your own as the break has room for. It never cuts a short video of your own or another item short. The Holding countdown, which comes last, makes up the rest of the time." }),
       el("p", { class: "hint", id: `how-${w}`, text: "With the keyboard: Tab to an item and press Space or Enter to pick it up. Left and Right choose the column, Up and Down the place in it. Space or Enter drops it, Escape cancels. Under each item, the buttons do the same." }));
     const layout = el("div", { class: "layout" }, drawPalette(g), drawColumns(g));
     sec.append(layout);
@@ -205,13 +205,13 @@
     const head = el("div", { class: "item-head" }, grab);
     if (it.counts) {
       const opts = Array.from({ length: 6 }, (_, k) => el("option", { value: k + 1, text: String(k + 1) }));
-      if (it.kind === "adverts") opts.push(el("option", { value: "fit", text: "Fit" }));
+      if (it.kind === "adverts") opts.push(el("option", { value: "fit", text: "Fill the time exactly" }));
       const sel = el("select", { id: `times-${key}`, ...(it.kind === "adverts" ? { "aria-describedby": `fit-help-${w}` } : {}) }, opts);
       sel.value = it.fit ? "fit" : String(it.times);
       sel.addEventListener("change", () => {
         focusSel(`#times-${key}`);
         send(w, { op: "times", column: ci, index: i, times: sel.value }, () => say(sel.value === "fit"
-          ? `${it.name} is now set to Fit in ${colName(grid(w), ci)}: as many whole adverts as the break has room for.`
+          ? `${it.name} is now set to Fill the time exactly in ${colName(grid(w), ci)}: as many whole short videos of your own as the break has room for.`
           : `${it.name} is now shown ${plural(+sel.value, "time", "times")} in ${colName(grid(w), ci)}.`));
       });
       head.append(el("span", { class: "times" }, el("label", { for: `times-${key}`, text: "Times shown" }), sel));

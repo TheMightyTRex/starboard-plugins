@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.14.0 (not released yet)
+
+### Changed
+- Plain words for the television terms (DASH-641, owner, 28 November 2026): Short title clips (idents), Coming-up trailers (promos), Waiting screen (holding slide), Branding (broadcast pack), Title bars (straps), Corner logo (on-screen logo), Public messages (PSAs), Your own short videos (adverts and extra videos), Break layouts (break grids) and Plan the week for me (Create initial schedule).
+- The break layouts' items and their Fit choice have plain names too: Fill the time exactly, and Same time every weekday for Stripe.
+- Settings keys, saved channels and layouts are unchanged: only the words people read changed.
+- The help and README use the same words, and the help checker accepts "waiting screen" as the name of the television picture.
+
+### Added
+- A one-time explainer on each page says what a new word means and what TV people call it (explain.py). Dismiss it once and it stays away on every page, and what was dismissed is kept as a short list in the station's state.
+- Tests for the words in the manifest (no trade word, no em dash, no contraction) and for the explainers (tests/test_tv_station_words.py).
+
 ## 0.13.3 (not released yet)
 
 ### Added

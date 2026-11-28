@@ -10,11 +10,11 @@ q: Where is the problem?
   The channels are not in Jellyfin -> 2
   A channel will not play -> q2
   A channel has nothing on -> 4
-  A broadcast pack was not used -> 6
-  There are no promos -> 7
+  Branding was not used -> 6
+  There are no coming-up trailers -> 7
   The schedule grid does not open -> 8
   Jellyfin's Live TV has no programmes -> 9
-  The holding slide or music was refused -> 10
+  The waiting screen or music was refused -> 10
   A series starts from an episode I have watched -> 11
 q2: What happens?
   Jellyfin says no tuner is free -> 3
@@ -26,7 +26,7 @@ q2: What happens?
 4: Add something to the channel #add-something-to-the-channel
 5: Check the stream #check-the-stream
 6: Fix the pack and upload it again #fix-the-pack-and-upload-it-again
-7: Give promos what they need #give-promos-what-they-need
+7: Give coming-up trailers what they need #give-coming-up-trailers-what-they-need
 8: Open the schedule grid #open-the-schedule-grid
 9: Check Jellyfin has the guide #check-jellyfin-has-the-guide
 10: Choose a file it can use #choose-a-file-it-can-use
@@ -52,7 +52,7 @@ Jellyfin reads the channel list and the guide from Create your own TV channel's 
 
 ## Let more channels play at once
 
-Each channel being watched is one conversion, and **Most channels at once** is 2 unless you change it. People watching the same channel share one, so it is the number of different channels at once.
+Each channel being watched is one server work, and **Most channels at once** is 2 unless you change it. People watching the same channel share one, so it is the number of different channels at once.
 
 1. In **Streaming**, raise **Most channels at once**. Each one adds about 0.9 of a processor core at 720p.
 2. Or choose **720p** in **Picture size**, which is lighter.
@@ -70,22 +70,22 @@ A channel with nothing in **What it shows**, or whose series and films Jellyfin 
 1. Select **Preview a frame** on the channel's page. If it says what went wrong, such as Jellyfin not answering, fix that first.
 2. A programme that will not play is replaced by a slate with the station's name for 20 seconds, then the channel goes on.
 3. Check **System**, then **Logs**, for Create your own TV channel.
-4. If the server is busy, choose **720p** in **Picture size**. Or turn off the on-screen logo and the straps for that channel, so it copies its programmes with no converting.
+4. If the server is busy, choose **720p** in **Picture size**. Or turn off the corner logo and the title bars for that channel, so it copies its programmes with no converting.
 
 ## Fix the pack and upload it again
 
 The pack is checked before anything in it is used, and the pack in use stays when it does not pass.
 
-1. In **Broadcast pack**, read **The last pack checked**. Each row names a file and what to change. For example, a logo may have no transparent parts, or a file name may not be one the pack uses.
-2. Change those files. [Make a broadcast pack](../../use/make-a-broadcast-pack.md) has every name, size and length.
+1. In **Branding**, read **The last pack checked**. Each row names a file and what to change. For example, a logo may have no transparent parts, or a file name may not be one the pack uses.
+2. Change those files. [Make branding](../../use/make-a-broadcast-pack.md) has every name, size and length.
 3. Zip the folder again and select **Upload a pack**.
 4. Still refused: download the template, put your files in its folders with the same names, and upload that.
 
-## Give promos what they need
+## Give coming-up trailers what they need
 
-1. Check the channel has something to make promos with: its **Holding slide and promos** card says how its promos are made. A broadcast pack with a promo works, and so does music. To add music, upload some in **Idents, clips and music**, under **Music for promos**, or on the channel's card. The channel then gets plain promos on its colour.
-2. Check **Make promos in quiet hours** is on, in the plug-in's settings under **Promos**.
-3. Promos are made in Starboard's quiet hours while nobody is watching anything in Jellyfin. To make them now, select **Make promos now** on the plug-in's tab, with nothing playing.
+1. Check the channel has something to make coming-up trailers with: its **Waiting screen and coming-up trailers** card says how its coming-up trailers are made. Branding with a coming-up trailer works, and so does music. To add music, upload some in **Short title clips, clips and music**, under **Music for coming-up trailers**, or on the channel's card. The channel then gets plain coming-up trailers on its colour.
+2. Check **Make coming-up trailers in quiet hours** is on, in the plug-in's settings under **Coming-up trailers**.
+3. Coming-up trailers are made in Starboard's quiet hours while nobody is watching anything in Jellyfin. To make them now, select **Make coming-up trailers now** on the plug-in's tab, with nothing playing.
 4. A channel needs programmes in the next 6 days that start at least 2 hours from now.
 
 ## Open the schedule grid
@@ -108,8 +108,8 @@ The grid is on the plug-in's own page on your home network, not inside Starboard
 
 Every file is checked with FFmpeg before it is used, and the message says what was wrong.
 
-- **A holding slide:** a PNG or JPEG picture, or a video (MP4, MOV, WEBM or MKV) of 1 to 120 seconds. It can be up to 90 MB (with Starboard 0.24.1 or later; 60 MB before) and 4096 pixels across.
-- **Music for promos:** an MP3, M4A, OGG or FLAC file with sound, of 5 seconds to 10 minutes and up to 60 MB. You can have up to 20 tracks for the station and 20 for each channel. Remove one first when there are 20.
+- **A waiting screen:** a PNG or JPEG picture, or a video (MP4, MOV, WEBM or MKV) of 1 to 120 seconds. It can be up to 90 MB (with Starboard 0.24.1 or later; 60 MB before) and 4096 pixels across.
+- **Music for coming-up trailers:** an MP3, M4A, OGG or FLAC file with sound, of 5 seconds to 10 minutes and up to 60 MB. You can have up to 20 tracks for the station and 20 for each channel. Remove one first when there are 20.
 
 ## Count what you have watched
 

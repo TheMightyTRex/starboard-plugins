@@ -1,6 +1,8 @@
 # Create your own TV channel: Settings
 
-Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **Idents, clips and music**, **Broadcast pack** and **Animation**, open from the same tab. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
+Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **Short title clips, clips and music**, **Branding** and **Animation**, open from the same tab. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
+
+These pages are for a computer screen. They are not made for phones, and the plug-in's own pages say so on a narrow screen.
 
 Each section here says what each setting does, its choices and the one it starts with, and shows an example of the result. The examples are drawn by the plug-in's own code over a made-up picture, with the example pack, Example TV.
 
@@ -11,13 +13,13 @@ Each section here says what each setting does, its choices and the one it starts
 | [Channels](#channels) | **Channels** | Add, name, number and order your channels |
 | [What each channel shows](#what-each-channel-shows) | **Channels**, the **What it shows** card | The series, films, collections, playlists, genres and decades on each channel |
 | [Schedule grid](#schedule-grid) | **Schedule grid** | A week for each channel, in 15 minute steps |
-| [Break grids](#break-grids) | **Break grids** | What plays In between programmes and in Breaks inside programmes, as columns you fill |
+| [Break layouts](#break-layouts) | **Break layouts** | What plays In between programmes and in Breaks inside programmes, as columns you fill |
 | [Where breaks go inside a programme](#where-breaks-go-inside-a-programme) | **Channels**, the **Breaks** card | At silence, at set times or at the end of a scene, and how many |
-| [Breaks and idents](#breaks-and-idents) | **Channels**, the **Breaks** and **Holding slide and promos** cards, and **Idents, clips and music** | What plays between programmes |
-| [On-screen logo](#on-screen-logo) | The station's settings, and each channel's **On-screen logo and branding** card | The logo in the corner of the picture, the clock and the label |
-| [Straps and cards](#straps-and-cards) | The station's settings | The programme's name, Up next, and the Coming up next and Later cards |
-| [Promos](#promos) | The station's settings | Short trailers for programmes coming up |
-| [Broadcast pack](#broadcast-pack) | **Broadcast pack** | Your own branding for every channel |
+| [Breaks and short title clips](#breaks-and-short-title-clips) | **Channels**, the **Breaks** and **Waiting screen and coming-up trailers** cards, and **Short title clips, clips and music** | What plays between programmes |
+| [Corner logo](#corner-logo) | The station's settings, and each channel's **Corner logo and branding** card | The logo in the corner of the picture, the clock and the label |
+| [Title bars and cards](#title-bars-and-cards) | The station's settings | The programme's name, Up next, and the Coming up next and Later cards |
+| [Coming-up trailers](#coming-up-trailers) | The station's settings | Short trailers for programmes coming up |
+| [Branding](#branding) | **Branding** | Your own branding for every channel |
 | [Animation](#animation) | **Animation**, and each channel's **Animation** card | How things drawn over the picture come on and go off |
 | [Streaming](#streaming) | The station's settings | Picture size and how many channels play at once |
 | [Station](#station) | The station's settings | The station's name, its language, numbers and the guide |
@@ -31,9 +33,9 @@ The station's settings are for every channel. A channel's own choice, on its pag
 - **Name and number**
 - **What it shows**
 - **Breaks**
-- **On-screen logo and branding**
+- **Corner logo and branding**
 - **Animation**
-- **Holding slide and promos**
+- **Waiting screen and coming-up trailers**
 - **Today and tomorrow**
 - **Played on this channel**
 
@@ -48,9 +50,9 @@ The station's settings are for every channel. A channel's own choice, on its pag
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
 | **On air** | Puts the channel in Jellyfin's Live TV. **Up** and **Down** move it in the list, which sets its number. **Remove** takes it off; its settings are kept in the plug-in's folder | Turned on |
-| **Name** | Select **Rename**. Shown in Jellyfin, in the guide, on the cards and promos, and as the on-screen logo when that is **The channel's name** | Up to 40 characters |
+| **Name** | Select **Rename**. Shown in Jellyfin, in the guide, on the cards and coming-up trailers, and as the corner logo when that is **The channel's name** | Up to 40 characters |
 | **Number** | Select **Change number**. Leave it empty to number it by its place in the list | Empty, so numbered from **First channel number** |
-| **Colour** | Used on its Coming up next cards, its made logo and its plain promos | **Blue**, **Green**, **Red**, **Purple**, **Orange**, **Teal**, **Pink**, **Grey**, **Gold** or **Navy**. Each new channel has the next colour in turn |
+| **Colour** | Used on its Coming up next cards, its made logo and its plain coming-up trailers | **Blue**, **Green**, **Red**, **Purple**, **Orange**, **Teal**, **Pink**, **Grey**, **Gold** or **Navy**. Each new channel has the next colour in turn |
 
 A change to what a channel shows, its order or its times starts after the programme on air ends, so nobody watching meets a jump.
 
@@ -72,7 +74,7 @@ Its line-up is read from Jellyfin straight away. The programmes for today and to
 | Each series, film, collection, playlist, genre or decade | **Up** and **Down** set the order; **Remove** takes it off | As many as you like | Two series and a collection of films |
 | **Order** | **In order** plays each series in aired order, taking turns. **Shuffled** plays them in a new order each time round | **In order** or **Shuffled**. **In order** | In order: series A episode 1, series B episode 1, series A episode 2 |
 | **Episodes of a series in a row** | How many episodes of one series play before the next has its turn | 1 to 6. **1** | 2: series A episodes 1 and 2, then series B episodes 1 and 2 |
-| **Create initial schedule** | Makes a week from this channel's own series and films, watched or not: series one after another on weekdays, each the next episode every day, and films at the weekend. Check **Hours to fill** and confirm. The week waits in the schedule grid as a suggestion to change, then **Save the suggestion**; a grid you saved before stays as it is until then. **Open the schedule grid** on the row goes there | **Hours to fill**: weekdays 18:00 to 23:00 and weekends 12:00 to 23:00, on the quarter hour | Monday to Friday evenings of series, and films on Saturday and Sunday afternoons |
+| **Plan the week for me** | Makes a week from this channel's own series and films, watched or not: series one after another on weekdays, each the next episode every day, and films at the weekend. Check **Hours to fill** and confirm. The week waits in the schedule grid as a suggestion to change, then **Save the suggestion**; a grid you saved before stays as it is until then. **Open the schedule grid** on the row goes there | **Hours to fill**: weekdays 18:00 to 23:00 and weekends 12:00 to 23:00, on the quarter hour | Monday to Friday evenings of series, and films on Saturday and Sunday afternoons |
 
 New episodes join the line-up at the end of the programme on air. **Read the channels from Jellyfin again**, in [Actions](#actions), reads them now; it also runs each night at 04:40.
 
@@ -109,11 +111,11 @@ The grid is a week, Monday to Sunday, in 15 minute steps. Films and series you p
 
 A programme takes the time of its longest episode, rounded up to 15 minutes, so programmes never run into each other. The grid refuses a change that would overlap another programme, and the message names it. In the grid, the arrow keys move between times and days. Page Up and Page Down move by an hour. Enter opens a programme's actions, or adds one at an empty time.
 
-## Break grids
+## Break layouts
 
-**Break grids** lists each channel's two grids. Each has an **Open the grid** link, which opens it in a new tab on the plug-in's own page (Starboard 0.24.0 and later). The link also shows on each channel's **Breaks** card. **In between programmes** is what plays after a programme, before the next one starts. **Breaks** is what plays in a break inside a programme, where a programme stops for adverts ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more).
+**Break layouts** lists each channel's two grids. Each has an **Open the grid** link, which opens it in a new tab on the plug-in's own page (Starboard 0.24.0 and later). The link also shows on each channel's **Breaks** card. **In between programmes** is what plays after a programme, before the next one starts. **Breaks** is what plays in a break inside a programme, where a programme stops for your own short videos ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more).
 
-A channel that has not changed its grids plays what it always has. The grid shows that order as its starting point. It is a bumper, **Promo** (as many as **Promos and clips in each break** says), **Adverts**, the holding slide and an ident. Nothing is saved until you change the grid. **Use the standard order again** takes a grid back to that.
+A channel that has not changed its grids plays what it always has. The grid shows that order as its starting point. It is a very short title clip, **Coming-up trailer** (as many as **Coming-up trailers and clips in each break** says), **Your own short videos**, the waiting screen and a short title clip. Nothing is saved until you change the grid. **Use the standard order again** takes a grid back to that.
 
 ![The In between programmes grid with its mode set to Sequence and 3 columns: step 1 marks How a break picks its column, step 2 Number of columns](../../images/tv-station/grid-between-modes.png)
 
@@ -130,37 +132,37 @@ Changing the choice loses nothing: columns the new choice does not use are kept,
 
 ### The items
 
-![The list of items beside the columns: Bumper, Promo, Adverts, Ident and the rest, each with Add to a column and Add; Ident picked up, with a blue line showing where it will go in Column 2](../../images/tv-station/grid-between-pick-up.png)
+![The list of items beside the columns: Very short title clip, Coming-up trailer, Your own short videos, Short title clip and the rest, each with Add to a column and Add; Short title clip picked up, with a blue line showing where it will go in Column 2](../../images/tv-station/grid-between-pick-up.png)
 
 | Item | What plays | Times shown |
 |---|---|---|
-| **Bumper** | A very short version of the ident with no music, from the broadcast pack | 1 to 6 |
-| **Promo** | A promo, a trailer or one of your clips, chosen at random | 1 to 6 |
-| **Adverts** | One of your extra videos, chosen at random | 1 to 6, or **Fit** |
-| **Ident** | An ident with its music | 1 to 6 |
-| **Other channel promo** | A promo for a programme on one of your other channels (**Show promos for your other channels** must be active) | 1 to 6 |
-| **Coming soon promo** | A Coming soon promo for a programme on this channel | 1 to 6 |
-| **PSA** | A public service announcement: one of your own videos with a sound track, chosen at random ([PSAs](#psas)) | 1 to 6 |
-| **Holding countdown** | The holding slide with the time to the programme's start. It takes the time that is left. The clock counts through everything after it (a bumper, a promo, an ident, an other channel promo or a Coming soon promo) and reaches 0:00 as the programme starts, so the slide ends early by the length of what follows | Once |
-| **Back soon** | The holding slide with Back soon. It takes the time that is left, and ends early enough for what follows it | Once |
+| **Very short title clip** | A very short version of the short title clip with no music, from the branding | 1 to 6 |
+| **Coming-up trailer** | A coming-up trailer, a trailer or one of your clips, chosen at random | 1 to 6 |
+| **Your own short videos** | One of your your own short videos, chosen at random | 1 to 6, or **Fit** |
+| **Short title clip** | A short title clip with its music | 1 to 6 |
+| **Other channel coming-up trailer** | A coming-up trailer for a programme on one of your other channels (**Show coming-up trailers for your other channels** must be active) | 1 to 6 |
+| **Coming soon coming-up trailer** | A Coming soon coming-up trailer for a programme on this channel | 1 to 6 |
+| **Public message** | A public service announcement: one of your own videos with a sound track, chosen at random ([Public messages](#public-messages)) | 1 to 6 |
+| **Waiting screen countdown** | The waiting screen with the time to the programme's start. It takes the time that is left. The clock counts through everything after it (a very short title clip, a coming-up trailer, a short title clip, an other channel coming-up trailer or a Coming soon coming-up trailer) and reaches 0:00 as the programme starts, so the slide ends early by the length of what follows | Once |
+| **Back soon** | The waiting screen with Back soon. It takes the time that is left, and ends early enough for what follows it | Once |
 
-Each promo, clip or video plays once at most in a break. So **Promo** with 3 times shown is 3 different ones, or fewer when there are fewer. The grid leaves out an item with nothing to play, or nothing that fits the time. A column has one holding slide at most. When the column has none, or the channel has no holding slide, Coming up next cards or a slate fill the time. They play before the idents that end the break. The grid also leaves out a promo for a programme that has started.
+Each coming-up trailer, clip or video plays once at most in a break. So **Coming-up trailer** with 3 times shown is 3 different ones, or fewer when there are fewer. The grid leaves out an item with nothing to play, or nothing that fits the time. A column has one waiting screen at most. When the column has none, or the channel has no waiting screen, Coming up next cards or a slate fill the time. They play before the short title clips that end the break. The grid also leaves out a coming-up trailer for a programme that has started.
 
 ### Fit, and a break length for each column
 
-**Fit** is a choice beside the numbers for **Adverts**, in **Times shown**. It adds as many whole adverts as the break has room for. The other items in the column keep their counts and their places. The adverts then go where the **Fit** item is, each at most once. The order turns by one each break, so over a day every advert has a turn first. An advert is never cut short, and nothing runs past the programme's start. **Holding countdown** (or Back soon) takes whatever time is left over, so the countdown's own length changes from break to break. When too little is left for even the shortest advert, the countdown has it.
+**Fit** is a choice beside the numbers for **Your own short videos**, in **Times shown**. It adds as many whole your own short videos as the break has room for. The other items in the column keep their counts and their places. The your own short videos then go where the **Fit** item is, each at most once. The order turns by one each break, so over a day every own short video has a turn first. An own short video is never cut short, and nothing runs past the programme's start. **Waiting screen countdown** (or Back soon) takes whatever time is left over, so the countdown's own length changes from break to break. When too little is left for even the shortest own short video, the countdown has it.
 
 Each column also has a **Break length**: **Automatic**, or 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25 or 30 minutes. In **In between programmes**, **Automatic** is the gap the schedule leaves. A set length is the most that plays besides the countdown or the cards, which take the rest of the gap. In **Breaks**, **Automatic** is the longest break set for the channel (**Breaks inside programmes**). A set length replaces it, as far as the programme has room. A column that was saved before 0.9.0 is **Automatic**.
 
-If a column's items need more time than its break length, the column says so in words. For example: "These items need at least 2 minutes 35 seconds, but the break is 2 minutes. Some are left out so the programme starts on time." The message is read out after the change that caused it. The programme still starts on time. The least wanted items go first: promos, then adverts, then bumpers. An ident is the last to go.
+If a column's items need more time than its break length, the column says so in words. For example: "These items need at least 2 minutes 35 seconds, but the break is 2 minutes. Some are left out so the programme starts on time." The message is read out after the change that caused it. The programme still starts on time. The least wanted items go first: coming-up trailers, then your own short videos, then very short title clips. A short title clip is the last to go.
 
 ### Moving things: three ways
 
 - **Drag:** drag an item from the list, or from a column, to where you want it.
-- **Keyboard:** Tab to an item and press Space or Enter to pick it up. Left and Right choose the column, Up and Down the place in it. Space or Enter drops it, and Escape cancels. Each step is said aloud: "Column 2, position 1 of 3", and "Bumper added to Column 2, position 1 of 3". Tab away and it is put back. With nothing picked up, the arrow keys move between items.
+- **Keyboard:** Tab to an item and press Space or Enter to pick it up. Left and Right choose the column, Up and Down the place in it. Space or Enter drops it, and Escape cancels. Each step is said aloud: "Column 2, position 1 of 3", and "Very short title clip added to Column 2, position 1 of 3". Tab away and it is put back. With nothing picked up, the arrow keys move between items.
 - **Buttons:** in the list, **Add to** a column and **Add**. On a placed item, **Times shown**, and under **Move or remove**: **Move up**, **Move down**, **Move to** a column with **Move**, and **Remove**. Focus stays on the button you used, so you can press it again.
 
-![A column with Times shown for Adverts set to Fit (1) and its Break length set to 3 minutes (2)](../../images/tv-station/grid-fit-times.png)
+![A column with Times shown for Your own short videos set to Fit (1) and its Break length set to 3 minutes (2)](../../images/tv-station/grid-fit-times.png)
 
 ![A column whose items need more time than its Break length, with the warning in words under the length](../../images/tv-station/grid-length-warning.png)
 
@@ -170,15 +172,15 @@ If a column's items need more time than its break length, the column says so in 
 
 ![The Breaks grid set to Morning, afternoon and evening: step 1 marks Morning, step 2 Afternoon](../../images/tv-station/grid-breaks-times-of-day.png)
 
-## PSAs
+## Public messages
 
-A **PSA** (public service announcement) is a kind of item beside **Bumper**, **Promo**, **Adverts** and the rest. You drag it into the grids in the same way, and set how many times it is shown. Its files are your own videos. Add them with **Add a PSA** in **Idents, clips and music** (for every channel) or on a channel's own page (for that channel only). The plug-in checks each file when you add it. It must be a real video that FFmpeg can read. It must have a picture, a length and a sound track, and be no more than 10 minutes and 90 MB. The plug-in refuses a file with no sound track, and the message says so. A channel's **PSAs** choice says whether it plays its own, the station's, both or none. A PSA is listed with the other files in [File lists](#file-lists).
+A **Public message** (public service announcement) is a kind of item beside **Very short title clip**, **Coming-up trailer**, **Your own short videos** and the rest. You drag it into the grids in the same way, and set how many times it is shown. Its files are your own videos. Add them with **Add a public message** in **Short title clips, clips and music** (for every channel) or on a channel's own page (for that channel only). The plug-in checks each file when you add it. It must be a real video that FFmpeg can read. It must have a picture, a length and a sound track, and be no more than 10 minutes and 90 MB. The plug-in refuses a file with no sound track, and the message says so. A channel's **Public messages** choice says whether it plays its own, the station's, both or none. A Public message is listed with the other files in [File lists](#file-lists).
 
-Not in 0.9.0: choosing a PSA from a folder on the server with a file picker, and levelling a PSA's sound to the channel's loudness. The plug-in can only reach the files you add to it for now.
+Not in 0.9.0: choosing a public message from a folder on the server with a file picker, and levelling a public message's sound to the channel's loudness. The plug-in can only reach the files you add to it for now.
 
 ## File lists
 
-**File lists** in Starboard's settings for the plug-in opens one page for all your files, in a new tab (Starboard 0.24.0 and later). It lists every **Ident**, **Promo clip**, **Adverts** and **PSA** file, 50 at a time, so a long list is as quick as a short one.
+**File lists** in Starboard's settings for the plug-in opens one page for all your files, in a new tab (Starboard 0.24.0 and later). It lists every **Short title clip**, **Coming-up trailer clip**, **Your own short videos** and **Public message** file, 50 at a time, so a long list is as quick as a short one.
 
 ![The file lists: Search by name (1), Sort by (2), a tick box on each file (3) and Add to the channel (4)](../../images/tv-station/files-list.png)
 
@@ -191,7 +193,7 @@ Not in 0.9.0: choosing a PSA from a folder on the server with a file picker, and
 | **Sound** | Files with a sound track, or without |
 | **Sort by** and **Order** | **Name**, **Length**, **Date added** or **Size**, either way round. A file with no size or date comes last |
 
-![The kind, Show and Length choices, with Adverts and Not used by any channel chosen](../../images/tv-station/files-filters.png)
+![The kind, Show and Length choices, with Your own short videos and Not used by any channel chosen](../../images/tv-station/files-filters.png)
 
 Each row shows the file's name, kind, length, whether it has sound, size and the date it was added. It also shows where the file is **Kept in** (the station, or a channel) and which channels play it. To change a list:
 
@@ -201,7 +203,7 @@ Each row shows the file's name, kind, length, whether it has sound, size and the
 
 **A file is never deleted**: it stays in the plug-in's folder. Each change is said aloud once, such as "Added to Comedy: 2 files".
 
-![The PSA files in the list](../../images/tv-station/files-psa.png)
+![The Public message files in the list](../../images/tv-station/files-psa.png)
 
 Not in 0.9.0: a picture or first frame for each file. The plug-in does not yet keep the times played and last played for a clip, so the lists do not show them. A folder for each channel (DASH-551) is also still to come.
 
@@ -223,11 +225,11 @@ These are on each channel's **Breaks** card, next to **Breaks inside programmes*
 
 The plug-in finds the places once for each programme. It does this in the quiet hours, for programmes on in the next 48 hours, at the lowest priority, and never while anyone is watching. It keeps them in a small file, so a change to any of these settings needs no new search. Nothing is searched for while a channel streams. **At set times** needs no search at all. On the computer where this was measured, a 30 minute programme (a 640 by 360 file) took about 8 processor seconds for **At silence**. It took 2 for **At the end of a scene**. A programme that is not searched yet has no breaks until the next quiet hour, except with **At set times**. A programme under 15 minutes has none. Each break's time comes from the break after the programme, so many breaks in a short slot need a longer **Break between programmes**.
 
-## Breaks and idents
+## Breaks and short title clips
 
-A break fills the time between programmes. It opens with a bumper. Then come promos, trailers and clips, then one extra video, then the holding slide or Coming up next cards. It ends with one ident immediately before the next programme. A transition from the broadcast pack plays at each cut between a programme and a break.
+A break fills the time between programmes. It opens with a very short title clip. Then come coming-up trailers, trailers and clips, then one short video of your own, then the waiting screen or Coming up next cards. It ends with one short title clip immediately before the next programme. A transition from the branding plays at each cut between a programme and a break.
 
-![Three pieces from the Example TV pack: an ident with its logo on teal, the logo with music, and a wipe transition part way across a made-up landscape](../../images/tv-station/pack-pieces.jpg)
+![Three pieces from the Example TV pack: a short title clip with its logo on teal, the logo with music, and a wipe transition part way across a made-up landscape](../../images/tv-station/pack-pieces.jpg)
 
 ### Each channel's breaks
 
@@ -237,71 +239,71 @@ On the channel's **Breaks** card:
 |---|---|---|---|
 | **Programmes start** | When each programme starts, with a break filling the time to it | **Back to back**, **On the quarter hour**, **On the half hour** or **On the hour**. **On the half hour** | On the half hour: a programme ending at 20:52 has an 8 minute break, then the next starts at 21:00 |
 | **Break between programmes** | Added after each programme. With programmes on the half hour, the break also fills the rest of the slot | **No break**, **1 minute**, **2 minutes**, **3 minutes** or **5 minutes**. **No break** | 3 minutes, back to back: a programme ending at 20:40 is followed by a break, and the next starts at 20:43 |
-| **Breaks inside programmes** | Where a break goes inside a programme, a short break plays there ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more): a bumper, promos, trailers or clips, one extra video, the holding slide with Back soon, and a bumper. There is no ident. Their time comes from the break after the programme, so the schedule never moves | **Off**, **Up to 1 minute each**, **Up to 2 minutes each** or **Up to 3 minutes each**. **Off** | Up to 2 minutes each: a 45 minute episode with two fades to black has two short breaks |
-| **Idents** | Whose idents play before each programme | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | One ident, then the programme |
-| **Idents play** | The order idents play in. A broadcast pack's idents always play in a random order | **In order** or **In a random order**. **In order** | In order: ident 1, then 2, then 3 |
+| **Breaks inside programmes** | Where a break goes inside a programme, a short break plays there ([Where breaks go inside a programme](#where-breaks-go-inside-a-programme) says more): a very short title clip, coming-up trailers, trailers or clips, one short video of your own, the waiting screen with Back soon, and a very short title clip. There is no short title clip. Their time comes from the break after the programme, so the schedule never moves | **Off**, **Up to 1 minute each**, **Up to 2 minutes each** or **Up to 3 minutes each**. **Off** | Up to 2 minutes each: a 45 minute episode with two fades to black has two short breaks |
+| **Short title clips** | Whose short title clips play before each programme | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | One short title clip, then the programme |
+| **Short title clips play** | The order short title clips play in. Branding's short title clips always play in a random order | **In order** or **In a random order**. **In order** | In order: short title clip 1, then 2, then 3 |
 | **Trailers** | Jellyfin's own trailers of the films on this channel | **None** or **Trailers of its films, from Jellyfin**. **None** | A film's trailer in the break |
 | **Your clips** | Whose clips play | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | A clip you added |
-| **Promos and clips in each break** | Each promo, trailer and clip plays once at most in a break, in a random order, after the bumper. The holding slide fills the rest. Once a [break grid](#break-grids) is changed, its **Promo** number is used in its place | **Up to 2**, **Up to 3**, **Up to 4** or **Up to 6**. **Up to 3** | Up to 3: a promo, a trailer and a clip |
-| **Extra videos** | One plays at random after the promos in each break, when it fits | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | A 2 minute short film |
-| **Add an ident**, **Add a clip** | Choose a video of up to 60 MB, or enter the name of a Jellyfin collection or folder of them. A clip can be up to 10 minutes | Videos you add | A 10 second ident |
-| **Add an extra video** | Select **Upload an extra video** and choose a video of up to 10 minutes and 90 MB. Add as many as you like. **Remove** in its More menu takes one off | Videos you add | A 5 minute music video |
+| **Coming-up trailers and clips in each break** | Each coming-up trailer, trailer and clip plays once at most in a break, in a random order, after the very short title clip. The waiting screen fills the rest. Once a [break layout](#break-layouts) is changed, its **Coming-up trailer** number is used in its place | **Up to 2**, **Up to 3**, **Up to 4** or **Up to 6**. **Up to 3** | Up to 3: a coming-up trailer, a trailer and a clip |
+| **Your own short videos** | One plays at random after the coming-up trailers in each break, when it fits | **None**, **This channel's**, **The station's** or **This channel's and the station's**. **This channel's and the station's** | A 2 minute short film |
+| **Add a short title clip**, **Add a clip** | Choose a video of up to 60 MB, or enter the name of a Jellyfin collection or folder of them. A clip can be up to 10 minutes | Videos you add | A 10 second short title clip |
+| **Add a short video of your own** | Select **Upload a short video of your own** and choose a video of up to 10 minutes and 90 MB. Add as many as you like. **Remove** in its More menu takes one off | Videos you add | A 5 minute music video |
 
-### Holding slide
+### Waiting screen
 
-The holding slide loops at the end of each break, after the promos, until the next programme starts, so the channel never shows black. With none, breaks end on Coming up next cards.
+The waiting screen loops at the end of each break, after the coming-up trailers, until the next programme starts, so the channel never shows black. With none, breaks end on Coming up next cards.
 
-On the channel's **Holding slide and promos** card:
+On the channel's **Waiting screen and coming-up trailers** card:
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **Holding slide** | Which slide this channel uses | **The station's holding slide**, **Its own holding slide** or **No holding slide**. **The station's holding slide** |
-| **Its own holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB, which loops. It is checked with FFmpeg first | A picture or video you add |
-| **Words on the slide** | What is written low in the middle of the slide, on a dark plate | **A countdown to the next programme**, **Back soon** or **No words**. **Station default** uses the choice in **Idents, clips and music** |
-| **Preview the holding slide** | Opens a frame of the slide with its words, in a new tab | None |
+| **Waiting screen** | Which slide this channel uses | **The station's waiting screen**, **Its own waiting screen** or **No waiting screen**. **The station's waiting screen** |
+| **Its own waiting screen** | Select **Upload a waiting screen** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB, which loops. It is checked with FFmpeg first | A picture or video you add |
+| **Words on the slide** | What is written low in the middle of the slide, on a dark plate | **A countdown to the next programme**, **Back soon** or **No words**. **Station default** uses the choice in **Short title clips, clips and music** |
+| **Preview the waiting screen** | Opens a frame of the slide with its words, in a new tab | None |
 
-![A holding slide with the Example TV logo, and under it Next programme in 4:32 and Kestrel Valley: Series 1, episode 1: First light](../../images/tv-station/holding-countdown.jpg)
+![A waiting screen with the Example TV logo, and under it Next programme in 4:32 and Kestrel Valley: Series 1, episode 1: First light](../../images/tv-station/holding-countdown.jpg)
 
 *A countdown to the next programme: it reaches 0:00 as the programme starts, with the programme's name under it.*
 
-![Three holding slides: with a countdown and the next programme's name, with Back soon, and with no words](../../images/tv-station/holding-words.jpg)
+![Three waiting screens: with a countdown and the next programme's name, with Back soon, and with no words](../../images/tv-station/holding-words.jpg)
 
 *Each choice for **Words on the slide**.*
 
-### The station's idents, clips and music
+### The station's short title clips, clips and music
 
-**Idents, clips and music** holds the station's own idents and clips, for every channel that chooses **The station's** or **This channel's and the station's**. Add a video of up to 60 MB, or the name of a Jellyfin collection or folder of them.
+**Short title clips, clips and music** holds the station's own short title clips and clips, for every channel that chooses **The station's** or **This channel's and the station's**. Add a video of up to 60 MB, or the name of a Jellyfin collection or folder of them.
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **The station's holding slide** | Select **Upload a holding slide** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Every channel without its own slide uses it | None until you add one |
+| **The station's waiting screen** | Select **Upload a waiting screen** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Every channel without its own slide uses it | None until you add one |
 | **Words on the slide** | The words for every channel left at **Station default** | **A countdown to the next programme**, **Back soon** or **No words**. **A countdown to the next programme** |
-| **Music the promos use** | Which music promos choose from. A channel's own music comes first. With no music of the kind chosen, the other is used | **Your music and the pack's**, **Only your music** or **Only the pack's music**. **Your music and the pack's** |
-| **Add an extra video for the breaks** | Select **Upload an extra video** and choose a video of up to 10 minutes and 90 MB, as many as you like | Videos you add |
-| **Add music for promos** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks. Each is checked with FFmpeg and played at the same loudness as the rest. **Remove** in its More menu takes it off | Music you add |
-| **Add a background loop for promos** | Select **Upload a background loop** and choose a video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080 and up to 90 MB, up to 20 loops. Every channel's promos choose from these, its own and its pack's promo background, one at random for each promo. Leave the clip area and the places for the words clear. **Remove** in its More menu takes it off | Loops you add |
+| **Music the coming-up trailers use** | Which music coming-up trailers choose from. A channel's own music comes first. With no music of the kind chosen, the other is used | **Your music and the pack's**, **Only your music** or **Only the pack's music**. **Your music and the pack's** |
+| **Add a short video of your own for the breaks** | Select **Upload a short video of your own** and choose a video of up to 10 minutes and 90 MB, as many as you like | Videos you add |
+| **Add music for coming-up trailers** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks. Each is checked with FFmpeg and played at the same loudness as the rest. **Remove** in its More menu takes it off | Music you add |
+| **Add a background loop for coming-up trailers** | Select **Upload a background loop** and choose a video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080 and up to 90 MB, up to 20 loops. Every channel's coming-up trailers choose from these, its own and its pack's coming-up trailer background, one at random for each coming-up trailer. Leave the clip area and the places for the words clear. **Remove** in its More menu takes it off | Loops you add |
 
-With music or a background loop here, a channel gets plain promos if its pack has no promo or it has no pack. A plain promo shows the programme's clips and words on a loop, or on the channel's colour.
+With music or a background loop here, a channel gets plain coming-up trailers if its pack has no coming-up trailer or it has no pack. A plain coming-up trailer shows the programme's clips and words on a loop, or on the channel's colour.
 
-## On-screen logo
+## Corner logo
 
-The logo in a corner of the picture, as on broadcast television (also called the DOG, or bug). The station's choices are for every channel. Each channel can choose its own on its **On-screen logo and branding** card, where every setting starts at **Station default**.
+The logo in a corner of the picture, as on broadcast television (also called the DOG, or bug). The station's choices are for every channel. Each channel can choose its own on its **Corner logo and branding** card, where every setting starts at **Station default**.
 
-![A made-up evening landscape with the Example TV logo on a dark backing plate in its corner, Top right](../../images/tv-station/dog-default.jpg)
+![A made-up evening landscape with the Example TV logo on a dark dark box behind the logo in its corner, Top right](../../images/tv-station/dog-default.jpg)
 
-*Every setting as it starts: the channel's logo, **Top right**, medium, inside the safe area, at 80% with the backing plate.*
+*Every setting as it starts: the channel's logo, **Top right**, medium, inside the safe area, at 80% with the dark box behind the logo.*
 
-### On-screen logo setting
+### Corner logo setting
 
-What the logo is. **The channel's logo** is the logo added on the channel's page, or else the broadcast pack's `logo/dog.png`. With neither, the plug-in draws the channel's name in its place.
+What the logo is. **The channel's logo** is the logo added on the channel's page, or else the branding's `logo/dog.png`. With neither, the plug-in draws the channel's name in its place.
 
-Choices: **The channel's logo** (the one it starts with), **The channel's name**, **The station's name** or **No on-screen logo**.
+Choices: **The channel's logo** (the one it starts with), **The channel's name**, **The station's name** or **No corner logo**.
 
 ![Four frames: the Example TV logo, the channel's name Comedy, the station's name Home TV, and no logo](../../images/tv-station/dog-kinds.jpg)
 
 ### Corner
 
-Which corner of the picture it sits in. The clock and the label sit beside it, away from the edge, and the straps go in the other bottom corner.
+Which corner of the picture it sits in. The clock and the label sit beside it, away from the edge, and the title bars go in the other bottom corner.
 
 Choices: **Top right** (the one it starts with), **Top left**, **Bottom right** or **Bottom left**.
 
@@ -333,11 +335,11 @@ Choices: 30% to 100%. It starts at 80%.
 
 ### When it shows
 
-Which parts of the channel it shows on. Clips are idents, trailers and your own clips.
+Which parts of the channel it shows on. Clips are short title clips, trailers and your own clips.
 
-Choices: **Always** (the one it starts with); **Only during programmes**; or **Programmes and cards, not clips**, which also shows it on the holding slide. With the last two, it comes on as a programme starts and goes off as it ends, as [Animation](#animation) says.
+Choices: **Always** (the one it starts with); **Only during programmes**; or **Programmes and cards, not clips**, which also shows it on the waiting screen. With the last two, it comes on as a programme starts and goes off as it ends, as [Animation](#animation) says.
 
-Example result: with **Only during programmes**, the logo is on the programme but not on the ident before it or the trailer after it.
+Example result: with **Only during programmes**, the logo is on the programme but not on the short title clip before it or the trailer after it.
 
 ### Fades in after the opening
 
@@ -355,98 +357,98 @@ Example result: with **After 1 minute**, the first minute of each programme has 
 
 ![The corner of the picture: the logo with the clock under it; with the clock and New; and with Live](../../images/tv-station/dog-clock-label.jpg)
 
-### Backing plate
+### Dark box behind the logo
 
 A dark, partly transparent box behind the logo, the clock and the label, so they are clear on any picture, even a bright one. It starts turned on.
 
 ![On a bright snowy picture: the channel's name and the clock on a dark plate, and the same with no plate, harder to read](../../images/tv-station/dog-plate.jpg)
 
-### Logo, Broadcast pack and the previews
+### Logo, Branding and the previews
 
-On the channel's **On-screen logo and branding** card:
+On the channel's **Corner logo and branding** card:
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
 | **Logo** | Select **Add logo** and choose a PNG with a clear background, at least 256 pixels tall. It is used in place of the pack's logo. With neither, a logo with its number and name is made. The logo in use shows on the card as a small picture. **Remove the logo** takes it off | The pack's logo |
-| **Broadcast pack** | Which pack this channel uses, as [Use a broadcast pack](../../use/use-a-broadcast-pack.md) says | **The station's pack**, **Its own pack** or **No pack**. **The station's pack** |
-| **Its own pack** | Select **Upload its own pack** and choose a zip made from the template, then choose **Its own pack** in **Broadcast pack**. **Remove its pack** takes it off | None |
+| **Branding** | Which pack this channel uses, as [Use branding](../../use/use-a-broadcast-pack.md) says | **The station's pack**, **Its own pack** or **No pack**. **The station's pack** |
+| **Its own pack** | Select **Upload its own pack** and choose a zip made from the template, then choose **Its own pack** in **Branding**. **Remove its pack** takes it off | None |
 | **Preview a frame** | Opens a frame of what is on now, drawn with the settings, in a new tab | None |
 | **Preview a Coming up next card** | Opens the next card, in a new tab | None |
 
-## Straps and cards
+## Title bars and cards
 
-The station's choices. A channel can choose its own on its **On-screen logo and branding** card.
+The station's choices. A channel can choose its own on its **Corner logo and branding** card.
 
 ### Programme name at the start
 
-The programme's name, with its series and episode, in a strap low in the corner for 8 seconds as each programme starts. It starts turned on.
+The programme's name, with its series and episode, in a title bar low in the corner for 8 seconds as each programme starts. It starts turned on.
 
-![A made-up landscape with the strap Tidewater Lane: Series 2, episode 4: The crossing, low in the corner](../../images/tv-station/strap-programme-name.jpg)
+![A made-up landscape with the title bar Tidewater Lane: Series 2, episode 4: The crossing, low in the corner](../../images/tv-station/strap-programme-name.jpg)
 
 ### Up next during the end credits
 
-The next programme and its time, in a strap low in the corner, during the end credits of each programme. It starts turned on.
+The next programme and its time, in a title bar low in the corner, during the end credits of each programme. It starts turned on.
 
 **Up next shows for** sets how long, until the programme ends: 5 to 120 seconds. It starts at 30 seconds.
 
-![A made-up landscape with the strap Up next at 21:00: Kestrel Valley, low in the corner](../../images/tv-station/strap-up-next.jpg)
+![A made-up landscape with the title bar Up next at 21:00: Kestrel Valley, low in the corner](../../images/tv-station/strap-up-next.jpg)
 
 ### Coming up next and Later cards
 
 In the breaks: the programme's picture, its title, its series and episode, the date and time it is shown and a short synopsis. The card for the next programme says Coming up next; a card for one after that says Later on and the channel's name. Off, a break with no clips shows the station's name. It starts turned on.
 
-With no broadcast pack, the plug-in draws the card on the programme's own picture, with a bar in the channel's colour. It darkens the picture to a third of its brightness so the words are clear.
+With no branding, the plug-in draws the card on the programme's own picture, with a bar in the channel's colour. It darkens the picture to a third of its brightness so the words are clear.
 
 ![A Coming up next card with no pack: Kestrel Valley, Series 1, episode 1: First light, Today at 21:00 and a synopsis, on the programme's darkened picture](../../images/tv-station/card-plain.jpg)
 
-With a broadcast pack, the plug-in draws the card on the pack's Coming up next background. The programme's picture goes in its clip area, and each field goes where `pack.json` places it.
+With branding, the plug-in draws the card on the pack's Coming up next background. The programme's picture goes in its clip area, and each field goes where `pack.json` places it.
 
 ![A Coming up next card from the Example TV pack: the words beside the programme's picture in a yellow frame](../../images/tv-station/card-pack.jpg)
 
 ![A Later on Comedy card from the Example TV pack, for Kestrel Valley at 22:00](../../images/tv-station/card-pack-later.jpg)
 
-## Promos
+## Coming-up trailers
 
-Promos are short trailers for programmes coming up. The plug-in makes them in quiet hours. It makes them for channels whose broadcast pack has a promo background. It also makes them for any channel that has music or a background loop for promos, in **Idents, clips and music** or on the channel.
+Coming-up trailers are short trailers for programmes coming up. The plug-in makes them in quiet hours. It makes them for channels whose branding has a coming-up trailer background. It also makes them for any channel that has music or a background loop for coming-up trailers, in **Short title clips, clips and music** or on the channel.
 
-A promo has a few short clips of the programme in its clip area, with its sound. It also has a music bed, and the title, the day and time and the channel. It gives the day and time, such as Sunday at 21:00, as it is made days before it plays.
+A coming-up trailer has a few short clips of the programme in its clip area, with its sound. It also has a background music, and the title, the day and time and the channel. It gives the day and time, such as Sunday at 21:00, as it is made days before it plays.
 
-![A promo from the Example TV pack: Coming soon, Kestrel Valley, Sunday at 21:00 and Comedy, with a clip of the programme in a yellow frame](../../images/tv-station/promo-pack.jpg)
+![A coming-up trailer from the Example TV pack: Coming soon, Kestrel Valley, Sunday at 21:00 and Comedy, with a clip of the programme in a yellow frame](../../images/tv-station/promo-pack.jpg)
 
-*A promo made with the example pack's promo background.*
+*A coming-up trailer made with the example pack's coming-up trailer background.*
 
-![A plain promo on the channel's teal colour: Coming soon, Kestrel Valley, Sunday at 21:00, Comedy, and a clip of the programme](../../images/tv-station/promo-plain.jpg)
+![A plain coming-up trailer on the channel's teal colour: Coming soon, Kestrel Valley, Sunday at 21:00, Comedy, and a clip of the programme](../../images/tv-station/promo-plain.jpg)
 
-*A plain promo, for a channel with no pack promo: on the channel's colour, or on a background loop you added.*
+*A plain coming-up trailer, for a channel with no pack coming-up trailer: on the channel's colour, or on a background loop you added.*
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **Make promos in quiet hours** | In Starboard's quiet hours, one at a time at the lowest priority, and never while anyone is watching | Turned on |
-| **Promo length** | How long each promo is. Longer promos show more clips | **As the pack says (15 seconds unless it says otherwise)**, **10 seconds**, **15 seconds**, **20 seconds**, **30 seconds**, **45 seconds** or **60 seconds**. **As the pack says** |
-| **Clips in each promo** | Short clips from different parts of the programme, clear of its opening titles and end credits | **By its length (about one every 5 seconds)**, or **2 clips** to **6 clips**. **By its length** |
-| **Use the programme's sound in promos** | Each clip plays with its own sound, at the same loudness as the rest. A programme with no sound has the music alone | Turned on |
+| **Make coming-up trailers in quiet hours** | In Starboard's quiet hours, one at a time at the lowest priority, and never while anyone is watching | Turned on |
+| **Coming-up trailer length** | How long each coming-up trailer is. Longer coming-up trailers show more clips | **As the pack says (15 seconds unless it says otherwise)**, **10 seconds**, **15 seconds**, **20 seconds**, **30 seconds**, **45 seconds** or **60 seconds**. **As the pack says** |
+| **Clips in each coming-up trailer** | Short clips from different parts of the programme, clear of its opening titles and end credits | **By its length (about one every 5 seconds)**, or **2 clips** to **6 clips**. **By its length** |
+| **Use the programme's sound in coming-up trailers** | Each clip plays with its own sound, at the same loudness as the rest. A programme with no sound has the music alone | Turned on |
 | **Music under the programme's sound** | How loud the music is while a clip's sound plays. It is at full before the first clip and after the last | **10%**, **20%**, **30%** or **50%**. **20%** |
-| **Show the station's logo on promos** | Promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner, clear of the clip and the words. Promos made with the station's pack carry it in their design already | Turned on |
-| **Audio description on promos** | A voice says each promo's words, for viewers who cannot read them. [Audio description on promos](#audio-description-on-promos) says what is said | Not turned on |
-| **Promos kept for each channel** | Old ones are replaced, so they never pile up | 1 to 6. **3** |
-| **Replace each promo after** | A promo is also replaced once its programme has started. When a channel's pack changes, its promos made with the old pack stop showing at once and are made again in the next quiet hour | **1 day**, **2 days**, **3 days** or **7 days**. **2 days** |
-| **Show promos for your other channels** | Each channel's breaks show the promos of your other channels too | Turned on |
+| **Show the station's logo on coming-up trailers** | Coming-up trailers made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner, clear of the clip and the words. Coming-up trailers made with the station's pack carry it in their design already | Turned on |
+| **Audio description on coming-up trailers** | A voice says each coming-up trailer's words, for viewers who cannot read them. [Audio description on coming-up trailers](#audio-description-on-coming-up-trailers) says what is said | Not turned on |
+| **Coming-up trailers kept for each channel** | Old ones are replaced, so they never pile up | 1 to 6. **3** |
+| **Replace each coming-up trailer after** | A coming-up trailer is also replaced once its programme has started. When a channel's pack changes, its coming-up trailers made with the old pack stop showing at once and are made again in the next quiet hour | **1 day**, **2 days**, **3 days** or **7 days**. **2 days** |
+| **Show coming-up trailers for your other channels** | Each channel's breaks show the coming-up trailers of your other channels too | Turned on |
 
-![A plain promo on purple with the station's Example TV logo, small, on a dark plate in the corner](../../images/tv-station/promo-station-logo.jpg)
+![A plain coming-up trailer on purple with the station's Example TV logo, small, on a dark plate in the corner](../../images/tv-station/promo-station-logo.jpg)
 
-*Show the station's logo on promos, on a plain promo for a channel with no pack of its own.*
+*Show the station's logo on coming-up trailers, on a plain coming-up trailer for a channel with no pack of its own.*
 
-### Audio description on promos
+### Audio description on coming-up trailers
 
-A promo is clips of a programme, music, and words on the picture: the title, the channel, the day and the time. A
-viewer who cannot read the picture hears only music. With **Audio description on promos** turned on, a voice says the
+A coming-up trailer is clips of a programme, music, and words on the picture: the title, the channel, the day and the time. A
+viewer who cannot read the picture hears only music. With **Audio description on coming-up trailers** turned on, a voice says the
 words.
 
 - **What is said.** The voice reads the words in the order they appear on the picture: **Coming soon**, the title,
-  the series and episode, the day and time, and the channel's name. When the promo is long enough, the first sentence of the
-  programme's description follows. A promo too short for all of it says the title, the day and time and the channel.
-- **How it sounds:** the voice starts in the promo's first second. The music and the programme's sound fall to about a
-  third while it speaks, and rise again after it. It is part of the promo's one sound track, so it plays in every
+  the series and episode, the day and time, and the channel's name. When the coming-up trailer is long enough, the first sentence of the
+  programme's description follows. A coming-up trailer too short for all of it says the title, the day and time and the channel.
+- **How it sounds:** the voice starts in the coming-up trailer's first second. The music and the programme's sound fall to about a
+  third while it speaks, and rise again after it. It is part of the coming-up trailer's one sound track, so it plays in every
   app, with nothing to choose.
 - **The voice** is eSpeak NG, a small speech program inside the plug-in. It is made on your server, and nothing is
   sent anywhere. It speaks the station's [Language](#language), with a voice for each of the ten. It is clear but
@@ -454,11 +456,11 @@ words.
 - **A programme with a described sound track** plays that track in its clips, in the station's language when it has
   one. The plug-in knows a described track by its name, such as **English (Audio Description)** or **AD**. It learns
   the name the next time it reads the channels from Jellyfin, which it does by itself each night.
-- **What it costs:** a few hundredths of a second of the processor for each promo, in the quiet hours when the promo
+- **What it costs:** a few hundredths of a second of the processor for each coming-up trailer, in the quiet hours when the coming-up trailer
   is made. Nothing runs for it at any other time. The plug-in's image is about 6 MB larger for the speech program.
-- **When it changes:** turning on or turning it off makes each channel's promos again in the next quiet hours.
+- **When it changes:** turning on or turning it off makes each channel's coming-up trailers again in the next quiet hours.
 
-On a channel's **Holding slide and promos** card, **Promos** says how its promos are made. **Add music for its promos** takes music for this channel only, an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes. **Add a background loop for its promos** takes a loop or picture for this channel only, as many as 20.
+On a channel's **Waiting screen and coming-up trailers** card, **Coming-up trailers** says how its coming-up trailers are made. **Add music for its coming-up trailers** takes music for this channel only, an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes. **Add a background loop for its coming-up trailers** takes a loop or picture for this channel only, as many as 20.
 
 ## Choose a style for my channel
 
@@ -495,17 +497,17 @@ Every video the plug-in makes, adds or imports is checked for fast changes in br
 
 Sound in an imported title clip or music is measured and played at the same level as everything else (-23 LUFS), by up to 12 dB. The notes after the check list any file that is changed.
 
-## Broadcast pack
+## Branding
 
-Your own branding for every channel. It can have the on-screen logo, the logo with its music, idents, bumpers and transitions. It can also have backgrounds for the Coming up next card and the promos, with music for the promos. [Use a broadcast pack](../../use/use-a-broadcast-pack.md) says how to add one, and [Make a broadcast pack](../../use/make-a-broadcast-pack.md) how to make one.
+Your own branding for every channel. It can have the corner logo, the logo with its music, short title clips, very short title clips and transitions. It can also have backgrounds for the Coming up next card and the coming-up trailers, with music for the coming-up trailers. [Use branding](../../use/use-a-broadcast-pack.md) says how to add one, and [Make branding](../../use/make-a-broadcast-pack.md) how to make one.
 
 | Row | What it does | Choices, and the one it starts with |
 |---|---|---|
 | **Station's pack** | Select **Upload a pack** and choose a zip of up to 60 MB made from the template. It is checked first; when it passes, every channel without a pack of its own uses it. **Stop using the pack** takes it off | None |
 | **Try the example pack** | Uses Example TV, a made-up channel drawn in code, for every channel without a pack of its own. The first time, it takes about 2 minutes to make, while no channel is playing. Turn off to go back to your own pack, or none | Turned off |
 | **The last pack checked** | What the check found: each problem with a pack that was not used, or notes on one that was, such as a picture scaled to fit | Empty until a pack is uploaded |
-| **Downloads** | The template (folders, `pack.json`, its schema and a README), the placement guides for the Coming up next card, the promo and the on-screen logo, and the example pack as a zip | None |
-| **Promos kept** | Each promo, with its programme, its day and time and its channel | None yet |
+| **Downloads** | The template (folders, `pack.json`, its schema and a README), the placement guides for the Coming up next card, the coming-up trailer and the corner logo, and the example pack as a zip | None |
+| **Coming-up trailers kept** | Each coming-up trailer, with its programme, its day and time and its channel | None yet |
 | **Each channel's pack** | Which pack each channel uses. Change it on the channel's page | **The station's pack** |
 
 ## Animation
@@ -515,43 +517,43 @@ Your own branding for every channel. It can have the on-screen logo, the logo wi
 | Thing | When it animates |
 |---|---|
 | **Coming up next and Later cards** | The words, the bar and the programme's picture come on as each card starts and go off by its end. The background stays still |
-| **Straps** | The programme's name as it starts, and Up next during the end credits |
-| **On-screen logo** | As a programme starts and ends, when **When it shows** is only during programmes or programmes and cards; and when it appears after the opening, with **Fades in after the opening**. When it shows always, it stays where it is |
-| **Clock** | With the on-screen logo |
+| **Title bars** | The programme's name as it starts, and Up next during the end credits |
+| **Corner logo** | As a programme starts and ends, when **When it shows** is only during programmes or programmes and cards; and when it appears after the opening, with **Fades in after the opening**. When it shows always, it stays where it is |
+| **Clock** | With the corner logo |
 | **New, Repeat or Live label** | On as the programme starts, off at 2 minutes |
-| **Words on the holding slide** | On as the slide starts, off by the time the next programme starts |
+| **Words on the waiting screen** | On as the slide starts, off by the time the next programme starts |
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **Coming on** | How it comes on | **The broadcast pack's, or none** (the one it starts with), **None**, **Fade in**, **Slide in from the left**, **Slide in from the right**, **Slide up from the bottom**, **Wipe on from the left** or **Grow from the centre** |
-| **Going off** | How it goes off | **The broadcast pack's, or none** (the one it starts with), **None**, **Fade out**, **Slide off to the left**, **Slide off to the right**, **Slide down off the bottom**, **Wipe off to the right** or **Shrink to the centre** |
-| **Speed** | How long it takes | **The broadcast pack's, or normal** (the one it starts with), **Quick, 0.3 seconds**, **Normal, 0.6 seconds** or **Slow, 1 second** |
+| **Coming on** | How it comes on | **The branding's, or none** (the one it starts with), **None**, **Fade in**, **Slide in from the left**, **Slide in from the right**, **Slide up from the bottom**, **Wipe on from the left** or **Grow from the centre** |
+| **Going off** | How it goes off | **The branding's, or none** (the one it starts with), **None**, **Fade out**, **Slide off to the left**, **Slide off to the right**, **Slide down off the bottom**, **Wipe off to the right** or **Shrink to the centre** |
+| **Speed** | How long it takes | **The branding's, or normal** (the one it starts with), **Quick, 0.3 seconds**, **Normal, 0.6 seconds** or **Slow, 1 second** |
 | **Preview** | On each thing's **Coming on** row: opens a few seconds of it coming on and going off, in a new tab, drawn over a made-up picture with the choices saved | None |
 
 Example result, from the example pack:
 - Its cards slide in from the left and fade out.
-- Its straps wipe on and off.
+- Its title bars wipe on and off.
 - Its logo and clock fade, slowly.
 - Its label slides in from the right, quickly.
-- The words on its holding slide slide up from the bottom and fade out.
+- The words on its waiting screen slide up from the bottom and fade out.
 
-Timing stays exact. Each thing comes on from its start and has gone by its end, so an animation never makes a break or a strap longer. If something is shown for less time than its two animations need, both are made shorter to fit. The plug-in draws each thing on its own layer only while it moves, so it costs little. Measured at 720p, a programme with everything animating used no more processor than one without. A card with animation used about half the processor of a plain one. A **Preview a frame** picture shows each thing where it rests.
+Timing stays exact. Each thing comes on from its start and has gone by its end, so an animation never makes a break or a title bar longer. If something is shown for less time than its two animations need, both are made shorter to fit. The plug-in draws each thing on its own layer only while it moves, so it costs little. Measured at 720p, a programme with everything animating used no more processor than one without. A card with animation used about half the processor of a plain one. A **Preview a frame** picture shows each thing where it rests.
 
 ## Streaming
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
 | **Picture size** | The size of the stream while a channel is watched. 720p is lighter on the processor; 1080p is sharper | **720p, lighter on the processor** or **1080p, sharper**. **720p** |
-| **Most channels at once** | Each channel being watched is one conversion. People watching the same channel share it | 1 to 6. **2** |
+| **Most channels at once** | Each channel being watched is one server work. People watching the same channel share it | 1 to 6. **2** |
 | **Stop a channel after the last viewer leaves** | Nothing runs while nobody watches | 5 to 300 seconds. **30 seconds** |
-| **Copy programmes when nothing is drawn on them** | A channel with no on-screen logo, no clock, no label and no straps plays its programmes as they are, with no converting | Turned on |
+| **Copy programmes when nothing is drawn on them** | A channel with no corner logo, no clock, no label and no title bars plays its programmes as they are, with no converting | Turned on |
 | **Leave out 3D films** | A 3D film plays as two pictures, side by side or one over the other. Films Jellyfin marks as 3D, or whose file name says 3D, are left out of every channel. Each film on a channel is also checked once, in quiet hours and never while anyone is watching, and one found to be 3D is left out too | Turned on |
 
 ## Station
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **Station name** | Shown in Jellyfin's Live TV, on the cards and as the on-screen logo when that is **The station's name**. A new name is given to its tuner in Jellyfin's Live TV too | Up to 40 characters. **Home TV** |
+| **Station name** | Shown in Jellyfin's Live TV, on the cards and as the corner logo when that is **The station's name**. A new name is given to its tuner in Jellyfin's Live TV too | Up to 40 characters. **Home TV** |
 | **Language** | The words drawn on the picture and in the guide, the sound track where a programme has one in this language, and film and series titles and descriptions. [Language](#language) says what changes | **English**, **Français (French)**, **Deutsch (German)**, **Español (Spanish)**, **Italiano (Italian)**, **Português (Portuguese)**, **Nederlands (Dutch)**, **Svenska (Swedish)**, **Dansk (Danish)** or **Norsk bokmål (Norwegian)**. **English** |
 | **First channel number** | 1 puts your channels first in Jellyfin's Live TV, before the free channels from 101 | 1 to 9000. **1** |
 | **Address Jellyfin uses to reach this plug-in** | Filled in by itself: Starboard 0.23.0 and later give the plug-in its address on your home network. Enter one only if Jellyfin runs on another computer that reaches this one by another address | Filled in by itself |
@@ -561,9 +563,9 @@ Timing stays exact. Each thing comes on from its start and has gone by its end, 
 
 **Language** is for every channel. It changes three things, from the next piece that plays:
 
-- **Words on the picture and in the guide.** These are the programme's name strap with its series and episode, and **Up next** at a time. They also include the **Coming up next** and **Later on** cards with the day and time. They also include the **New**, **Repeat** or **Live** label, **Coming soon** on promos, and **Back soon** or the countdown on the holding slide. In German, for example, a card says Als Nächstes and Morgen um 21:00. The clock stays 24-hour. The plug-in's own pages in Starboard stay in English.
+- **Words on the picture and in the guide.** These are the programme's name title bar with its series and episode, and **Up next** at a time. They also include the **Coming up next** and **Later on** cards with the day and time. They also include the **New**, **Repeat** or **Live** label, **Coming soon** on coming-up trailers, and **Back soon** or the countdown on the waiting screen. In German, for example, a card says Als Nächstes and Morgen um 21:00. The clock stays 24-hour. The plug-in's own pages in Starboard stay in English.
 - **Sound track:** a programme with more than one sound track plays the one in this language, else its default track, as before. A line-up read before 0.6.0 knows each track's language after its next read, each night at 04:40 or with **Read the channels from Jellyfin again**.
-- **Titles and descriptions.** For a language other than English, the plug-in reads a film's title and description, and a series' name, in this language. It gets them from the film database (TMDB) through Jellyfin. It reads them only for programmes about to be shown. These are the next 3 hours of a channel someone is watching, the guide's days each night, and each promo as it is made. It reads at most 60 an hour and keeps each one, so a new language takes a day or so to reach the whole guide. A programme the film database has nothing for keeps Jellyfin's own title. Nothing in Jellyfin is changed.
+- **Titles and descriptions.** For a language other than English, the plug-in reads a film's title and description, and a series' name, in this language. It gets them from the film database (TMDB) through Jellyfin. It reads them only for programmes about to be shown. These are the next 3 hours of a channel someone is watching, the guide's days each night, and each coming-up trailer as it is made. It reads at most 60 an hour and keeps each one, so a new language takes a day or so to reach the whole guide. A programme the film database has nothing for keeps Jellyfin's own title. Nothing in Jellyfin is changed.
 
 Jellyfin cannot give an episode's own name and plot in another language this way, so they stay as Jellyfin has them. To have those in your language too, set the library's language in Jellyfin:
 
@@ -571,19 +573,19 @@ Jellyfin cannot give an episode's own name and plot in another language this way
 2. Set **Preferred download language**.
 3. Refresh the library's metadata in Jellyfin.
 
-After a change of language, each channel's promos are made again in the next quiet hours, with the new words.
+After a change of language, each channel's coming-up trailers are made again in the next quiet hours, with the new words.
 
 ## Actions
 
 - **Try the example pack:** makes Example TV, if it is not made yet, and uses it for every channel without a pack of its own.
-- **Make promos now:** makes any promos that are due, one at a time at the lowest priority, unless someone is watching. They are also made each hour of Starboard's quiet hours.
+- **Make coming-up trailers now:** makes any coming-up trailers that are due, one at a time at the lowest priority, unless someone is watching. They are also made each hour of Starboard's quiet hours.
 - **Refresh Jellyfin's guide:** asks Jellyfin to read the channel list and the guide again now. The **Guide** page says when Jellyfin last read the guide and how many programmes it had.
 - **Read the channels from Jellyfin again:** reads every channel's line-up now. It also runs each night at 04:40, so new episodes join.
 - **Stop every channel playing:** stops every stream now. Anyone watching can choose the channel again.
 
 ## Find out more
 
-- [Use a broadcast pack](../../use/use-a-broadcast-pack.md)
-- [Make a broadcast pack](../../use/make-a-broadcast-pack.md)
+- [Use branding](../../use/use-a-broadcast-pack.md)
+- [Make branding](../../use/make-a-broadcast-pack.md)
 - [Dashboard card](dashboard-card.md)
 - [Problems](problems.md)

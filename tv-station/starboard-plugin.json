@@ -2,8 +2,8 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.13.3",
- "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
+ "version": "0.14.0",
+ "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/tv-station",
@@ -45,7 +45,7 @@
    "label": "Channels",
    "type": "custom",
    "choices": "/channels",
-   "hint": "Add a channel and open it. It has a card for each of these: its name and number, what it shows, its breaks, its on-screen logo, its animation, its holding slide and promos, its programmes and what it has played."
+   "hint": "Add a channel and open it. It has a card for each of these: its name and number, what it shows, its breaks, its corner logo, its animation, its waiting screen and coming-up trailers, its programmes and what it has played."
   },
   {
    "key": "guide",
@@ -63,7 +63,7 @@
   },
   {
    "key": "grids",
-   "label": "Break grids",
+   "label": "Break layouts",
    "type": "custom",
    "choices": "/grids",
    "hint": "What plays In between programmes and in Breaks inside programmes, as two grids for each channel, with drag and drop, buttons and the keyboard."
@@ -73,25 +73,18 @@
    "label": "File lists",
    "type": "custom",
    "choices": "/files",
-   "hint": "Every ident, promo clip, advert and PSA in one list. You can search, sort and filter it, and add several files to a channel or take them off together."
-  },
-  {
-   "key": "styles",
-   "label": "Choose a style for my channel",
-   "type": "custom",
-   "choices": "/styles",
-   "hint": "Add the video and picture files you made in Canva, Figma or another tool, or a zip of them, and turn them into your branding. Check each file, and say where it came from."
+   "hint": "Every short title clip, coming-up trailer clip, own short video and Public message in one list. You can search, sort and filter it, and add several files to a channel or take them off together."
   },
   {
    "key": "clips",
-   "label": "Idents, clips and music",
+   "label": "Short title clips, clips and music",
    "type": "custom",
    "choices": "/clips",
-   "hint": "The station's own idents and clips, its holding slide and its music for promos, for every channel's breaks."
+   "hint": "The station's own short title clips and clips, its waiting screen and its music for coming-up trailers, for every channel's breaks."
   },
   {
    "key": "pack",
-   "label": "Broadcast pack",
+   "label": "Branding",
    "type": "custom",
    "choices": "/pack",
    "hint": "Your own branding for the channels: upload a pack made from the template, try the example pack, and download the template and placement guides."
@@ -101,7 +94,7 @@
    "label": "Animation",
    "type": "custom",
    "choices": "/animation",
-   "hint": "How the cards, straps, on-screen logo, clock, label and holding slide words come on and go off, for every channel, with a preview of each."
+   "hint": "How the cards, title bars, corner logo, clock, label and waiting screen words come on and go off, for every channel, with a preview of each."
   },
   {
    "key": "station_name",
@@ -214,7 +207,7 @@
    "min": 1,
    "max": 6,
    "group": "Streaming",
-   "hint": "Each channel being watched is one conversion. People watching the same channel share it."
+   "hint": "Each channel being watched is one server work. People watching the same channel share it."
   },
   {
    "key": "stop_after",
@@ -232,7 +225,7 @@
    "label": "Copy programmes when nothing is drawn on them",
    "type": "switch",
    "default": true,
-   "hint": "A channel with no on-screen logo and no straps plays its programmes as they are, with no converting.",
+   "hint": "A channel with no corner logo and no title bars plays its programmes as they are, with no converting.",
    "group": "Streaming"
   },
   {
@@ -245,28 +238,28 @@
   },
   {
    "key": "promos",
-   "label": "Make promos in quiet hours",
+   "label": "Make coming-up trailers in quiet hours",
    "type": "switch",
    "default": true,
-   "group": "Promos",
-   "hint": "Short clips of a programme coming up, with its sound, a music bed and its day and time, on a background loop. One at a time, at the lowest priority, never while anyone is watching."
+   "group": "Coming-up trailers",
+   "hint": "Short clips of a programme coming up, with its sound, a background music and its day and time, on a background loop. One at a time, at the lowest priority, never while anyone is watching."
   },
   {
    "key": "promo_keep",
-   "label": "Promos kept for each channel",
+   "label": "Coming-up trailers kept for each channel",
    "type": "number",
    "default": 3,
    "min": 1,
    "max": 6,
-   "group": "Promos",
+   "group": "Coming-up trailers",
    "hint": "Old ones are replaced, so they never pile up."
   },
   {
    "key": "promo_replace_days",
-   "label": "Replace each promo after",
+   "label": "Replace each coming-up trailer after",
    "type": "choice",
    "default": "2",
-   "group": "Promos",
+   "group": "Coming-up trailers",
    "choices": [
     {
      "value": "1",
@@ -285,14 +278,14 @@
      "label": "7 days"
     }
    ],
-   "hint": "A promo is also replaced once its programme has started."
+   "hint": "A coming-up trailer is also replaced once its programme has started."
   },
   {
    "key": "promo_seconds",
-   "label": "Promo length",
+   "label": "Coming-up trailer length",
    "type": "choice",
    "default": "",
-   "group": "Promos",
+   "group": "Coming-up trailers",
    "choices": [
     {
      "value": "",
@@ -323,14 +316,14 @@
      "label": "60 seconds"
     }
    ],
-   "hint": "How long each promo is. Longer promos show more clips. A change shows in the promos made from the next quiet hour."
+   "hint": "How long each coming-up trailer is. Longer coming-up trailers show more clips. A change shows in the coming-up trailers made from the next quiet hour."
   },
   {
    "key": "promo_clips",
-   "label": "Clips in each promo",
+   "label": "Clips in each coming-up trailer",
    "type": "choice",
    "default": "",
-   "group": "Promos",
+   "group": "Coming-up trailers",
    "choices": [
     {
      "value": "",
@@ -361,10 +354,10 @@
   },
   {
    "key": "promo_sound",
-   "label": "Use the programme's sound in promos",
+   "label": "Use the programme's sound in coming-up trailers",
    "type": "switch",
    "default": true,
-   "group": "Promos",
+   "group": "Coming-up trailers",
    "hint": "Each clip plays with its own sound, at the same loudness as the rest, and the music goes quieter under it."
   },
   {
@@ -372,7 +365,7 @@
    "label": "Music under the programme's sound",
    "type": "choice",
    "default": "20",
-   "group": "Promos",
+   "group": "Coming-up trailers",
    "choices": [
     {
      "value": "10",
@@ -395,31 +388,31 @@
   },
   {
    "key": "promo_station_logo",
-   "label": "Show the station's logo on promos",
+   "label": "Show the station's logo on coming-up trailers",
    "type": "switch",
    "default": true,
-   "group": "Promos",
-   "hint": "The station pack's logo, small, in a corner of promos made with a channel's own pack or a plain design. Promos made with the station's pack carry it already."
+   "group": "Coming-up trailers",
+   "hint": "The station pack's logo, small, in a corner of coming-up trailers made with a channel's own pack or a plain design. Coming-up trailers made with the station's pack carry it already."
   },
   {
    "key": "promo_audio_description",
-   "label": "Audio description on promos",
+   "label": "Audio description on coming-up trailers",
    "type": "switch",
    "default": false,
-   "group": "Promos",
-   "hint": "A voice says each promo's words: Coming soon, the title, the episode, the day and time and the channel. It adds the first sentence of the description when there is room. The music and the programme's sound fall under it. The voice is made on your server (eSpeak NG), in the station's language; nothing is sent anywhere. Promos are made again in the next quiet hours."
+   "group": "Coming-up trailers",
+   "hint": "A voice says each coming-up trailer's words: Coming soon, the title, the episode, the day and time and the channel. It adds the first sentence of the description when there is room. The music and the programme's sound fall under it. The voice is made on your server (eSpeak NG), in the station's language; nothing is sent anywhere. Coming-up trailers are made again in the next quiet hours."
   },
   {
    "key": "promo_other",
-   "label": "Show promos for your other channels",
+   "label": "Show coming-up trailers for your other channels",
    "type": "switch",
    "default": true,
-   "group": "Promos",
-   "hint": "Each channel's breaks show promos for programmes on your other channels too."
+   "group": "Coming-up trailers",
+   "hint": "Each channel's breaks show coming-up trailers for programmes on your other channels too."
   },
   {
    "key": "dog_kind",
-   "label": "On-screen logo",
+   "label": "Corner logo",
    "type": "choice",
    "default": "channel_logo",
    "choices": [
@@ -437,11 +430,11 @@
     },
     {
      "value": "none",
-     "label": "No on-screen logo"
+     "label": "No corner logo"
     }
    ],
    "hint": "Every channel uses these unless it has its own, in Channels.",
-   "group": "On-screen logo"
+   "group": "Corner logo"
   },
   {
    "key": "dog_corner",
@@ -467,7 +460,7 @@
     }
    ],
    "hint": "Where it sits.",
-   "group": "On-screen logo"
+   "group": "Corner logo"
   },
   {
    "key": "dog_size",
@@ -489,7 +482,7 @@
     }
    ],
    "hint": "Small is 6% of the picture's height, medium 8.5% and large 12%.",
-   "group": "On-screen logo"
+   "group": "Corner logo"
   },
   {
    "key": "dog_margin",
@@ -511,7 +504,7 @@
     }
    ],
    "hint": "Inside the safe area keeps it on screen on every television.",
-   "group": "On-screen logo"
+   "group": "Corner logo"
   },
   {
    "key": "dog_opacity",
@@ -521,7 +514,7 @@
    "default": 80,
    "min": 30,
    "max": 100,
-   "group": "On-screen logo",
+   "group": "Corner logo",
    "hint": "100% is solid."
   },
   {
@@ -543,8 +536,8 @@
      "label": "Programmes and cards, not clips"
     }
    ],
-   "hint": "Clips are idents, trailers and your own clips.",
-   "group": "On-screen logo"
+   "hint": "Clips are short title clips, trailers and your own clips.",
+   "group": "Corner logo"
   },
   {
    "key": "dog_fade_in",
@@ -570,15 +563,15 @@
     }
    ],
    "hint": "Keeps the opening titles clear.",
-   "group": "On-screen logo"
+   "group": "Corner logo"
   },
   {
    "key": "dog_clock",
    "label": "Clock",
    "type": "switch",
    "default": false,
-   "hint": "The time beside the on-screen logo.",
-   "group": "On-screen logo"
+   "hint": "The time beside the corner logo.",
+   "group": "Corner logo"
   },
   {
    "key": "dog_label",
@@ -600,15 +593,15 @@
     }
    ],
    "hint": "In words, for the first 2 minutes of each programme.",
-   "group": "On-screen logo"
+   "group": "Corner logo"
   },
   {
    "key": "dog_plate",
-   "label": "Backing plate",
+   "label": "Dark box behind the logo",
    "type": "switch",
    "default": true,
    "hint": "A dark, partly transparent box behind the logo, the clock and the label, so they are clear on any picture.",
-   "group": "On-screen logo"
+   "group": "Corner logo"
   },
   {
    "key": "dog_strap_start",
@@ -616,7 +609,7 @@
    "type": "switch",
    "default": true,
    "hint": "For 8 seconds as each programme starts.",
-   "group": "Straps and cards"
+   "group": "Title bars and cards"
   },
   {
    "key": "dog_strap_end",
@@ -624,7 +617,7 @@
    "type": "switch",
    "default": true,
    "hint": "The next programme and its time, at the end of each programme.",
-   "group": "Straps and cards"
+   "group": "Title bars and cards"
   },
   {
    "key": "dog_strap_seconds",
@@ -634,7 +627,7 @@
    "default": 30,
    "min": 5,
    "max": 120,
-   "group": "Straps and cards"
+   "group": "Title bars and cards"
   },
   {
    "key": "dog_cards",
@@ -642,7 +635,14 @@
    "type": "switch",
    "default": true,
    "hint": "In the breaks: the programme's picture, title, the date and time it is shown and a short synopsis.",
-   "group": "Straps and cards"
+   "group": "Title bars and cards"
+  },
+  {
+   "key": "styles",
+   "label": "Choose a style for my channel",
+   "type": "custom",
+   "choices": "/styles",
+   "hint": "Add the video and picture files you made in Canva, Figma or another tool, or a zip of them, and turn them into your branding. Check each file, and say where it came from."
   }
  ],
  "actions": [
@@ -653,7 +653,7 @@
   },
   {
    "id": "promos",
-   "label": "Make promos now",
+   "label": "Make coming-up trailers now",
    "path": "/actions/promos"
   },
   {
@@ -717,7 +717,7 @@
   },
   {
    "id": "promos",
-   "label": "Make promos",
+   "label": "Make coming-up trailers",
    "path": "/jobs/promos",
    "every_hours": 1,
    "quiet_hours": true,
@@ -755,6 +755,15 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.14.0",
+   "date": "2026-11-28",
+   "changed": [
+    "Plain words for the television terms: **Short title clips** (idents), **Coming-up trailers** (promos), **Waiting screen** (holding slide), **Branding** (broadcast pack), **Title bars** (straps), **Corner logo** and **Public messages**.",
+    "A one-time explainer on each page says what a new word means, with the old word, and does not come back after you dismiss it.",
+    "Nothing you saved changes: every setting keeps its key and every channel plays as before."
+   ]
+  },
   {
    "version": "0.13.3",
    "date": "2026-11-28",
@@ -915,13 +924,6 @@
    "added": [
     "**Create initial schedule** on a channel's What it shows card: a week from the channel's own series and films, in the hours you give, ready to change in the schedule grid and save.",
     "**This channel's line-up** in Suggest a schedule: every series and film the channel shows, watched or not."
-   ]
-  },
-  {
-   "version": "0.3.1",
-   "date": "2026-11-19",
-   "changed": [
-    "**Preview a frame** of a Coming up next card or a promo is taken 1.5 seconds into the pack's background video, so a background that opens with a movement, such as bands sweeping off, shows as it rests."
    ]
   }
  ]

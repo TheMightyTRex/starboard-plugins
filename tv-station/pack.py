@@ -7,7 +7,7 @@
     bumpers/bumperNN.mp4 (.mov .mkv .webm) short and silent (0.4.0): open and close each break, chosen at random
     coming-next/background.mp4 (or .mov, .png, .jpg)  the Coming up next card, with a clip area and text fields
     promo/background.mp4 (or .mov, .png, .jpg)        the promo, with a clip area and text fields
-    promo/music/*.m4a (.mp3 .wav .flac .ogg .opus)     music beds; each promo has one, chosen at random
+    promo/music/*.m4a (.mp3 .wav .flac .ogg .opus)     pieces of background music; each promo has one, chosen at random
     transitions/*.webm (VP9 with alpha) or *.mov (ProRes 4444)  wipes and stings between programme and break
 
 A zip is checked before anything in it is used: its names, types, sizes and lengths, no path outside its folder, no
@@ -428,8 +428,8 @@ def check(folder):
         if len(by_role.get(role, [])) > most:
             problems.append(f"{len(by_role[role])} files in {role}s, more than the {most} a pack may have")
     if "dog" not in by_role:
-        problems.append("logo/dog.png is missing: every pack has the on-screen logo")
-    out = {"name": str(doc.get("name") or "Broadcast pack")[:40], "made": str(doc.get("made") or "")[:40],
+        problems.append("logo/dog.png is missing: every pack has the corner logo")
+    out = {"name": str(doc.get("name") or "Branding")[:40], "made": str(doc.get("made") or "")[:40],
            "colours": doc.get("colours") or {}, "dog": None, "sting": None, "idents": [], "bumpers": [], "coming_next": None, "promo": None,
            "music": [], "transitions": [], "checked": int(time.time())}
     # Listed in pack.json but not in the folder: a name changed on one and not the other.
@@ -497,13 +497,13 @@ def check(folder):
     for rel in by_role.get("ident", []):
         item = media(rel, "ident")
         if item and item["still"]:
-            problems.append(f"{rel}: a still picture. An ident is a video")
+            problems.append(f"{rel}: a still picture. A short title clip is a video")
         elif item:
             out["idents"].append(item)
     for rel in by_role.get("bumper", []):  # 0.4.0: short and silent; any sound in one is never played
         item = media(rel, "bumper")
         if item and item["still"]:
-            problems.append(f"{rel}: a still picture. A bumper is a short video")
+            problems.append(f"{rel}: a still picture. A very short title clip is a short video")
         elif item:
             out["bumpers"].append({**item, "has_audio": False})
     for rel in by_role.get("music", []):
@@ -542,7 +542,7 @@ def check(folder):
         if part == "promo":
             out[part]["seconds"] = int(lay.get("seconds") or 15)
             if not out["music"]:
-                notes.append("promo/music has no music, so promos have none")
+                notes.append("promo/music has no music, so coming-up trailers have none")
         if "Title" not in fields:
             notes.append(f"pack.json, {part}: no Title field, so the programme's title is not drawn")
     for part in ("coming_next", "promo"):
@@ -610,12 +610,12 @@ def summary(p):
     """What a pack holds, in words."""
     if not p:
         return "No pack"
-    bits = ["the on-screen logo" if p.get("dog") else "",
+    bits = ["the corner logo" if p.get("dog") else "",
             "the logo with music" if p.get("sting") else "",
-            f"{len(p['idents'])} ident{'s' if len(p['idents']) != 1 else ''}" if p.get("idents") else "",
-            f"{len(p['bumpers'])} bumper{'s' if len(p['bumpers']) != 1 else ''}" if p.get("bumpers") else "",
+            f"{len(p['idents'])} short title clip{'s' if len(p['idents']) != 1 else ''}" if p.get("idents") else "",
+            f"{len(p['bumpers'])} very short title clip{'s' if len(p['bumpers']) != 1 else ''}" if p.get("bumpers") else "",
             "a Coming up next card" if p.get("coming_next") else "",
-            ("a promo" + (f" with {len(p['music'])} music bed{'s' if len(p['music']) != 1 else ''}" if p.get("music") else "")) if p.get("promo") else "",
+            ("a coming-up trailer" + (f" with {len(p['music'])} background music{'s' if len(p['music']) != 1 else ''}" if p.get("music") else "")) if p.get("promo") else "",
             f"{len(p['transitions'])} transition{'s' if len(p['transitions']) != 1 else ''}" if p.get("transitions") else ""]
     bits = [b for b in bits if b]
     words = ", ".join(bits[:-1]) + " and " + bits[-1] if len(bits) > 1 else bits[0] if bits else "nothing"
@@ -667,7 +667,7 @@ def placement_filters(which, layout, font, dog_box=None):
         lines = (f.get("lines") if isinstance(f, dict) else None) or LINES.get(name, 1)
         label = f"{name}: {r[2] - r[0]} by {r[3] - r[1]}, at {r[0]}, {r[1]}" + (f", up to {lines} lines" if lines > 1 else "")
         out += _rect_filters(font, r, label, "0x69f0ae", size=26)
-    head = "Coming up next card" if which == "coming_next" else "Promo, with music from promo/music"
+    head = "Coming up next card" if which == "coming_next" else "Coming-up trailer, with music from promo/music"
     out.append(_ff_text(font, f"{head}: 1920 by 1080, 25 frames a second", 30, "(w-tw)/2", TITLE_SAFE[1] + 40, "white", box="black@0.6"))
     if which == "coming_next":
         out.append(_ff_text(font, "pack.json, animation, cards: the clip area and every field animate on and off together, over the background",
@@ -778,12 +778,12 @@ The full specification is in the plug-in's help: Make a broadcast pack.
 """
 
 WHAT_GOES_HERE = {
-    "logo": "dog.png: the on-screen logo, a PNG with a transparent background.\nlogo-with-music.mp4: the logo with its music baked in, 1 to 20 seconds.\n",
+    "logo": "dog.png: the corner logo, a PNG with a transparent background.\nlogo-with-music.mp4: the logo with its music baked in, 1 to 20 seconds.\n",
     "idents": "ident01.mp4, ident02.mp4 and so on: as many as you like, 2 to 60 seconds each, played in a random order.\n",
     "bumpers": "bumper01.mp4 and so on: short and silent, 0.5 to 10 seconds, opening each break.\n",
     "coming-next": "background.mp4 (or .png, .jpg): the Coming up next card. placement.png shows where the clip and the words go.\n",
-    "promo": "background.mp4 (or .png, .jpg): the promo. placement.png shows where the clips and the words go.\n",
-    "promo/music": "music01.m4a and so on: music beds for the promos, 5 to 300 seconds each.\n",
+    "promo": "background.mp4 (or .png, .jpg): the coming-up trailer. placement.png shows where the clips and the words go.\n",
+    "promo/music": "music01.m4a and so on: pieces of background music for the coming-up trailers, 5 to 300 seconds each.\n",
     "transitions": "wipe01.webm and so on: 0.2 to 5 seconds, WebM VP9 with alpha or ProRes 4444 with alpha.\n",
 }
 

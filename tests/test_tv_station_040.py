@@ -206,7 +206,7 @@ class PackBumpers(unittest.TestCase):
         self.assertEqual([b["path"] for b in out["pack"]["bumpers"]], ["bumpers/bumper01.mp4"])
         self.assertFalse(out["pack"]["bumpers"][0]["has_audio"], "a bumper's sound is never played")
         self.assertTrue(any("bumper02.mp4: 12.0 seconds" in p for p in out["problems"]), out["problems"])
-        self.assertIn("1 bumper", pack.summary(out["pack"]))
+        self.assertIn("1 very short title clip", pack.summary(out["pack"]))
         self.assertEqual(pack.validate({**doc, "bumpers": ["bumper1.mp4"]})[:1] != [], True, "names are checked")
 
 

@@ -1,5 +1,5 @@
 """Create your own TV channel 0.3.2 (owner, 19 November 2026): "There is no way to create a schedule from the channel
-list once you add items - can you put a Create initial schedule to put something together to edit in the schedule
+list once you add items - can you put a Plan the week for me to put something together to edit in the schedule
 grid." """
 import os
 import sys
@@ -70,10 +70,10 @@ class TheButton(App):
         cid, _ = self.make(episodes("aa", 6, 1500))
         rows = {it["id"]: it for it in self.app.channels_page(now=NOW)["items"]}
         it = rows[f"{cid}:initial"]
-        self.assertEqual(it["title"], "Create initial schedule")
+        self.assertEqual(it["title"], "Plan the week for me")
         self.assertEqual(it["group"], "What it shows")
         self.assertEqual(it["actions"], ["attach"])
-        self.assertEqual(it["attach"]["label"], "Create initial schedule")
+        self.assertEqual(it["attach"]["label"], "Plan the week for me")
         self.assertEqual(it["attach"]["value"], "Weekdays 18:00 to 23:00, weekends 12:00 to 23:00")
         self.assertIn(f"/grid?channel={cid}", it["link"]["url"])
         self.assertLessEqual(len(it["detail"]), 200)
