@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.18.0",
+ "version": "0.19.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -728,6 +728,17 @@
  },
  "changes": [
   {
+   "version": "0.19.0",
+   "date": "2026-11-28",
+   "added": [
+    "**Shows at set times** in What plays when: say what plays at what time, such as Harbour lights at 19:00 on weekdays, on a page of the plug-in's own. It is for a computer screen.",
+    "The times are read from the week grid, so a grid you made before shows as times and nothing is lost."
+   ],
+   "changed": [
+    "The week grid is under **More: plan every slot on a grid**."
+   ]
+  },
+  {
    "version": "0.18.0",
    "date": "2026-11-28",
    "changed": [
@@ -898,13 +909,6 @@
    ],
    "added": [
     "**Leave out 3D films** (Yes unless changed): a film Jellyfin or its file name says is 3D is left out of channels, and each film is checked once in quiet hours for two pictures side by side or one over the other."
-   ]
-  },
-  {
-   "version": "0.5.4",
-   "date": "2026-11-19",
-   "fixed": [
-    "**A programme with a subtitle file beside it showed only the channel's name card:** the plug-in asked for the subtitle in place of the sound. It now picks the sound among the file's own sound tracks."
    ]
   }
  ]
