@@ -33,7 +33,7 @@ q2: Does its tab say Needs setting up?
   Yes -> stepsetup
   No -> stepactive
 stepsetup: Fill in its settings | Then select Turn on
-stepactive: It is active | Starboard turned on it
+stepactive: It is active | Starboard turned it on
 endcard: Add its card to your dashboard
 endstop: Leave it out | Nothing is installed
 ```
