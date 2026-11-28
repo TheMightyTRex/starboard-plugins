@@ -52,10 +52,10 @@ Jellyfin reads the channel list and the guide from Create your own TV channel's 
 
 ## Let more channels play at once
 
-Each channel being watched is one server work, and **Most channels at once** is 2 unless you change it. People watching the same channel share one, so it is the number of different channels at once.
+Each channel someone watches uses your server, and **Channels playing at once** is 2 unless you change it. People watching the same channel share one, so it is the number of different channels at once.
 
-1. In **Streaming**, raise **Most channels at once**. Each one adds about 0.9 of a processor core at 720p.
-2. Or choose **720p** in **Picture size**, which is lighter.
+1. In **Station**, raise **Channels playing at once**. Each one adds about 0.9 of a processor core at 720p.
+2. Or choose **Lighter (720p)** in **Picture quality**.
 
 ## Add something to the channel
 
@@ -70,7 +70,7 @@ A channel with nothing in **What it shows**, or whose series and films Jellyfin 
 1. Select **Preview a frame** on the channel's page. If it says what went wrong, such as Jellyfin not answering, fix that first.
 2. A programme that will not play is replaced by a slate with the station's name for 20 seconds, then the channel goes on.
 3. Check **System**, then **Logs**, for Create your own TV channel.
-4. If the server is busy, choose **720p** in **Picture size**. Or turn off the corner logo and the title bars for that channel, so it copies its programmes with no converting.
+4. If the server is busy, choose **Lighter (720p)** in **Picture quality**. Or turn off the corner logo and the title bars for that channel, so it copies its programmes with no converting.
 
 ## Fix the pack and upload it again
 

@@ -120,7 +120,7 @@ Starboard never adds it by itself. You choose to add it from the catalogue.
   leaves. People watching the same channel share one stream.
 - **Coming-up trailers are made one at a time,** by one FFmpeg at the lowest priority with one thread, in Starboard's quiet
   hours. Nothing is made while anyone is watching: a channel starting stops it at once.
-- **One server work for each channel being watched,** at 720p unless you choose 1080p. At most 2 channels convert at
+- **Your server does work for each channel being watched,** at 720p unless you choose Sharper (1080p). At most 2 channels convert at
   once unless you change it. A channel with no corner logo and no title bars copies its programmes with no converting.
 - **Measured** (17 November 2026, as Starboard runs it): 16.4 MiB of memory and no measurable processor (0.00%) at
   rest. While one channel played at 720p with the corner logo, it used about 140 MiB and 0.9 of a processor core.
