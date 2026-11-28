@@ -59,7 +59,7 @@ class TheSetting(unittest.TestCase):
     def test_not_active_unless_changed_and_says_where_the_voice_is_made(self):
         m = manifest("tv-station")
         s = next(x for x in m["settings"] if x["key"] == "promo_audio_description")
-        self.assertEqual((s["type"], s["default"], s["group"], s["label"]), ("switch", False, "Coming-up trailers", "Audio description on coming-up trailers"))
+        self.assertEqual((s["type"], s["default"], s["group"], s["label"]), ("switch", False, "Logo, title bars and trailers", "Audio description on coming-up trailers"))
         self.assertIn("on your server", s["hint"])
         self.assertIn("nothing is sent anywhere", s["hint"])
         self.assertIn("0.7.0", [c["version"] for c in m["changes"]])

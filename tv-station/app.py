@@ -2116,6 +2116,31 @@ def channels_file(name, item, length, rfile):
     return channels_page(said, only=cid if can("partial") else None)
 
 
+def _sub(out, menu, title, page, prefix, detail=None, group="More"):
+    """The items of another page, in a sub menu of this one (0.11.0, fewer tabs). Each id gets the prefix, so a change finds its page again."""
+    out.setdefault("menus", []).append({"id": menu, "title": title, "detail": (detail or page.get("intro") or "")[:200], "group": group})
+    for it in page.get("items", []):
+        out["items"].append({**it, "id": prefix + str(it["id"]), "menu": menu})
+
+
+def guide_rows(now=None):
+    """The guide as plain rows, for a sub menu: a group for each channel, a row for each programme in the next 24 hours."""
+    now = time.time() if now is None else now
+    items = []
+    for ch in numbered(state()):
+        if not ch.get("on", True):
+            continue
+        for k, a in enumerate(sched_of(ch).airings(now, now + 86400, limit=100)):
+            e = a["entry"]
+            more = [guide.episode_words(e)[:60], "New" if guide.is_new(e, a["start"]) else "Repeat"]
+            items.append({"id": f"{ch['id']}:{k}", "title": (e.get("title") or "Programme")[:120], "group": f"{ch['number']} {ch['name']}"[:40],
+                          "detail": (f"{day_hm(a['start'], now)} to {hm(a['end'])}. " + ". ".join(x for x in more if x))[:200]})
+    if not items:
+        items.append({"id": "none", "title": "Nothing is on yet", "group": "The next 24 hours", "state": "unknown", "state_label": "None",
+                      "detail": "Add a channel and a series or film to it, and its programmes are listed here."})
+    return {"items": items, "intro": f"What is on {station_name()} in the next 24 hours. Jellyfin's guide has the next 7 days. " + guide_status(now)}
+
+
 def _explain(out, s, page):
     """Adds the one-time explainers for a page to its notices (explain.py)."""
     got = explain.notices(s, page)
@@ -2201,6 +2226,8 @@ def clips_page(said=None):
                              "hint": f"A video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080, up to 90 MB. {no_file}"}})
     out = {"type": "list", "title": "What plays between programmes", "items": items,
            "intro": "Everything here plays between programmes on every channel. Each channel can use these, its own, or both."}
+    _sub(out, "layouts", "Break layouts", grids_page(), "layouts~", "What plays between programmes and in breaks inside programmes, for each channel.")
+    _sub(out, "files", "All your files in one list", files_page(), "files~", "Every short title clip, trailer clip, short video and public message, to search and sort.")
     _explain(out, s, "clips")
     if said:
         out["said"] = said[:200]
@@ -2488,6 +2515,7 @@ def pack_page(said=None):
     out = {"type": "list", "title": "Branding", "items": items,
            "intro": ("Your own branding for the channels: the corner logo, short title clips, the logo with music, Coming up next and coming-up trailer backgrounds, "
                      "music for the coming-up trailers, and transitions. Upload a zip made from the template, or try the example pack.")}
+    _sub(out, "animation", "Animation", animation_page(), "anim~", "How the cards, title bars, corner logo, clock, label and waiting screen words come on and go off.")
     _explain(out, s, "pack")
     if said:
         out["said"] = said[:200]
@@ -2496,6 +2524,8 @@ def pack_page(said=None):
 
 def pack_post(body):
     action, rid = body.get("action"), str(body.get("id") or "")
+    if rid.startswith("anim~"):  # the Animation sub menu (0.11.0): the same change as before, answered with this page
+        return pack_page((animation_post({**body, "id": rid[5:]}) or {}).get("said"))
     if rid == "example" and action == "toggle":
         with _lock:
             s = state()
@@ -3062,10 +3092,12 @@ def schedule_page(said=None):
     if not items:
         items.append({"id": "none", "title": "No channels yet", "group": "Each channel's grid", "state": "unknown", "state_label": "None",
                       "detail": "Add a channel in Channels first."})
-    out = {"type": "list", "title": "Schedule grid", "items": items,
+    out = {"type": "list", "title": "What plays when", "items": items,
            "intro": ("Select Open the schedule grid under a channel: its week opens in a new tab, on this plug-in's own page, in a desktop "
                      "browser. Place films and series at set times by dragging or with buttons and the keyboard, copy a day, stripe a series "
                      "across weekdays, or suggest a week from watch history.")}
+    g = guide_rows()
+    _sub(out, "guide", "What is on in the next 24 hours", g, "guide~", g["intro"], group="Guide")
     if said:
         out["said"] = said[:200]
     return out
@@ -3105,7 +3137,7 @@ def files_page(said=None):
     """Starboard's page for the file lists: a link to the plug-in's own page, which opens in a new tab."""
     s, base = state(), address()
     item = {"id": "files", "title": "File lists", "group": "Files", "state": "ok", "state_label": "Ready",
-            "detail": "Every short title clip, coming-up trailer clip, own short video and Public message in one list that can be searched, sorted and filtered, with several files added to a channel or taken off it together."}
+            "detail": "Every short title clip, trailer clip, short video of your own and public message, to search, sort and filter, and to add to channels together."}
     if base:
         item["link"] = {"url": f"{base}/t/{s['token']}/files", "label": "Open the file lists"}
     else:

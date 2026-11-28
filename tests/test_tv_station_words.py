@@ -11,7 +11,7 @@ from helpers import ROOT  # noqa: E402
 TV = os.path.join(ROOT, "tv-station")
 sys.path.insert(0, TV)
 import explain  # noqa: E402
-from test_tv_station_020 import App  # noqa: E402
+from test_tv_station_020 import App, episodes  # noqa: E402
 
 # The trade words the glossary replaces. They may stay in an explainer ("TV people call it an ident") and in ids and file names.
 TRADE = re.compile(r"\b(idents?|promos?|straps?|bumpers?|PSAs?|broadcast packs?|holding slides?|break grids?|backing plate|conversions?)\b", re.I)
@@ -98,7 +98,7 @@ class TheClipsPage(App):
     def groups(self, page):
         out = []
         for it in page["items"]:
-            if it["group"] not in out:
+            if "menu" not in it and it["group"] not in out:
                 out.append(it["group"])
         return out
 
@@ -108,6 +108,11 @@ class TheClipsPage(App):
         self.assertEqual(self.groups(page), ["Start here", "Short title clips", "Clips", "Music", "Waiting screen", "More: your own short videos",
                                              "More: public messages", "More: background loops"])
         self.assertNotIn("Add", self.groups(page))
+
+    def test_the_break_layouts_and_files_are_sub_menus_of_this_page(self):
+        page = self.app.clips_page()
+        self.assertEqual([m["id"] for m in page["menus"]], ["layouts", "files"])
+        self.assertTrue(all(it["id"].split("~")[0] in ("layouts", "files") for it in page["items"] if "menu" in it))
 
     def test_every_add_row_keeps_its_id_and_sits_in_its_own_group(self):
         by_id = {it["id"]: it["group"] for it in self.app.clips_page()["items"]}
@@ -128,6 +133,49 @@ class TheClipsPage(App):
             for t in (it.get("detail", ""), (it.get("attach") or {}).get("hint", "")):
                 self.assertNotIn("names are not used", t)
             self.assertLessEqual(len((it.get("detail") or "").split(". ")), 2, it["id"])
+
+
+class TheSixTabs(App):
+    """Fewer tabs (DASH-643): four pages of the plug-in's own, two groups of settings, and nothing lost."""
+
+    def setUp(self):
+        super().setUp()
+        with open(os.path.join(TV, "starboard-plugin.json"), encoding="utf-8") as f:
+            self.m = json.load(f)
+
+    def test_the_tabs(self):
+        tabs = []
+        for s in self.m["settings"]:
+            t = s["label"] if s["type"] == "custom" else s["group"]
+            if t not in tabs:
+                tabs.append(t)
+        self.assertEqual(sorted(tabs), sorted(["Station", "Logo, title bars and trailers", "Channels", "What plays between programmes",
+                                               "What plays when", "Branding", "Choose a style for my channel"]))
+
+    def test_no_setting_key_was_lost(self):
+        keys = {s["key"] for s in self.m["settings"]}
+        old = {"channels", "schedule", "clips", "pack", "station_name", "language", "first_number", "address", "guide_days", "picture",
+               "most_at_once", "stop_after", "copy_plain", "leave_out_3d", "promos", "promo_keep", "promo_replace_days", "promo_seconds",
+               "promo_clips", "promo_sound", "promo_music_level", "promo_station_logo", "promo_audio_description", "promo_other",
+               "dog_kind", "dog_corner", "dog_size", "dog_margin", "dog_opacity", "dog_when", "dog_fade_in", "dog_clock", "dog_label",
+               "dog_plate", "dog_strap_start", "dog_strap_end", "dog_strap_seconds", "dog_cards"}
+        self.assertEqual(old - keys, set())
+
+    def test_the_guide_is_inside_what_plays_when(self):
+        self.channel(lineup=episodes("a", 3, 1500))
+        page = self.app.schedule_page()
+        self.assertEqual(page["title"], "What plays when")
+        self.assertIn("guide", [m["id"] for m in page["menus"]])
+        self.assertTrue(any(it.get("menu") == "guide" for it in page["items"]))
+
+    def test_an_animation_choice_still_saves_through_branding(self):
+        page = self.app.pack_page()
+        row = next(it for it in page["items"] if it["id"].startswith("anim~station:") and it.get("choice"))
+        value = row["choice"]["options"][-1][0]
+        got = self.app.pack_post({"action": "choose", "id": row["id"], "value": value})
+        again = next(it for it in got["items"] if it["id"] == row["id"])
+        self.assertEqual(again["choice"]["value"], value)
+        self.assertEqual(got["title"], "Branding")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 # Create your own TV channel: Settings
 
-Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **What plays between programmes**, **Branding** and **Animation**, open from the same tab. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
+Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. It has seven tabs of its own: **Station**, **Logo, title bars and trailers**, **Channels**, **What plays between programmes**, **What plays when**, **Branding** and **Choose a style for my channel**. **Streaming** is part of **Station**. **Guide** is inside **What plays when**. **Break layouts** and **File lists** are inside **What plays between programmes**. **Animation** is inside **Branding**. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
 
 These pages are for a computer screen. They are not made for phones, and the plug-in's own pages say so on a narrow screen.
 
@@ -12,17 +12,17 @@ Each section here says what each setting does, its choices and the one it starts
 |---|---|---|
 | [Channels](#channels) | **Channels** | Add, name, number and order your channels |
 | [What each channel shows](#what-each-channel-shows) | **Channels**, the **What it shows** card | The series, films, collections, playlists, genres and decades on each channel |
-| [Schedule grid](#schedule-grid) | **Schedule grid** | A week for each channel, in 15 minute steps |
-| [Break layouts](#break-layouts) | **Break layouts** | What plays In between programmes and in Breaks inside programmes, as columns you fill |
+| [Schedule grid](#schedule-grid) | **What plays when** | A week for each channel, in 15 minute steps |
+| [Break layouts](#break-layouts) | **What plays between programmes**, then **Break layouts** | What plays In between programmes and in Breaks inside programmes, as columns you fill |
 | [Where breaks go inside a programme](#where-breaks-go-inside-a-programme) | **Channels**, the **Breaks** card | At silence, at set times or at the end of a scene, and how many |
 | [Breaks and short title clips](#breaks-and-short-title-clips) | **Channels**, the **Breaks** and **Waiting screen and coming-up trailers** cards, and **What plays between programmes** | What plays between programmes |
-| [Corner logo](#corner-logo) | The station's settings, and each channel's **Corner logo and branding** card | The logo in the corner of the picture, the clock and the label |
-| [Title bars and cards](#title-bars-and-cards) | The station's settings | The programme's name, Up next, and the Coming up next and Later cards |
-| [Coming-up trailers](#coming-up-trailers) | The station's settings | Short trailers for programmes coming up |
+| [Corner logo](#corner-logo) | **Logo, title bars and trailers**, and each channel's **Corner logo and branding** card | The logo in the corner of the picture, the clock and the label |
+| [Title bars and cards](#title-bars-and-cards) | **Logo, title bars and trailers** | The programme's name, Up next, and the Coming up next and Later cards |
+| [Coming-up trailers](#coming-up-trailers) | **Logo, title bars and trailers** | Short trailers for programmes coming up |
 | [Branding](#branding) | **Branding** | Your own branding for every channel |
-| [Animation](#animation) | **Animation**, and each channel's **Animation** card | How things drawn over the picture come on and go off |
-| [Streaming](#streaming) | The station's settings | Picture size and how many channels play at once |
-| [Station](#station) | The station's settings | The station's name, its language, numbers and the guide |
+| [Animation](#animation) | **Branding**, then **Animation**, and each channel's **Animation** card | How things drawn over the picture come on and go off |
+| [Streaming](#streaming) | **Station** | Picture size and how many channels play at once |
+| [Station](#station) | **Station** | The station's name, its language, numbers and the guide |
 
 The station's settings are for every channel. A channel's own choice, on its page in **Channels**, comes first; **Station default** on a channel uses the station's choice, which the option names.
 
@@ -90,7 +90,7 @@ A channel streams only while someone is watching it in Jellyfin's Live TV, so wh
 
 ## Guide
 
-**Guide** starts by saying when Jellyfin last read the guide, and how many programmes on how many channels it had. This tells you that Jellyfin has the guide. Then each channel has a table of what is on in the next 24 hours. It shows the time, the programme, the episode, New or Repeat, and what it is about. Jellyfin's own guide has as many days as **Days in Jellyfin's guide** says. An episode or film first shown in the last 30 days is New. Anything older is a Repeat.
+In **What plays when**, the menu **What is on in the next 24 hours** starts by saying when Jellyfin last read the guide, and how many programmes on how many channels it had. This tells you that Jellyfin has the guide. Then each channel lists what is on in the next 24 hours. Each row shows the programme, its time, its episode, and whether it is New or a Repeat. Jellyfin's own guide has as many days as **Days in Jellyfin's guide** says. An episode or film first shown in the last 30 days is New. Anything older is a Repeat.
 
 ## Schedule grid
 
@@ -180,7 +180,7 @@ Not in 0.9.0: choosing a public message from a folder on the server with a file 
 
 ## File lists
 
-**File lists** in Starboard's settings for the plug-in opens one page for all your files, in a new tab (Starboard 0.24.0 and later). It lists every **Short title clip**, **Coming-up trailer clip**, **Your own short videos** and **Public message** file, 50 at a time, so a long list is as quick as a short one.
+In **What plays between programmes**, the menu **All your files in one list** opens one page for all your files, in a new tab (Starboard 0.24.0 and later). It lists every **Short title clip**, **Coming-up trailer clip**, **Your own short videos** and **Public message** file, 50 at a time, so a long list is as quick as a short one.
 
 ![The file lists: Search by name (1), Sort by (2), a tick box on each file (3) and Add to the channel (4)](../../images/tv-station/files-list.png)
 
