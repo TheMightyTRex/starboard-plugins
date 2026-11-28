@@ -928,7 +928,7 @@
   {
    "id": "tv-station",
    "name": "Create your own TV channel",
-   "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
+   "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
    "kind": "Jellyfin",
    "author": "TheMightyTRexUK",
    "permissions": [
@@ -936,7 +936,7 @@
     "network:lan",
     "network:port"
    ],
-   "version": "0.13.2",
+   "version": "0.17.1",
    "starboard_api": ">=1.15 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/tv-station/starboard-plugin.json",
    "published": true,
