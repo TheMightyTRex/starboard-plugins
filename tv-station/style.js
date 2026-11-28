@@ -61,7 +61,7 @@
 
   function frame(title, body, foot) {
     const list = steps(), i = at(), n = list.length;
-    const words = `Import a kit · step ${i + 1} of ${n} · ${title}`;
+    const words = `${mode() === "make" ? "Make a style here" : "Import a kit"} · step ${i + 1} of ${n} · ${title}`;
     return h("div", { class: "wizard-main" },
       h("div", { class: "meter wizard-progress" }, h("div", { class: "meter__label" }, h("span", {}, words), h("span", { class: "numeric" }, i + 1 === n ? "Last step" : `${n - i - 1} to go`)),
         h("div", { class: "progress", role: "progressbar", "aria-label": `Progress through ${mode() === "make" ? "Make a style here" : "Import a kit"}`, "aria-valuemin": "1", "aria-valuemax": String(n), "aria-valuenow": String(i + 1),
@@ -235,9 +235,10 @@
   // Make: 1 Choose a style
   function styleStep() {
     const k = S.kit;
+    if (!k.style) k.style = k.styles[0].id;  // a good answer is already chosen
     const body = [h("p", { class: "muted" }, "Each style draws 4 short title clips, 2 bumpers, the background for the Coming up next card, the background for coming-up trailers and your logo, from your channel's name and two colours."),
       h("fieldset", { class: "option-cards" }, h("legend", { class: "visually-hidden" }, "Style"),
-        k.styles.map((st) => h("label", { class: "option-card" }, h("input", { type: "radio", name: "style", value: st.id, checked: st.id === k.style, on: { change: () => { k.style = st.id; } } }), h("strong", {}, st.name), h("small", {}, st.blurb))))];
+        k.styles.map((st, i) => h("label", { class: "option-card" }, h("input", { type: "radio", name: "style", value: st.id, checked: st.id === k.style, on: { change: () => { k.style = st.id; } } }), h("strong", {}, st.name + (i === 0 ? " (recommended)" : "")), h("small", {}, st.blurb))))];
     return frame("Choose a style", body, foot(async () => {
       if (!k.style) { S.error = "Choose a style."; return render(true); }
       try { take(await op({ op: "set", kit: k.id, style: k.style })); move(1); } catch (e) { S.error = e.message; render(true); }
@@ -327,7 +328,7 @@
     const body = [h("p", { class: "muted" }, `${k.name} is ready. Choose where to use it.`),
       h("fieldset", { class: "option-cards" }, h("legend", { class: "visually-hidden" }, "Where to use the branding"),
         cards.map(([v, t, d]) => h("label", { class: "option-card" }, h("input", { type: "radio", name: "to", value: v, checked: v === S.to, on: { change: () => { S.to = v; } } }), h("strong", {}, t), h("small", {}, d))))];
-    return frame("Use the branding", body, h("div", { class: "wizard__foot" },
+    return frame(mode() === "make" ? "Use the style" : "Use the branding", body, h("div", { class: "wizard__foot" },
       h("button", { class: "btn btn--primary", type: "button", id: "use", on: { click: doUse } }, "Use this branding"), h("button", { class: "btn", type: "button", on: { click: () => move(-1) } }, "Back")));
   }
   async function doUse() {
