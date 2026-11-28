@@ -187,6 +187,16 @@ class Online(unittest.TestCase):
         entry = json.load(open(os.path.join(share, "index-entry.json")))
         self.assertEqual((entry["licence"], entry["kind"]), ("MIT", "pack"))
 
+    def test_the_ai_page_is_names_and_links_only(self):
+        page = self.m.ai_page()
+        self.assertGreater(len(page["items"]), 10)
+        self.assertTrue(all(i["link"]["url"].startswith("https://") and i["state_label"] == "Link only" for i in page["items"]))
+        self.assertEqual({i["group"] for i in page["items"]}, {"Online tools", "Programs on your own computer"})
+        self.assertIn("computer screen", page["notices"][0]["title"])
+        text = open(os.path.join(os.path.dirname(__file__), "..", "online-sources", "ai-sources.json")).read().lower()
+        self.assertNotIn("made with an ai tool", text)
+        self.assertNotIn("\"template\"", text)  # the prompts themselves belong on the TV channel plug-in's page
+
     def test_nothing_to_send_is_said(self):
         with self.assertRaises(ValueError):
             self.m.build_pack()

@@ -74,6 +74,13 @@
    "hint": "Styles other people made, each MIT licensed with credits. Use one to send it to Create your own TV channel."
   },
   {
+   "key": "ai",
+   "label": "Ask an AI tool",
+   "type": "custom",
+   "choices": "/ai",
+   "hint": "Free AI tools for pictures, video, music, voice and logos, by name and link only. Starboard calls none of them."
+  },
+  {
    "key": "pack",
    "label": "Your pack",
    "type": "custom",

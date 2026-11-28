@@ -392,6 +392,24 @@ def share_action():
                     "Share only what you made or have the right to share. A style with an unknown source can be kept here, but the library lists only MIT packs that were read first"}
 
 
+# Ask an AI tool: free AI sources by name and link only (nothing is fetched, hosted or called) ---------------------------------------------
+def ai_page(said=""):
+    doc = sb._json_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ai-sources.json"), {}) or {}
+    rows = []
+    for group, key in (("Online tools", "sources"), ("Programs on your own computer", "local_sources")):
+        for s in doc.get(key, []):
+            if not str(s.get("url", "")).startswith("https://"):
+                continue
+            rows.append({"id": s["id"], "title": _clean(s.get("name"), 120), "group": group, "state": "unknown", "state_label": "Link only",
+                         "detail": _clean(f"{s.get('makes', '')} {s.get('free_tier', '')}", 200),
+                         "link": {"url": s["url"], "label": f"Open {_clean(s.get('name'), 40)} on its own site"}, "actions": []})
+    guide = " ".join(f"{i + 1}. {g['title']}." for i, g in enumerate(doc.get("guide", [])[:9]))
+    return {"type": "list", "title": doc.get("title", "Ask an AI tool"), "intro": _clean((doc.get("intro", "") + " " + doc.get("terms_note", "")).strip(), 400),
+            "items": rows, "notices": [NOTICE, {"id": "asking", "tone": "info", "title": "How to ask well", "text": _clean(guide, 400)}]
+            + ([{"id": "checked", "tone": "info", "title": "Checked on " + doc["checked"], "text": "Free tiers and terms change. Read the tool's own terms before you use what it makes."}] if doc.get("checked") else []),
+            **({"said": said} if said else {})}
+
+
 # Pages Starboard draws ----------------------------------------------------------------------------------------------------
 def result_items(kind):
     saved = {i["id"] for i in _read("items.json", [])}
@@ -468,5 +486,5 @@ if __name__ == "__main__":
     pf, pp = page_for("pictures")
     mf, mp = page_for("music")
     sb.serve({"/pictures": pf, ("POST", "/pictures"): pp, "/music": mf, ("POST", "/music"): mp, "/pack": pack_page, ("POST", "/pack"): pack_post,
-              "/styles": styles_page, ("POST", "/styles"): styles_post, ("POST", "/actions/send"): send,
+              "/ai": ai_page, "/styles": styles_page, ("POST", "/styles"): styles_post, ("POST", "/actions/send"): send,
               ("POST", "/actions/refresh"): refresh_action, ("POST", "/actions/share"): share_action})

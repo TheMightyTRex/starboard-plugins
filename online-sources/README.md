@@ -12,6 +12,7 @@ catalogue and not listed in the store: add it with **Upload a zip file** in Sett
   from) in a shared folder. Create your own TV channel checks it before it uses it.
 - **Styles from the library**: styles other people made, MIT licensed, with credits, listed only after they were read. A style listed as
   a link only is never downloaded.
+- **Ask an AI tool**: free AI tools for pictures, video, music, voice and logos, by name and link only. The copy-ready prompts live on Create your own TV channel's page.
 - **This page is for a computer screen. It is not made for phones.**
 
 Music from Jamendo is never fetched (its terms do not allow keeping its music on a server). Nothing runs until you press something.
