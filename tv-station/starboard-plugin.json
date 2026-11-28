@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.15.0",
+ "version": "0.16.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -728,6 +728,18 @@
  },
  "changes": [
   {
+   "version": "0.16.0",
+   "date": "2026-11-28",
+   "added": [
+    "**Station break style** in What plays between programmes, with three styles: **Quiet**, **Classic TV** and **Busy**.",
+    "**Break style** on each channel's Breaks card says in words what the channel does, such as Uses the station style: Classic TV, and lets it use the station style, one of its own, or its own settings."
+   ],
+   "changed": [
+    "The old break rows are under **More about breaks** on each channel's Breaks card.",
+    "Nothing changes until you choose a style. A channel saved before styles keeps every value it has."
+   ]
+  },
+  {
    "version": "0.15.0",
    "date": "2026-11-28",
    "changed": [
@@ -887,17 +899,6 @@
    "date": "2026-11-19",
    "fixed": [
     "**Promos follow a new pack:** when a channel's broadcast pack changes, its promos made with the old pack stop showing and are made again in the next quiet hour."
-   ]
-  },
-  {
-   "version": "0.5.0",
-   "date": "2026-11-19",
-   "added": [
-    "**Promos and clips in each break:** up to 2, 3, 4 or 6, each once, on a channel's Breaks card. The holding slide fills the rest.",
-    "**Extra videos:** upload as many as you like for the station or one channel. One plays at random after the promos in each break."
-   ],
-   "changed": [
-    "**Breaks:** between programmes a bumper, promos, an extra video, the holding slide, then the ident. Inside a programme a bumper, promos, an extra video, the holding slide with Back soon, then a bumper."
    ]
   }
  ]

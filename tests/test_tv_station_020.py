@@ -77,7 +77,7 @@ class App(unittest.TestCase):
 
     def channel(self, name="Comedy", lineup=None):
         page = self.app.channels_post({"action": "add", "value": name}, now=NOW)
-        cid = page["menus"][-1]["id"]
+        cid = [m for m in page["menus"] if not m.get("parent")][-1]["id"]
         if lineup:
             s = self.app.state()
             ch = self.app.find(s, cid)
@@ -117,12 +117,12 @@ class SavedInPlace(App):
         self.channel("Films")
         full = self.app.channels_post({"action": "choose", "id": f"{one}:dog-corner", "value": "bottom_left"}, now=NOW)
         self.assertNotIn("partial", full)
-        self.assertEqual(len(full["menus"]), 2, "an older Starboard gets the whole list, as before")
+        self.assertEqual(len(full["menus"]), 4, "each channel and its More about breaks; an older Starboard gets the whole list, as before")
         self.can("partial")
         part = self.app.channels_post({"action": "choose", "id": f"{one}:dog-corner", "value": "top_left"}, now=NOW)
-        self.assertEqual(part["partial"], {"menus": [one]})
-        self.assertEqual([m["id"] for m in part["menus"]], [one])
-        self.assertTrue(all(it["menu"] == one for it in part["items"]))
+        self.assertEqual(part["partial"], {"menus": [one, f"{one}~breaks"]})
+        self.assertEqual([m["id"] for m in part["menus"]], [one, f"{one}~breaks"])
+        self.assertTrue(all(it["menu"] in (one, f"{one}~breaks") for it in part["items"]))
         self.assertEqual(part["said"], "Corner: Top left. Saved for Comedy", "it says what was saved")
 
     def test_moving_a_channel_answers_with_every_channel(self):
@@ -306,7 +306,7 @@ class Uploads(App):
             self.app.add_holding(f"ch-{cid}", "big.mp4", 91 * 1024 * 1024, io.BytesIO(b""))
         self.can("partial")
         page = send(clip, f"{cid}:holding-own")
-        self.assertEqual(page["partial"], {"menus": [cid]})
+        self.assertEqual(page["partial"], {"menus": [cid, f"{cid}~breaks"]})
         s = self.app.state()
         h = self.app.holding_for(s, self.app.find(s, cid))
         self.assertFalse(h["still"])

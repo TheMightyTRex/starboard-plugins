@@ -231,9 +231,25 @@ A break fills the time between programmes. It opens with a very short title clip
 
 ![Three pieces from the Example TV pack: a short title clip with its logo on teal, the logo with music, and a wipe transition part way across a made-up landscape](../../images/tv-station/pack-pieces.jpg)
 
+### Break styles
+
+A style sets how long the break after each programme is and what plays in it. There are three:
+
+| Style | Break after each programme | What plays |
+|---|---|---|
+| **Quiet** | 1 minute | A short title clip, then up to 2 coming-up trailers and clips |
+| **Classic TV** | 2 minutes | A short title clip, then up to 3 coming-up trailers and clips, then one of your own short videos |
+| **Busy** | 5 minutes | A short title clip, then up to 6 coming-up trailers and clips, one of your own short videos, and trailers of the channel's films |
+
+In **What plays between programmes**, **Station break style** sets the style for every channel that uses it. A channel that already has its own style or its own settings is not changed, and the answer says how many were. A new channel uses the station style from the start.
+
+On a channel's **Breaks** card, **Break style** says in words what the channel does now, such as "Uses the station style: Classic TV". Choose **Use the station style** to follow the station again, one of the three styles for this channel alone, or **Your own settings**.
+
+The rows a style sets are under **More about breaks** on the same card. Change one and the channel has its own settings. Its earlier settings are kept when you choose a style, and **Your own settings** brings them back. A channel saved before styles existed is not changed: it shows **Your own settings** when it has changed a break setting, and **Use the station style** when it has not. Nothing changes until you choose a style.
+
 ### Each channel's breaks
 
-On the channel's **Breaks** card:
+On the channel's **Breaks** card, under **More about breaks**:
 
 | Setting | What it does | Choices, and the one it starts with | Example result |
 |---|---|---|---|
