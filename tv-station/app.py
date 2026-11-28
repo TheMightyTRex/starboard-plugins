@@ -32,6 +32,7 @@ import filelist
 import flash
 import grid
 import guide
+import handoff
 import library
 import pack
 import played
@@ -45,7 +46,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.13.1"
+VERSION = "0.13.4"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -2445,6 +2446,13 @@ def pack_page(said=None):
         items.append({"id": f"ch-{ch['id']}", "title": f"{ch['number']}  {ch['name']}: {pack_words(s, ch)}"[:120], "group": "Each channel's pack",
                       "detail": "Change it in Channels, on the channel's page, under Channel.", "state": "ok" if channel_pack(s, ch) else "off",
                       "state_label": "Uses a pack" if channel_pack(s, ch) else "No pack"})
+    for r in handoff.listing():  # 0.13.3: read only now, when the page is drawn (nothing watches the folder)
+        note = handoff.licence_of(None, r["name"], 300)
+        items.append({"id": f"handoff:{r['name']}", "title": r["name"][:120], "group": "Packs ready to use", "state": "unknown", "state_label": "Not checked yet",
+                      "on": False, "actions": ["toggle", "remove"],
+                      "detail": (f"Another plug-in put this here, {round(r['size'] / 1048576, 1)} MB. Starboard did not check it: this plug-in checks it before it uses it. "
+                                 "Turn it on to use it for every channel without a pack of its own. Remove takes it out of the folder." +
+                                 (f" Where its files came from: {note}" if note else ""))[:600]})
     out = {"type": "list", "title": "Broadcast pack", "items": items,
            "intro": ("Your own branding for the channels: the on-screen logo, idents, the logo with music, Coming up next and promo backgrounds, "
                      "music for the promos, and transitions. Upload a zip made from the template, or try the example pack.")}
@@ -2453,8 +2461,44 @@ def pack_page(said=None):
     return out
 
 
+def handoff_use(name):
+    """Packs ready to use (0.13.3): the zip is copied out of the shared folder first, checked as an upload, and removed from it only after it is installed."""
+    work = os.path.join(sbplugin.DATA, PACKS, ".work")
+    zcopy = handoff.take(name, work)
+    try:
+        with sbplugin.working("a pack from another plug-in being checked"):
+            got = handoff.install(zcopy, pack_dir("station"), work)
+    except pack.PackError as e:
+        sbplugin.keep("pack_check", {"at": int(time.time()), "file": name, "ok": False, "problems": str(e).split("; ")[:12], "notes": []})
+        raise ValueError(f"{name} cannot be used: {e}"[:200]) from None
+    finally:
+        with contextlib.suppress(OSError):
+            os.remove(zcopy)
+    _packs.pop("station", None)
+    sbplugin.keep("pack_check", {"at": int(time.time()), "file": name, "ok": True, "problems": [], "notes": got["notes"]})
+    with _lock:
+        s = state()
+        s["station_pack"] = "station"
+        s.pop("pack_before_example", None)
+        save(s)
+    handoff.remove(name)  # only now
+    return got
+
+
 def pack_post(body):
     action, rid = body.get("action"), str(body.get("id") or "")
+    if rid.startswith("handoff:"):
+        name = rid[len("handoff:"):]
+        try:
+            if action == "toggle":
+                got = handoff_use(name)
+                return pack_page(f"{got['pack']['name']} is the station's pack: {pack.summary(got['pack']).lower()}"[:200])
+            if action == "remove":
+                handoff.remove(name)
+                return pack_page(f"{name} was taken out of the hand-off folder"[:200])
+        except handoff.HandoffError as e:
+            raise ValueError(str(e)) from None
+        raise ValueError("That cannot be changed here")
     if rid == "example" and action == "toggle":
         with _lock:
             s = state()

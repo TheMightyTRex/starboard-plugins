@@ -508,6 +508,10 @@ Your own branding for every channel. It can have the on-screen logo, the logo wi
 | **Promos kept** | Each promo, with its programme, its day and time and its channel | None yet |
 | **Each channel's pack** | Which pack each channel uses. Change it on the channel's page | **The station's pack** |
 
+### Packs ready to use
+
+Needs Starboard 1.25 or later. Another plug-in, such as Online sources, can leave a pack in a shared folder for this plug-in. Open **Broadcast pack**. A pack that is waiting is listed under **Packs ready to use**, with where its files came from. Starboard did not check it: this plug-in checks it, with the same checks as an uploaded pack, before it uses it. Turn it on to use it for every channel without a pack of its own. The zip is taken out of the folder only after it has been checked and installed. **Remove** takes it out of the folder without using it. A pack with no logo gets one drawn from its name.
+
 ## Animation
 
 **Animation** sets how each thing drawn over the picture comes on and goes off, for every channel. A channel can choose its own on its **Animation** card, where each starts at **Station default**.
