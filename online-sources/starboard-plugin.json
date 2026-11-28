@@ -1,0 +1,164 @@
+{
+ "manifest_version": 1,
+ "id": "online-sources",
+ "name": "Online sources",
+ "version": "0.1.0",
+ "description": "Find free pictures and music on Openverse and Pexels, keep who made them and their licence, use styles from a library, and hand a pack to Create your own TV channel.",
+ "author": "TheMightyTRexUK",
+ "licence": "MIT",
+ "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/online-sources",
+ "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
+ "starboard_api": ">=1.25 <2.0",
+ "starboard_tested": "1.25",
+ "capabilities": {
+  "needs": [
+   "fetch",
+   "handoff"
+  ]
+ },
+ "replaces_or_adds": "Adds to Create your own TV channel: free backgrounds and music, with their credits, sent as a pack.",
+ "permissions": [
+  "fetch",
+  "handoff:send"
+ ],
+ "fetch": [
+  "api.openverse.org",
+  "api.pexels.com",
+  "images.pexels.com",
+  "upload.wikimedia.org",
+  "cdn.freesound.org",
+  "raw.githubusercontent.com"
+ ],
+ "containers": [
+  {
+   "name": "main",
+   "image": "local/online-sources:0.1.0",
+   "build": true,
+   "port": 8080,
+   "network": "default",
+   "volumes": [
+    "data",
+    "handoff/tv-pack:send"
+   ],
+   "start": "when_needed",
+   "idle_stop_minutes": 10
+  }
+ ],
+ "resources": {
+  "main": {
+   "memory": 48,
+   "cpus": 0.25
+  }
+ },
+ "health": "/health",
+ "settings": [
+  {
+   "key": "pictures",
+   "label": "Find a picture",
+   "type": "custom",
+   "choices": "/pictures",
+   "hint": "Search for a background. Save it as the Coming up next or promo background."
+  },
+  {
+   "key": "music",
+   "label": "Find music",
+   "type": "custom",
+   "choices": "/music",
+   "hint": "Search for music for promos. Pieces on sites Starboard may not fetch from are shown with a link only."
+  },
+  {
+   "key": "styles",
+   "label": "Styles from the library",
+   "type": "custom",
+   "choices": "/styles",
+   "hint": "Styles other people made, each MIT licensed with credits. Use one to send it to Create your own TV channel."
+  },
+  {
+   "key": "ai",
+   "label": "Ask an AI tool",
+   "type": "custom",
+   "choices": "/ai",
+   "hint": "Free AI tools for pictures, video, music, voice and logos, by name and link only. Starboard calls none of them."
+  },
+  {
+   "key": "pack",
+   "label": "Your pack",
+   "type": "custom",
+   "choices": "/pack",
+   "hint": "What you saved, with its maker and licence. Send it to Create your own TV channel under Actions."
+  },
+  {
+   "key": "sources",
+   "label": "Search",
+   "type": "choice",
+   "default": "both",
+   "group": "Search",
+   "choices": [
+    {
+     "value": "both",
+     "label": "Openverse and Pexels"
+    },
+    {
+     "value": "openverse",
+     "label": "Openverse only"
+    },
+    {
+     "value": "pexels",
+     "label": "Pexels only"
+    }
+   ],
+   "hint": "Pexels needs the free key in the Pexels key setting. Music comes only from Openverse."
+  },
+  {
+   "key": "pexels_key",
+   "label": "Pexels key",
+   "type": "secret",
+   "group": "Pexels",
+   "hint": "A free key from Pexels. Starboard sends it only to api.pexels.com. It is never shown again."
+  },
+  {
+   "key": "show_all",
+   "label": "Show items I may not be able to use",
+   "type": "switch",
+   "default": false,
+   "group": "Search",
+   "hint": "Off, only pictures and music free for any use are shown. On, ones for non-commercial use or with no changes are shown too, marked Check the licence."
+  },
+  {
+   "key": "pack_name",
+   "label": "Pack name",
+   "type": "text",
+   "default": "Online sources pack",
+   "group": "Pack",
+   "hint": "Shown in Create your own TV channel, up to 40 characters."
+  }
+ ],
+ "actions": [
+  {
+   "id": "send",
+   "label": "Send your pack to Create your own TV channel",
+   "path": "/actions/send",
+   "confirm": "Put your pack, with a LICENCE.txt saying where each file came from, in the shared folder for Create your own TV channel?"
+  },
+  {
+   "id": "refresh",
+   "label": "Check the style library",
+   "path": "/actions/refresh"
+  },
+  {
+   "id": "share",
+   "label": "Make my pack ready to share as a style",
+   "path": "/actions/share",
+   "confirm": "Make a zip of your pack with its LICENCE.txt and an index entry, in this plug-in's own folder? Nothing is posted or listed."
+  }
+ ],
+ "changes": [
+  {
+   "version": "0.1.0",
+   "date": "2026-11-28",
+   "added": [
+    "First draft: search Openverse and Pexels for pictures and music, keep the maker and licence, and send a pack with a LICENCE.txt to Create your own TV channel."
+   ]
+  }
+ ]
+}

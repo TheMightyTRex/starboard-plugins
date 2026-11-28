@@ -1,0 +1,732 @@
+{
+ "schema_version": 1,
+ "title": "Ask an AI tool",
+ "language": "en-GB",
+ "checked": "2026-11-28",
+ "notice_desktop": "This page is for a computer screen. It is not made for phones.",
+ "intro": "Copy a ready-made prompt, paste it into an AI tool, then import the file it makes. You do not need an account here. The tools below may.",
+ "evidence_key": {
+  "F": "Read on the tool's own page on the check date.",
+  "S": "Read in a search summary only. Check it before you rely on it.",
+  "G": "From general knowledge, not checked. Check it.",
+  "mixed": "Part read on the tool's own page, part from general knowledge."
+ },
+ "terms_note": "Terms change. Read the tool's own terms before you use what it makes.",
+ "guide": [
+  {
+   "title": "Ask for one clear subject",
+   "text": "Say one thing: a harbour at dusk, or paper shapes sliding in. Two ideas in one prompt give a muddle."
+  },
+  {
+   "title": "Add style words",
+   "text": "Words such as flat, cinematic, retro, paper cut-out or soft focus change the result more than anything else. Pick one style, not three."
+  },
+  {
+   "title": "Say the length",
+   "text": "Give the length in seconds. Most free video tools make 5 or 10 seconds. If you need longer, make several and join them."
+  },
+  {
+   "title": "Say the shape and size",
+   "text": "Say 16:9 and 1920 by 1080. If the tool offers a shape menu, choose 16:9 there too, as the menu often wins over the words."
+  },
+  {
+   "title": "Leave words out",
+   "text": "AI tools often spell words wrongly or change them between frames. Ask for no words, then add the channel name in the plug-in."
+  },
+  {
+   "title": "Keep people and brands out",
+   "text": "Ask for no real people, no real logos and no brand names. Do not ask for the style of a living artist, or for a famous song."
+  },
+  {
+   "title": "Ask for calm, clear results",
+   "text": "Ask for no flashing. Ask for plain areas where words will go. Ask for music with an even level and no singing."
+  },
+  {
+   "title": "Try three times, then change one thing",
+   "text": "The first result is rarely the best. Change one word at a time, so you learn what each word does."
+  },
+  {
+   "title": "Keep a record and add credits",
+   "text": "Write down the tool, the date, the plan (free or paid) and the prompt. Put it in a file named LICENCE.txt in your kit, with the credit line for each file."
+  }
+ ],
+ "sources": [
+  {
+   "id": "bing-image-creator",
+   "name": "Microsoft Image Creator (Bing)",
+   "url": "https://www.bing.com/images/create",
+   "kinds": [
+    "pictures",
+    "logos"
+   ],
+   "local": false,
+   "makes": "Pictures from a text prompt.",
+   "free_tier": "Free with a personal Microsoft account.",
+   "limits": "15 fast creations a day that refill each day. After that, slower creations, up to 200 prompts in 24 hours. The page also says 10 in one place, so the number is not steady.",
+   "watermark": "A visible watermark by default. A signed-in person can turn it off in Settings.",
+   "resolution": "Not stated on the page I read.",
+   "use_terms": "The help page does not say whether use is personal or commercial. It points to the Image Creator Terms, which I did not read. One search summary says personal use only.",
+   "sign_in": "A personal Microsoft account. Work or school accounts cannot use it.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Read the Image Creator Terms before you use a picture in public."
+  },
+  {
+   "id": "adobe-firefly",
+   "name": "Adobe Firefly",
+   "url": "https://firefly.adobe.com",
+   "kinds": [
+    "pictures",
+    "video",
+    "logos"
+   ],
+   "local": false,
+   "makes": "Pictures and short video from a prompt.",
+   "free_tier": "A free plan with limited free daily generations for images and video.",
+   "limits": "Limited. One generation at a time. The page gives no numbers.",
+   "watermark": "Not stated on the page I read.",
+   "resolution": "Not stated on the page I read.",
+   "use_terms": "Adobe says output from its own Firefly models can be used commercially. Pictures made with partner models may have other terms, so check each one.",
+   "sign_in": "An Adobe account (free).",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "The free plan page does not say whether pictures carry a watermark or a content mark. Check the first result."
+  },
+  {
+   "id": "ideogram",
+   "name": "Ideogram",
+   "url": "https://ideogram.ai",
+   "kinds": [
+    "pictures",
+    "logos"
+   ],
+   "local": false,
+   "makes": "Pictures, often with readable text.",
+   "free_tier": "Read this carefully: on 28 November 2026 the help page says new accounts without a creator badge get no free credits.",
+   "limits": "Older eligible accounts keep 30 credits a week. Free credits reset on Saturdays.",
+   "watermark": "Reports disagree and the page does not say.",
+   "resolution": "Not stated on the page I read.",
+   "use_terms": "Pictures made with free credits are public. Whether free use may be commercial is not clear: reports disagree, and the page points to the Terms of Service.",
+   "sign_in": "An account. Sign-in by Google, Apple, Microsoft or email does not by itself bring free credits.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "partly_confirmed",
+   "notes": "Probably not a free choice for a new account. Left in so you know why it is not recommended."
+  },
+  {
+   "id": "leonardo",
+   "name": "Leonardo.ai",
+   "url": "https://leonardo.ai",
+   "kinds": [
+    "pictures",
+    "video",
+    "logos"
+   ],
+   "local": false,
+   "makes": "Pictures and some video from a prompt.",
+   "free_tier": "A free plan with a daily allowance of tokens.",
+   "limits": "Reports say 150 tokens a day that do not carry over. Not confirmed: the official page refused to load.",
+   "watermark": "Not confirmed.",
+   "resolution": "Not confirmed.",
+   "use_terms": "Reports disagree on commercial use. Reports say free-plan pictures are visible to other people on the site.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "S",
+   "status": "not_confirmed",
+   "notes": "I could not read Leonardo's own terms. Read them first."
+  },
+  {
+   "id": "craiyon",
+   "name": "Craiyon",
+   "url": "https://www.craiyon.com",
+   "kinds": [
+    "pictures"
+   ],
+   "local": false,
+   "makes": "Quick, simple pictures.",
+   "free_tier": "Free, with advertisements.",
+   "limits": "Slower on the free plan. Exact limits not confirmed.",
+   "watermark": "A small Craiyon watermark on free pictures (reported).",
+   "resolution": "Lower than most. Not confirmed.",
+   "use_terms": "Reported: free commercial use needs a credit to Craiyon. A business with more than 1 million US dollars a year needs a separate licence. Free pictures may be public. The official terms page refused to load.",
+   "sign_in": "None needed for the free use (reported).",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "S",
+   "status": "not_confirmed",
+   "notes": "A good first try because there is no account. Quality is lower than the others."
+  },
+  {
+   "id": "gemini-app",
+   "name": "Google Gemini (the app and site)",
+   "url": "https://gemini.google.com",
+   "kinds": [
+    "pictures",
+    "video"
+   ],
+   "local": false,
+   "makes": "Pictures from a prompt, and short video on paid plans.",
+   "free_tier": "Free with a Google account.",
+   "limits": "A daily limit that Google changes often. Reports range from about 20 to 100 pictures a day. Video is on paid plans, except a small daily credit allowance in Flow (reported).",
+   "watermark": "Not confirmed.",
+   "resolution": "Not confirmed.",
+   "use_terms": "Not read. Read Google's terms for generative tools.",
+   "sign_in": "A Google account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "S",
+   "status": "not_confirmed",
+   "notes": "Google's own limits page is: support.google.com/gemini/answer/16275805. I did not read it."
+  },
+  {
+   "id": "perchance",
+   "name": "Perchance image generators",
+   "url": "https://perchance.org/ai-text-to-image-generator",
+   "kinds": [
+    "pictures"
+   ],
+   "local": false,
+   "makes": "Pictures from a prompt, from community-made generators.",
+   "free_tier": "Free and, by report, without a sign-in or a daily cap.",
+   "limits": "No cap reported. The pages can be slow and may show advertisements.",
+   "watermark": "Not confirmed.",
+   "resolution": "Not confirmed.",
+   "use_terms": "Not found. Reports say commercial rights depend on the generator and on the model behind it.",
+   "sign_in": "None (reported).",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "S",
+   "status": "not_confirmed",
+   "notes": "Each generator on Perchance is made by a different person. There is no download button on some, so you may have to save the picture by right-click."
+  },
+  {
+   "id": "runway",
+   "name": "Runway",
+   "url": "https://runwayml.com",
+   "kinds": [
+    "video",
+    "pictures"
+   ],
+   "local": false,
+   "makes": "Short video from a prompt or a picture.",
+   "free_tier": "125 credits once, not each month. They do not run out with time.",
+   "limits": "Not stated what 125 credits make. A few clips at most.",
+   "watermark": "Not stated for the free plan. The page lists No watermarks as a paid feature.",
+   "resolution": "Not stated.",
+   "use_terms": "Commercial use is not mentioned for the free plan.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Enough to try it, not enough to run a channel."
+  },
+  {
+   "id": "luma",
+   "name": "Luma Dream Machine",
+   "url": "https://lumalabs.ai/dream-machine",
+   "kinds": [
+    "video",
+    "pictures"
+   ],
+   "local": false,
+   "makes": "Short video from a prompt or a picture.",
+   "free_tier": "A free plan exists. The pricing page says it differs from paid plans in credits, watermark, resolution and commercial use, but gives no numbers.",
+   "limits": "Not stated.",
+   "watermark": "The page says there is a difference. Details not stated.",
+   "resolution": "The page says there is a difference. Details not stated.",
+   "use_terms": "Paid plans, from 30 US dollars a month, include commercial use. The free plan does not, by the page's own comparison.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "partly_confirmed",
+   "notes": "Check the free numbers on the site before you spend time on it."
+  },
+  {
+   "id": "pika",
+   "name": "Pika",
+   "url": "https://pika.art",
+   "kinds": [
+    "video"
+   ],
+   "local": false,
+   "makes": "Short video from a prompt or a picture.",
+   "free_tier": "Not a free choice as I read it: the Free plan has no monthly credits. Credits are bought in packs.",
+   "limits": "None free.",
+   "watermark": "The pricing page says Free exports have no watermark.",
+   "resolution": "Not stated on the page I read.",
+   "use_terms": "The comparison table says the commercial licence is No for the Free plan.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Left in so you know why it is not recommended."
+  },
+  {
+   "id": "kling",
+   "name": "Kling AI",
+   "url": "https://kling.ai",
+   "kinds": [
+    "video"
+   ],
+   "local": false,
+   "makes": "Short video from a prompt or a picture.",
+   "free_tier": "Not confirmed. The pricing page I opened showed no plan details.",
+   "limits": "Not confirmed.",
+   "watermark": "Not confirmed.",
+   "resolution": "Not confirmed.",
+   "use_terms": "Not read.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "G",
+   "status": "not_confirmed",
+   "notes": "Listed only so you can check it yourself."
+  },
+  {
+   "id": "suno",
+   "name": "Suno",
+   "url": "https://suno.com",
+   "kinds": [
+    "music"
+   ],
+   "local": false,
+   "makes": "Songs and instrumental tracks from a prompt.",
+   "free_tier": "Free plan: 50 credits a day, which do not carry over.",
+   "limits": "Up to 4 songs at once. The pricing page says the free plan has no monthly song downloads, so check you can save the file before you plan around it.",
+   "watermark": "Not stated.",
+   "resolution": "Not stated.",
+   "use_terms": "Commercial rights are not included on the free plan (Pro and above include them). Personal use at home is what this channel is.",
+   "sign_in": "An account (free).",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Ask for instrumental, with no singing."
+  },
+  {
+   "id": "udio",
+   "name": "Udio",
+   "url": "https://www.udio.com",
+   "kinds": [
+    "music"
+   ],
+   "local": false,
+   "makes": "Songs and instrumental tracks from a prompt.",
+   "free_tier": "A free plan with a small daily and monthly allowance (reported: 10 a day, 100 a month).",
+   "limits": "Reported: a cap on longer tracks each day. Credits do not roll over.",
+   "watermark": "Not confirmed.",
+   "resolution": "Not confirmed.",
+   "use_terms": "Reports disagree. Several 2026 reports say free output is for personal, non-commercial use and that downloads may be blocked. I did not read Udio's own terms.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "S",
+   "status": "not_confirmed",
+   "notes": "Check on the site that downloads are allowed before you use it."
+  },
+  {
+   "id": "stable-audio",
+   "name": "Stable Audio (the website)",
+   "url": "https://stableaudio.com",
+   "kinds": [
+    "music"
+   ],
+   "local": false,
+   "makes": "Music and sound effects from a prompt.",
+   "free_tier": "A free tier exists.",
+   "limits": "The page I read gave no numbers.",
+   "watermark": "Not stated.",
+   "resolution": "Not stated.",
+   "use_terms": "The page says the licence depends on the plan. No details.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "partly_confirmed",
+   "notes": "The open model behind it, Stable Audio Open, is in the list of programs you can run yourself."
+  },
+  {
+   "id": "hf-musicgen",
+   "name": "MusicGen demo on Hugging Face",
+   "url": "https://huggingface.co/spaces/facebook/MusicGen",
+   "kinds": [
+    "music"
+   ],
+   "local": false,
+   "makes": "Short music clips from a prompt.",
+   "free_tier": "Free to try in the browser. Demos can have a queue.",
+   "limits": "Short clips (reported about 30 seconds).",
+   "watermark": "None.",
+   "resolution": "Audio file.",
+   "use_terms": "The model files are licensed Creative Commons BY-NC 4.0: non-commercial. That suits a home channel but not selling. A Space can be taken down.",
+   "sign_in": "None for the demo (reported).",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "mixed",
+   "status": "partly_confirmed",
+   "notes": "Licence read on the model's own page. The demo's limits are from general knowledge."
+  },
+  {
+   "id": "ttsmaker",
+   "name": "TTSMaker",
+   "url": "https://ttsmaker.com",
+   "kinds": [
+    "voice"
+   ],
+   "local": false,
+   "makes": "Spoken audio from typed text, in many voices and languages.",
+   "free_tier": "Free. A site page says 20,000 characters a week, with some voices unlimited.",
+   "limits": "Files are kept for a short time (reported 30 minutes), so download straight away.",
+   "watermark": "None.",
+   "resolution": "Audio file (MP3 or WAV).",
+   "use_terms": "The site says commercial use is allowed for free, but its terms add conditions for some features. I read only the first part.",
+   "sign_in": "None needed (reported).",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "S",
+   "status": "partly_confirmed",
+   "notes": "Read the Terms of Service page for your voice."
+  },
+  {
+   "id": "elevenlabs",
+   "name": "ElevenLabs",
+   "url": "https://elevenlabs.io",
+   "kinds": [
+    "voice"
+   ],
+   "local": false,
+   "makes": "Very natural spoken voices.",
+   "free_tier": "Free plan: 10,000 credits a month.",
+   "limits": "Credits run out quickly for long text.",
+   "watermark": "None.",
+   "resolution": "Audio file.",
+   "use_terms": "The commercial licence is a paid add-on from the Starter plan. The page does not say what Free allows. It does not mention a credit rule.",
+   "sign_in": "An account.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Use it for one or two lines, not for long reading."
+  },
+  {
+   "id": "logo-via-image",
+   "name": "A logo from a picture tool, then clean up",
+   "url": "https://inkscape.org",
+   "kinds": [
+    "logos"
+   ],
+   "local": false,
+   "makes": "A simple shape that you clean up yourself.",
+   "free_tier": "Use any picture tool above, then trace the result in Inkscape (free, open source) or remove the background in GIMP or Krita.",
+   "limits": "Depends on the picture tool.",
+   "watermark": "Depends on the picture tool.",
+   "resolution": "Trace to a vector so it stays sharp at any size.",
+   "use_terms": "Follow the picture tool's terms. Inkscape, GIMP and Krita are free software and put no limits on what you make.",
+   "sign_in": "None for the editors.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "G",
+   "status": "confirmed",
+   "notes": "Logo makers such as Looka let you design for free but charge to download, so they are left out."
+  }
+ ],
+ "local_sources": [
+  {
+   "id": "sdxl",
+   "name": "Stable Diffusion XL, with ComfyUI or stable-diffusion.cpp",
+   "url": "https://github.com/Comfy-Org/ComfyUI",
+   "kinds": [
+    "pictures",
+    "logos"
+   ],
+   "local": true,
+   "makes": "Pictures on your own computer.",
+   "free_tier": "Free. No sign-in, no limits, nothing leaves your computer.",
+   "limits": "Your own hardware.",
+   "watermark": "None.",
+   "resolution": "Up to 1024 by 1024, then upscale.",
+   "use_terms": "SDXL 1.0 uses the CreativeML OpenRAIL++-M licence (read on the model page). ComfyUI is GPL-3.0 and stable-diffusion.cpp is MIT (read on GitHub). Stable Diffusion 3.5 uses the Stability AI Community Licence, free below an income limit (read on the model page; I did not read the limit).",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Pick a model whose licence you have read.",
+   "hardware": "A computer with a graphics card with about 8 GB of video memory is comfortable (general knowledge, not measured). Without a graphics card it works on the processor but takes minutes for each picture. Do not run it on the Starboard server.",
+   "licence": "OpenRAIL++-M / GPL-3.0 / MIT"
+  },
+  {
+   "id": "flux-schnell",
+   "name": "FLUX.1 schnell",
+   "url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+   "kinds": [
+    "pictures"
+   ],
+   "local": true,
+   "makes": "Fast, good pictures on your own computer.",
+   "free_tier": "Free. No sign-in for the model files (Hugging Face may ask you to accept a licence for some models).",
+   "limits": "Your own hardware.",
+   "watermark": "None.",
+   "resolution": "Up to about 1024 by 1024 or more.",
+   "use_terms": "Apache-2.0 (read on the model page).",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "A good default for stills, with ComfyUI or diffusers.",
+   "hardware": "A large model (12 billion settings). A graphics card with 12 to 24 GB works best, smaller with compressed versions (general knowledge). Not for a small server.",
+   "licence": "Apache-2.0"
+  },
+  {
+   "id": "svd",
+   "name": "Stable Video Diffusion",
+   "url": "https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt",
+   "kinds": [
+    "video"
+   ],
+   "local": true,
+   "makes": "A short moving clip from a still picture.",
+   "free_tier": "Free to run. No sign-in for the files I read, apart from accepting the licence.",
+   "limits": "A few seconds per clip.",
+   "watermark": "None.",
+   "resolution": "About 1024 by 576.",
+   "use_terms": "Stability AI's own Stable Video Diffusion community licence (read the name on the model page, not the text).",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Older and smaller than the newer models. Useful for making a still picture move gently.",
+   "hardware": "Needs a graphics card with plenty of video memory, around 16 GB or more for the longer version (general knowledge, not measured).",
+   "licence": "Stability community licence"
+  },
+  {
+   "id": "ltx-video",
+   "name": "LTX-Video",
+   "url": "https://github.com/Lightricks/LTX-Video",
+   "kinds": [
+    "video"
+   ],
+   "local": true,
+   "makes": "Short video from text or a picture, on your own computer.",
+   "free_tier": "Free to run. No sign-in.",
+   "limits": "Your own hardware.",
+   "watermark": "None.",
+   "resolution": "Up to 1216 by 704 and more with newer versions (general knowledge).",
+   "use_terms": "The code is Apache-2.0 (read on GitHub). The model files use the LTX-Video open-weights licence (read the name on the model page, not the text): read it.",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "The project describes a smaller 2 billion model for light video memory use.",
+   "hardware": "A graphics card with 8 to 12 GB for the small model, 24 GB or more for the large one (general knowledge). Not for a small server.",
+   "licence": "Apache-2.0 code; open-weights model licence"
+  },
+  {
+   "id": "wan",
+   "name": "Wan 2.1 and 2.2",
+   "url": "https://github.com/Wan-Video/Wan2.2",
+   "kinds": [
+    "video"
+   ],
+   "local": true,
+   "makes": "Short video from text or a picture, on your own computer.",
+   "free_tier": "Free to run. No sign-in.",
+   "limits": "Your own hardware.",
+   "watermark": "None.",
+   "resolution": "480p to 720p (general knowledge).",
+   "use_terms": "Apache-2.0 for code and for the model files I checked (read on GitHub and the model page).",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Good results for a free model. The 1.3 billion and 5 billion versions are the small ones.",
+   "hardware": "The 1.3 billion version is reported to run on about 8 GB of video memory, the 5 billion version on a 24 GB card (general knowledge, not measured). A few minutes for a 5 second clip on a good card. Not for a small server.",
+   "licence": "Apache-2.0"
+  },
+  {
+   "id": "audiocraft",
+   "name": "MusicGen (AudioCraft)",
+   "url": "https://github.com/facebookresearch/audiocraft",
+   "kinds": [
+    "music"
+   ],
+   "local": true,
+   "makes": "Instrumental music from a prompt, on your own computer.",
+   "free_tier": "Free. No sign-in.",
+   "limits": "Clips of about 30 seconds at a time (general knowledge).",
+   "watermark": "None.",
+   "resolution": "Audio file.",
+   "use_terms": "The code is MIT (read on GitHub). The model files I checked are Creative Commons BY-NC 4.0: non-commercial (read on the model page). Fine for a home channel.",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Small models can run on a processor, slowly.",
+   "hardware": "The small model runs on a processor; a graphics card makes it much faster (general knowledge, not measured).",
+   "licence": "MIT code; CC BY-NC 4.0 model files"
+  },
+  {
+   "id": "stable-audio-open",
+   "name": "Stable Audio Open",
+   "url": "https://huggingface.co/stabilityai/stable-audio-open-small",
+   "kinds": [
+    "music"
+   ],
+   "local": true,
+   "makes": "Short music and sound effects from a prompt.",
+   "free_tier": "Free to run. You must agree to the licence on Hugging Face first, which needs a free account to download.",
+   "limits": "Short clips.",
+   "watermark": "None.",
+   "resolution": "Audio file.",
+   "use_terms": "Stability AI community licences (read the names on the model pages, not the text). The tools code (stable-audio-tools) is MIT.",
+   "sign_in": "A free Hugging Face account to download the model files.",
+   "account_needed": "yes",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "The one local choice here that asks for an account, only to download the file once.",
+   "hardware": "The small version is made to run on modest hardware, even a phone (general knowledge). Not measured.",
+   "licence": "Stability community licence; MIT tools"
+  },
+  {
+   "id": "piper",
+   "name": "Piper (text to speech)",
+   "url": "https://github.com/OHF-Voice/piper1-gpl",
+   "kinds": [
+    "voice"
+   ],
+   "local": true,
+   "makes": "Spoken audio from text, on your own computer.",
+   "free_tier": "Free. No sign-in. No limits.",
+   "limits": "Your own hardware.",
+   "watermark": "None.",
+   "resolution": "Audio file.",
+   "use_terms": "The original Piper (MIT) was archived in August 2025. Its successor is GPL-3.0 (read on GitHub). Each voice has its own licence: read the card of the voice you use.",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "Many voices in many languages. Works on a processor.",
+   "hardware": "Fast on an ordinary processor, even a small computer (general knowledge, not measured here).",
+   "licence": "GPL-3.0 (successor); voices vary"
+  },
+  {
+   "id": "kokoro",
+   "name": "Kokoro (text to speech)",
+   "url": "https://huggingface.co/hexgrad/Kokoro-82M",
+   "kinds": [
+    "voice"
+   ],
+   "local": true,
+   "makes": "Natural-sounding speech on your own computer.",
+   "free_tier": "Free. No sign-in.",
+   "limits": "Your own hardware.",
+   "watermark": "None.",
+   "resolution": "Audio file.",
+   "use_terms": "Apache-2.0 (read on the model page).",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "A small model of 82 million settings.",
+   "hardware": "Runs on a processor (general knowledge, not measured).",
+   "licence": "Apache-2.0"
+  },
+  {
+   "id": "coqui",
+   "name": "Coqui TTS and XTTS",
+   "url": "https://github.com/idiap/coqui-ai-TTS",
+   "kinds": [
+    "voice"
+   ],
+   "local": true,
+   "makes": "Speech, and voice cloning.",
+   "free_tier": "Free to run.",
+   "limits": "Your own hardware.",
+   "watermark": "None.",
+   "resolution": "Audio file.",
+   "use_terms": "The code is MPL-2.0 (read on GitHub). The XTTS-v2 model files use the Coqui Public Model Licence, which is non-commercial (read the name on the model page). Do not clone a real person's voice.",
+   "sign_in": "None.",
+   "account_needed": "no",
+   "checked": "2026-11-28",
+   "evidence": "F",
+   "status": "confirmed",
+   "notes": "The company behind it closed in early 2024 (general knowledge). The code lives on in a fork.",
+   "hardware": "Runs on a processor slowly and on a graphics card well (general knowledge).",
+   "licence": "MPL-2.0 code; non-commercial model files"
+  }
+ ],
+ "safety": [
+  {
+   "title": "Terms change",
+   "text": "Free plans, limits and rules change often. The notes here were checked on 28 November 2026. Read the tool's own terms before you use anything it makes."
+  },
+  {
+   "title": "Home use is the safe side",
+   "text": "Most free plans allow personal use and many do not allow commercial use. A channel at home, for your family, is personal use. Do not sell or share it for money."
+  },
+  {
+   "title": "Free pictures may be public",
+   "text": "Some tools show what you make to other people. Never type private things, names of children, addresses or passwords into a prompt."
+  },
+  {
+   "title": "No real people and no brands",
+   "text": "Do not ask for a real person, a famous character, a real logo, a brand or a real song. The result may copy them, and you would not own that."
+  },
+  {
+   "title": "Keep credits",
+   "text": "Put the tool name, the date, the plan and your prompt in a file named LICENCE.txt in your kit. You do not need an AI label on the channel."
+  },
+  {
+   "title": "Check before you import",
+   "text": "Play each file once. Check for flashing, odd words, a watermark in a corner, and a loud start. A watermark means the free plan wants a credit or a paid plan."
+  },
+  {
+   "title": "Your own accounts and details",
+   "text": "Making an account is your own choice. Never give an AI tool your Starboard address, keys or passwords. The tools do not need them."
+  },
+  {
+   "title": "Open-source tools on your own computer",
+   "text": "They send nothing out and have no limits, but they need a computer with a graphics card for video. Do not run them on the Starboard server."
+  }
+ ],
+ "kinds": [
+  {
+   "id": "pictures",
+   "label": "Pictures"
+  },
+  {
+   "id": "video",
+   "label": "Video"
+  },
+  {
+   "id": "music",
+   "label": "Music"
+  },
+  {
+   "id": "voice",
+   "label": "Voice"
+  },
+  {
+   "id": "logos",
+   "label": "Logos"
+  }
+ ],
+ "note": "Copied from mockups/tv-channel-ai-prompts-2026-11-28/prompts.json (28 November 2026) without the prompt templates, which belong on Create your own TV channel's own page."
+}
