@@ -945,16 +945,6 @@
    "fixed": [
     "**The schedule grid opens:** with Starboard 0.24.0 and later, Open the schedule grid uses the address you opened Starboard with, so it opens from any address that reaches the server. With no channels, the grid page says what to do."
    ]
-  },
-  {
-   "version": "0.1.1",
-   "date": "2026-11-19",
-   "changed": [
-    "**Its address for Jellyfin fills in by itself:** with Starboard 0.23.0 and later, Starboard gives it its address on your home network, so Jellyfin's Live TV works without opening its page first."
-   ],
-   "fixed": [
-    "**Channel names and numbers are accepted:** with Starboard 0.23.0 and later, Add a channel, Rename and Change number take plain text, not only web addresses."
-   ]
   }
  ]
 }

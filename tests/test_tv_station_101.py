@@ -19,6 +19,7 @@ from test_tv_station_pack import load_app  # noqa: E402
 
 TV = os.path.join(ROOT, "tv-station")
 sys.path.insert(0, TV)
+import draw  # noqa: E402
 import kit  # noqa: E402
 import pack  # noqa: E402
 
@@ -136,6 +137,7 @@ class ZipRules(unittest.TestCase):
 @unittest.skipUnless(HAS_FFMPEG, "needs FFmpeg")
 class Files(unittest.TestCase):
     def setUp(self):
+        draw.clear()  # a channel starting to play in another test sets the stop
         self.tmp = tempfile.TemporaryDirectory()
         self.src = os.path.join(self.tmp.name, "in")
         os.makedirs(self.src)
@@ -203,6 +205,7 @@ class Files(unittest.TestCase):
 @unittest.skipUnless(HAS_FFMPEG, "needs FFmpeg")
 class Page(unittest.TestCase):
     def setUp(self):
+        draw.clear()
         self.tmp = tempfile.TemporaryDirectory()
         self.app = load_app(self.tmp.name)
         import stylepage
