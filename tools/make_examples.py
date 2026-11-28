@@ -151,7 +151,7 @@ def main():
 # The collection's catalogue (DASH-318): every plug-in here, which Starboard's Catalogue page lists. "published" is
 # worked out from each manifest by published() below.
 # The categories ("kind" in catalogue.json), in the order Starboard's Catalogue and Stallboard list them. A plug-in picks one in
-# KINDS below. A category with no plug-in is not shown anywhere, so "AI assistants" (28 November 2026, DASH-625: "Ask an assistant
+# KINDS below. A category with no plug-in is not shown anywhere, so "AI assistants" (28 November 2026, DASH-626: "Ask an assistant
 # about your server, or let an AI tool manage Starboard, with your own model or key") stays hidden until the first one is listed.
 CATEGORIES = ["Appearance", "Accessibility", "Jellyfin", "Downloads", "Network", "Home", "System", "Books", "Photos", "AI assistants", "Apps you can add"]
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",

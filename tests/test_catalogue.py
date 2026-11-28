@@ -31,7 +31,7 @@ class ReplacesOrAdds(unittest.TestCase):
 
 
 class Categories(unittest.TestCase):
-    """DASH-625: every entry's kind is a known category, and a category nobody uses (AI assistants, for now) lists nothing."""
+    """DASH-626: every entry's kind is a known category, and a category nobody uses (AI assistants, for now) lists nothing."""
 
     def rows(self):
         with open(os.path.join(ROOT, "catalogue.json"), encoding="utf-8") as f:
