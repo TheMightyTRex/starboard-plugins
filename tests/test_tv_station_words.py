@@ -205,5 +205,62 @@ class TheStationTab(unittest.TestCase):
                 self.assertLessEqual(len(sentence.split()), 25, x["key"])
 
 
+class TheBrandingPage(App):
+    """Branding (DASH-648): Plain, Example TV or My own branding; the pack format is unchanged."""
+
+    def mine(self, have=True):
+        fake = {"name": "Mine", "folder": self.tmp.name, "made": "", "dog": ""}
+        self.app.load_pack = lambda name: fake if (have and name == "station") else None
+        self.app.pack.summary = lambda p: "a logo and 2 short title clips"
+        return fake
+
+    def row(self, page, rid):
+        return next(i for i in page["items"] if i["id"] == rid)
+
+    def test_the_first_row_is_the_choice_and_starts_on_plain(self):
+        page = self.app.pack_page()
+        first = page["items"][0]
+        self.assertEqual((first["id"], first["group"]), ("branding", "Branding"))
+        self.assertEqual(first["choice"]["options"], [["none", "Plain"], ["example", "Example TV"], ["own", "My own branding"]])
+        self.assertEqual(first["choice"]["value"], "none")
+        self.assertIn("Plain", first["detail"])
+
+    def test_own_branding_needs_an_upload_first(self):
+        self.mine(have=False)
+        with self.assertRaises(ValueError):
+            self.app.pack_post({"action": "choose", "id": "branding", "value": "own"})
+
+    def test_plain_and_own_switch_without_losing_the_upload(self):
+        self.mine()
+        s = self.app.state()
+        s["station_pack"] = "station"
+        self.app.save(s)
+        page = self.app.pack_post({"action": "choose", "id": "branding", "value": "none"})
+        self.assertEqual(self.app.state()["station_pack"], "")
+        self.assertEqual(self.row(page, "branding")["choice"]["value"], "none")
+        page = self.app.pack_post({"action": "choose", "id": "branding", "value": "own"})
+        self.assertEqual(self.app.state()["station_pack"], "station")
+        self.assertEqual(self.row(page, "branding")["choice"]["value"], "own")
+
+    def test_a_bad_choice_is_refused(self):
+        with self.assertRaises(ValueError):
+            self.app.pack_post({"action": "choose", "id": "branding", "value": "loud"})
+
+    def test_the_corner_logo_row_says_where_it_is(self):
+        self.channel("Comedy")
+        page = self.app.pack_page()
+        row = self.row(page, "corner-logo")
+        self.assertEqual(row["title"], "The logo in the corner: top right, medium")
+        self.assertIn("/preview/", row["link"]["url"])
+
+    def test_the_groups_are_in_the_order_of_the_task(self):
+        page = self.app.pack_page()
+        groups = []
+        for it in page["items"]:
+            if "menu" not in it and it["group"] not in groups:
+                groups.append(it["group"])
+        self.assertEqual(groups[:3], ["Branding", "My own branding", "The logo in the corner"])
+
+
 if __name__ == "__main__":
     unittest.main()

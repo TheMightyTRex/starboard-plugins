@@ -2522,25 +2522,28 @@ def pack_page(said=None):
     sp = station_pack(s)
     items = []
     using_example = s.get("station_pack") == "example"
-    title = f"Station's pack: {sp['name']}" + (" (the example pack)" if using_example else "") if sp else "Station's pack: none yet"
+    title = f"Branding in use: {sp['name']}" + (" (Example TV)" if using_example else "") if sp else "My own branding: none uploaded yet"
     detail = (pack.summary(sp) + (f". Made {sp['made']}" if sp.get("made") else "") + ". Used by every channel without its own."
-              if sp else "Upload a zip made from the template: every channel uses it unless it has its own, or none.")
+              if sp else "Upload a zip made from the template. Every channel uses it unless it has its own.")
     pic = logo_thumb(os.path.join(sp["folder"], sp["dog"]), f"The corner logo in {sp['name']}") if sp and sp.get("dog") else None
-    items.append({"id": "station", "title": title[:120], "detail": detail[:200], "group": "The station's pack", **({"image": pic} if pic else {}),
+    items.append({"id": "station", "title": title[:120], "detail": detail[:200], "group": "My own branding", **({"image": pic} if pic else {}),
                   "state": "ok" if sp else "unknown", "state_label": "In use" if sp else "None yet",
                   "actions": ["attach", "detach"] if sp and not using_example else ["attach"],
-                  "attach": {"label": "Upload a pack", "field": "Pack", "detach_label": "Stop using the pack", "hint": "A zip of up to 60 MB, made from the template", "accept": ".zip"}})
+                  "attach": {"label": "Upload branding", "field": "Branding", "detach_label": "Stop using my branding", "hint": "A zip file of up to 60 MB, made from the template. The file name is not shown.", "accept": ".zip"}})
     if _example["making"]:
         ex_state, ex_label, ex_detail = "unknown", "Being made", "Making the example pack at the lowest priority: about 2 minutes. Open this page again then."
     elif _example["error"]:
         ex_state, ex_label, ex_detail = "problem", "Not made", f"The example pack was not made: {_example['error']}"
     else:
         ex_state, ex_label = ("ok", "In use") if using_example else ("off", "Not in use")
-        ex_detail = ("Example TV, made in code: a logo, the logo with music, 3 short title clips, a Coming up next card, a coming-up trailer with 2 background tracks "
-                     "and 3 transitions. " + ("Turn off to go back to your own pack, or none." if using_example else
-                                              "Turn on to use it for every channel without its own pack."))
-    items.append({"id": "example", "title": "Try the example pack", "detail": ex_detail[:200], "group": "The station's pack",
-                  "on": using_example, "actions": ["toggle"], "state": ex_state, "state_label": ex_label})
+        ex_detail = "Ready-made branding: a logo, the logo with music, 3 short title clips, a Coming up next card, a coming-up trailer and 3 transitions."
+    look = "example" if using_example else ("own" if sp else "none")
+    words = {"none": "Plain: your channel name in the corner, and nothing else.",
+             "example": "Example TV. " + ex_detail[:150],
+             "own": "My own branding. " + (pack.summary(sp)[:150] if sp else "")}[look]
+    items.append({"id": "branding", "title": "Branding", "group": "Branding", "detail": words[:200], "state": ex_state if _example["making"] or _example["error"] else "ok",
+                  "state_label": ex_label if _example["making"] or _example["error"] else "Saved",
+                  "choice": _choice("Branding", look, {"none": "Plain", "example": "Example TV", "own": "My own branding"})})
     chk = sbplugin.remember("pack_check", None) or {}
     if chk:
         lines = chk.get("problems") or chk.get("notes") or []
@@ -2560,7 +2563,7 @@ def pack_page(said=None):
     if load_pack("example"):
         downloads.append(("example-zip", "The example pack, as a zip", "example-pack.zip"))
     for key, words, path in downloads:
-        it = {"id": f"dl-{key}", "title": words, "group": "Downloads", "state": "ok", "state_label": "Ready"}
+        it = {"id": f"dl-{key}", "title": words, "group": "My own branding", "state": "ok", "state_label": "Ready"}
         if base:
             it["link"] = {"url": f"{base}/{path}", "label": f"Download {words[0].lower() + words[1:]}"}
             it["detail"] = ("Where the clip area, each text field and the title safe area go" + (", on your pack's own background"
@@ -2573,7 +2576,7 @@ def pack_page(said=None):
                             "or open this plug-in's web page once from its page in Settings, Plug-ins.")
         items.append(it)
     if not load_pack("example") and base:
-        items.append({"id": "dl-example-later", "title": "The example pack, as a zip", "group": "Downloads", "state": "unknown",
+        items.append({"id": "dl-example-later", "title": "The example pack, as a zip", "group": "My own branding", "state": "unknown",
                       "state_label": "Not made yet", "detail": "Turn on Try the example pack first, and it is made."})
     names = {c["id"]: c["name"] for c in s["channels"]}
     for p in sorted(s.get("promos") or [], key=lambda x: x.get("airs") or 0):
@@ -2585,9 +2588,22 @@ def pack_page(said=None):
                       "detail": ("Coming-up trailers are made in quiet hours, for channels whose pack has a coming-up trailer background, while nobody is watching."
                                  if truthy(settings().get("promos"), True) else "Making coming-up trailers is off in the settings.")})
     for ch in numbered(s):
-        items.append({"id": f"ch-{ch['id']}", "title": f"{ch['number']}  {ch['name']}: {pack_words(s, ch)}"[:120], "group": "Each channel's pack",
+        items.append({"id": f"ch-{ch['id']}", "title": f"{ch['number']}  {ch['name']}: {pack_words(s, ch)}"[:120], "group": "Each channel's branding",
                       "detail": "Change it in Channels, on the channel's page, under Channel.", "state": "ok" if channel_pack(s, ch) else "off",
                       "state_label": "Uses a pack" if channel_pack(s, ch) else "No pack"})
+    cfg = settings()
+    rs = dog.resolve(cfg, None)
+    first = numbered(s)[0] if s["channels"] else None
+    corner = {"top_right": "top right", "top_left": "top left", "bottom_right": "bottom right", "bottom_left": "bottom left"}.get(rs.get("corner"), "in a corner")
+    size = {"small": "small", "medium": "medium", "large": "large"}.get(rs.get("size"), "medium")
+    logo = {"id": "corner-logo", "title": f"The logo in the corner: {corner}, {size}", "group": "The logo in the corner",
+            "state": "ok" if rs.get("kind") != "none" else "off", "state_label": "Shown" if rs.get("kind") != "none" else "Not shown",
+            "detail": "Change where it is, its size and the clock in Logo, title bars and trailers. Each channel can choose its own."}
+    if first and address():
+        logo["link"] = {"url": f"{address()}/t/{s['token']}/preview/{first['id']}.png", "label": f"Preview a frame of {first['name']} with the logo"}
+    items.append(logo)
+    order = ["Branding", "My own branding", "The last pack checked", "The logo in the corner", "Coming-up trailers kept", "Each channel's branding"]
+    items.sort(key=lambda it: order.index(it["group"]) if it["group"] in order else len(order))
     out = {"type": "list", "title": "Branding", "items": items,
            "intro": ("Your own branding for the channels: the corner logo, short title clips, the logo with music, Coming up next and coming-up trailer backgrounds, "
                      "music for the coming-up trailers, and transitions. Upload a zip made from the template, or try the example pack.")}
@@ -2598,10 +2614,36 @@ def pack_page(said=None):
     return out
 
 
+def branding_choice(value):
+    """Plain, Example TV or My own branding (0.14.0, DASH-648). The branding file format is unchanged: Plain is no pack, Example TV is the
+    example pack and My own branding is the station's uploaded pack, which stays in its folder while another is chosen."""
+    if value not in ("none", "example", "own"):
+        raise ValueError("That is not one of the choices")
+    with _lock:
+        s = state()
+        now = s.get("station_pack") or ""
+        if value == "own" and not load_pack("station") and now != "station":
+            raise ValueError("Upload your branding first, then choose it")
+    if value == "example":
+        if now == "example":
+            return "Example TV is in use already"
+        return (pack_post({"action": "toggle", "id": "example"}) or {}).get("said") or "Saved"
+    if now == "example":  # leave the example: back to what was there before
+        pack_post({"action": "toggle", "id": "example"})
+    with _lock:
+        s = state()
+        s["station_pack"] = "station" if value == "own" else ""
+        s.pop("pack_before_example", None)
+        save(s)
+    return "Saved. Every channel without branding of its own uses " + ("your own branding" if value == "own" else "no branding: Plain")
+
+
 def pack_post(body):
     action, rid = body.get("action"), str(body.get("id") or "")
     if rid.startswith("anim~"):  # the Animation sub menu (0.11.0): the same change as before, answered with this page
         return pack_page((animation_post({**body, "id": rid[5:]}) or {}).get("said"))
+    if rid == "branding" and action == "choose":
+        return pack_page(branding_choice(str(body.get("value") or "")))
     if rid == "example" and action == "toggle":
         with _lock:
             s = state()

@@ -520,14 +520,19 @@ Sound in an imported title clip or music is measured and played at the same leve
 
 Your own branding for every channel. It can have the corner logo, the logo with its music, short title clips, very short title clips and transitions. It can also have backgrounds for the Coming up next card and the coming-up trailers, with music for the coming-up trailers. [Use branding](../../use/use-a-broadcast-pack.md) says how to add one, and [Make branding](../../use/make-a-broadcast-pack.md) how to make one.
 
+**Branding** is one choice with three answers: **Plain**, **Example TV** and **My own branding**. **Plain** shows your channel name in the corner and nothing else. **Example TV** is ready-made branding with a logo, short title clips, cards and music. **My own branding** is a zip file you or a designer made from the template. The file format has not changed, so branding you made before still works.
+
 | Row | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **Station's pack** | Select **Upload a pack** and choose a zip of up to 60 MB made from the template. It is checked first; when it passes, every channel without a pack of its own uses it. **Stop using the pack** takes it off | None |
-| **Try the example pack** | Uses Example TV, a made-up channel drawn in code, for every channel without a pack of its own. The first time, it takes about 2 minutes to make, while no channel is playing. Turn off to go back to your own pack, or none | Turned off |
-| **The last pack checked** | What the check found: each problem with a pack that was not used, or notes on one that was, such as a picture scaled to fit | Empty until a pack is uploaded |
-| **Downloads** | The template (folders, `pack.json`, its schema and a README), the placement guides for the Coming up next card, the coming-up trailer and the corner logo, and the example pack as a zip | None |
+| **Branding** | Which branding every channel without its own uses. **My own branding** needs a zip uploaded first. Your upload stays while another is chosen, so you can go back to it | **Plain**, **Example TV** or **My own branding**. **Plain** |
+| **Branding in use** or **My own branding** | Select **Upload branding** and choose a zip of up to 60 MB made from the template. It is checked first; when it passes, every channel without branding of its own uses it. **Stop using my branding** takes it off | None |
+| **The last pack checked** | What the check found: each problem with a zip that was not used, or notes on one that was, such as a picture scaled to fit | Empty until a zip is uploaded |
+| **Downloads** | The template (folders, `pack.json`, its schema and a README), the placement guides for the Coming up next card, the coming-up trailer and the corner logo, and the example as a zip | None |
+| **The logo in the corner** | Says where the logo is and how big. **Preview a frame** opens one frame with the logo in a new tab. Change the corner, size and clock in **Logo, title bars and trailers** | **Top right**, **Medium** |
 | **Coming-up trailers kept** | Each coming-up trailer, with its programme, its day and time and its channel | None yet |
-| **Each channel's pack** | Which pack each channel uses. Change it on the channel's page | **The station's pack** |
+| **Each channel's branding** | Which branding each channel uses. Change it on the channel's page, under **More** | **The station's branding** |
+
+The first time you choose **Example TV**, it takes about 2 minutes to make, while no channel is playing. Then every channel without branding of its own uses it.
 
 ## Animation
 

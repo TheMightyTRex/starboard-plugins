@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.18.0 (not released yet)
+
+### Changed
+- Branding page (DASH-648, owner, 28 November 2026): one choice, Plain, Example TV or My own branding, then the upload and downloads under My own branding, the last check, the logo in the corner with a preview frame link, the coming-up trailers kept and each channel's branding.
+- Plain is no station pack, Example TV is the example pack, and My own branding is the uploaded zip, which stays in its folder while another is chosen. The pack file format, its schema and the template are unchanged.
+- The Try the example pack row is replaced by the choice. POST /pack with {"action": "toggle", "id": "example"} still answers as before.
+- Migration: nothing is moved. A station on the example shows Example TV, one with an uploaded zip shows My own branding, and one with neither shows Plain.
+- Not done: the corner, size and clock cannot be changed on this page, because Starboard keeps them as plain settings that a plug-in page cannot write. The preview is a link to one frame the plug-in already draws; it makes no video.
+
 ## 0.17.1 (not released yet)
 
 ### Changed
