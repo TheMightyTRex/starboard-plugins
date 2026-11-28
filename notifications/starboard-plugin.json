@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "notifications",
  "name": "Notifications",
- "version": "1.4.1",
+ "version": "1.4.2",
  "description": "Sends Starboard's events to email, Telegram, Discord, Signal, Pushover, ntfy or a webhook, in plain words, and a weekly New this week.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -101,7 +101,7 @@
    "label": "New this week",
    "type": "switch",
    "default": false,
-   "hint": "A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Deactivated until you activate it.",
+   "hint": "A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Turned off until you turn it on.",
    "group": "What to send"
   },
   {
@@ -122,7 +122,7 @@
    "type": "choice",
    "default": "email",
    "group": "What to send",
-   "hint": "Email uses the settings in Email. The other choice uses every way you activated.",
+   "hint": "Email uses the settings in Email. The other choice uses every way you turned on.",
    "choices": [
     {
      "value": "email",
@@ -130,7 +130,7 @@
     },
     {
      "value": "all",
-     "label": "Every way I activated"
+     "label": "Every way I turned on"
     }
    ]
   },
@@ -146,7 +146,7 @@
    "label": "Hold alerts that are not urgent in quiet hours",
    "type": "switch",
    "default": false,
-   "hint": "A request ready, a failed download, an app back or an update ready wait. One summary goes when the quiet hours end. Deactivated until you activate it.",
+   "hint": "A request ready, a failed download, an app back or an update ready wait. One summary goes when the quiet hours end. Turned off until you turn it on.",
    "group": "Quiet hours"
   },
   {
@@ -176,7 +176,7 @@
    "label": "Still send urgent ones",
    "type": "switch",
    "default": true,
-   "hint": "An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Deactivate it to hold them too.",
+   "hint": "An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Turn it off to hold them too.",
    "group": "Quiet hours"
   },
   {
@@ -184,7 +184,7 @@
    "label": "Send by email",
    "type": "switch",
    "default": false,
-   "hint": "Activate once the email details are entered and the test arrives.",
+   "hint": "Turn on once the email details are entered and the test arrives.",
    "group": "Email"
   },
   {
@@ -257,7 +257,7 @@
    "label": "Send by Telegram",
    "type": "switch",
    "default": false,
-   "hint": "Activate once the bot token and chat are entered and the test arrives.",
+   "hint": "Turn on once the bot token and chat are entered and the test arrives.",
    "group": "Telegram"
   },
   {
@@ -279,7 +279,7 @@
    "label": "Send by Discord",
    "type": "switch",
    "default": false,
-   "hint": "Activate once the webhook is filled in and the test arrives.",
+   "hint": "Turn on once the webhook is filled in and the test arrives.",
    "group": "Discord"
   },
   {
@@ -323,7 +323,7 @@
    "label": "Send by Pushover",
    "type": "switch",
    "default": false,
-   "hint": "Activate once both keys are entered and the test arrives.",
+   "hint": "Turn on once both keys are entered and the test arrives.",
    "group": "Pushover"
   },
   {
@@ -344,7 +344,7 @@
    "label": "Send by ntfy",
    "type": "switch",
    "default": false,
-   "hint": "Activate once the topic is filled in and the test arrives.",
+   "hint": "Turn on once the topic is filled in and the test arrives.",
    "group": "ntfy"
   },
   {
@@ -373,7 +373,7 @@
    "label": "Send to webhooks",
    "type": "switch",
    "default": false,
-   "hint": "Activate once an address is filled in and the test arrives.",
+   "hint": "Turn on once an address is filled in and the test arrives.",
    "group": "Webhooks"
   },
   {
@@ -512,6 +512,13 @@
  },
  "changes": [
   {
+   "version": "1.4.2",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
+  {
    "version": "1.4.1",
    "date": "2026-11-26",
    "changed": [
@@ -522,17 +529,17 @@
    "version": "1.4.0",
    "date": "2026-11-25",
    "added": [
-    "**Quiet hours:** choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. An app that stops answering, a full disk and a disk change still go at once. Deactivated until you activate it."
+    "**Quiet hours:** choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. An app that stops answering, a full disk and a disk change still go at once. Turned off until you turn it on."
    ]
   },
   {
    "version": "1.3.0",
    "date": "2026-11-22",
    "added": [
-    "**New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, and no pictures. You choose the day and the hour, and it can go by email alone or by every way you activated."
+    "**New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, and no pictures. You choose the day and the hour, and it can go by email alone or by every way you turned on."
    ],
    "changed": [
-    "**Deactivated at first:** New this week is now deactivated until you activate it under What to send. Send New this week on is replaced by **When to send New this week**, one setting for the day and the hour."
+    "**Turned off at first:** New this week is now turned off until you turn it on under What to send. Send New this week on is replaced by **When to send New this week**, one setting for the day and the hour."
    ]
   },
   {
@@ -553,7 +560,7 @@
    "version": "1.1.3",
    "date": "2026-11-17",
    "changed": [
-    "**Clearer words:** each channel's switch says what to enter before you activate it, the band says **Not sent**, and a message about an event it does not know says \"Starboard has an alert. Open Starboard for the details.\"",
+    "**Clearer words:** each channel's switch says what to enter before you turn it on, the band says **Not sent**, and a message about an event it does not know says \"Starboard has an alert. Open Starboard for the details.\"",
     "**Logo description:** a screen reader says \"Notifications logo\", the plug-in's name, instead of a description of the symbol."
    ]
   },

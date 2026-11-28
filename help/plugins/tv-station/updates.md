@@ -63,7 +63,7 @@ Released on 22 November 2026.
 
 Added:
 
-- **Audio description on promos:** a setting in **Promos** that is not active unless you activate it. A voice says
+- **Audio description on promos:** a setting in **Promos** that is not active unless you turn it on. A voice says
   each promo's words, so a blind viewer hears what is coming, on which channel, and when. The voice is made on your
   server, in the station's language, and nothing is sent anywhere. A programme that has a described sound track plays
   that track in its clips. [Audio description on promos](settings.md#audio-description-on-promos) says what is said
@@ -117,7 +117,7 @@ Fixed:
 
 Added:
 
-- **The station's logo on promos:** promos for a channel with its own pack show the station's logo, small, in a corner. To leave it out, deactivate **Show the station's logo on promos**.
+- **The station's logo on promos:** promos for a channel with its own pack show the station's logo, small, in a corner. To leave it out, turn off **Show the station's logo on promos**.
 
 ## What is new in 0.5.0
 

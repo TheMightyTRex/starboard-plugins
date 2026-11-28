@@ -168,7 +168,7 @@ ANSWERS.update({
     "/api/schedule": "2026-11-22 03:30:00 +0000 UTC", "/api/run": None,
 })
 HELPER_URL = {"themearr": "THEMEARR_URL", "checkrr": "CHECKRR_URL"}  # where each helper finds its app
-POSTS["library-cleanup"] = "/jobs/move"  # DASH-406: activated here, on a stand-in media folder of made-up files
+POSTS["library-cleanup"] = "/jobs/move"  # DASH-406: turned on here, on a stand-in media folder of made-up files
 SETTINGS["library-cleanup"] = {"active": True}
 SETTINGS["picture-shrinker"] = {"originals": "keep"}  # 1.2.0: nothing is shrunk until the backup is chosen
 # Remote access refuses callers on 127.0.0.1 (visitors through its tunnel arrive there); the host network needs this.

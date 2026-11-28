@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.13.2",
+ "version": "0.13.3",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -756,10 +756,17 @@
  },
  "changes": [
   {
-   "version": "0.13.2",
+   "version": "0.13.3",
    "date": "2026-11-28",
    "added": [
     "**Lottie animations** in Import a kit: a Lottie file (JSON, up to 1 MB) can be a short title clip or a bumper. It is checked first (no expressions, links, pictures or text), its colours become your two colours, and your channel's name is drawn over it."
+   ]
+  },
+  {
+   "version": "0.13.2",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
    ]
   },
   {
@@ -816,7 +823,7 @@
    "version": "0.7.0",
    "date": "2026-11-22",
    "added": [
-    "**Audio description on promos** (not active unless you activate it): a voice says each promo's words, so a blind viewer hears what is coming, on which channel, and when. It is made on your server, in the station's language. Nothing is sent anywhere."
+    "**Audio description on promos** (not active unless you turn it on): a voice says each promo's words, so a blind viewer hears what is coming, on which channel, and when. It is made on your server, in the station's language. Nothing is sent anywhere."
    ]
   },
   {
@@ -870,7 +877,7 @@
    "version": "0.5.2",
    "date": "2026-11-19",
    "added": [
-    "**The station's logo on promos:** promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner. To leave it out, deactivate Show the station's logo on promos."
+    "**The station's logo on promos:** promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner. To leave it out, turn off Show the station's logo on promos."
    ]
   },
   {
@@ -915,22 +922,6 @@
    "date": "2026-11-19",
    "changed": [
     "**Preview a frame** of a Coming up next card or a promo is taken 1.5 seconds into the pack's background video, so a background that opens with a movement, such as bands sweeping off, shows as it rests."
-   ]
-  },
-  {
-   "version": "0.3.0",
-   "date": "2026-11-19",
-   "added": [
-    "**Animation on and off:** the cards, straps, on-screen logo, clock, label and holding slide words can fade, slide in from the left, right or bottom, wipe or grow, and go off the same ways, quick, normal or slow. Choose on the Animation page or a channel's Animation card, with a preview of each.",
-    "**A broadcast pack can choose its animation** in pack.json, under animation. A choice in the settings comes first.",
-    "**Each channel remembers what it has played** to someone watching: From the next episode not watched counts an episode it played, 70% or more of it, as watched, as well as what Jellyfin says. Jellyfin's watched marks are never changed.",
-    "**Played on this channel:** a new card on each channel lists the last few programmes it played, with a way to forget them.",
-    "**Promos with the programme's sound:** each clip plays with its own sound, and the music goes down to 20% under it (10%, 20%, 30% or 50% in Music under the programme's sound).",
-    "**Promo length** from 10 to 60 seconds, and **Clips in each promo**, about one every 5 seconds unless you choose 2 to 6.",
-    "**Background loops for promos:** upload several videos or pictures for the station or one channel; each promo chooses one at random with the pack's."
-   ],
-   "changed": [
-    "**From the next episode not watched** finds the first episode, in the channel's order, that is not watched, where before it took the first not played in Jellyfin's order."
    ]
   }
  ]

@@ -30,7 +30,7 @@ The first one with `metadata.db` is set as Calibre-Web's library. If you chose a
 ![Calibre library maker's Actions, with Make the library (step 2) outlined](../../images/calibre-library/make-2-button.png)
 
 4. Watch the progress in words on the same page. A file that cannot be read is listed with the reason.
-5. When it says **Done**, deactivate Calibre-Web and activate it again. It opens the new library.
+5. When it says **Done**, turn off Calibre-Web and turn it on again. It opens the new library.
 
 When new books arrive in your books folder, run it again: it adds only what is new.
 

@@ -15,15 +15,15 @@ An example Starboard plug-in by TheMightyTRexUK, MIT licence.
 
 ## Settings
 
-- **Use single sign-on**: Leave it off on a server only you use. Off means nothing runs for it. To stop the plug-in completely, deactivate it in Settings, Plug-ins, Manage.
-- **This server's Tailscale name**: Such as starboard.tail1234.ts.net, found in Tailscale's admin page under Machines. Set it once. Passkeys are tied to this address for ever: if it changes, every passkey stops working and has to be made again. Tailscale needs MagicDNS and HTTPS certificates activated.
+- **Use single sign-on**: Leave it off on a server only you use. Off means nothing runs for it. To stop the plug-in completely, turn it off in Settings, Plug-ins, Manage.
+- **This server's Tailscale name**: Such as starboard.tail1234.ts.net, found in Tailscale's admin page under Machines. Set it once. Passkeys are tied to this address for ever: if it changes, every passkey stops working and has to be made again. Tailscale needs MagicDNS and HTTPS certificates turned on.
 
 ## What this version does
 
 It holds the settings that the sign-in provider will use, and nothing else. There is no provider in it yet, so nothing signs in
 through it, and it makes no network call.
 
-- **Use single sign-on** is off until you activate it. Leave it off on a server only you use.
+- **Use single sign-on** is off until you turn it on. Leave it off on a server only you use.
 - **This server's Tailscale name** is the address the provider will live at, such as `starboard.tail1234.ts.net`. Set it once.
   **Passkeys are tied to this address for ever.** A passkey made at one address does not work at another, so changing the
   name later means making every passkey again.

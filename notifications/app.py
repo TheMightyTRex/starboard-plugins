@@ -367,7 +367,7 @@ def _handle(body):
         keep("week", week)
         return {"ok": True}
     if KINDS.get(event) and setting(KINDS[event], True) is not True:
-        return {"ok": True, "said": "Not sent: this kind is deactivated"}
+        return {"ok": True, "said": "Not sent: this kind is off"}
     title, body_text, tone = words(event, data)
     if in_quiet() and not (event in URGENT and setting("quiet_urgent", True) is True):
         return hold(event, data, title, body_text, tone)
@@ -428,7 +428,7 @@ def weekly(force=False):
 def _weekly(force):
     if not force:
         if setting("send_weekly", False) is not True:
-            return {"said": "The weekly message is deactivated"}
+            return {"said": "The weekly message is off"}
         if time.time() - float(remember("weekly_sent", 0) or 0) < 20 * 3600:  # Starboard's retry or a double start
             return {"said": "Already sent today"}
     since = time.time() - 7 * 86400
@@ -446,7 +446,7 @@ def _weekly(force):
         return {"said": "Nothing new this week, so nothing was sent"}
     by = ["email"] if setting("weekly_by", "email") != "all" else None
     if by and "email" not in active():
-        return {"said": "New this week: email is not activated. Activate it under Email, or send by every way you activated"}
+        return {"said": "New this week: email is not on. Turn it on under Email, or send by every way you turned on"}
     sent, failed = deliver("New on your server this week", f"Added to Jellyfin in the last 7 days:\n\n{text}", "info", channels=by, kind="weekly")
     if not force and sent:
         keep("weekly_sent", time.time())
@@ -461,7 +461,7 @@ def weekly_now():
 
 def _said(sent, failed, what):
     if not sent and not failed:
-        return f"{what}: no channel is active. Activate one in Settings first"
+        return f"{what}: no channel is active. Turn one on in Settings first"
     bits = ([f"sent by {', '.join(sent)}"] if sent else []) + ([f"not sent by {'; '.join(failed)}"] if failed else [])
     return f"{what}: " + "; ".join(bits)
 
@@ -479,7 +479,7 @@ def card():
     log = remember("log", []) or []
     real = [x for x in log if x.get("kind") != "test"]
     if not active():
-        return band({"state": "warning", "text": "No channel is active. Activate one in Settings, Plug-ins, Notifications."},
+        return band({"state": "warning", "text": "No channel is active. Turn one on in Settings, Plug-ins, Notifications."},
                     "needs_setup", label="No channel active")
     held = len(remember("held", []) or [])
     if held and in_quiet():

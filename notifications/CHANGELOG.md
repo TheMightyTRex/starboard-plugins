@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.2 (28 November 2026)
+
+### Changed
+- Turn on and turn off: the text and the help pages now say turn on and turn off. How it works has not changed.
+
 ## 1.4.1 (26 November 2026)
 
 ### Changed
@@ -8,15 +13,15 @@
 ## 1.4.0 (25 November 2026)
 
 ### Added
-- Quiet hours: choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. An app that stops answering, a full disk and a disk change still go at once. Deactivated until you activate it.
+- Quiet hours: choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. An app that stops answering, a full disk and a disk change still go at once. Turned off until you turn it on.
 
 ## 1.3.0 (22 November 2026)
 
 ### Added
-- New this week, by email: a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, and no pictures. You choose the day and the hour, and it can go by email alone or by every way you activated.
+- New this week, by email: a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, and no pictures. You choose the day and the hour, and it can go by email alone or by every way you turned on.
 
 ### Changed
-- Deactivated at first: New this week is now deactivated until you activate it under What to send. Send New this week on is replaced by When to send New this week, one setting for the day and the hour.
+- Turned off at first: New this week is now turned off until you turn it on under What to send. Send New this week on is replaced by When to send New this week, one setting for the day and the hour.
 
 ## 1.2.0 (19 November 2026)
 
@@ -31,7 +36,7 @@
 ## 1.1.3 (17 November 2026)
 
 ### Changed
-- Clearer words: each channel's switch says what to enter before you activate it, the band says Not sent, and a message about an event it does not know says "Starboard has an alert. Open Starboard for the details."
+- Clearer words: each channel's switch says what to enter before you turn it on, the band says Not sent, and a message about an event it does not know says "Starboard has an alert. Open Starboard for the details."
 - Logo description: a screen reader says "Notifications logo", the plug-in's name, instead of a description of the symbol.
 
 ## 1.1.2 (17 November 2026)

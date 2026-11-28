@@ -270,7 +270,7 @@ class AudioVault(unittest.TestCase):
         app = load()
         out = app.audiovault()
         self.assertEqual(out["items"], [])
-        self.assertIn("Activate it under 'Sources'", out["intro"])
+        self.assertIn("Turn it on under 'Sources'", out["intro"])
         self.assertFalse(manifest()["settings"][[s["key"] for s in manifest()["settings"]].index("audiovault_links")]["default"])
 
     def test_links_for_titles_without_a_described_track(self):
@@ -440,12 +440,12 @@ class People(unittest.TestCase):
         screen = self.app.people()
         self.assertEqual([(i["title"], i["on"]) for i in screen["items"]], [("Sam", False), ("Alex", False)])
         got = self.app.people({"action": "toggle", "id": "u1"})
-        self.assertEqual(got["said"], "Audio description activated for Sam")
+        self.assertEqual(got["said"], "Audio description turned on for Sam")
         self.assertTrue(self.configs["u1"]["RememberAudioSelections"])
         self.assertEqual(self.configs["u1"]["AudioLanguagePreference"], "eng")  # the rest is kept
         self.assertTrue(next(i for i in got["items"] if i["id"] == "u1")["on"])
         got = self.app.people({"action": "toggle", "id": "u1"})
-        self.assertEqual(got["said"], "Audio description deactivated for Sam")
+        self.assertEqual(got["said"], "Audio description turned off for Sam")
         self.assertFalse(self.configs["u1"]["RememberAudioSelections"])
 
     def test_older_jellyfin_address(self):
@@ -607,7 +607,7 @@ class PlayTheDescribedTrack(unittest.TestCase):
 
     def test_the_described_track_is_asked_for_once(self):
         app, jf = self.make(self.session("u1", 1))
-        self.assertEqual(app.play({"action": "toggle", "id": "u1"})["said"], "Play the described track activated for Sam")
+        self.assertEqual(app.play({"action": "toggle", "id": "u1"})["said"], "Play the described track turned on for Sam")
         app.on_event({"event": "playback.started", "data": {"user": "Sam"}})
         self.assertEqual(jf.commands, [("/Sessions/s-1/Command", {"Name": "SetAudioStreamIndex", "Arguments": {"Index": "2"}})])
         app.on_event({"event": "playback.started"})  # the same start again: the person may have chosen another track

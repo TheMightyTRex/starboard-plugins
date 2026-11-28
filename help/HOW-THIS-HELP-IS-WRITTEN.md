@@ -5,7 +5,7 @@ The plug-ins help follows the design system's guides, as Starboard's help does:
 - [Help writing guide](https://github.com/TheMightyTRex/design-system/blob/main/docs/HELP-WRITING.md), section 11 for
   the help centre standard: the top menu, the side menu, flow charts, the journey and the plug-in pages.
 - [Content design guide](https://github.com/TheMightyTRex/design-system/blob/main/docs/CONTENT-DESIGN.md): British
-  English, sentence case, no em dashes and no contractions. Settings are activated or deactivated.
+  English, sentence case, no em dashes and no contractions. Settings are on or turned off.
 
 ## Only in the plug-ins help
 

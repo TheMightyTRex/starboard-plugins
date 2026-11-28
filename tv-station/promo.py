@@ -7,7 +7,7 @@ pages and the pack's promo/music, at about a fifth of its level under the progra
 from the schedule ("Sunday at 21:00", true all week) and the channel's name. They are made one at a time, by one
 FFmpeg at the lowest priority with one thread, and never while anyone is watching. Each channel keeps a set number;
 a promo is replaced when it is older than the setting says, and dropped before its programme starts, so they never
-pile up. Each is played in the breaks like a clip: on its own channel, and on the others unless that is deactivated.
+pile up. Each is played in the breaks like a clip: on its own channel, and on the others unless that is off.
 """
 import os
 import secrets

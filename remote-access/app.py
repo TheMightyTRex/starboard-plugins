@@ -58,7 +58,7 @@ def method():
 
 
 def shared():
-    """The apps this plug-in may share, by the person's switches. Starboard is shared unless deactivated."""
+    """The apps this plug-in may share, by the person's switches. Starboard is shared unless turned off."""
     out = []
     for app, _, _ in APPS:
         if setting(f"share_{app}", True) in (True, "true", 1):
@@ -575,7 +575,7 @@ def screen():
         where = address(app)
         c = checked.get(app)
         if not is_shared:
-            detail, st = "Not shared: activate it in Settings to share it.", "off"
+            detail, st = "Not shared: turn it on in Settings to share it.", "off"
         elif app not in targets:
             detail, st = f"Not shared: {NAMES[app]} is not in Starboard's apps.", "off"
         elif where:

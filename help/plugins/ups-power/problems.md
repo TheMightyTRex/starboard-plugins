@@ -43,11 +43,11 @@ PeaNUT only. In UPS and power's settings, enter the user name and password again
 
 ## Enter the address
 
-Open UPS and power's tab, choose how to read the UPS, enter its address and select **Save**, then **Activate**.
+Open UPS and power's tab, choose how to read the UPS, enter its address and select **Save**, then **Turn on**.
 
 ## Check the alerts
 
-1. Alerts are on by default: check **Send alerts through Starboard** is activated.
+1. Alerts are on by default: check **Send alerts through Starboard** is on.
 2. Check Starboard's own alerts are on in **Settings**, then **Alerts**. UPS and power uses the same place.
 3. It asks once a minute: a cut shorter than a minute may pass unseen.
 4. Starboard before 0.26.0 does not take alerts from plug-ins: the card then says so, and updating Starboard fixes it.
@@ -68,7 +68,7 @@ NUT lists each UPS by the name in `ups.conf`. Leave **UPS name** empty to use th
 
 ## Starboard's jobs are not held on battery
 
-1. Check that **Hold Starboard's heavy jobs on battery** is activated in the settings.
+1. Check that **Hold Starboard's heavy jobs on battery** is on in the settings.
 2. Check that Starboard is version 0.40.0 or later. An older Starboard does not know this part, and the plug-in is not offered to it.
 3. Check that you approved the permission to hold heavy jobs when you installed or updated the plug-in.
 4. Open **Downloads**. While the hold lasts, the page says why downloads are paused. The log in **System** says when a hold starts and ends.

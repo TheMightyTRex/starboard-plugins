@@ -5,11 +5,11 @@ Library clean-up finds them by the rules you choose and moves them to a holding 
 each item can be put back, and you delete what is in the holding folder yourself when you are sure.
 
 Starboard never adds it by itself: you choose to add it from the catalogue. Nothing moves until you have checked
-**Preview** and activated **Move items each day**.
+**Preview** and turned on **Move items each day**.
 
 ## What it moves
 
-Three rules, each activated when you add it. You can deactivate any of them in **Rules**.
+Three rules, each turned on when you add it. You can turn off any of them in **Rules**.
 
 - **Films watched by everyone:** every person who uses Jellyfin has watched it. Nobody has watched it for more than 90 days (**Last watched more than**).
 - **Series that ended, every episode watched:** Jellyfin says the series has ended, and everyone has watched every episode. Nobody has watched the last episode for more than the same 90 days.
@@ -18,12 +18,12 @@ Three rules, each activated when you add it. You can deactivate any of them in *
 "Everyone" means each person who can sign in to Jellyfin. If someone never watches, such as a guest account, add
 their Jellyfin user name to **People to leave out**. If you do not, the first rule never finds anything.
 
-In **Libraries**, each film and series library in Jellyfin is listed. Choose **Deactivate** for a library the rules
+In **Libraries**, each film and series library in Jellyfin is listed. Choose **Turn off** for a library the rules
 should leave alone, such as a children's library.
 
 ## What it always keeps
 
-In **Always keep**, each activated when you add it:
+In **Always keep**, each turned on when you add it:
 
 - **Favourites:** anything anyone has marked as a favourite in Jellyfin.
 - **Something someone is part way through:** anything in anyone's **Continue watching**, and a series someone has
@@ -35,7 +35,7 @@ In **Always keep**, each activated when you add it:
 
 ## Preview
 
-Open **Preview** before you activate anything. It lists every film and series the rules would move now, with why and
+Open **Preview** before you turn on anything. It lists every film and series the rules would move now, with why and
 how much space each frees, and the total at the top. It is worked out in the background when you open it, which takes
 a few seconds on a large library; the page updates by itself. It is worked out again when you change a setting, after
 six hours, or when you choose **Preview again** in **Actions**.
@@ -45,7 +45,7 @@ the rules, and check again.
 
 ## Start moving
 
-When **Preview** lists only what you are happy to move, activate **Move items each day** in **Rules**. Once a day, in
+When **Preview** lists only what you are happy to move, turn on **Move items each day** in **Rules**. Once a day, in
 Starboard's quiet hours, it works out the list again and moves each item:
 
 - The item's folder goes to `media/.holding/library-cleanup`, keeping the folders it was in. A film in
@@ -77,7 +77,7 @@ still used.
 ## The card on your dashboard
 
 Add the **Holding folder** card in **Edit dashboard**. It shows how much is in the holding folder. The card's band
-shows the Library clean-up logo, its name and a status. The status is **Deactivated** with what Preview would move. Once it moves items each day, the status is **Next in
+shows the Library clean-up logo, its name and a status. The status is **Turned off** with what Preview would move. Once it moves items each day, the status is **Next in
 quiet hours**. While it works out Preview or moves items, the status is **Working**.
 
 ## What it may do
@@ -101,7 +101,7 @@ to the version you had, with your settings as they were.
 
 ## Stop it or remove it
 
-- **Stop it for a while:** deactivate **Move items each day**, or choose **Deactivate** for the plug-in. What is in
+- **Stop it for a while:** turn off **Move items each day**, or choose **Turn off** for the plug-in. What is in
   the holding folder stays there.
 - **Remove it:** first put back anything you want with **Put back**. After you remove it, what it moved stays in
   `media/.holding/library-cleanup`. Move a folder back to where it was yourself. Reelix will not follow it again until you choose **Follow** for it in Starboard's **Library**.

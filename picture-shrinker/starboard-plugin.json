@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "picture-shrinker",
  "name": "Picture shrinker",
- "version": "1.2.3",
+ "version": "1.2.4",
  "description": "Shrinks the posters and photos of people Jellyfin keeps, so they take less space. You choose: keep a backup of each original, or shrink without a backup.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -75,7 +75,7 @@
    "type": "switch",
    "default": true,
    "group": "What to shrink",
-   "hint": "Activated when you add it: every picture type is shrunk. Deactivate it to choose types one by one."
+   "hint": "Turned on when you add it: every picture type is shrunk. Turn it off to choose types one by one."
   },
   {
    "key": "posters",
@@ -83,7 +83,7 @@
    "type": "switch",
    "default": true,
    "group": "What to shrink",
-   "hint": "The poster of each film, series, season and collection. Used when Shrink all picture types is deactivated."
+   "hint": "The poster of each film, series, season and collection. Used when Shrink all picture types is off."
   },
   {
    "key": "people",
@@ -386,6 +386,13 @@
  },
  "changes": [
   {
+   "version": "1.2.4",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
+  {
    "version": "1.2.3",
    "date": "2026-11-26",
    "changed": [
@@ -419,7 +426,7 @@
    "added": [
     "**Choose the backup:** Original pictures asks whether to keep a backup copy of each original or just shrink, once it is added and again after this update. Nothing is shrunk until you choose; a backup you already have is kept.",
     "**Start again** in its actions, for the pictures it shrinks or for every picture: deletes the backup and the records, and has Jellyfin download the pictures again at full size. A picture Jellyfin cannot download again is put back after a day.",
-    "**Every picture type:** posters, photos of people, backdrops, thumbnails, logos, banners, disc art and clear art, each with its own size and all activated, with **Shrink all picture types** for all in one setting. Backdrops asked for by Lentzeris (issue #2)."
+    "**Every picture type:** posters, photos of people, backdrops, thumbnails, logos, banners, disc art and clear art, each with its own size and all turned on, with **Shrink all picture types** for all in one setting. Backdrops asked for by Lentzeris (issue #2)."
    ],
    "changed": [
     "**Rules 1.2:** the same rules file as the Jellyfin version (SYNC.md).",
@@ -441,7 +448,7 @@
    "version": "1.1.0",
    "date": "2026-11-15",
    "added": [
-    "**Backup first:** each original is copied to the plug-in's own folder before its first shrink, and a picture whose original cannot be backed up is not shrunk. Activated by default.",
+    "**Backup first:** each original is copied to the plug-in's own folder before its first shrink, and a picture whose original cannot be backed up is not shrunk. Turned on by default.",
     "**Restore original pictures** and **Delete backup** in its actions; Space saved shows the pictures now, the backup and the space saved.",
     "**Quality, posters and photos of people** are settings, as in the Jellyfin version.",
     "**Stays idle when Jellyfin's own Picture shrinker is installed**, so the two never shrink the same pictures. To see that, it reads Jellyfin's list of plug-ins with Jellyfin's key."
@@ -458,7 +465,7 @@
     "**Shrinks Jellyfin's pictures:** posters to 900 pixels tall and photos of cast and crew to 400 pixels wide, both settings. Smaller pictures are left alone.",
     "**Checked before it replaces:** each picture is written beside the original, opened again and checked, and swapped in only when it is smaller.",
     "**When you choose:** every day, week or month at a time, with Shrink now, at the lowest priority.",
-    "**New pictures in quiet hours:** deactivated unless you activate it.",
+    "**New pictures in quiet hours:** turned off unless you turn it on.",
     "**Space saved:** on its page and on a dashboard card."
    ]
   }

@@ -146,7 +146,7 @@ def try_pairing():
         if p.get("result") != "timed_out":
             keep("pairing", {**p, "result": "timed_out"})
         return {"id": "timed_out", "tone": "warning", "title": "The link button was not pressed in time",
-                "text": f"Choose Activate beside {p['name']} to try again, then press the round button on top of the bridge.", "dismiss": True}
+                "text": f"Choose Turn on beside {p['name']} to try again, then press the round button on top of the bridge.", "dismiss": True}
     b = hue.Bridge(p["address"], fingerprint=p["fingerprint"])
     try:
         key = b.pair()
@@ -189,7 +189,7 @@ def bridge_screen():
             items.append({"id": f"bridge:{f['address']}", "title": f.get("name") or "Hue bridge", "group": "Found on your network",
                           "detail": f"At {f['address']}", "on": False, "state": "off", "state_label": "Not paired", "actions": ["toggle"]})
     intro = ("Paired: this plug-in reaches the bridge on your home network with its own key. Nothing goes to the Hue cloud."
-             if b else "Give the bridge's address, or choose Activate beside a bridge found on your network. Then press the round "
+             if b else "Give the bridge's address, or choose Turn on beside a bridge found on your network. Then press the round "
              "link button on top of the bridge: this page waits for it.")
     out = {"type": "list", "title": "Bridge", "intro": intro, "items": items, "notices": notices}
     if not b:
@@ -310,17 +310,17 @@ def lights_screen(tab):
         if lids:
             bulk.append({"id": f"bulk:{mid}", "label": f"Every light in {mtitle}" if tab != "types" else f"Every light: {mtitle.lower()}",
                          "kind": "", "on": on, "total": len(lids), "active": on > 0, "menu": mid,
-                         "hint": f"{on} of {len(lids)} lights on. Deactivate it and every one goes off"})
+                         "hint": f"{on} of {len(lids)} lights on. Turn it off and every one goes off"})
         items += [{**r, "menu": mid} for r in group_rows(h, mid, mtitle, lids, grouped)]
         for lid in lids:
             items += [{**r, "menu": mid} for r in light_rows(h, mid, lid)]
     if h.lights:
         on = h.on_count(list(h.lights))
         bulk.insert(0, {"id": "bulk:home", "label": "Every light in the home", "kind": "", "on": on, "total": len(h.lights),
-                        "active": on > 0, "hint": f"{on} of {len(h.lights)} lights on. Deactivate it and every one goes off"})
-    intro = {"rooms": "Each room's lights. Open a room to activate or deactivate its lights, dim them or give them a colour or a white.",
+                        "active": on > 0, "hint": f"{on} of {len(h.lights)} lights on. Turn it off and every one goes off"})
+    intro = {"rooms": "Each room's lights. Open a room to turn on or turn off its lights, dim them or give them a colour or a white.",
              "zones": "Zones are sets of lights you made in the Hue app, such as Downstairs. A light can be in several.",
-             "types": "Open a type to activate or deactivate its lights, dim them or give them a colour or a white."}[tab]
+             "types": "Open a type to turn on or turn off its lights, dim them or give them a colour or a white."}[tab]
     if not menus:
         intro += f" Your bridge has no {title.lower()} yet: make them in the Hue app."
     return {"type": "list", "title": title, "intro": intro, "menus": menus, "items": items, "bulk": bulk}
@@ -442,10 +442,10 @@ def scenes_screen(said=""):
             for s in scenes:
                 active = ((s.get("status") or {}).get("active") or "inactive") != "inactive"
                 items.append({"id": f"scene:{s['id']}", "title": name(s), "menu": gid, "on": active,
-                              "detail": f"In use in {name(g['res'])}" if active else f"Activate to show it in {name(g['res'])}",
+                              "detail": f"In use in {name(g['res'])}" if active else f"Turn on to show it in {name(g['res'])}",
                               "state": "ok" if active else "off", "state_label": "In use" if active else "Not in use", "actions": ["toggle"]})
     out = {"type": "list", "title": "Scenes", "menus": menus, "items": items,
-           "intro": "Each room's and zone's scenes, as made in the Hue app. Activate shows a scene; Deactivate turns that room's lights off."
+           "intro": "Each room's and zone's scenes, as made in the Hue app. Turn on shows a scene; Turn off turns that room's lights off."
            + ("" if menus else " Your bridge has no scenes yet: make them in the Hue app.")}
     return {**out, "said": said} if said else out
 
@@ -465,7 +465,7 @@ def scenes_post(body):
     where = name(g.get("res")) or "its room"
     if ((scene.get("status") or {}).get("active") or "inactive") != "inactive":
         if not g.get("grouped"):
-            raise hue.BridgeError(f"{where} has no group to deactivate")
+            raise hue.BridgeError(f"{where} has no group to turn off")
         bridge().put("grouped_light", g["grouped"], {"on": {"on": False}})
         said = f"{where} is off"
     else:
@@ -573,7 +573,7 @@ def schedules_screen(said=""):
         detail = ("Runs at " + r["spec"]["time"] + ", when the bridge works it out for where you live") if not nxt and r["spec"]["time"] in ("sunrise", "sunset") \
             else f"Next {nxt}" if nxt else "Has run"
         out["items"].append({"id": r["id"], "title": text, "group": "Your schedules", "on": on,
-                             "detail": detail if on else "Deactivated: it does not run until you activate it",
+                             "detail": detail if on else "Inactive: it does not run until you turn it on",
                              "state": "ok" if on else "off", "state_label": "On" if on else "Off",
                              "actions": ["toggle", "attach", "remove"],
                              "attach": {"label": "Change", "field": "The schedule in words", "value": text, "placeholder": words.EXAMPLE,
@@ -616,7 +616,7 @@ def schedules_post(body):
     if action == "toggle":
         now = (b.v1("GET", path) or {}).get("status", "enabled") == "enabled"
         b.v1("PUT", path, {"status": "disabled" if now else "enabled"})
-        return schedules_screen(f"{'Deactivated' if now else 'Activated'}: {words.describe(r['spec'])}")
+        return schedules_screen(f"{'Off' if now else 'On'}: {words.describe(r['spec'])}")
     if action == "remove":
         _delete(b, r)
         keep("schedules", [x for x in records if x["id"] != rid])
@@ -648,7 +648,7 @@ def play_screen(said=""):
                 items.append({"id": f"play:{s['id']}", "title": name(s), "group": name(g["res"]), "on": on,
                               "detail": f"Runs in {name(g['res'])} when something starts playing" if on else f"In {name(g['res'])}",
                               "state": "ok" if on else "off", "state_label": "Chosen" if on else "Not chosen", "actions": ["toggle"]})
-    intro = ("Activate one scene to run when someone starts playing something in Jellyfin. Starboard checks what is playing every "
+    intro = ("Turn one on scene to run when someone starts playing something in Jellyfin. Starboard checks what is playing every "
              "5 minutes, so the lights can change up to 5 minutes after it starts.")
     if last.get("at"):
         intro += f" Last ran {last['at']} for {last.get('title') or 'something'}."

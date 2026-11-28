@@ -73,7 +73,7 @@
         }
       ],
       "steps": [],
-      "alt": "Library clean-up's Rules, with Move items each day, deactivated, outlined",
+      "alt": "Library clean-up's Rules, with Move items each day, turned off, outlined",
       "topic": "settings",
       "page": "settings-plugin.html?id=library-cleanup"
     },
@@ -113,7 +113,7 @@
     {
       "phase": "present",
       "file": "settings-4-libraries.png",
-      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const tab = async (t) => { [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t).click(); await w(1200); }; await w(1500); await tab('Libraries'); const r = [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Activate') && b.closest('li, .row')?.textContent.includes(\"Children's films\")); r.dataset.shot = 'lib';",
+      "run": "const w = (ms) => new Promise((r) => setTimeout(r, ms)); const btn = (t, root = document) => [...root.querySelectorAll('button')].find((b) => b.textContent.trim() === t); const tab = async (t) => { [...document.querySelectorAll('[role=tab]')].find((x) => x.textContent.trim() === t).click(); await w(1200); }; await w(1500); await tab('Libraries'); const r = [...document.querySelectorAll('main button')].find((b) => b.textContent.trim().startsWith('Turn on') && b.closest('li, .row')?.textContent.includes(\"Children's films\")); r.dataset.shot = 'lib';",
       "marks": [
         {
           "t": "$[data-shot=lib]",
@@ -122,7 +122,7 @@
         }
       ],
       "steps": [],
-      "alt": "Library clean-up's Libraries, with Children's films Left alone and Activate beside it outlined",
+      "alt": "Library clean-up's Libraries, with Children's films Left alone and Turn on beside it outlined",
       "topic": "settings",
       "page": "settings-plugin.html?id=library-cleanup"
     },
@@ -165,7 +165,7 @@
         }
       ],
       "steps": [],
-      "alt": "The Holding folder card in the light theme: the band with Library clean-up's logo and Deactivated, 38.7 GB in the holding folder and what Preview would move",
+      "alt": "The Holding folder card in the light theme: the band with Library clean-up's logo and Off, 38.7 GB in the holding folder and what Preview would move",
       "topic": "dashboard-card",
       "page": "dashboard.html"
     },

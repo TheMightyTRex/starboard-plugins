@@ -674,7 +674,7 @@ def groups_page(said=None):
                       "attach": {"label": "Maintenance", "field": "Maintenance windows", "value": win.line(kept),
                                  "hint": "Such as Sunday 02:00 to 04:00; now for 2 hours. Split several with ;"}})
     out = {"type": "list", "title": "Groups and maintenance",
-           "intro": ("A group is made when a check names it with in, such as Router: ping 192.168.1.1 in Home. Deactivate a "
+           "intro": ("A group is made when a check names it with in, such as Router: ping 192.168.1.1 in Home. Turn off a "
                      "group to pause its alerts. Maintenance windows pause them at set times: its checks still run, and "
                      "the status page says Maintenance."),
            "items": items}
@@ -778,7 +778,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, f.read(), kind, {"Cache-Control": "max-age=86400"})
         if not setting("status_page", True):
             return self._send(404, "<!doctype html><html lang=\"en-GB\"><title>Status page</title><h1>Status page</h1>"
-                              "<p>The status page is deactivated in Starboard.</p></html>", "text/html; charset=utf-8", PAGE_HEADERS)
+                              "<p>The status page is off in Starboard.</p></html>", "text/html; charset=utf-8", PAGE_HEADERS)
         path = os.path.join(PAGE_DIR, "index.html")
         if not os.path.isfile(path):
             write_page()

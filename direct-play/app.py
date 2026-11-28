@@ -12,7 +12,7 @@ How it works:
     shrink    H.264 at remux bitrates: H.264 CRF 20 with a bitrate cap
     reencode  an old format (DivX, Xvid, MPEG-2, WMV, VC-1), 10-bit H.264, larger than a chosen device shows, or HEVC
               when the setting asks and no chosen device plays it: H.264 CRF 20
-  HEVC is left alone unless that setting is activated: it costs space, and Jellyfin converts it live.
+  HEVC is left alone unless that setting is on: it costs space, and Jellyfin converts it live.
 - One file at a time, at the lowest processor and disk priority, only when the schedule allows (weekends, Starboard's
   quiet hours, or any time). The file being converted always finishes; the schedule is checked between files.
 - Each output is checked (length, video, the first sound track, where sound and picture start) before it replaces
@@ -44,7 +44,7 @@ GOOD_CONTAINERS = ("mkv", "mp4", "m4v")
 LOSSLESS_KEEP = {"dts", "truehd", "flac", "opus", "vorbis", "aac", "ac3", "eac3", "mp3"}  # worth keeping beside a new track
 ORDER = ["remux", "audio", "shrink", "reencode"]
 WORDS = {"remux": "Repackage as MKV", "audio": "Add a playable sound track", "shrink": "Shrink", "reencode": "Convert to H.264"}
-KEPT = ".direct-play-originals"  # where originals go when Keep the originals is activated, in the same folder tree
+KEPT = ".direct-play-originals"  # where originals go when Keep the originals is on, in the same folder tree
 SURVEY_HOURS = 6  # a new survey at most this often while working
 TICK = 60  # the worker wakes once a minute
 CARD_SECONDS = (10, 30, 60, 300)  # Card updates every (owner, 14 November 2026): 30 seconds unless changed

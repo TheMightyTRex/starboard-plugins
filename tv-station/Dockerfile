@@ -6,7 +6,7 @@
 FROM alpine:3.21
 # Every package takes Alpine's fixed version at build, so a fix reaches the next build with no change here.
 RUN apk upgrade --no-cache && apk add --no-cache python3 ffmpeg tzdata espeak-ng
-# Lottie import (0.13.2, DASH-639): Pillow and rlottie-python, pinned, from a ready-built wheel only (never built here). A platform with no
+# Lottie import (0.13.3, DASH-639): Pillow and rlottie-python, pinned, from a ready-built wheel only (never built here). A platform with no
 # wheel installs nothing, and the page then says Lottie files are not used in this image.
 RUN apk add --no-cache py3-pillow && apk add --no-cache --virtual .pip py3-pip \
     && (pip install --no-cache-dir --break-system-packages --no-deps --only-binary=:all: --target /opt/lib rlottie-python==1.3.8 \

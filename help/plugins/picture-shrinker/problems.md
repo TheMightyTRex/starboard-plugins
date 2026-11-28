@@ -27,7 +27,7 @@ q2: What does the card say?
 3. If it stopped soon after an update, select **Roll back to** and the version you had. Read [Updates](updates.md).
 4. Still failing: go to **System**, then **Logs**, and find its name.
 
-It stops answering when it cannot read and change Jellyfin's metadata folder. If the **Space saved** page says "Jellyfin's metadata folder is not there", check Jellyfin is installed in **Settings**, then **Apps**. Then deactivate and activate Picture shrinker.
+It stops answering when it cannot read and change Jellyfin's metadata folder. If the **Space saved** page says "Jellyfin's metadata folder is not there", check Jellyfin is installed in **Settings**, then **Apps**. Then turn off and turn on Picture shrinker.
 
 ## Update it or update Starboard
 

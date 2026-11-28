@@ -1,11 +1,12 @@
 # Library clean-up: Updates
 
-Library clean-up 1.0.4 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
+Library clean-up 1.0.5 is the latest version. It needs Starboard 0.19.0 or later, with plug-in API 1.15.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.5 | 1.15 or later | Not released yet |
 | 1.0.4 | 1.15 or later | Not released yet |
 | 1.0.3 | 1.15 or later | 17 November 2026 |
 | 1.0.2 | 1.15 or later | 17 November 2026 |
@@ -40,14 +41,14 @@ Added:
 
 - **Rules:** films watched by everyone, last watched more than 90 days ago; series that ended with every episode watched; films and series nobody has watched for 12 months. Each a setting, for the libraries you choose.
 - **Always kept:** favourites, anything someone is part way through, films in a collection, and anything tagged keep.
-- **Preview** lists what would move and the space it frees. Nothing moves until you activate **Move items each day**.
+- **Preview** lists what would move and the space it frees. Nothing moves until you turn on **Move items each day**.
 - **Never deletes:** it moves each item to `media/.holding`, keeping its folders, and **Put back** returns it.
 - **Reelix and Jellyfin are told:** Reelix stops following what moves, so it is not downloaded again, and follows it again when it is put back.
 
 ## How an update is kept safe
 
 - **Before the update** Starboard asks Library clean-up to get ready. It finishes the item it is moving and starts no new run, so nothing is left half moved. If it is still working, it says "Still working. Try again in a minute" and nothing changes.
-- **After the update,** or after a Roll back, it says when it checks again, or that **Move items each day** is deactivated. The next run carries on where it stopped.
+- **After the update,** or after a Roll back, it says when it checks again, or that **Move items each day** is off. The next run carries on where it stopped.
 - Starboard waits for the new version to answer. If it does not, Starboard goes back to the version you had by itself, with your settings as they were.
 - Your settings, its folder and what is in the holding folder are kept.
 

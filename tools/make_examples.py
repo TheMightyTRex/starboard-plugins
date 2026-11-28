@@ -12,7 +12,7 @@ import sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from examples_src import (COMMON, EXAMPLES, IMAGE_VERSION, NEW_IN_IMAGE, TEXT_PATCH, TEXT_PATCH_CHANGE, TEXT_PATCH_DATE,  # noqa: E402
+from examples_src import (COMMON, EXAMPLES, IMAGE_VERSION, NEW_IN_IMAGE, TEXT_PATCH, TEXT_PATCH_CHANGE, TEXT_PATCH_DATE, TEXT_PATCH_2, TEXT_PATCH_2_CHANGE, TEXT_PATCH_2_DATE,  # noqa: E402
                           UPDATE_STEPS, VERSION, changes_for)
 import make_logos  # noqa: E402
 
@@ -115,6 +115,10 @@ def main():
             major, minor, patch = (int(x) for x in m["version"].split("."))
             m["version"] = f"{major}.{minor}.{patch + 1}"
             m["changes"] = [{"version": m["version"], "date": TEXT_PATCH_DATE, "changed": [TEXT_PATCH_CHANGE]}] + m["changes"]
+        if pid in TEXT_PATCH_2:  # 28 November 2026: the next patch version again, with its own entry
+            major, minor, patch = (int(x) for x in m["version"].split("."))
+            m["version"] = f"{major}.{minor}.{patch + 1}"
+            m["changes"] = [{"version": m["version"], "date": TEXT_PATCH_2_DATE, "changed": [TEXT_PATCH_2_CHANGE]}] + m["changes"]
         if pid in UPDATE_STEPS:
             m["update"] = UPDATE_STEPS[pid]
         order = ["manifest_version", "id", "name", "version", "description", "author", "licence", "homepage", "support_url",
@@ -150,6 +154,10 @@ def main():
 
 # The collection's catalogue (DASH-318): every plug-in here, which Starboard's Catalogue page lists. "published" is
 # worked out from each manifest by published() below.
+# The categories ("kind" in catalogue.json), in the order Starboard's Catalogue and Stallboard list them. A plug-in picks one in
+# KINDS below. A category with no plug-in is not shown anywhere, so "AI assistants" (28 November 2026, DASH-626: "Ask an assistant
+# about your server, or let an AI tool manage Starboard, with your own model or key") stays hidden until the first one is listed.
+CATEGORIES = ["Appearance", "Accessibility", "Jellyfin", "Downloads", "Network", "Home", "System", "Books", "Photos", "AI assistants", "Apps you can add"]
 KINDS = {"vpn-check": "Downloads", "line-speed": "Network", "watching-now": "Jellyfin", "most-watched": "Jellyfin",
          "library-health": "Jellyfin", "dns-blocking": "Network", "home-assistant": "Home", "outside-services": "Network",
          "download-summary": "Downloads", "disk-forecast": "System", "remote-access": "Network", "seasonal-styles": "Appearance", "styles": "Appearance",
@@ -279,6 +287,14 @@ NOTES = {
 }
 
 
+def category(pid):
+    """A plug-in's category: one of CATEGORIES, or the build stops (a typo would make a category of its own)."""
+    kind = KINDS.get(pid, "Other")
+    if kind not in CATEGORIES:
+        raise SystemExit(f"{pid}: category {kind!r} is not one of: {', '.join(CATEGORIES)}. Add it to KINDS, or the new category to CATEGORIES.")
+    return kind
+
+
 def write_catalogue():
     rows = []
     for pid in sorted(os.listdir(ROOT)):
@@ -286,7 +302,7 @@ def write_catalogue():
         if not os.path.isfile(mf):
             continue
         m = json.load(open(mf, encoding="utf-8"))
-        rows.append({"id": m["id"], "name": m["name"], "description": m["description"], "kind": KINDS.get(pid, "Other"),
+        rows.append({"id": m["id"], "name": m["name"], "description": m["description"], "kind": category(pid),
                      "author": m["author"], "permissions": m["permissions"], "version": m["version"], "starboard_api": m["starboard_api"],
                      "manifest": f"https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/{pid}/starboard-plugin.json",
                      "published": published(m), "recommended": pid in RECOMMENDED})

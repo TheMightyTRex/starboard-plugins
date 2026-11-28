@@ -30,7 +30,7 @@ A setting it needs is empty, or it has never been set up.
 
 1. On its tab, select **Finish setting up**. The first setting it needs has the focus.
 2. Fill it in and save.
-3. Select **Activate**.
+3. Select **Turn on**.
 
 ## 2. Start it again
 

@@ -1,4 +1,4 @@
-"""Lottie import (0.13.2, DASH-639): a Lottie animation (the JSON that After Effects, LottieFiles and other tools export) used as a short
+"""Lottie import (0.13.3, DASH-639): a Lottie animation (the JSON that After Effects, LottieFiles and other tools export) used as a short
 title clip or a bumper. The JSON is data, never run: it is checked first (size, no expressions, no links, no images or text,
 a size and length that fit), its colours are swapped for the channel's two colours, and rlottie draws the frames, which FFmpeg
 encodes with the name drawn over them. Nothing leaves the home.

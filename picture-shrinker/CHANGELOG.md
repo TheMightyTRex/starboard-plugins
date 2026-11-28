@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.4 (28 November 2026)
+
+### Changed
+- Turn on and turn off: the text and the help pages now say turn on and turn off. How it works has not changed.
+
 ## 1.2.2 (17 November 2026)
 
 ### Added
