@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Changed
+- The status page's copy of the design system has the new wizard and page parts (28 November 2026): styles only, nothing on the status page changes.
 - The status page's copy of the design system also has the notice fix: a notice with buttons keeps its words readable on a phone.
 - The status page's copy of the TRex Design System (`ds.css`) is up to date with the library: the second level menu row condenses when the names do not fit, and the unused cover card, cover actions and book row styles are gone. No change to what the page shows.
 
