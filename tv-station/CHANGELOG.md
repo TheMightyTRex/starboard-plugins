@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.16.0 (not released yet)
+
+### Added
+- Break styles (DASH-644, owner, 28 November 2026): Quiet (1 minute, up to 2), Classic TV (2 minutes, up to 3 and one short video of your own) and Busy (5 minutes, up to 6, a short video of your own and trailers of the channel's films), in styles.py. A style sets only the break values a channel already has, so the plan is made by the code it always used.
+- Station break style in What plays between programmes, and a channel's own style in words: Break style on the card says Uses the station style: Classic TV, a style of its own, or Your own settings.
+- Use the station style is a choice on the channel. A channel that moves off Your own settings keeps its values, and Your own settings brings them back.
+- A new channel uses the station style from the start.
+
+### Changed
+- The old break rows are under More about breaks, a sub menu of the channel (id channel~breaks). A partial answer for a channel now covers that sub menu too.
+- Migration: a channel saved before 0.12.0 has no style. It uses the station style when it never changed a break setting and has Your own settings when it did. Reading a style writes nothing, and no value changes until you choose a style.
+- Tests for the styles, the migration and the sub menu are in tests/test_tv_station_styles.py.
+- The break length of Classic TV is 2 minutes, not about 1 minute: Quiet is 1 minute. A decision for the owner: the numbers are in styles.py.
+
 ## 0.15.0 (not released yet)
 
 ### Changed

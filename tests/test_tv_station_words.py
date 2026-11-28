@@ -105,7 +105,7 @@ class TheClipsPage(App):
     def test_the_groups_follow_the_task(self):
         page = self.app.clips_page()
         self.assertEqual(page["title"], "What plays between programmes")
-        self.assertEqual(self.groups(page), ["Start here", "Short title clips", "Clips", "Music", "Waiting screen", "More: your own short videos",
+        self.assertEqual(self.groups(page), ["Start here", "Break style", "Short title clips", "Clips", "Music", "Waiting screen", "More: your own short videos",
                                              "More: public messages", "More: background loops"])
         self.assertNotIn("Add", self.groups(page))
 

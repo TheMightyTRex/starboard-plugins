@@ -42,6 +42,7 @@ import sbplugin
 import stylepage
 import schedule
 import stream
+import styles
 import three_d
 import titles
 import tv_words
@@ -210,12 +211,19 @@ def find(s, cid):
 
 
 def new_channel(s, name):
+    """A new channel (0.12.0: it uses the station's style, and takes its values when one is chosen)."""
+    ch = _new_channel(s, name)
+    styles.apply(ch, s.get("style") or "")
+    return ch
+
+
+def _new_channel(s, name):
     cid = secrets.token_hex(4)
     colour = list(COLOURS)[len(s["channels"]) % len(COLOURS)]
     return {"id": cid, "name": name.strip()[:40] or "Channel", "colour": colour, "on": True, "sources": [],
             "order": "in_order", "run": 1, "start_on": 30, "break_seconds": 0, "seed": secrets.randbits(48),
             "idents": "both", "ident_order": "in_order", "trailers": False, "clips": "both", "dog": {},
-            "own": {"idents": [], "clips": [], "sources": []}, "eras": [], "lineup_hash": "", "trailer_clips": []}
+            "own": {"idents": [], "clips": [], "sources": []}, "eras": [], "lineup_hash": "", "trailer_clips": [], "style": ""}
 
 
 # Jellyfin -----------------------------------------------------------------------------------------------------------
@@ -1414,7 +1422,7 @@ PICK_KINDS = (("series", "Series"), ("film", "Films"), ("collection", "Collectio
 
 
 def channel_rows(s, ch, cfg, base, now):
-    """One channel's menu row and its items, card by card."""
+    """One channel's menu row, its sub menus and its items, card by card. Returns (menus, items)."""
     cid, n = ch["id"], ch["number"]
     sched = sched_of(ch)
     a = sched.airing(now)
@@ -1423,6 +1431,8 @@ def channel_rows(s, ch, cfg, base, now):
     if not on:
         detail = "Off air. " + detail
     menu = {"id": cid, "title": f"{n}  {ch['name']}", "group": "Channels", "detail": detail[:200], "active": on}
+    more_menu = {"id": f"{cid}~breaks", "title": "More about breaks", "parent": cid, "group": "Breaks", "detail":
+                 "The settings a style sets, one by one. Changing one gives this channel its own settings."}
     items = []
 
     def row(key, title, group, **more):
@@ -1475,24 +1485,42 @@ def channel_rows(s, ch, cfg, base, now):
                 "hint": "Weekdays 18:00 to 23:00, weekends 12:00 to 23:00, on the quarter hour"},
         **({"link": grid_link} if grid_link else {}))
 
-    # Breaks
+    # Breaks: one style, then the old rows under More about breaks (0.12.0, DASH-644 and DASH-645)
     g = "Breaks"
-    row("start_on", "Programmes start", g, choice=_choice("Start", ch.get("start_on"), START_ON),
+    sub = f"{cid}~breaks"
+    st_id = styles.style_of(ch)
+    station_style = s.get("style") or ""
+    station_name_ = styles.name(station_style) or "not chosen yet"
+    options = {"": f"Use the station style: {styles.name(station_style) or 'none yet'}"[:40], **{k: v["name"] for k, v in styles.PRESETS.items()},
+               styles.CUSTOM: styles.OWN}
+    if st_id == "":
+        said_style = (f"Uses the station style: {station_name_}. " + (styles.words(station_style) if station_style else
+                      "No station style is chosen yet, so it plays as it always has."))
+    elif st_id == styles.CUSTOM:
+        said_style = "Has its own settings, set one by one under More about breaks. Choose a style to replace them. They are kept, and Your own settings brings them back."
+    else:
+        said_style = f"Has its own style: {styles.name(st_id)}. " + styles.words(st_id)
+    row("style", "Break style", g, choice=_choice("Break style", st_id, options), detail=said_style[:200])
+
+    def brow(key, title, group, **more):
+        row(key, title, group, menu=sub, **more)
+
+    brow("start_on", "Programmes start", g, choice=_choice("Start", ch.get("start_on"), START_ON),
         detail="On the quarter, half or whole hour, the break fills the time to the next one.")
-    row("break_seconds", "Break between programmes", g, choice=_choice("Break", ch.get("break_seconds"), BREAKS),
+    brow("break_seconds", "Break between programmes", g, choice=_choice("Break", ch.get("break_seconds"), BREAKS),
         detail="Added after each programme. With programmes on the half hour, the break also fills the rest of the slot.")
-    row("mid_break_seconds", "Breaks inside programmes", g, choice=_choice("Breaks inside", str(ch.get("mid_break_seconds") or 0), MID_BREAKS),
+    brow("mid_break_seconds", "Breaks inside programmes", g, choice=_choice("Breaks inside", str(ch.get("mid_break_seconds") or 0), MID_BREAKS),
         detail="Where a programme fades to black for its own short videos, found in quiet hours. Their time comes from the break after it.")
     how_now, per_30, per_film = place_choice(ch)
-    row("place_how", "Where breaks go inside a programme", g, choice=_choice("Where", how_now, PLACE_HOW),
+    brow("place_how", "Where breaks go inside a programme", g, choice=_choice("Where", how_now, PLACE_HOW),
         detail="Found once for each programme, in quiet hours. A break with no place found goes to its set time.")
-    row("breaks_per_30", "Breaks in each 30 minutes", g, choice=_choice("Breaks in 30 minutes", str(per_30 or ""), PER_30),
+    brow("breaks_per_30", "Breaks in each 30 minutes", g, choice=_choice("Breaks in 30 minutes", str(per_30 or ""), PER_30),
         detail="This many for every 30 minutes, at least 1. Automatic is 1 up to 40 minutes, 2 up to 75 minutes and 3 after that. A film has its own number.")
-    row("breaks_per_film", "Breaks in a film", g, choice=_choice("Breaks in a film", str(per_film or ""), PER_FILM),
+    brow("breaks_per_film", "Breaks in a film", g, choice=_choice("Breaks in a film", str(per_film or ""), PER_FILM),
         detail="How many breaks a film has, whatever its length. Their time comes from the break after it, so a film with many needs a long one.")
     for which in breakgrid.GRIDS:
         saved = breakgrid.grid_of(ch, which) is not None
-        row(f"grid-{which}", f"{breakgrid.GRID_WORDS[which]} grid", g, state="ok" if saved else "unknown",
+        brow(f"grid-{which}", f"{breakgrid.GRID_WORDS[which]} grid", g, state="ok" if saved else "unknown",
             state_label="Your grid" if saved else "Standard order",
             detail=("What plays between one programme and the next: " if which == "between" else "What plays in a break inside a programme: ") +
                    ("your grid is in use." if saved else "the order it has always had. Open the grid to change it.") +
@@ -1500,31 +1528,31 @@ def channel_rows(s, ch, cfg, base, now):
             **({"link": {"url": f"{base}/t/{s['token']}/breaks?channel={cid}&grid={which}",
                          "label": f"Open the {GRID_LINK[which]} grid for {ch['name']}"}} if base else {}))
     both = {"none": "None", "own": "This channel's", "shared": "The station's", "both": "This channel's and the station's"}
-    row("idents", "Short title clips", g, choice=_choice("Short title clips", ch.get("idents"), both))
-    row("ident_order", "Short title clips play", g, choice=_choice("Short title clips play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
-    row("trailers", "Trailers", g, choice=_choice("Trailers", "on" if ch.get("trailers") else "off", {"off": "None", "on": "Trailers of its films, from Jellyfin"}))
-    row("clips", "Your clips", g, choice=_choice("Clips", ch.get("clips"), both))
-    row("per_break", "Coming-up trailers and clips in each break", g, choice=_choice("In each break", str(ch.get("per_break") or 3), PER_BREAK),
+    brow("idents", "Short title clips", g, choice=_choice("Short title clips", ch.get("idents"), both))
+    brow("ident_order", "Short title clips play", g, choice=_choice("Short title clips play", ch.get("ident_order"), {"in_order": "In order", "random": "In a random order"}))
+    brow("trailers", "Trailers", g, choice=_choice("Trailers", "on" if ch.get("trailers") else "off", {"off": "None", "on": "Trailers of its films, from Jellyfin"}))
+    brow("clips", "Your clips", g, choice=_choice("Clips", ch.get("clips"), both))
+    brow("per_break", "Coming-up trailers and clips in each break", g, choice=_choice("In each break", str(ch.get("per_break") or 3), PER_BREAK),
         detail="Each plays once at most, in a random order, after the very short title clip. The waiting screen fills the rest of the break.")
-    row("extras", "Your own short videos", g, choice=_choice("Your own short videos", ch.get("extras") or "both", both),
+    brow("extras", "Your own short videos", g, choice=_choice("Your own short videos", ch.get("extras") or "both", both),
         detail="One plays at random after the coming-up trailers in each break, when it fits.")
     own = ch.get("own") or {}
     for role in ("idents", "clips", "extras", "psa"):
         for c in own.get(role) or []:
-            row(f"clip-{c['id']}", f"{ROLES[role]}: {c['title']}", g, detail=f"{round(c['dur'])} seconds", actions=["remove"], state_label="Ready")
-    row("add-ident", "Add a short title clip", g, actions=["attach"], state="unknown", state_label="Add one",
+            brow(f"clip-{c['id']}", f"{ROLES[role]}: {c['title']}", g, detail=f"{round(c['dur'])} seconds", actions=["remove"], state_label="Ready")
+    brow("add-ident", "Add a short title clip", g, actions=["attach"], state="unknown", state_label="Add one",
         attach={"label": "Add a short title clip", "field": "Short title clip", "hint": "A short video, up to 60 MB, or the name of a Jellyfin collection of them",
                 "accept": ",".join(CLIP_TYPES)})
-    row("add-clip", "Add a clip", g, actions=["attach"], state="unknown", state_label="Add one",
+    brow("add-clip", "Add a clip", g, actions=["attach"], state="unknown", state_label="Add one",
         attach={"label": "Add a clip", "field": "Clip", "hint": "A trailer or clip, up to 60 MB, or the name of a Jellyfin collection of them",
                 "accept": ",".join(CLIP_TYPES)})
-    row("psa", "Public messages", g, choice=_choice("Public messages", ch.get("psa") or "both", both),
+    brow("psa", "Public messages", g, choice=_choice("Public messages", ch.get("psa") or "both", both),
         detail="Public service announcements for the Public message item in the break layouts: this channel's, the station's or both.")
-    row("add-psa", "Add a public message", g, actions=["attach"], state="unknown", state_label="Add one",
+    brow("add-psa", "Add a public message", g, actions=["attach"], state="unknown", state_label="Add one",
         detail="A video with sound, up to 10 minutes and 90 MB. It is checked when it is added.",
         attach={"label": "Upload a public message", "field": "Public message", "hint": "A video with a picture and a sound track, up to 10 minutes and 90 MB",
                 "accept": ",".join(CLIP_TYPES)})
-    row("add-extra", "Add a short video of your own", g, actions=["attach"], state="unknown", state_label="Add one",
+    brow("add-extra", "Add a short video of your own", g, actions=["attach"], state="unknown", state_label="Add one",
         detail="As many as you like. One plays at random after the coming-up trailers in each break.",
         attach={"label": "Upload a short video of your own", "field": "Short video of your own", "hint": "A video of up to 10 minutes and 90 MB",
                 "accept": ",".join(CLIP_TYPES)})
@@ -1643,7 +1671,7 @@ def channel_rows(s, ch, cfg, base, now):
     else:
         row("played-none", "Nothing played yet", g, state="unknown", state_label="Empty",
             detail="Once someone watches it in Jellyfin's Live TV, what it plays is listed here.")
-    return menu, items
+    return [menu, more_menu], items
 
 
 PLAYED_SHOWN = 5  # programmes listed in Played on this channel
@@ -1663,11 +1691,11 @@ def channels_page(said=None, now=None, only=None):
     for ch in numbered(s):
         if only and ch["id"] != only:
             continue
-        m, its = channel_rows(s, ch, cfg, base, now)
-        menus.append(m)
+        ms, its = channel_rows(s, ch, cfg, base, now)
+        menus += ms
         items += its
     if only:
-        out = {"type": "list", "title": "Channels", "partial": {"menus": [only]}, "menus": menus, "items": items}
+        out = {"type": "list", "title": "Channels", "partial": {"menus": [m["id"] for m in menus]}, "menus": menus, "items": items}
         if said:
             out["said"] = said[:200]
         return out
@@ -1907,6 +1935,9 @@ def channels_post(body, now=None):
         elif key == "forget-played" and action == "remove":
             record().forget(cid)
             said = f"{ch['name']} has forgotten what it played. Jellyfin's watched marks are as they were"
+        elif action == "choose" and key == "style":
+            said = channel_style(s, ch, value)
+            refresh = True
         elif action == "choose":
             said = choose(ch, key, value)
             refresh = key in ("order", "run", "start_on", "break_seconds", "trailers")
@@ -1925,8 +1956,23 @@ def channels_post(body, now=None):
     return out
 
 
+def channel_style(s, ch, value):
+    """Moves a channel to a style (0.12.0): the station's, one of its own, or its own settings. Its own settings are kept first."""
+    to = "" if value is None else str(value)
+    was = styles.style_of(ch)
+    if to not in ("", styles.CUSTOM) and to not in styles.PRESETS:
+        raise ValueError("That is not one of the styles")
+    if to == "" and not s.get("style"):
+        styles.move(ch, "", "")
+        return "Saved. No station style is chosen yet, so it plays as it did"
+    styles.move(ch, to, s.get("style") or "")
+    kept = " Its own settings are kept: choose Your own settings to bring them back" if was == styles.CUSTOM and to != styles.CUSTOM else ""
+    return "Saved." + kept
+
+
 def choose(ch, key, value):
     v = "" if value is None else str(value)
+    before = styles.values_of(ch)
     if key == "colour" and v in COLOURS:
         ch["colour"] = v
     elif key == "order" and v in ("in_order", "shuffle"):
@@ -1983,6 +2029,9 @@ def choose(ch, key, value):
             ch.setdefault("dog", {})[k] = v
     else:
         raise ValueError("That is not one of the choices")
+    if styles.values_of(ch) != before and styles.style_of(ch) != styles.CUSTOM:
+        styles.edited(ch)  # a break setting changed by hand: this channel now has its own settings
+        return "Saved. It now has its own settings, not the style"
     return "Saved"
 
 
@@ -2162,6 +2211,15 @@ def clips_page(said=None):
                       "state": "ok" if using else "unknown", "state_label": "In use" if using else "Not used",
                       "detail": "Adds ready-made branding with 3 short title clips, a logo with music and a Coming up next card. You can stop using it any time."})
 
+    st = s.get("style") or ""
+    using = [c for c in s["channels"] if styles.style_of(c) == ""]
+    own = len(s["channels"]) - len(using)
+    who = (f"{sbplugin.plural(len(using), 'channel')} use it" + (f", and {own} have their own" if own else "")) if s["channels"] else "No channels yet"
+    items.append({"id": "station-style", "title": "Station break style", "group": "Break style", "state": "ok" if st else "unknown",
+                  "state_label": "Saved" if st else "Not chosen yet",
+                  "detail": ((styles.words(st) + " " if st else "A style sets the break after each programme for every channel that uses the station style. ") + who + ".")[:200],
+                  "choice": _choice("Break style", st, {"": "Not chosen yet", **{k: v["name"] for k, v in styles.PRESETS.items()}})})
+
     def listed(role, group):
         for c in sh.get(role) or []:
             items.append({"id": f"{role}:{c['id']}", "title": c["title"][:120], "detail": f"{round(c['dur'])} seconds",
@@ -2238,6 +2296,7 @@ def clips_post(body):
     action, rid, value = body.get("action"), str(body.get("id") or ""), body.get("value")
     if action == "toggle" and rid == "use-example":  # the empty page's Use the example files: the example branding, as in Branding
         return clips_page((pack_post({"action": "toggle", "id": "example"}) or {}).get("said"))
+    soon = []
     with _lock:
         s = state()
         if action == "dismiss" and explain.dismiss(s, rid):
@@ -2260,6 +2319,12 @@ def clips_post(body):
         elif action == "detach" and rid == "holding":
             drop_holding(s.pop("holding", None))
             said = "The station's waiting screen is removed. Breaks end on Coming up next cards, unless a channel has its own waiting screen"
+        elif action == "choose" and rid == "station-style" and (str(value) in styles.PRESETS or str(value) == ""):
+            s["style"] = str(value)
+            changed, own = styles.follow(s["channels"], str(value)) if value else (0, 0)
+            said = (f"Station break style: {styles.name(str(value))}. Saved. {sbplugin.plural(changed, 'channel')} changed"
+                    + (f", and {own} with their own style were left as they are" if own else "")) if value else "Station break style: not chosen. Every channel keeps its settings"
+            soon = [c["id"] for c in s["channels"]] if changed else []
         elif action == "choose" and rid == "holding-words" and str(value) in dog.HOLDING_WORDS:
             s["holding_words"] = str(value)
             said = f"Words on the waiting screen: {dog.HOLDING_WORDS[str(value)]}. Saved"
@@ -2269,6 +2334,8 @@ def clips_post(body):
         else:
             raise ValueError("That cannot be changed here")
         save(s)
+    for cid in soon:
+        refresh_soon(cid)
     return clips_page(said)
 
 
