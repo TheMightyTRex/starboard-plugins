@@ -488,7 +488,7 @@ class PacksInTheApp(unittest.TestCase):
         app.channels_post({"action": "add", "value": "Comedy"}, now=NOW)
         page = app.pack_page()
         ids = [it["id"] for it in page["items"]]
-        for want in ("station", "example", "dl-template", "dl-coming-next", "dl-promo", "dl-logo", "promo-none"):
+        for want in ("station", "branding", "dl-template", "dl-coming-next", "dl-promo", "dl-logo", "promo-none"):
             self.assertIn(want, ids)
         token = app.state()["token"]
         dl = {it["id"]: it for it in page["items"]}
