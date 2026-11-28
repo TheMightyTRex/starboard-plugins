@@ -13,8 +13,10 @@
   themeSel.value = theme; paint(theme);
   themeSel.addEventListener("change", () => { paint(themeSel.value); try { localStorage.setItem("tvbreaks-theme", themeSel.value); } catch { /* private */ } });
 
-  const S = { kit: null, channels: [], busy: false, playing: false, step: "add", error: "", note: "", to: "station", sameAs: "", poll: 0 };
-  const PATHS = [{ id: "import", label: "Import a kit" }];
+  const S = { kit: null, channels: [], busy: false, playing: false, step: "path", error: "", note: "", to: "station", sameAs: "", poll: 0, mode: "", pv: 0 };
+  const PATHS = [
+    { id: "make", label: "Make a style here (recommended)", line: "Choose a style, enter your channel's name and two colours, and Starboard draws the title clips and cards on your own server. 4 steps." },
+    { id: "import", label: "Import a kit", line: "Add the video and picture files you made in Canva, Figma or another tool, or a zip of them. 5 steps." }];
 
   const h = (tag, attrs, ...kids) => {
     const el = document.createElement(tag);
@@ -44,8 +46,10 @@
   function remember(id) { try { if (id) localStorage.setItem("tvstyle-kit", id); else localStorage.removeItem("tvstyle-kit"); } catch { /* private */ } }
   function take(o) { S.kit = o.kit; remember(o.kit && o.kit.id); S.channels = o.channels || S.channels; S.playing = !!o.playing; if (o.said) S.note = o.said; }
 
-  // The steps for this kit: a ready made pack in a zip leaves out What is each file.
+  // The steps for this job: a ready made pack in a zip leaves out What is each file.
+  const mode = () => (S.kit && S.kit.mode) || S.mode || "import";
   function steps() {
+    if (mode() === "make") return [["style", "Choose a style"], ["details", "Name and colours"], ["make", "Make the style"], ["use", "Use the style"]];
     const ready = S.kit && S.kit.ready === "pack";
     return ready ? [["add", "Add your files"], ["where", "Where did this pack come from?"], ["make", "Name it and make the branding"], ["use", "Use the branding"]]
       : [["add", "Add your files"], ["what", "What is each file?"], ["where", "Where did each file come from?"], ["make", "Name it and make the branding"], ["use", "Use the branding"]];
@@ -57,10 +61,10 @@
 
   function frame(title, body, foot) {
     const list = steps(), i = at(), n = list.length;
-    const words = `Import a kit · step ${i + 1} of ${n} · ${title}`;
+    const words = `${mode() === "make" ? "Make a style here" : "Import a kit"} · step ${i + 1} of ${n} · ${title}`;
     return h("div", { class: "wizard-main" },
       h("div", { class: "meter wizard-progress" }, h("div", { class: "meter__label" }, h("span", {}, words), h("span", { class: "numeric" }, i + 1 === n ? "Last step" : `${n - i - 1} to go`)),
-        h("div", { class: "progress", role: "progressbar", "aria-label": "Progress through Import a kit", "aria-valuemin": "1", "aria-valuemax": String(n), "aria-valuenow": String(i + 1),
+        h("div", { class: "progress", role: "progressbar", "aria-label": `Progress through ${mode() === "make" ? "Make a style here" : "Import a kit"}`, "aria-valuemin": "1", "aria-valuemax": String(n), "aria-valuenow": String(i + 1),
           "aria-valuetext": `Step ${i + 1} of ${n}: ${title}` }, h("span", { style: `width:${Math.round(((i + 1) / n) * 100)}%` }))),
       h("div", { class: "wizard" }, h("div", { class: "stack-4" }, h("h2", { tabindex: "-1", id: "step-h" }, title), S.error ? notice("danger", "That did not work", [S.error]) : null, body), foot));
   }
@@ -68,7 +72,7 @@
     const first = at() === 0;
     return h("div", { class: "wizard__foot" },
       next ? h("button", { class: "btn btn--primary", type: "button", disabled: !canNext, on: { click: next } }, nextLabel || "Continue") : null,
-      first ? null : h("button", { class: "btn", type: "button", on: { click: () => move(-1) } }, "Back"));
+      first && PATHS.length < 2 ? null : h("button", { class: "btn", type: "button", on: { click: () => (first ? go("path") : move(-1)) } }, "Back"));
   }
 
   // 1 Add
@@ -208,6 +212,114 @@
     }, 1500);
   }
 
+  // 0 Which job
+  function pathStep() {
+    const cur = S.mode || "make";
+    const body = [h("p", { class: "muted" }, "Both ways make your channel's branding: short title clips, bumpers, the cards and the on-screen logo. Nothing is sent anywhere."),
+      h("fieldset", { class: "option-cards" }, h("legend", { class: "visually-hidden" }, "How do you want to start?"),
+        PATHS.map((p) => h("label", { class: "option-card" }, h("input", { type: "radio", name: "path", value: p.id, checked: p.id === cur, on: { change: () => { S.mode = p.id; } } }), h("strong", {}, p.label), h("small", {}, p.line))))];
+    return h("div", { class: "wizard-main" }, h("div", { class: "wizard" }, h("div", { class: "stack-4" }, h("h2", { tabindex: "-1", id: "step-h" }, "How do you want to start?"), S.error ? notice("danger", "That did not work", [S.error]) : null, body),
+      h("div", { class: "wizard__foot" }, h("button", { class: "btn btn--primary", type: "button", id: "path-go", on: { click: choosePath } }, "Continue"))));
+  }
+  async function choosePath() {
+    S.mode = S.mode || "make";
+    try {
+      if (S.mode === "make") {
+        const o = await op({ op: "new" }); take(o);
+        take(await op({ op: "set", kit: o.kit.id, mode: "make" }));
+        go("style");
+      } else go("add");
+    } catch (e) { S.error = e.message; render(true); }
+  }
+
+  // Make: 1 Choose a style
+  function styleStep() {
+    const k = S.kit;
+    if (!k.style) k.style = k.styles[0].id;  // a good answer is already chosen
+    const body = [h("p", { class: "muted" }, "Each style draws 4 short title clips, 2 bumpers, the background for the Coming up next card, the background for coming-up trailers and your logo, from your channel's name and two colours."),
+      h("fieldset", { class: "option-cards" }, h("legend", { class: "visually-hidden" }, "Style"),
+        k.styles.map((st, i) => h("label", { class: "option-card" }, h("input", { type: "radio", name: "style", value: st.id, checked: st.id === k.style, on: { change: () => { k.style = st.id; } } }), h("strong", {}, st.name + (i === 0 ? " (recommended)" : "")), h("small", {}, st.blurb))))];
+    return frame("Choose a style", body, foot(async () => {
+      if (!k.style) { S.error = "Choose a style."; return render(true); }
+      try { take(await op({ op: "set", kit: k.id, style: k.style })); move(1); } catch (e) { S.error = e.message; render(true); }
+    }, "Continue to name and colours"));
+  }
+
+  // Make: 2 Name and colours, with a still to look at first
+  function detailsStep() {
+    const k = S.kit;
+    const name = h("input", { class: "input", id: "name", maxlength: 40, value: k.name || "", "aria-describedby": "name-h" });
+    const c1 = h("input", { type: "color", class: "input", id: "c1", value: k.colours[0] }), c2 = h("input", { type: "color", class: "input", id: "c2", value: k.colours[1] });
+    const still = h("input", { type: "checkbox", id: "still", checked: !!k.still });
+    const pick = h("input", { type: "file", id: "logo", class: "input", accept: ".png" });
+    const pics = h("div", { class: "pictures", id: "pics" }, [["title", "A short title clip"], ["card", "The Coming up next card"], ["bumper", "A bumper (half way through)"]].map(([p, t]) =>
+      h("figure", {}, h("img", { id: `pv-${p}`, alt: `${t}, drawn from your name and colours`, width: 320, height: 180 }), h("figcaption", { class: "hint" }, t))));
+    const refresh = () => { clearTimeout(S.pv); S.pv = setTimeout(drawPictures, 500); };
+    [name, c1, c2].forEach((e) => e.addEventListener("input", refresh));
+    const body = [
+      h("div", { class: "field" }, h("label", { for: "name" }, "Channel name"), h("p", { class: "hint", id: "name-h" }, "Up to 40 characters."), name),
+      h("div", { class: "colours" }, h("div", { class: "field" }, h("label", { for: "c1" }, "Main colour"), c1), h("div", { class: "field" }, h("label", { for: "c2" }, "Second colour"), c2)),
+      h("p", { class: "hint" }, "The words are black or white. If they would be hard to read on a colour, Starboard makes that colour a little darker or lighter, so they reach 7 to 1."),
+      h("div", { class: "field" }, h("label", { for: "logo" }, "Your logo (optional)"), h("p", { class: "hint", id: "logo-h" }, k.logo ? `Added: ${k.logo}. Choose another to change it.` : "A PNG with a clear background. With none, your channel's name is drawn as the logo."), pick,
+        h("div", { class: "row" }, h("button", { class: "btn", type: "button", on: { click: () => addLogo(pick.files) } }, "Add the logo"), k.logo ? h("button", { class: "btn", type: "button", on: { click: dropLogo } }, "Take the logo out") : null)),
+      h("div", { class: "field" }, h("label", { class: "check" }, still, " Make the clips with no movement"), h("p", { class: "hint" }, "For people who ask for it. The same words, held still.")),
+      h("h3", {}, "How it will turn out"), h("p", { class: "hint", id: "pv-note", role: "status" }, "Drawn from your words and colours, not video. They change when you change a choice."), pics,
+    ];
+    setTimeout(drawPictures, 50);
+    return frame("Name and colours", body, foot(async () => {
+      try { take(await op({ op: "set", kit: k.id, name: name.value.trim(), colours: [c1.value, c2.value], still: still.checked })); if (!S.kit.name) throw new Error("Give the channel a name."); move(1); }
+      catch (e) { S.error = e.message; render(true); }
+    }, "Continue to making it"));
+  }
+  async function drawPictures() {
+    const n = $("name"); if (!n || !$("pics")) return;
+    const q = (p) => `style/api/preview?style=${encodeURIComponent(S.kit.style)}&name=${encodeURIComponent(n.value)}&c1=${encodeURIComponent($("c1").value)}&c2=${encodeURIComponent($("c2").value)}&part=${p}`;
+    const mine = ++S.pvn || (S.pvn = 1);
+    const note = $("pv-note");
+    for (const p of ["title", "card", "bumper"]) {
+      if (mine !== S.pvn || !$(`pv-${p}`)) return;
+      try {
+        const r = await fetch(q(p));
+        if (!r.ok) { let m = "The picture could not be drawn."; try { m = (await r.json()).error || m; } catch { /* not JSON */ } if (note) note.textContent = m; return; }
+        const url = URL.createObjectURL(await r.blob()); const img = $(`pv-${p}`); if (img) { const old = img.src; img.src = url; if (old.startsWith("blob:")) URL.revokeObjectURL(old); }
+      } catch { if (note) note.textContent = "The picture could not be drawn."; return; }
+    }
+    if (note && mine === S.pvn) note.textContent = "Drawn from your words and colours, not video. The pictures are up to date.";
+  }
+  async function addLogo(fl) {
+    if (!fl || !fl.length) { S.error = "Choose a PNG first."; return render(true); }
+    try { const f = fl[0]; take(await api(`style/api/upload?kit=${encodeURIComponent(S.kit.id)}&name=${encodeURIComponent(f.name)}`, { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: f })); say("Logo added"); S.error = ""; }
+    catch (e) { S.error = e.message; }
+    render(true);
+  }
+  async function dropLogo() { try { take(await op({ op: "set", kit: S.kit.id, drop_logo: true })); say("Logo taken out"); } catch (e) { S.error = e.message; } render(true); }
+
+  // Make: 3 Make the style
+  function makeStyleStep() {
+    const k = S.kit, job = k.job || {}, res = k.result;
+    const st = k.styles.find((x) => x.id === k.style) || { name: "" };
+    const body = [
+      h("div", { class: "table-wrap" }, h("table", { class: "table" }, h("caption", { class: "visually-hidden" }, "What will be made"), h("tbody", {},
+        [["Style", st.name], ["Channel name", k.name], ["Colours", `${k.colours[0]} and ${k.colours[1]}`], ["Logo", k.logo || "Drawn from the name"], ["Movement", k.still ? "None: held still" : "Fades and slides"]]
+          .map(([a, b]) => h("tr", {}, h("th", { scope: "row" }, a), h("td", {}, b)))))),
+      h("p", { class: "muted" }, "It takes about a minute. It uses one processor thread at the lowest priority, makes one thing at a time, and stops at once if anyone starts to watch a channel."),
+      h("div", { class: "row" }, h("button", { class: "btn btn--primary", type: "button", id: "make", disabled: !!job.running || S.playing, on: { click: doMakeStyle } }, res ? "Make it again" : "Make the style")),
+      S.playing ? notice("warning", "A channel is being watched", ["Making the style waits until nobody is watching. Try again then."]) : null];
+    if (job.running) body.push(h("div", { class: "meter" }, h("div", { class: "meter__label" }, h("span", { id: "job-words" }, `${job.words} (${job.step} of ${job.of})`)),
+      h("div", { class: "progress progress--running", role: "progressbar", "aria-label": "Making the style", "aria-valuemin": "0", "aria-valuemax": String(job.of), "aria-valuenow": String(job.step),
+        "aria-valuetext": `${job.words}, ${job.step} of ${job.of}` }, h("span", { style: `width:${Math.round((job.step / Math.max(1, job.of)) * 100)}%` }))));
+    if (job.error) body.push(notice("danger", "The style was not made", [job.error]));
+    if (res) {
+      body.push(res.ok ? notice("success", "The style passed every check", [res.summary + ". Drawn on your own server, and nothing left it."]) : notice("danger", "The style did not pass", [h("ul", { class: "notes" }, res.problems.map((t) => h("li", {}, t)))]));
+      if (res.notes.length) body.push(notice("info", "Notes from the check", [h("ul", { class: "notes" }, res.notes.map((t) => h("li", {}, t)))]));
+    }
+    return frame("Make the style", body, foot(() => move(1), "Continue to using it", !!(res && res.ok) && !job.running));
+  }
+  async function doMakeStyle() {
+    try { take(await op({ op: "build", kit: S.kit.id })); say("Making the style"); } catch (e) { S.error = e.message; }
+    render(true); poll();
+  }
+
   // 5 Use
   function useStep() {
     const k = S.kit;
@@ -216,7 +328,7 @@
     const body = [h("p", { class: "muted" }, `${k.name} is ready. Choose where to use it.`),
       h("fieldset", { class: "option-cards" }, h("legend", { class: "visually-hidden" }, "Where to use the branding"),
         cards.map(([v, t, d]) => h("label", { class: "option-card" }, h("input", { type: "radio", name: "to", value: v, checked: v === S.to, on: { change: () => { S.to = v; } } }), h("strong", {}, t), h("small", {}, d))))];
-    return frame("Use the branding", body, h("div", { class: "wizard__foot" },
+    return frame(mode() === "make" ? "Use the style" : "Use the branding", body, h("div", { class: "wizard__foot" },
       h("button", { class: "btn btn--primary", type: "button", id: "use", on: { click: doUse } }, "Use this branding"), h("button", { class: "btn", type: "button", on: { click: () => move(-1) } }, "Back")));
   }
   async function doUse() {
@@ -227,15 +339,17 @@
   function doneStep() {
     return h("div", { class: "wizard" }, h("div", { class: "stack-4" }, h("h2", { tabindex: "-1", id: "step-h" }, "Done"), notice("success", null, [S.note]),
       h("p", {}, "Channels pick it up the next time a break plays. Promos made before are made again in the next quiet hour."),
-      h("div", { class: "wizard__foot" }, h("button", { class: "btn btn--primary", type: "button", on: { click: () => { S.step = "add"; S.note = ""; render(true); } } }, "Import another kit"))));
+      h("div", { class: "wizard__foot" }, h("button", { class: "btn btn--primary", type: "button", on: { click: () => { S.step = "path"; S.note = ""; S.mode = ""; render(true); } } }, "Start another"))));
   }
 
   function render(moveFocus) {
     app.replaceChildren();
     let view;
     if (S.step === "done") view = doneStep();
-    else if (S.step === "add" || !S.kit) { S.step = "add"; view = addStep(); }
-    else view = ({ what: whatStep, where: whereStep, make: makeStep, use: useStep }[S.step] || addStep)();
+    else if (S.step === "path") view = pathStep();
+    else if (S.step === "add" && !S.kit) view = addStep();
+    else if (!S.kit && S.step !== "add") { S.step = "path"; view = pathStep(); }
+    else view = ({ add: addStep, style: styleStep, details: detailsStep, what: whatStep, where: whereStep, make: mode() === "make" ? makeStyleStep : makeStep, use: useStep }[S.step] || pathStep)();
     app.append(view);
     if (moveFocus) { const hd = $("step-h"); if (hd) { hd.focus(); say(hd.textContent); } }
     poll();
@@ -244,7 +358,7 @@
   (async () => {
     let last = "";
     try { last = localStorage.getItem("tvstyle-kit") || ""; } catch { /* private */ }
-    try { take(await api("style/api/state?kit=" + encodeURIComponent(last))); if (S.kit && S.kit.job && S.kit.job.running) S.step = "make"; } catch (e) { S.error = e.message; }
+    try { take(await api("style/api/state?kit=" + encodeURIComponent(last))); if (S.kit) S.step = S.kit.job && S.kit.job.running ? "make" : S.kit.mode === "make" ? "style" : "add"; } catch (e) { S.error = e.message; }
     render(false);
   })();
 })();

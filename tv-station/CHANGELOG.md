@@ -1,9 +1,22 @@
 # Changelog
 
-## 0.13.1 (28 November 2026)
+## 0.13.2 (28 November 2026)
 
 ### Changed
 - Turn on and turn off: the text and the help pages now say turn on and turn off. How it works has not changed.
+
+## 0.13.1 (not released yet)
+
+### Added
+- Make a style here (DASH-632): on Choose a style for my channel, the first question is now How do you want to start? with Make a style here (recommended) and Import a kit.
+- Five style recipes (Clean, Evening, Retro, Bold, Plain). A recipe is data in recipes.py: how the name arrives and what is drawn with it.
+- Each style makes 4 short title clips (5 to 6 seconds), 2 bumpers (1.5 seconds, silent), the Coming up next card background and the coming-up trailer background (both pictures), and the on-screen logo, from a name, two colours and an optional logo PNG.
+- A picture of a title clip, the card and a bumper is drawn first and changes with every choice. Only then is video made.
+- The words are black or white, at least 72 pixels tall, inside the title safe area, and a colour they sit on is made darker or lighter in small steps until they reach 7 to 1. Nothing moves faster than a 0.5 second fade or a 1 second slide, so nothing flashes. A Make the clips with no movement choice holds every clip still.
+- One FFmpeg thread with a short look-ahead, one job at a time, the lowest priority, and a stop at once when a channel starts to play.
+- The pack carries LICENCE.txt (MIT, the plug-in's own recipes) and a kit.json that names the style.
+- The copy of the design system's components (ds-components.css) is current, with its new wizard parts.
+- Tests: tests/test_tv_station_recipes.py.
 
 ## 0.13.0 (not released yet)
 
