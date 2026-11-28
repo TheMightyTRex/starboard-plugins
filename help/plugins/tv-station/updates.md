@@ -1,12 +1,11 @@
 # Create your own TV channel: Updates
 
-Create your own TV channel 0.9.2 is the latest version. It needs Starboard with plug-in API 1.15 or later. Choose from your library, the cards and saving in place need Starboard 0.24.0.
+Create your own TV channel 0.9.1 is the latest version. It needs Starboard with plug-in API 1.15 or later. Choose from your library, the cards and saving in place need Starboard 0.24.0.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
-| 0.9.2 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.9.1 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.9.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |
 | 0.8.0 | 1.15 or later; Starboard 0.24.0 for the slide-out, the cards and saving in place | Not released yet |

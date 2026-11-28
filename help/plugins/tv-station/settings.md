@@ -460,6 +460,30 @@ words.
 
 On a channel's **Holding slide and promos** card, **Promos** says how its promos are made. **Add music for its promos** takes music for this channel only, an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes. **Add a background loop for its promos** takes a loop or picture for this channel only, as many as 20.
 
+## Choose a style for my channel
+
+This page is for a computer. It is not made for phones. In Starboard, open **Settings**, **Plug-ins**, **Create your own TV channel**, then **Choose a style for my channel**, and select **Choose a style for my channel**. It opens in a new tab. Nothing is sent anywhere: the plug-in checks your files and makes the branding on your own server.
+
+### Import a kit
+
+Use this when you made your title clips, logo or cards in Canva, Figma, Descript, Adobe Express or another tool. Export them as video or picture files, or put them in a zip, then follow the five steps.
+
+1. **Add your files.** Choose videos (MP4, MOV, WebM or MKV), pictures (PNG or JPG), sounds (MP3, M4A, WAV, FLAC, OGG or OPUS) or a zip of them. A file can be up to 90 MB and a zip up to 60 MB. The plug-in reads each file to find out what it really is, so a picture renamed to end in .mp4 is refused. SVG pictures are refused, because they can hold links and scripts. Export a PNG instead. A zip that is already a finished branding pack skips step 2.
+2. **What is each file?** Say whether a file is a short title clip, a bumper, a logo, the background for the Coming up next card, the background for coming-up trailers, or music for trailers. The plug-in guesses from the name and length. Choose **Leave it out** for any file you do not want. A still picture used as a short title clip becomes a 5 second clip that fades in and out. Used as a bumper, it becomes a 2 second clip.
+3. **Where did each file come from?** Choose **I made it**, **A free stock site**, **A template or kit from a design tool** or **Something else**, and add the address of the page if you have it. The plug-in never opens the address. It writes your answers into a file called LICENCE.txt inside the branding. It cannot check them. For **Something else** it reminds you to check that you have the right to use the file.
+4. **Name it and make the branding.** Enter the channel name and choose two colours. If you added no logo, the name is drawn as the logo. The plug-in checks the branding with the same checks as an uploaded pack, and says what to change if one fails. It makes the branding at the lowest priority, with one FFmpeg thread, one job at a time, and never while someone is watching a channel. If someone starts to watch, it stops and you make it again later.
+5. **Use the branding.** Use it for every channel without a pack of its own (the station's pack), or for one channel only.
+
+The branding holds a kit.json file as well as LICENCE.txt. It names the channel, the two colours and where each file came from, so you can share a style as a file. If you add a zip that holds a kit.json, its name, colours and answers are filled in for you to check.
+
+### A warning for fast flashing
+
+Every video the plug-in makes, adds or imports is checked for fast changes in brightness. If a clip flashes more than 3 times in one second, the plug-in says so in plain words and tells you from when. Fast flashing can make some people ill. The check does not stop you using the clip. It is a guard, not the full test that broadcasters use, so it measures the whole picture and each quarter of it, and it reads only the first 90 seconds. It also runs when you add a clip on **Idents, clips and music**.
+
+### Sound
+
+Sound in an imported title clip or music is measured and played at the same level as everything else (-23 LUFS), by up to 12 dB. The notes after the check list any file that is changed.
+
 ## Broadcast pack
 
 Your own branding for every channel. It can have the on-screen logo, the logo with its music, idents, bumpers and transitions. It can also have backgrounds for the Coming up next card and the promos, with music for the promos. [Use a broadcast pack](../../use/use-a-broadcast-pack.md) says how to add one, and [Make a broadcast pack](../../use/make-a-broadcast-pack.md) how to make one.

@@ -1,0 +1,21 @@
+/* Choose a style for my channel (0.10.0): the design system's tokens and components (ds-tokens.css, ds-components.css) with
+   only the layout this page needs. A computer screen only: it is tested at 1280 and 1024 pixels wide and not made for phones. */
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: var(--space-4); top: var(--space-2); background: var(--color-surface-raised); padding: var(--space-3); z-index: 10; min-height: 44px; display: inline-flex; align-items: center; }
+.top, main { max-width: 64rem; margin: 0 auto; padding: 0 var(--space-4); }
+.top { padding-top: var(--space-6); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; align-items: flex-start; }
+.top > div:first-child { flex: 1 1 24rem; }
+.lede { color: var(--color-text-muted); margin: var(--space-2) 0 var(--space-4); max-width: 46rem; }
+main { padding-bottom: var(--space-8, 4rem); display: grid; gap: var(--space-4); }
+main:focus { outline: none; }
+.wizard { padding: var(--space-5, 1.5rem); border: 1px solid var(--color-divider); border-radius: var(--radius); background: var(--color-surface); box-shadow: var(--shadow-card); }
+.wizard h2 { font-size: var(--text-lg); }
+.wizard h2:focus { outline: none; }
+.wizard table { width: 100%; border-collapse: collapse; }
+.wizard th, .wizard td { text-align: left; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-divider); vertical-align: top; }
+.wizard td .field { min-width: 14rem; }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; }
+.colours { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.colours input[type="color"] { min-width: 4rem; min-height: 44px; padding: 2px; }
+.notes { margin: var(--space-2) 0 0; padding-left: var(--space-5, 1.5rem); }
+.done-list { display: grid; gap: var(--space-2); }

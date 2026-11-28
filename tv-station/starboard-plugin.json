@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.9.2",
+ "version": "0.13.1",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -74,6 +74,13 @@
    "type": "custom",
    "choices": "/files",
    "hint": "Every ident, promo clip, advert and PSA in one list. You can search, sort and filter it, and add several files to a channel or take them off together."
+  },
+  {
+   "key": "styles",
+   "label": "Choose a style for my channel",
+   "type": "custom",
+   "choices": "/styles",
+   "hint": "Add the video and picture files you made in Canva, Figma or another tool, or a zip of them, and turn them into your branding. Check each file, and say where it came from."
   },
   {
    "key": "clips",
@@ -749,10 +756,20 @@
  },
  "changes": [
   {
-   "version": "0.9.2",
+   "version": "0.13.1",
    "date": "2026-11-28",
    "changed": [
     "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
+  {
+   "version": "0.13.0",
+   "date": "2026-11-28",
+   "added": [
+    "**Choose a style for my channel**: a page, for a computer, that turns files you made in Canva, Figma, Descript or another tool into your branding. Add videos, pictures and sounds, or a zip, say what each is, say where each came from, and the plug-in makes the pack.",
+    "**A still picture becomes a short title clip**, 5 seconds that fade in and out, made on your server with one FFmpeg thread at the lowest priority and never while anyone is watching.",
+    "**LICENCE.txt and kit.json** are written into the branding, with where each file came from.",
+    "**A warning for fast flashing** on every clip made, added or imported. It says when a clip flashes more than 3 times in one second, and never stops you using it."
    ]
   },
   {
@@ -914,26 +931,6 @@
    ],
    "changed": [
     "**Longer holding slides:** a holding slide's video may be up to 120 seconds and 90 MB. Starboard 0.24.1 or later takes files that big; an older Starboard stops at 60 MB."
-   ]
-  },
-  {
-   "version": "0.2.0",
-   "date": "2026-11-19",
-   "added": [
-    "**Choose from your library:** with Starboard 0.24.0 and later, a slide-out lists every series, film, collection, playlist, genre and decade in Jellyfin, with search; tick several and add them to a channel at once. Those on the channel already show as added.",
-    "**A holding slide:** upload a picture or a short video, with Back soon or a countdown to the next programme and its name. It loops at the end of each break, after the promos, until the next programme starts, so the channel never shows black.",
-    "**Music for promos:** upload MP3, M4A, OGG or FLAC music for the station or for one channel, list it and remove it. Promos use it with, or in place of, the pack's music, and a channel with music but no pack promo gets plain promos on its colour.",
-    "**Jellyfin's guide:** the Guide page says when Jellyfin last read the guide and how many programmes it had, and Refresh Jellyfin's guide in Actions asks it to read it again.",
-    "**Suggest a schedule asks what to make it from:** Watch history, General watch history, All TV, All films or TV and Films, and remembers the choice for each channel.",
-    "**Logos show on their rows:** a channel's logo and the station pack's on-screen logo show as a small picture once uploaded."
-   ],
-   "changed": [
-    "**Channels in cards:** with Starboard 0.24.0 and later, each channel is a card in the list, and an opened channel has a card each for its name and number, what it shows, its breaks, its on-screen logo and branding, its holding slide and promos, and its programmes for today and tomorrow.",
-    "**Changes save in place:** with Starboard 0.24.0 and later, a change answers with that channel only, so the page keeps the open channel, where you were and focus, and says what was saved, such as Corner: Bottom left.",
-    "**Renaming the station renames its tuner in Jellyfin's Live TV.**"
-   ],
-   "fixed": [
-    "**The schedule grid opens:** with Starboard 0.24.0 and later, Open the schedule grid uses the address you opened Starboard with, so it opens from any address that reaches the server. With no channels, the grid page says what to do."
    ]
   }
  ]

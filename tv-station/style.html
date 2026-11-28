@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Choose a style for my channel</title>
+<link rel="stylesheet" href="style/tokens.css">
+<link rel="stylesheet" href="style/components.css">
+<link rel="stylesheet" href="style/style.css">
+<script src="style/style.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
+<header class="top">
+  <div>
+    <h1>Choose a style for my channel</h1>
+    <p class="lede">Get the title clips, the logo and the cards for your channels. Nothing is sent anywhere: the files are checked and the branding is made on your own server.</p>
+  </div>
+  <div class="field">
+    <label for="theme">Colours</label>
+    <select id="theme" class="select"><option value="light">Light</option><option value="dark">Dark</option><option value="contrast">High contrast</option></select>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <div class="notice" data-tone="info" role="note"><span aria-hidden="true"></span><div class="notice__body"><p>This page is for a computer screen. It is not made for phones.</p></div></div>
+  <noscript><div class="notice" data-tone="danger"><span aria-hidden="true"></span><div class="notice__body"><p>This page needs JavaScript. Turn it on for this page, or add a pack in Starboard: Settings, Plug-ins, Create your own TV channel, Broadcast pack.</p></div></div></noscript>
+  <p id="said" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
+  <div id="app"></div>
+</main>
+</body>
+</html>
