@@ -267,7 +267,7 @@ class MoveAndPutBack(Base):
     def test_deactivated_by_default_and_nothing_moves(self):
         self.assertFalse(self.app.active())
         out = self.app.job_move()
-        self.assertIn("turned off", out["said"])
+        self.assertIn("is off", out["said"])
         self.assertTrue(os.path.isdir(self.m("movies", "Old Film (2001)")))
         self.assertEqual(self.rx.calls, [])
         self.assertEqual(self.jf.told, [])

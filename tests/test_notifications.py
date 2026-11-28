@@ -197,7 +197,7 @@ class Weekly(unittest.TestCase):
             self.app.on_event({"event": "item.added", "data": d}, wait=True)
 
     def test_off_until_switched_on(self):
-        self.assertIn("turned off", self.app.weekly()["said"])
+        self.assertIn("is off", self.app.weekly()["said"])
         self.assertEqual(self.calls, [])
         self.assertFalse(next(s for s in manifest("notifications")["settings"] if s["key"] == "send_weekly")["default"])
 

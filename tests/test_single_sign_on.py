@@ -121,7 +121,7 @@ class States(unittest.TestCase):
 class Manifest(unittest.TestCase):
     def test_it_is_off_light_and_runs_only_when_asked(self):
         m = manifest("single-sign-on")
-        self.assertEqual(m["version"], "0.1.0")
+        self.assertEqual(m["version"], "0.1.1")
         self.assertEqual(m["permissions"], [])
         self.assertEqual(m["containers"][0]["start"], "when_needed")
         self.assertNotIn("jobs", m)
