@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.13.0",
+ "version": "0.13.1",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -756,6 +756,16 @@
  },
  "changes": [
   {
+   "version": "0.13.1",
+   "date": "2026-11-28",
+   "added": [
+    "**Make a style here**: on Choose a style for my channel, choose one of 5 styles (Clean, Evening, Retro, Bold or Plain), enter your channel's name and two colours, and add a logo if you have one. The plug-in draws 4 short title clips, 2 bumpers, the Coming up next card background, the coming-up trailer background and the logo on your own server.",
+    "**A picture first**: a picture of a title clip, the Coming up next card and a bumper is drawn before any video is made. Nothing is made while anyone is watching a channel, and it uses one FFmpeg thread at the lowest priority.",
+    "**Readable words**: the words are black or white, and a colour that would make them hard to read is made a little darker or lighter until they reach 7 to 1. A still choice holds every clip still, for people who ask for it.",
+    "**The licence** is written into the pack: the styles and what they draw are free to use under the MIT licence."
+   ]
+  },
+  {
    "version": "0.13.0",
    "date": "2026-11-28",
    "added": [
@@ -924,26 +934,6 @@
    ],
    "changed": [
     "**Longer holding slides:** a holding slide's video may be up to 120 seconds and 90 MB. Starboard 0.24.1 or later takes files that big; an older Starboard stops at 60 MB."
-   ]
-  },
-  {
-   "version": "0.2.0",
-   "date": "2026-11-19",
-   "added": [
-    "**Choose from your library:** with Starboard 0.24.0 and later, a slide-out lists every series, film, collection, playlist, genre and decade in Jellyfin, with search; tick several and add them to a channel at once. Those on the channel already show as added.",
-    "**A holding slide:** upload a picture or a short video, with Back soon or a countdown to the next programme and its name. It loops at the end of each break, after the promos, until the next programme starts, so the channel never shows black.",
-    "**Music for promos:** upload MP3, M4A, OGG or FLAC music for the station or for one channel, list it and remove it. Promos use it with, or in place of, the pack's music, and a channel with music but no pack promo gets plain promos on its colour.",
-    "**Jellyfin's guide:** the Guide page says when Jellyfin last read the guide and how many programmes it had, and Refresh Jellyfin's guide in Actions asks it to read it again.",
-    "**Suggest a schedule asks what to make it from:** Watch history, General watch history, All TV, All films or TV and Films, and remembers the choice for each channel.",
-    "**Logos show on their rows:** a channel's logo and the station pack's on-screen logo show as a small picture once uploaded."
-   ],
-   "changed": [
-    "**Channels in cards:** with Starboard 0.24.0 and later, each channel is a card in the list, and an opened channel has a card each for its name and number, what it shows, its breaks, its on-screen logo and branding, its holding slide and promos, and its programmes for today and tomorrow.",
-    "**Changes save in place:** with Starboard 0.24.0 and later, a change answers with that channel only, so the page keeps the open channel, where you were and focus, and says what was saved, such as Corner: Bottom left.",
-    "**Renaming the station renames its tuner in Jellyfin's Live TV.**"
-   ],
-   "fixed": [
-    "**The schedule grid opens:** with Starboard 0.24.0 and later, Open the schedule grid uses the address you opened Starboard with, so it opens from any address that reaches the server. With no channels, the grid page says what to do."
    ]
   }
  ]

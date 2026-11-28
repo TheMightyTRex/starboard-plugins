@@ -1,4 +1,4 @@
-"""The plug-in's own page Choose a style for my channel (0.13.0): the server side of Import a kit (and, from the next
+"""The plug-in's own page Choose a style for my channel (0.10.0): the server side of Import a kit (and, from the next
 change, Make a style here). It is a wizard (the design system's docs/WIZARD.md), drawn by style.html and style.js.
 
 Work lives in /data/styles/<kit>/: in/ holds the files as added, pack/ the branding being made, state.json what the page
@@ -10,6 +10,7 @@ import os
 import re
 import secrets
 import shutil
+import tempfile
 import threading
 import time
 
@@ -18,6 +19,7 @@ import flash
 import kit
 import pack
 import sbplugin
+import recipes
 
 KEEP_SECONDS = 86400
 MOST_KITS = 4
@@ -74,7 +76,7 @@ def new_kit():
     kid = secrets.token_hex(6)
     os.makedirs(os.path.join(root(), kid, "in"))
     st = {"id": kid, "name": "", "colours": ["#10202C", "#1B8A7F"], "files": [], "skipped": [], "result": None, "job": {}, "ready": "", "pack_origin": "",
-          "pack_link": ""}
+          "pack_link": "", "mode": "import", "style": "", "logo": "", "still": False}
     _write(kid, st)
     return st
 
@@ -89,7 +91,7 @@ def used_bytes(kid):
 def public(st):
     """What the page is told: the kit, with each file's choices, and what a person may answer."""
     files = [dict(f, roles=kit.roles_for(f["kind"])) for f in st["files"]]
-    return {**st, "files": files, "roles": kit.ROLES, "origins": kit.ORIGINS, "reminder": kit.REMINDER,
+    return {**st, "files": files, "styles": [{"id": k, "name": v["name"], "blurb": v["blurb"]} for k, v in recipes.STYLES.items()], "roles": kit.ROLES, "origins": kit.ORIGINS, "reminder": kit.REMINDER,
             "playing": bool(_ctx["playing"]()), "version": 1}
 
 
@@ -119,6 +121,8 @@ def upload(kid, name, length, rfile):
     st = _read(kid)
     if st["job"].get("running"):
         raise ValueError("The branding is being made. Wait for it to finish")
+    if st.get("mode") == "make" and zipped:
+        raise ValueError("Add the logo as a PNG, not a zip")
     if len(st["files"]) >= kit.MAX_FILES:
         raise ValueError(f"A kit holds up to {kit.MAX_FILES} files")
     if used_bytes(kid) + length > MOST_TOTAL:
@@ -163,6 +167,14 @@ def _add_file(st, folder, name):
     except kit.KitError as e:
         os.remove(path)
         raise ValueError(f"{name}: {e}") from None
+    if st.get("mode") == "make":  # a style takes one thing from you: a logo, a PNG with a clear background
+        if info["kind"] != "still" or kit.extension(name) != "png" or pack.has_transparency(path) is not True:
+            os.remove(path)
+            raise ValueError(f"{name}: a logo is a PNG with a clear background. Export it again with the background turned off")
+        if st.get("logo") and st["logo"] != name:
+            with_suppress_remove(os.path.join(folder, st["logo"]))
+        st["logo"] = name
+        return
     given = (st.get("given") or {}).get(name) or {}
     st["files"].append({"name": name, "kind": info["kind"], "dur": info["dur"], "w": info["w"], "h": info["h"], "audio": info["audio"],
                         "role": kit.guess_role(name, info), "origin": given.get("origin", ""), "link": given.get("link", ""), "flash": ""})
@@ -235,6 +247,15 @@ def op(body):
         st = _read(kid)
         if st["job"].get("running"):
             raise ValueError("The branding is being made. Wait for it to finish")
+        if body.get("mode") in ("import", "make"):
+            st["mode"] = body["mode"]
+        if body.get("style") in recipes.STYLES:
+            st["style"] = body["style"]
+        if "still" in body:
+            st["still"] = bool(body["still"])
+        if body.get("drop_logo"):
+            with_suppress_remove(os.path.join(kit_dir(kid), "in", kit.safe_name(st.get("logo") or "")))
+            st["logo"] = ""
         if "name" in body:
             st["name"] = draw.clean_words(body.get("name"))
         if isinstance(body.get("colours"), list) and len(body["colours"]) == 2:
@@ -268,7 +289,10 @@ def start_build(kid):
         raise ValueError("Give the channel a name")
     if _ctx["playing"]():
         raise ValueError("A channel is being watched. Making branding waits until nobody is watching: try again then")
-    if st["ready"] != "pack":
+    if st.get("mode") == "make":
+        if st["style"] not in recipes.STYLES:
+            raise ValueError("Choose a style first")
+    elif st["ready"] != "pack":
         todo = [f for f in st["files"] if f["role"] != "skip"]
         if not todo:
             raise ValueError("Mark at least one file as something")
@@ -298,7 +322,11 @@ def _run_build(kid):
             d = kit_dir(kid)
             out = os.path.join(d, "pack")
             made = kit.today()
-            if st["ready"] == "pack":
+            if st.get("mode") == "make":
+                logo = os.path.join(d, "in", st["logo"]) if st.get("logo") else None
+                recipes.make(out, st["style"], st["name"], st["colours"], made, logo=logo, still=bool(st.get("still")),
+                            progress=lambda step, of, words: _progress(kid, step, of, words))
+            elif st["ready"] == "pack":
                 shutil.rmtree(out, ignore_errors=True)
                 shutil.copytree(os.path.join(d, "ready"), out)
                 origin = {"name": "the whole pack", "role": "ident", "origin": st["pack_origin"] or "other", "link": st["pack_link"]}
@@ -321,7 +349,12 @@ def _run_build(kid):
             st = _read(kid)
             extra = []
             roles = {f["role"] for f in st["files"]}
-            if "music" in roles and not roles & {"promo"} and st["ready"] != "pack":
+            if st.get("mode") == "make":
+                look = recipes.plan(st["style"], st["name"], *st["colours"])
+                if look["adjusted"]:
+                    extra.append("Your " + " and ".join({"c1": "main colour", "c2": "second colour"}[k] for k in look["adjusted"])
+                                 + " was made a little darker or lighter, so the words reach 7 to 1 and are easy to read")
+            if "music" in roles and not roles & {"promo"} and st["ready"] != "pack" and st.get("mode") != "make":
                 extra.append("The music is not used yet: it plays in coming-up trailers, which need a background. Add a picture or video marked as the background for coming-up trailers")
             st["result"] = {"ok": got["ok"], "problems": got["problems"][:12], "notes": (extra + got["notes"])[:20], "summary": pack.summary(got["pack"]) if got["ok"] else ""}
             st["job"] = {"running": False, "error": ""}
@@ -375,3 +408,36 @@ def use(kid, to):
     out = overview("")
     out["said"] = f"{st['name']} is now the branding for {where}"
     return out
+
+
+_still_lock = threading.Lock()
+
+
+def preview(q):
+    """One still picture of what a style draws, as PNG bytes, before any video is made. q: style, name, c1, c2, part (title, bumper or card), variant."""
+    if _ctx["playing"]():
+        raise ValueError("A channel is being watched. The picture waits until nobody is watching: try again then")
+    style = str(q.get("style") or "")
+    part = str(q.get("part") or "title")
+    if style not in recipes.STYLES or part not in ("title", "bumper", "card"):
+        raise ValueError("Choose one of the styles")
+    name = draw.clean_words(q.get("name")) or "Your channel"
+    try:
+        variant = max(0, min(len(recipes.VARIANTS) - 1, int(q.get("variant") or 0)))
+    except ValueError:
+        variant = 0
+    if _job_lock.locked():
+        raise ValueError("A style is being made. Wait for it to finish")
+    os.makedirs(root(), exist_ok=True)
+    with _still_lock, tempfile.TemporaryDirectory(dir=root(), prefix=".still-") as tmp:
+        dst = os.path.join(tmp, "still.png")
+        draw.clear()
+        with sbplugin.working("a picture being drawn"):
+            try:
+                recipes.title_still(style, name, draw.colour(q.get("c1"), "#10202C"), draw.colour(q.get("c2"), "#1B8A7F"), dst, tmp, variant=variant, part=part)
+            except draw.Stopped:
+                raise ValueError("A channel started to play, so the picture stopped") from None
+            except RuntimeError as e:
+                raise ValueError(str(e)[:200]) from None
+        with open(dst, "rb") as f:
+            return f.read()

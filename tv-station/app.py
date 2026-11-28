@@ -45,7 +45,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.13.0"
+VERSION = "0.13.1"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -3389,6 +3389,11 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(data)
             return None
         one = {k: (v or [""])[0] for k, v in query.items()}
+        if rest == "style/api/preview":
+            try:
+                return self._bytes(200, stylepage.preview(one), "image/png", "no-store")
+            except ValueError as e:
+                return self._json(409, {"error": str(e)})
         if rest == "style/api/state":
             try:
                 return self._json(200, stylepage.overview(one.get("kit", "")))
