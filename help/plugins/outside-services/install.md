@@ -35,7 +35,7 @@ Measured on 20 November 2026 with 7 checks: about 17 MB of memory and under 0.1%
 2. Under **Network**, find **Uptime and status** and select **Install…**.
 3. A slide-out opens with what it can read, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Uptime and status**. To stop, select **Cancel**: nothing is installed.
-5. Its own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it.
+5. Its own tab opens under **Settings**, then **Plug-ins**, and Starboard turns it on.
 
 ### Add it by its address
 
@@ -61,7 +61,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 3. Choose where its folder goes: **Keep it with Starboard's data** (in `data/plugins/.removed`) or **Move it to the holding folder**, listed in **System**, **Clean up**.
 4. Enter your Starboard password and select **Remove**.
 
-Its container stops, its API key stops working and its alerts are cleared. Nothing is deleted. To stop it for a while instead, select **Deactivate** on its tab.
+Its container stops, its API key stops working and its alerts are cleared. Nothing is deleted. To stop it for a while instead, select **Turn off** on its tab.
 
 ## Find out more
 

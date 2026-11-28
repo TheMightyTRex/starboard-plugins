@@ -1,7 +1,7 @@
 """Library clean-up: moves films and series that have been watched, or that nobody watches, to the holding folder, so
 a small server's disks do not fill up (DASH-406; the comparison report's recommendation 6). It never deletes.
 
-The rules, each activated or deactivated, for the libraries you choose:
+The rules, each turned on or turned off, for the libraries you choose:
 - Watched by everyone: a film every person counted has watched, last watched more than N days ago (90).
 - Not watched for a long time: a film or series nobody has watched for N months (12), and added more than N months
   ago, so nothing new is caught.
@@ -19,7 +19,7 @@ it is refused. Nothing is ever removed: this file has no call that deletes a fil
 Reelix stops following what moves, so it is not downloaded again, and Jellyfin is told the folder has gone. Put back
 moves it to the same place, Reelix follows it again exactly as it did (the same episodes), and Jellyfin is told.
 
-When it runs: once a day in quiet hours, only when Move items each day is activated (deactivated when added). Preview
+When it runs: once a day in quiet hours, only when Move items each day is on (turned off when added). Preview
 lists what would move and the space it frees, worked out in the background when asked; nothing moves from Preview.
 
 Lightweight: the container rests when not used (start: when_needed), Python's standard library only, and Jellyfin is
@@ -710,9 +710,9 @@ def summary(rec):
 # What Starboard calls ------------------------------------------------------------------------------------------
 
 def job_move():
-    """Once a day in quiet hours: moves what the rules find, only when Move items each day is activated."""
+    """Once a day in quiet hours: moves what the rules find, only when Move items each day is on."""
     if not active():
-        return {"said": "Move items each day is deactivated, so nothing moved. Preview lists what would"}
+        return {"said": "Move items each day is off, so nothing moved. Preview lists what would"}
     if not start("move", run_moves):
         return {"said": "Already working" if running() else "Not started: the plug-in is about to be updated"}
     return {"said": summary(_wait(RUN_LIMIT + 300))}
@@ -750,7 +750,7 @@ def preview_screen():
         start("preview", work_out_preview)
     notices = _notices("preview")
     if not p:
-        intro = "Preview is being worked out from Jellyfin. Nothing moves until you activate 'Move items each day'."
+        intro = "Preview is being worked out from Jellyfin. Nothing moves until you turn on 'Move items each day'."
         return {"type": "list", "title": "Preview", "layout": "folds", "readonly": True, "intro": intro, "columns": COLUMNS,
                 "notices": notices or [{"id": "working", "tone": "info", "progress": 0, "title": "Working out Preview", "text": "Reading your libraries from Jellyfin."}],
                 "items": []}
@@ -759,7 +759,7 @@ def preview_screen():
     intro = (f"{plural(n, 'item')} would move to the holding folder, freeing {size_words(p['size'])}. "
              f"{plural(p['kept'], 'item')} the rules found {'is' if p['kept'] == 1 else 'are'} always kept. "
              f"Worked out {when:%a %-d %b at %H:%M} for {plural(p['people'], 'person', 'people')} in {plural(p['libraries'], 'library', 'libraries')}. ")
-    intro += "It moves these once a day in quiet hours." if active() else "Nothing moves until you activate 'Move items each day'."
+    intro += "It moves these once a day in quiet hours." if active() else "Nothing moves until you turn on 'Move items each day'."
     if not _preview_fresh(p) and running():
         notices = notices or [{"id": "working", "tone": "info", "progress": 0, "title": "Working out Preview again", "text": "A setting changed."}]
     for i, prob in enumerate(p.get("problems") or []):
@@ -824,7 +824,7 @@ def held_post(body=None):
 
 
 def libraries_screen(said=None):
-    """The libraries it looks at: each film and series library in Jellyfin, activated or deactivated."""
+    """The libraries it looks at: each film and series library in Jellyfin, turned on or turned off."""
     off = _libraries_off()
     try:
         libs = libraries()
@@ -834,7 +834,7 @@ def libraries_screen(said=None):
               "group": "Films" if lib["kind"] == "films" else "Series", "on": lib["id"] not in off,
               "state": "ok" if lib["id"] not in off else "off", "state_label": "Checked" if lib["id"] not in off else "Left alone",
               "actions": ["toggle"]} for lib in libs]
-    out = {"type": "list", "title": "Libraries", "intro": "The rules check only the libraries activated here. A library you add to Jellyfin is checked until you deactivate it.",
+    out = {"type": "list", "title": "Libraries", "intro": "The rules check only the libraries turned on here. A library you add to Jellyfin is checked until you turn it off.",
            "items": items}
     if said:
         out["said"] = said
@@ -858,7 +858,7 @@ def libraries_post(body=None):
 
 
 def card():
-    """The holding folder's size, with the band's status: working now, deactivated, or the next run."""
+    """The holding folder's size, with the band's status: working now, turned off, or the next run."""
     rows, prog = _held(), _job["progress"]
     total = sum(r["size"] for r in rows)
     err = remember("_error")
@@ -871,8 +871,8 @@ def card():
     p = remember("preview", None) or {}
     would = f"Preview: {plural(len(p.get('items') or []), 'item')}, {size_words(p.get('size'))}" if p else "Open 'Preview' to find what would move"
     if not active():
-        return band({"value": total, "label": "in the holding folder", "note": f"Deactivated. {would}"[:80]}, "inactive", sbplugin.changed("preview"),
-                    "Deactivated", refresh=600)
+        return band({"value": total, "label": "in the holding folder", "note": f"Off. {would}"[:80]}, "inactive", sbplugin.changed("preview"),
+                    "Off", refresh=600)
     s = _state()
     note = f"{plural(len(rows), 'item')} held. Next check in quiet hours"
     return band({"value": total, "label": "in the holding folder", "note": note}, "scheduled",
@@ -894,7 +894,7 @@ def before_update(body=None):
 
 def after_update(body=None):
     sbplugin._work["hold"] = 0.0
-    return {"ok": True, "said": "Ready. " + ("It checks again in quiet hours" if active() else "Move items each day is deactivated")}
+    return {"ok": True, "said": "Ready. " + ("It checks again in quiet hours" if active() else "Move items each day is off")}
 
 
 def health():

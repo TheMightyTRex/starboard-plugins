@@ -465,7 +465,7 @@ class Manifest(unittest.TestCase):
             self.assertEqual(problems, [])
 
     def test_words(self):
-        banned = re.compile(r"\b(click|enable|disable|turn on|turn off|toggle|above|below|please|just|simply|easy|advanced|see|look)\b", re.I)
+        banned = re.compile(r"\b(click|enable|disable|activate|deactivate|toggle|above|below|please|just|simply|easy|advanced|see|look)\b", re.I)
         texts = json.dumps(manifest("tv-station"))
         for name in ("README.md",):
             texts += open(os.path.join(TV, name), encoding="utf-8").read()

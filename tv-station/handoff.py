@@ -1,4 +1,4 @@
-"""Packs ready to use (0.13.3, DASH-640): a pack another plug-in left in the shared hand-off folder tv-pack (plug-in API 1.25: the
+"""Packs ready to use (0.13.4, DASH-640): a pack another plug-in left in the shared hand-off folder tv-pack (plug-in API 1.25: the
 permission handoff:receive and the volume handoff/tv-pack:receive, mounted at /handoff/tv-pack).
 
 The folder is writable by every plug-in that may send into it, so nothing in it is trusted:

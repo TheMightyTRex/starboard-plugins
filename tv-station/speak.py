@@ -4,7 +4,7 @@ description to promos"): the words on a promo, spoken, so a blind viewer hears w
 Made on the server by eSpeak NG, a small speech program in the image (about 6 MB): nothing is sent anywhere, it has a
 voice for each of the station's ten languages, and a promo's words take a few hundredths of a processor second. It runs
 only while a promo is being made (quiet hours, one at a time, lowest priority), and only when Audio description on
-promos is activated. The words go in on standard input, so no title can be read as an option.
+promos is on. The words go in on standard input, so no title can be read as an option.
 """
 import os
 import shutil

@@ -18,7 +18,7 @@ active and its card is on your dashboard. It takes about five minutes.
 1. Choose a plug-in.
 2. Read what it may do.
 3. Install it.
-4. Set it up, if it asks: Starboard activates it for you.
+4. Set it up, if it asks: Starboard turns it on for you.
 5. Add its card to your dashboard.
 
 ```flow
@@ -32,8 +32,8 @@ stepinstall: Install it | Enter your Starboard password
 q2: Does its tab say Needs setting up?
   Yes -> stepsetup
   No -> stepactive
-stepsetup: Fill in its settings | Then select Activate
-stepactive: It is active | Starboard activated it
+stepsetup: Fill in its settings | Then select Turn on
+stepactive: It is active | Starboard turned on it
 endcard: Add its card to your dashboard
 endstop: Leave it out | Nothing is installed
 ```
@@ -55,8 +55,8 @@ select **Install** and its name. Its own tab opens. You know it worked when the 
 
 ## Step 4: Set it up, if it asks
 
-Starboard activates a plug-in as soon as it is installed. If the tab says **Needs setting up**, select **Finish
-setting up**, fill in what it asks for, then select **Activate** in **General**, **State**. You know it worked when
+Starboard turns on a plug-in as soon as it is installed. If the tab says **Needs setting up**, select **Finish
+setting up**, fill in what it asks for, then select **Turn on** in **General**, **State**. You know it worked when
 its state says **Active**.
 
 ## Step 5: Add its card to your dashboard

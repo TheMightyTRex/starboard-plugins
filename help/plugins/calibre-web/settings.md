@@ -11,7 +11,7 @@ On its tab, **Its first sign-in** has **Show the password…**. It asks for your
 Calibre-Web's tab, in **Settings**, then **Plug-ins**, then **Calibre-Web**, has these buttons:
 
 - **Open Calibre-Web** opens its own page in a new tab. It is there while it is active.
-- **Activate** starts it, and Starboard chooses a free port for its page. **Deactivate** stops it and keeps its folder.
+- **Turn on** starts it, and Starboard chooses a free port for its page. **Turn off** stops it and keeps its folder.
 - **Try again** starts it again when it did not start.
 - **Check for an update** is there when this Starboard is newer than the version was made for.
 - **Remove Calibre-Web** stops it and takes it away. You choose where its folder goes; nothing is deleted.
@@ -22,7 +22,7 @@ Calibre-Web's tab, in **Settings**, then **Plug-ins**, then **Calibre-Web**, has
 - Uploading books and changing their details in Calibre-Web are off: Starboard gives it the folders read only. Add books to your books folder, then run [Calibre library maker](../calibre-library/install.md) again.
 - Your phone's reading app can use OPDS at `/opds` on its page, with the `admin` sign-in.
 - Calibre-Web keeps its users and choices in its own folder in Starboard's data, `data/plugins/calibre-web`.
-- Its settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
+- Its settings are kept when you update or turn it off, and when you remove it they stay in its folder.
 
 ## Read on your phone
 

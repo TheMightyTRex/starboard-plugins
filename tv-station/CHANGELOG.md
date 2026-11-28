@@ -1,15 +1,20 @@
 # Changelog
 
-## 0.13.3 (not released yet)
+## 0.13.4 (not released yet)
 
 ### Added
 - Packs ready to use (DASH-640): a pack another plug-in left in the shared hand-off folder tv-pack (plug-in API 1.25) is listed on Broadcast pack, with where its files came from (LICENCE.txt in the zip). It needs Starboard 1.25 (starboard_api, the permission handoff:receive and the volume handoff/tv-pack:receive).
 - The folder is read only when the page is drawn. A file is listed only when it is a regular file (never a link) ending in .zip, not starting with a dot, with a plain name, and at most 60 MB.
-- The control on a row copies the zip out of the folder first, then checks it exactly like an uploaded pack (the same limits, loudness step and flash guard), and removes it from the folder only after it is installed. Remove takes it out of the folder.
+- Turn on copies the zip out of the folder first, then checks it exactly like an uploaded pack (the same limits, loudness step and flash guard), and removes it from the folder only after it is installed. Remove takes it out of the folder.
 - A pack of backgrounds and music, with no logo or layout in pack.json, is accepted: the plug-in's own places for the clip and the words are used, and the name is drawn as the logo.
 - LICENCE.txt in the zip is kept with the installed pack.
 - Tests: tests/test_tv_station_handoff.py.
 - Not done: the pull request waits for Starboard 1.25 (Starboard pull request 430): an older Starboard refuses this manifest.
+
+## 0.13.2 (28 November 2026)
+
+### Changed
+- Turn on and turn off: the text and the help pages now say turn on and turn off. How it works has not changed.
 
 ## 0.13.1 (not released yet)
 

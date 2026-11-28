@@ -1,11 +1,12 @@
 # Picture shrinker: Updates
 
-Picture shrinker 1.2.3 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Picture shrinker 1.2.4 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.2.4 | 1.14 or later | Not released yet |
 | 1.2.3 | 1.14 or later | Not released yet |
 | 1.2.2 | 1.14 or later | 17 November 2026 |
 | 1.2.1 | 1.14 or later | 17 November 2026 |
@@ -42,7 +43,7 @@ Added:
 
 - **Choose the backup:** Original pictures asks whether to keep a backup copy of each original or just shrink. It asks once when you add the plug-in and again after this update. It shrinks nothing until you choose, and it keeps any backup you already have.
 - **Start again** in its actions, for the pictures it shrinks or for every picture. It deletes the backup and the records, and has Jellyfin download the pictures again at full size. If Jellyfin cannot download a picture again, the plug-in puts it back after a day.
-- **Every picture type:** posters, photos of people, backdrops, thumbnails, logos, banners, disc art and clear art. Each has its own size. The plug-in activates them all when you add it. Shrink all picture types shrinks them all in one setting. Lentzeris asked for backdrops in the Jellyfin version's issue #2.
+- **Every picture type:** posters, photos of people, backdrops, thumbnails, logos, banners, disc art and clear art. Each has its own size. The plug-in turns them on all when you add it. Shrink all picture types shrinks them all in one setting. Lentzeris asked for backdrops in the Jellyfin version's issue #2.
 
 Changed:
 
@@ -81,7 +82,7 @@ Added:
 - **Shrinks Jellyfin's pictures:** posters to 900 pixels tall and photos of cast and crew to 400 pixels wide, both settings. Smaller pictures are left alone.
 - **Checked before it replaces:** each picture is written beside the original, opened again and checked, and swapped in only when it is smaller.
 - **When you choose:** every day, week or month at a time, with Shrink now, at the lowest priority.
-- **New pictures in quiet hours:** deactivated unless you activate it.
+- **New pictures in quiet hours:** turned off unless you turn it on.
 - **Space saved:** on its page and on a dashboard card.
 
 ## How an update is kept safe

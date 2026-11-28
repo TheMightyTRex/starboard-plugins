@@ -115,10 +115,10 @@ def restore(name, stamp=None):
         except RuntimeError:
             time.sleep(1)
     else:
-        raise RuntimeError(f"Jellystat kept its database busy. The backup is ready in {work}; deactivate the plug-in and try again")
+        raise RuntimeError(f"Jellystat kept its database busy. The backup is ready in {work}; turn off the plug-in and try again")
     psql(f'ALTER DATABASE "{work}" RENAME TO "{DB}"')
     return (f"Restored {name} ({tables} tables). Your database before it is kept as {before}. "
-            "Deactivate and activate Jellystat if its pages still show the old figures.")
+            "Turn off and turn on Jellystat if its pages still show the old figures.")
 
 
 def restore_in_background():

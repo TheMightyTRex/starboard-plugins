@@ -6,16 +6,16 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Something someone asked for is ready** | Reelix's or Seerr's requests that become ready to watch. Activated or deactivated. | Activated |
-| **Tell the person who asked too** | By the email address or Telegram chat given for them under People. Activated or deactivated. | Activated |
-| **A download failed** | A download that stops with a problem. Activated or deactivated. | Activated |
-| **An app stops answering, and when it is back** | After two checks in a row with no answer. Activated or deactivated. | Activated |
-| **A disk is nearly full** | At the limit set for alerts in Settings, Alerts, or 90%. Activated or deactivated. | Activated |
-| **A disk is erased, added or taken out** | Every change Starboard's disk pool helper makes, however it was asked for, as a warning when a disk was erased. Needs Starboard 0.23.0 or later. Activated or deactivated. | Activated |
-| **An update is ready** | For Starboard, your apps and your plug-ins. Activated or deactivated. | Activated |
-| **New this week** | A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Deactivated until you activate it. Activated or deactivated. | Deactivated |
+| **Something someone asked for is ready** | Reelix's or Seerr's requests that become ready to watch. Turned on or turned off. | Turned on |
+| **Tell the person who asked too** | By the email address or Telegram chat given for them under People. Turned on or turned off. | Turned on |
+| **A download failed** | A download that stops with a problem. Turned on or turned off. | Turned on |
+| **An app stops answering, and when it is back** | After two checks in a row with no answer. Turned on or turned off. | Turned on |
+| **A disk is nearly full** | At the limit set for alerts in Settings, Alerts, or 90%. Turned on or turned off. | Turned on |
+| **A disk is erased, added or taken out** | Every change Starboard's disk pool helper makes, however it was asked for, as a warning when a disk was erased. Needs Starboard 0.23.0 or later. Turned on or turned off. | Turned on |
+| **An update is ready** | For Starboard, your apps and your plug-ins. Turned on or turned off. | Turned on |
+| **New this week** | A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Turned off until you turn it on. Turned on or turned off. | Turned off |
 | **When to send New this week** | The day and the hour. It lists what arrived in the last 7 days. A schedule: every day, week or month, and a time. | Every week, Monday, 09:00 |
-| **Send New this week by** | Email uses the settings in Email. The other choice uses every way you activated. One of: Email only, Every way I activated. | Email only |
+| **Send New this week by** | Email uses the settings in Email. The other choice uses every way you turned on. One of: Email only, Every way I turned on. | Email only |
 | **Starboard's address, for links** | Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address. A web address. | Empty |
 
 ![Notifications' What to send, with When to send New this week outlined](../../images/notifications/settings-1-new-this-week.png)
@@ -24,10 +24,10 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Hold alerts that are not urgent in quiet hours** | A request ready, a failed download, an app back or an update ready wait, and one summary goes when the quiet hours end. Activated or deactivated. | Deactivated |
+| **Hold alerts that are not urgent in quiet hours** | A request ready, a failed download, an app back or an update ready wait, and one summary goes when the quiet hours end. Turned on or turned off. | Turned off |
 | **Quiet hours start at** | Choose every day. Only the hour counts. A schedule: every day, week or month, and a time. | Every day, 22:00 |
 | **Quiet hours end at** | Choose every day. The summary is sent at this hour. A schedule: every day, week or month, and a time. | Every day, 07:00 |
-| **Still send urgent ones** | An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Deactivate it to hold them too. Activated or deactivated. | Activated |
+| **Still send urgent ones** | An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Turn it off to hold them too. Turned on or turned off. | Turned on |
 
 ![Notifications' Quiet hours, with Quiet hours start at outlined](../../images/notifications/settings-4-quiet-hours.png)
 
@@ -35,7 +35,7 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Send by email** | Activate once the email details are entered and the test arrives. Activated or deactivated. | Deactivated |
+| **Send by email** | Turn on once the email details are entered and the test arrives. Turned on or turned off. | Turned off |
 | **Email server** | Such as smtp.example.com Words. | Empty |
 | **Port** | A number from 1 to 65535. | 587 |
 | **Security** | How the connection to your email server is protected. Your email service says which to use. One of: STARTTLS (usually port 587), SSL (usually port 465), None (only on your own network). | STARTTLS (usually port 587) |
@@ -50,7 +50,7 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Send by Telegram** | Activate once the bot token and chat are entered and the test arrives. Activated or deactivated. | Deactivated |
+| **Send by Telegram** | Turn on once the bot token and chat are entered and the test arrives. Turned on or turned off. | Turned off |
 | **Bot token** | From @BotFather in Telegram. Kept secret by Starboard: it is never shown again. | Empty |
 | **Telegram chat** | One chat id a line. Send your bot a message first, so it may write to you. One a line. | Empty |
 
@@ -58,14 +58,14 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Send by Discord** | Activate once the webhook is filled in and the test arrives. Activated or deactivated. | Deactivated |
+| **Send by Discord** | Turn on once the webhook is filled in and the test arrives. Turned on or turned off. | Turned off |
 | **Discord webhook address** | In Discord: the channel's Edit channel, Integrations, Webhooks, Copy webhook URL. Kept secret by Starboard: it is never shown again. | Empty |
 
 ## Signal
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Send by Signal** | Only if you run signal-cli-rest-api, which sends for a number you registered with it. Activated or deactivated. | Deactivated |
+| **Send by Signal** | Only if you run signal-cli-rest-api, which sends for a number you registered with it. Turned on or turned off. | Turned off |
 | **signal-cli-rest-api address** | Such as http://192.0.2.10:8080 A web address. | Empty |
 | **Send from number** | The number registered with it, such as +447700900123. Words. | Empty |
 | **Send Signal messages to** | One number or group id a line. One a line. | Empty |
@@ -74,7 +74,7 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Send by Pushover** | Activate once both keys are entered and the test arrives. Activated or deactivated. | Deactivated |
+| **Send by Pushover** | Turn on once both keys are entered and the test arrives. Turned on or turned off. | Turned off |
 | **User key** | Kept secret by Starboard: it is never shown again. | Empty |
 | **Application token** | Make an application for Starboard on pushover.net. Kept secret by Starboard: it is never shown again. | Empty |
 
@@ -82,7 +82,7 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Send by ntfy** | Activate once the topic is filled in and the test arrives. Activated or deactivated. | Deactivated |
+| **Send by ntfy** | Turn on once the topic is filled in and the test arrives. Turned on or turned off. | Turned off |
 | **ntfy server** | A web address. | https://ntfy.sh |
 | **Topic** | On ntfy.sh anyone who knows the topic can read it, so make it hard to guess. Words. | Empty |
 | **Access token** | Optional, for a server or topic that needs one. Kept secret by Starboard: it is never shown again. | Empty |
@@ -91,7 +91,7 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 | Setting | What it does | Default |
 |---|---|---|
-| **Send to webhooks** | Activate once an address is filled in and the test arrives. Activated or deactivated. | Deactivated |
+| **Send to webhooks** | Turn on once an address is filled in and the test arrives. Turned on or turned off. | Turned off |
 | **Webhook addresses** | One or more, separated by spaces. Each gets title, body and type as JSON, as the Apprise API's notify address takes them. Kept secret by Starboard: it is never shown again. | Empty |
 
 ## People
@@ -104,24 +104,24 @@ Notifications' settings are on its own tab: go to **Settings**, then **Plug-ins*
 
 These are on Notifications' tab.
 
-- **Send a test email**, **Send a test to Telegram**, **Send a test to Discord**, **Send a test by Signal**, **Send a test by Pushover**, **Send a test by ntfy** and **Send a test to the webhooks** each send "A test from Starboard" by that one channel. They use the details you saved. They work even before you activate the channel. Starboard says "Test sent by" and the channel, or "Test not sent" and why.
+- **Send a test email**, **Send a test to Telegram**, **Send a test to Discord**, **Send a test by Signal**, **Send a test by Pushover**, **Send a test by ntfy** and **Send a test to the webhooks** each send "A test from Starboard" by that one channel. They use the details you saved. They work even before you turn on the channel. Starboard says "Test sent by" and the channel, or "Test not sent" and why.
 - **Send what quiet hours held now** sends the summary of what was held straight away, even inside the quiet hours. It says "Sending what quiet hours held now". If nothing was held, nothing is sent.
-- **Send New this week now** sends New this week straight away, at any time. It goes the way **Send New this week by** says, even while **New this week** is deactivated. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
+- **Send New this week now** sends New this week straight away, at any time. It goes the way **Send New this week by** says, even while **New this week** is off. It says "Sending New this week now. The Notifications card says when it has gone". If nothing arrived in the last 7 days, nothing is sent.
 
 ![Notifications' Actions, with Send New this week now outlined](../../images/notifications/settings-3-send-now.png)
 
 ## Things to note
 
-- A setting you change is used for the next message; you do not need to deactivate it first.
-- Fill in a channel's details, select its test button, and activate **Send by** that channel only once the test arrives.
+- A setting you change is used for the next message; you do not need to turn it off first.
+- Fill in a channel's details, select its test button, and turn on **Send by** that channel only once the test arrives.
 - **Quiet hours** run from the start hour to the end hour in your server's time, over midnight when the start is later. The plug-in keeps held messages in its folder, at most 200 a night. They go as one list of up to 40 lines, with the time of each and how many more. The person who asked for something that became ready is told then, in their own message. New this week and the test buttons are never held.
 - Each message goes by every active channel. One channel failing never stops the others.
 - Under **People**, give one line for each person, such as `Sam, sam@example.com` or `Sam, telegram 123456`. The name must be the one they use in Reelix or Seerr. Only email and Telegram can tell a person.
 - New this week is sent on the day and at the hour you choose in **When to send New this week**, once a week. A week with nothing new sends nothing.
 - Passwords, tokens, keys and webhook addresses are secret. Starboard never shows them again. The plug-in never writes them to its log, its cards or its folder.
 - On ntfy.sh anyone who knows the topic can read it, so make the topic hard to guess.
-- Signal works only if you already run signal-cli-rest-api with a number registered. Otherwise leave **Send by Signal** deactivated.
-- Settings are kept when you update or deactivate it, and when you remove it they stay in its folder.
+- Signal works only if you already run signal-cli-rest-api with a number registered. Otherwise leave **Send by Signal** turned off.
+- Settings are kept when you update or turn it off, and when you remove it they stay in its folder.
 
 ## Find out more
 

@@ -53,16 +53,16 @@ Measured:
 
    ![The foot of the install slide-out, with Your Starboard password filled in and Install Library clean-up (step 4) outlined](../../images/library-cleanup/install-3-password.png)
 
-5. Library clean-up's own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Activate**.
+5. Library clean-up's own tab opens under **Settings**, then **Plug-ins**, and Starboard turns it on: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Turn on**.
 
    ![Library clean-up's own tab, General, with its State, Active, (step 5) outlined](../../images/library-cleanup/install-4-active.png)
 
 6. Check the rules, **Libraries** and **Always keep**. If someone never watches, such as a guest account, add their Jellyfin user name to **People to leave out**. Read [Settings](settings.md).
 7. Open **Preview**. It lists what the rules would move now, and the space each frees. Nothing moves from **Preview**.
-8. When **Preview** lists only what you are happy to move, activate **Move items each day** in **Rules**.
+8. When **Preview** lists only what you are happy to move, turn on **Move items each day** in **Rules**.
 9. Add its card to your dashboard. Read [Dashboard card](dashboard-card.md).
 
-To move items straight away, first activate **Move items each day**. Then go to **System**, then **Jobs**, and select **Run now** beside **Move items to the holding folder**.
+To move items straight away, first turn on **Move items each day**. Then go to **System**, then **Jobs**, and select **Run now** beside **Move items to the holding folder**.
 
 ### Add it by its address
 
@@ -84,7 +84,7 @@ Or run its installer, `install.py` in its folder, on any computer with Python, a
 
 Its containers stop and go, and its API key stops working. Nothing is deleted. What it moved stays in `media/.holding/library-cleanup`. To return a folder after you remove the plug-in, move it back to where it was yourself. Then choose **Follow** for it in Starboard's **Library** so Reelix follows it again.
 
-To stop it for a while instead, deactivate **Move items each day**, or select **Deactivate** on its tab. Starboard keeps its settings, its folder and what is in the holding folder.
+To stop it for a while instead, turn off **Move items each day**, or select **Turn off** on its tab. Starboard keeps its settings, its folder and what is in the holding folder.
 
 ## Find out more
 

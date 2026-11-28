@@ -521,7 +521,7 @@
     width: var(--current-bar-w);
     background: var(--color-accent);
   }
-  /* Send feedback at the foot of the side menu while Send feedback is activated (Settings, General): a menu item
+  /* Send feedback at the foot of the side menu while Send feedback is on (Settings, General): a menu item
      under a line, opening Snaglist. Pages with no side menu, such as the set-up, keep Snaglist's corner button. */
   .rail__feedback {
     width: 100%;
@@ -652,7 +652,7 @@
   .phone-menu__section {
     border-bottom: 1px solid var(--color-divider);
   }
-  /* Send feedback, its own row above the menu's foot while Send feedback is activated, like the section rows. */
+  /* Send feedback, its own row above the menu's foot while Send feedback is on, like the section rows. */
   .phone-menu__feedback {
     display: flex;
     align-items: center;

@@ -41,7 +41,7 @@ Your Starboard's plug-in API is outside what this version of Kavita works with, 
 ## Open its web page
 
 1. Go to **Settings**, then **Plug-ins**, then **Kavita**.
-2. Check its state is **Active**. If not, select **Activate**.
+2. Check its state is **Active**. If not, select **Turn on**.
 3. In **Its web page**, select **Open Kavita**. Use the address shown there: Starboard chooses the port, 5000 when it is free, so it may be a different one.
 4. Open it from a device on your home network. The page is not on the internet.
 
@@ -74,9 +74,9 @@ The main install can also add Kavita, in **Install apps**, **Ebooks**. With both
 Kavita 1.1.1 and earlier made a sign-in key that was too short for Kavita. Making the first account then ended with "400 Error, Something went wrong when registering user". Version 1.1.2 makes a long enough key for a new install. An install made before it keeps the short key, because Starboard never writes over a file Kavita keeps in its own folder. That install needs one repair.
 
 1. Update Kavita to 1.1.2. Read [Updates](updates.md).
-2. On Kavita's tab, select **Deactivate**.
+2. On Kavita's tab, select **Turn off**.
 3. In Starboard's data folder, open `plugins/kavita/app` and move `appsettings.json` out of it, to a folder of your own. Starboard writes a new one with a long key the next time it starts.
-4. Select **Activate** and make the first account again.
+4. Select **Turn on** and make the first account again.
 
 No account or library was made by the failed attempt, so nothing else needs to be reset. If you had already made accounts, they stay: only people signed in at the time are signed out.
 

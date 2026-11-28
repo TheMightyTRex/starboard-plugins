@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "philips-hue",
  "name": "Philips Hue",
- "version": "0.1.1",
+ "version": "0.1.2",
  "description": "Your Hue lights by room, zone and type: on and off, brightness, colour, scenes and schedules, through the Hue bridge on your home network. Nothing goes to the Hue cloud.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -48,7 +48,7 @@
    "type": "custom",
    "choices": "/rooms",
    "group": "Rooms",
-   "hint": "Each room's lights: activate or deactivate them, dim them and give them a colour or a white."
+   "hint": "Each room's lights: turn on or turn them off, dim them and give them a colour or a white."
   },
   {
    "key": "zones",
@@ -163,6 +163,13 @@
   "alt": "Philips Hue logo"
  },
  "changes": [
+  {
+   "version": "0.1.2",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
   {
    "version": "0.1.1",
    "date": "2026-11-26",

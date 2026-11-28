@@ -315,7 +315,7 @@ def screen():
     return {"type": "list", "title": "Make a Calibre library from your books",
             "intro": "Calibre-Web needs a Calibre library, which is a folder with a file called metadata.db. Your books folder is not one, "
                      "so this makes a new one beside it, in books-library, by copying each book with Calibre's own tool. Your books folder is "
-                     "read only here and is never changed. Run it again later to add books that arrived since. Then deactivate and activate "
+                     "read only here and is never changed. Run it again later to add books that arrived since. Then turn off and turn on "
                      "Calibre-Web, so it opens the library.",
             "items": items}
 

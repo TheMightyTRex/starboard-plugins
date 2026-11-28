@@ -1,6 +1,6 @@
 """Create your own TV channel 0.7.0, audio description on promos (DASH-509, owner, 21 November 2026: "Can you add a task
 to add audio description to promos"). A promo is clips, music and words on the picture, so a blind viewer heard only
-music. With the setting activated (it is not unless changed), a voice made on the server says the words.
+music. With the setting turned on (it is not unless changed), a voice made on the server says the words.
 
 The FFmpeg test runs only where ffmpeg is installed; the voice in it is a tone, so it needs no speech program."""
 import http.server
@@ -299,7 +299,7 @@ class TheApp(App):
         self.app.promo_design = lambda s, ch: self.app.promo.plain_pack("0x1f5f99")
         made, asked, said = self.job()
         self.assertTrue(made, said)
-        self.assertEqual(asked, [], "not activated: the speech program is never asked")
+        self.assertEqual(asked, [], "not turned on: the speech program is never asked")
         self.assertNotIn("[voice]", " ".join(made[0]))
         self.assertFalse([p for p in self.app.state()["promos"] if p["design"].endswith("|ad")])
         self.settings(promo_audio_description=True, promo_seconds="20")

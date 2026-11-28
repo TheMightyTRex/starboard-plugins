@@ -45,13 +45,13 @@ Calibre-Web's page is on your home network, at this computer's address and the p
 1. Check Calibre-Web's tab says **Active**. Starboard gives it a port only once it is active.
 2. Under **Its web page**, read the address, then select **Open Calibre-Web**.
 3. Open it from a device on your home network. It does not open from away from home.
-4. If it still does not open, deactivate it, activate it again and wait a minute for the app to start.
+4. If it still does not open, turn it off, turn it on again and wait a minute for the app to start.
 
 ## Point it at your library
 
 Calibre-Web finds books only in a Calibre library: a folder with `metadata.db` in it. A folder of book files is not one.
 
-1. Check whether `books-library` in your media folder has `metadata.db`. If it does, deactivate Calibre-Web and activate it again: Starboard sets the library at its start.
+1. Check whether `books-library` in your media folder has `metadata.db`. If it does, turn off Calibre-Web and turn it on again: Starboard sets the library at its start.
 2. If not, and `books` has no `metadata.db` either, make a library with [Calibre library maker](../calibre-library/install.md). Read [Your books](your-books.md).
 3. If your own Calibre library is somewhere else, move it into `books` with Calibre. Or enter `/media/books` as **Location of Calibre database** in Calibre-Web's admin settings.
 

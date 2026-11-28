@@ -40,16 +40,16 @@ In **Settings**, **Plug-ins**, **Picture shrinker**:
   time. When you add it, it runs every Sunday at 03:30. In a month without the date you chose, such as the 31st in
   April, it runs on the last day.
 - **Shrink now:** in **Actions**, starts a run straight away. **Stop shrinking** stops it after the picture it is on.
-- **Shrink new pictures in quiet hours:** deactivated when you add it. Activate it to shrink the pictures Jellyfin
+- **Shrink new pictures in quiet hours:** turned off when you add it. Turn it on to shrink the pictures Jellyfin
   saves for new films and series each night, in Starboard's quiet hours, so they never build up.
 
 A run stops itself after about two hours. The next run carries on where it stopped.
 
 ## Settings
 
-- **Shrink all picture types:** activated when you add it, so every type is shrunk in one setting. Deactivate it to
+- **Shrink all picture types:** turned on when you add it, so every type is shrunk in one setting. Turn it off to
   choose types one by one with the ticks under it. The ticks are **Posters**, **Photos of cast and crew**,
-  **Backdrops**, **Thumbnails**, **Logos**, **Banners**, **Disc art** and **Clear art**. All are activated when you add it.
+  **Backdrops**, **Thumbnails**, **Logos**, **Banners**, **Disc art** and **Clear art**. All are on when you add it.
 
 In **Sizes and quality**:
 
@@ -153,7 +153,7 @@ goes back to the version you had, with your settings as they were.
 
 ## Stop it or remove it
 
-- **Stop it for a while:** choose **Deactivate**. Its settings and what it has saved are kept.
+- **Stop it for a while:** choose **Turn off**. Its settings and what it has saved are kept.
 - **Remove it:** choose **Remove**. The pictures it shrank stay shrunk. To put them back first, choose **Restore
   original pictures**, or **Start again** to have Jellyfin download them again. To free the backup's space, choose
   **Delete backup**.

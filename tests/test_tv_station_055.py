@@ -145,7 +145,7 @@ class LeftOut(App):
         app.someone_watching = lambda: True
         self.assertIn("Someone is watching", app.three_d_job()["said"])
         with mock.patch.object(app, "settings", lambda: {"leave_out_3d": False}):
-            self.assertIn("deactivated", app.three_d_job()["said"])
+            self.assertIn("is off", app.three_d_job()["said"])
 
 
 @unittest.skipUnless(shutil.which("ffmpeg"), "ffmpeg is not installed here")
