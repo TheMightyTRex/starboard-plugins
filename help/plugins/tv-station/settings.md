@@ -510,7 +510,7 @@ Your own branding for every channel. It can have the on-screen logo, the logo wi
 
 ### Packs ready to use
 
-Needs Starboard 1.25 or later. Another plug-in, such as Online sources, can leave a pack in a shared folder for this plug-in. Open **Broadcast pack**. A pack that is waiting is listed under **Packs ready to use**, with where its files came from. Starboard did not check it: this plug-in checks it, with the same checks as an uploaded pack, before it uses it. Use the switch on its row to use it for every channel without a pack of its own. The zip is taken out of the folder only after it has been checked and installed. **Remove** takes it out of the folder without using it. A pack with no logo gets one drawn from its name.
+Needs Starboard 1.25 or later. Another plug-in, such as Online sources, can leave a pack in a shared folder for this plug-in. Open **Broadcast pack**. A pack that is waiting is listed under **Packs ready to use**, with where its files came from. Starboard did not check it: this plug-in checks it, with the same checks as an uploaded pack, before it uses it. Use the control on its row to use it for every channel without a pack of its own. The zip is taken out of the folder only after it has been checked and installed. **Remove** takes it out of the folder without using it. A pack with no logo gets one drawn from its name.
 
 ## Animation
 

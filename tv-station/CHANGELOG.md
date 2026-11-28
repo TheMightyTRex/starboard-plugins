@@ -5,7 +5,7 @@
 ### Added
 - Packs ready to use (DASH-635): a pack another plug-in left in the shared hand-off folder tv-pack (plug-in API 1.25) is listed on Broadcast pack, with where its files came from (LICENCE.txt in the zip). It needs Starboard 1.25 (starboard_api, the permission handoff:receive and the volume handoff/tv-pack:receive).
 - The folder is read only when the page is drawn. A file is listed only when it is a regular file (never a link) ending in .zip, not starting with a dot, with a plain name, and at most 60 MB.
-- The switch on a row copies the zip out of the folder first, then checks it exactly like an uploaded pack (the same limits, loudness step and flash guard), and removes it from the folder only after it is installed. Remove takes it out of the folder.
+- The control on a row copies the zip out of the folder first, then checks it exactly like an uploaded pack (the same limits, loudness step and flash guard), and removes it from the folder only after it is installed. Remove takes it out of the folder.
 - A pack of backgrounds and music, with no logo or layout in pack.json, is accepted: the plug-in's own places for the clip and the words are used, and the name is drawn as the logo.
 - LICENCE.txt in the zip is kept with the installed pack.
 - Tests: tests/test_tv_station_handoff.py.

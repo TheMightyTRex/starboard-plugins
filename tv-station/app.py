@@ -2451,7 +2451,7 @@ def pack_page(said=None):
         items.append({"id": f"handoff:{r['name']}", "title": r["name"][:120], "group": "Packs ready to use", "state": "unknown", "state_label": "Not checked yet",
                       "on": False, "actions": ["toggle", "remove"],
                       "detail": (f"Another plug-in put this here, {round(r['size'] / 1048576, 1)} MB. Starboard did not check it: this plug-in checks it before it uses it. "
-                                 "The switch on this row uses it for every channel without a pack of its own. Remove takes it out of the folder." +
+                                 "The control on this row uses it for every channel without a pack of its own. Remove takes it out of the folder." +
                                  (f" Where its files came from: {note}" if note else ""))[:600]})
     out = {"type": "list", "title": "Broadcast pack", "items": items,
            "intro": ("Your own branding for the channels: the on-screen logo, idents, the logo with music, Coming up next and promo backgrounds, "
