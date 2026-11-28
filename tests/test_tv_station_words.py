@@ -178,5 +178,32 @@ class TheSixTabs(App):
         self.assertEqual(got["title"], "Branding")
 
 
+class TheStationTab(unittest.TestCase):
+    """Station and streaming (DASH-647): the choices most people make come first, and every key and default stays."""
+
+    def setUp(self):
+        with open(os.path.join(TV, "starboard-plugin.json"), encoding="utf-8") as f:
+            self.rows = [x for x in json.load(f)["settings"] if x.get("group") == "Station"]
+
+    def test_the_first_five_are_the_ones_most_people_make(self):
+        self.assertEqual([x["key"] for x in self.rows][:5], ["station_name", "language", "picture", "most_at_once", "stop_after"])
+        self.assertEqual([x["label"] for x in self.rows][2:5], ["Picture quality", "Channels playing at once", "Stop a channel when nobody is watching"])
+
+    def test_the_rest_say_they_can_stay_as_they_are(self):
+        for x in self.rows[5:]:
+            if x["key"] != "address":
+                self.assertIn("You can leave this as it is.", x["hint"], x["key"])
+
+    def test_defaults_and_choice_values_are_as_before(self):
+        by = {x["key"]: x for x in self.rows}
+        self.assertEqual((by["picture"]["default"], [c["value"] for c in by["picture"]["choices"]]), ("720", ["720", "1080"]))
+        self.assertEqual((by["most_at_once"]["default"], by["stop_after"]["default"], by["first_number"]["default"]), (2, 30, 1))
+
+    def test_no_hint_has_a_sentence_over_25_words(self):
+        for x in self.rows:
+            for sentence in re.split(r"(?<=[.])\s", x.get("hint", "")):
+                self.assertLessEqual(len(sentence.split()), 25, x["key"])
+
+
 if __name__ == "__main__":
     unittest.main()

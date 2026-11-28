@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.17.1 (not released yet)
+
+### Changed
+- Station and streaming simplified (DASH-647, owner, 28 November 2026): the Station tab leads with Station name, Language, Picture quality, Channels playing at once and Stop a channel when nobody is watching. The rest follow, and each says you can leave it as it is.
+- Plainer labels and hints: Picture quality is Lighter (720p) or Sharper (1080p); the Language hint is shorter. Keys, values and defaults are unchanged.
+- Not done: folding the other six under More. Starboard draws a plug-in's plain settings in the order given and has no way to fold some of them, so this needs a Starboard change (a show-more switch for settings).
+
 ## 0.17.0 (not released yet)
 
 ### Changed

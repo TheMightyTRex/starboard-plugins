@@ -560,12 +560,14 @@ Timing stays exact. Each thing comes on from its start and has gone by its end, 
 
 ## Streaming
 
+These settings are in **Station**. The first three are the choices most people make: **Picture quality**, **Channels playing at once** and **Stop a channel when nobody is watching**. The others have good answers already, and each says you can leave it as it is.
+
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **Picture size** | The size of the stream while a channel is watched. 720p is lighter on the processor; 1080p is sharper | **720p, lighter on the processor** or **1080p, sharper**. **720p** |
-| **Most channels at once** | Each channel being watched is one server work. People watching the same channel share it | 1 to 6. **2** |
-| **Stop a channel after the last viewer leaves** | Nothing runs while nobody watches | 5 to 300 seconds. **30 seconds** |
-| **Copy programmes when nothing is drawn on them** | A channel with no corner logo, no clock, no label and no title bars plays its programmes as they are, with no converting | Turned on |
+| **Picture quality** | The size of the stream while a channel is watched. Lighter uses less of your server. Sharper has a clearer picture but needs about twice the work | **Lighter (720p)** or **Sharper (1080p)**. **Lighter (720p)** |
+| **Channels playing at once** | Each channel someone watches uses your server. People watching the same channel share it | 1 to 6. **2** |
+| **Stop a channel when nobody is watching** | The channel stops this many seconds after the last person leaves. Nothing runs while nobody watches | 5 to 300 seconds. **30 seconds** |
+| **Play programmes as they are when nothing is drawn on them** | A channel with no corner logo, no clock, no label and no title bars plays its programmes as they are, with no converting | Turned on |
 | **Leave out 3D films** | A 3D film plays as two pictures, side by side or one over the other. Films Jellyfin marks as 3D, or whose file name says 3D, are left out of every channel. Each film on a channel is also checked once, in quiet hours and never while anyone is watching, and one found to be 3D is left out too | Turned on |
 
 ## Station

@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.17.0",
+ "version": "0.17.1",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -95,47 +95,47 @@
      "label": "Norsk bokmål (Norwegian)"
     }
    ],
-   "hint": "This sets the language of three things. The first is the words on the picture and in the guide, such as Coming up next and the day and time. The second is the sound track, where a programme has one in this language. The third is film and series titles and descriptions, which come from the film database.",
+   "hint": "Sets the words on the picture and in the guide, the sound track where there is one, and film and series titles.",
    "group": "Station"
   },
   {
    "key": "picture",
-   "label": "Picture size",
+   "label": "Picture quality",
    "type": "choice",
    "default": "720",
    "choices": [
     {
      "value": "720",
-     "label": "720p, lighter on the processor"
+     "label": "Lighter (720p)"
     },
     {
      "value": "1080",
-     "label": "1080p, sharper"
+     "label": "Sharper (1080p)"
     }
    ],
-   "hint": "The size of the stream while a channel is watched.",
+   "hint": "Lighter uses less of your server and suits most homes. Sharper has a clearer picture but needs about twice the work.",
    "group": "Station"
   },
   {
    "key": "most_at_once",
-   "label": "Most channels at once",
+   "label": "Channels playing at once",
    "type": "number",
    "default": 2,
    "min": 1,
    "max": 6,
    "group": "Station",
-   "hint": "Each channel being watched is one server work. People watching the same channel share it."
+   "hint": "Each channel someone watches uses your server. People on the same channel share it."
   },
   {
    "key": "stop_after",
-   "label": "Stop a channel after the last viewer leaves",
+   "label": "Stop a channel when nobody is watching",
    "type": "number",
    "unit": "seconds",
    "default": 30,
    "min": 5,
    "max": 300,
    "group": "Station",
-   "hint": "Nothing runs while nobody watches."
+   "hint": "The channel stops this many seconds after the last person leaves. Nothing runs while nobody watches."
   },
   {
    "key": "first_number",
@@ -144,7 +144,7 @@
    "default": 1,
    "min": 1,
    "max": 9000,
-   "hint": "1 puts your channels first in Jellyfin's Live TV, before the free channels from 101.",
+   "hint": "You can leave this as it is. 1 puts your channels before the free channels, which start at 101.",
    "group": "Station"
   },
   {
@@ -155,21 +155,21 @@
    "min": 1,
    "max": 14,
    "group": "Station",
-   "hint": "Worked out when Jellyfin asks for it, about once a day."
+   "hint": "You can leave this as it is. Jellyfin's guide works out this many days when Jellyfin asks, about once a day."
   },
   {
    "key": "address",
    "label": "Address Jellyfin uses to reach this plug-in",
    "type": "text",
-   "hint": "Filled in by itself: Starboard gives this plug-in its address on your home network, such as http://192.168.1.20:8790. Enter one only when Jellyfin reaches the server by another address.",
+   "hint": "Filled in for you, such as http://192.168.1.20:8790. Change it only when Jellyfin reaches the server by another address.",
    "group": "Station"
   },
   {
    "key": "copy_plain",
-   "label": "Copy programmes when nothing is drawn on them",
+   "label": "Play programmes as they are when nothing is drawn on them",
    "type": "switch",
    "default": true,
-   "hint": "A channel with no corner logo and no title bars plays its programmes as they are, with no converting.",
+   "hint": "You can leave this as it is. A channel with no corner logo and no title bars plays its programmes as they are, which saves your server work.",
    "group": "Station"
   },
   {
@@ -178,7 +178,7 @@
    "type": "switch",
    "default": true,
    "group": "Station",
-   "hint": "A 3D film plays as two pictures. Films Jellyfin or their file name says are 3D are left out, and each film on a channel is checked once in quiet hours."
+   "hint": "You can leave this as it is. A 3D film plays as two pictures, so films marked 3D are left out. Each film is checked once, when nobody is watching."
   },
   {
    "key": "promos",
@@ -728,6 +728,15 @@
  },
  "changes": [
   {
+   "version": "0.17.1",
+   "date": "2026-11-28",
+   "changed": [
+    "**Station** shows the choices most people make first: **Station name**, **Language**, **Picture quality**, **Channels playing at once** and **Stop a channel when nobody is watching**, then the rest, each saying you can leave it as it is.",
+    "Plainer labels and hints: Picture quality has Lighter (720p) and Sharper (1080p), and the Language hint is three short sentences less.",
+    "Every setting keeps its key and value."
+   ]
+  },
+  {
    "version": "0.17.0",
    "date": "2026-11-28",
    "changed": [
@@ -894,13 +903,6 @@
    "date": "2026-11-19",
    "fixed": [
     "**Pack logo check:** a busy plug-in no longer refuses a logo as having no transparent parts; it tries again, then says to upload the pack again in a minute."
-   ]
-  },
-  {
-   "version": "0.5.2",
-   "date": "2026-11-19",
-   "added": [
-    "**The station's logo on promos:** promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner. To leave it out, turn off Show the station's logo on promos."
    ]
   }
  ]
