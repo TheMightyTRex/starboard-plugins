@@ -24,7 +24,7 @@ Starboard's help has the full references.
 
 ## What plug-in API 1.21 added
 
-- `needs_plugins` and `switch`: a plug-in may list the plug-ins it needs, and name its own main switch. Deactivating a plug-in, or saving its switch as inactive, asks first when other active plug-ins need it, names them in plain words, and deactivates them too on a yes. Single sign-on 0.1.0 uses `switch`. Read the [manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html#plug-ins-that-need-another-plug-in-needs_plugins-and-switch).
+- `needs_plugins` and `switch`: a plug-in may list the plug-ins it needs, and name its own main switch. Turning off a plug-in, or saving its switch as inactive, asks first when other active plug-ins need it, names them in plain words, and turns them off too on a yes. Single sign-on 0.1.0 uses `switch`. Read the [manifest reference](https://themightytrex.github.io/starboard/help/developers/plugin-manifest-reference.html#plug-ins-that-need-another-plug-in-needs_plugins-and-switch).
 
 ## What plug-in API 1.20 added
 
@@ -48,7 +48,7 @@ Plug-in API 1.16 comes with Starboard 0.23.0. Nothing was taken away: a plug-in 
 | The `disk.changed` event, with `system:read` | Sent when Starboard's disk pool helper finishes a job, however it was asked for: `action` (`add`, `remove` or `balance`), `state`, `disk`, `erased` (the disks it erased) and `result` | Notifications 1.2.0 |
 | `STARBOARD_HOME_ADDRESS` | For a container with `publish` on the `lan` network: its own address on the home network, such as `http://192.0.2.20:8790` | Create your own TV channel 0.1.1 |
 | Plain text boxes | A custom setting's `add` box and an item's `attach` form take plain text, not only a web address: check what you are sent | Create your own TV channel |
-| Activated when installed | Starboard activates a plug-in as soon as it is installed, unless it needs settings first or an app it brings in is on the computer | Every plug-in |
+| Turned on when installed | Starboard turns on a plug-in as soon as it is installed, unless it needs settings first or an app it brings in is on the computer | Every plug-in |
 
 ## What plug-in API 1.15 added
 
@@ -57,7 +57,7 @@ Plug-in API 1.15 came with Starboard 0.19.0. Nothing was taken away: a plug-in m
 | Part | What it is | Used here by |
 |---|---|---|
 | `build` on a container | Its image is built by Starboard from the `Dockerfile` in the plug-in's zip file and tagged `local/<id>:<version>`. It installs only with **Settings**, **Plug-ins**, **Add a plug-in**, **Upload a zip file**, and updates with **Update from a zip file**. A manifest with `build` from an address or a catalogue is refused | None: every plug-in here is published with an image pinned by digest |
-| `jellyfin_libraries` and `jellyfin:libraries` | Jellyfin libraries for folders the plug-in fills, which Starboard adds on each activation with real-time monitoring deactivated unless the plug-in sets `realtime_monitor`. The permission is medium risk | None yet |
+| `jellyfin_libraries` and `jellyfin:libraries` | Jellyfin libraries for folders the plug-in fills, which Starboard adds each time the plug-in is turned on, with real-time monitoring turned off unless the plug-in sets `realtime_monitor`. The permission is medium risk | None yet |
 | `library:holding` and the volume `media:holding` | The media folder, read and write, at `/media`, so a plug-in can move films and series into its holding folder, `media/.holding/<id>/`, keeping the folders each was in, and put them back. The permission is high risk. A container that mounts it may run as `"user": "media"` | Library clean-up |
 | `restore` on a custom setting's item | An action on a row of a custom setting's list, drawn as a **Put back** button and sent as `{"action": "restore", "id"}` | Library clean-up's **Holding folder** |
 
@@ -90,8 +90,8 @@ Plug-in API 1.15 came with Starboard 0.19.0. Nothing was taken away: a plug-in m
   finishing or stopping its work, and `/update/after` by carrying on.
 - **Accessible words.** Labels under 60 characters in sentence case, a hint on every switch and choice, a title on
   every card. Starboard's plug-in tester checks them, and every plug-in here passes it.
-- **The content rules:** British English, sentence case, no em dashes, no contractions; settings are activated or
-  deactivated.
+- **The content rules:** British English, sentence case, no em dashes, no contractions; settings are on or
+  turned off.
 
 ## Older Starboards
 

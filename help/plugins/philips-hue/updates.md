@@ -1,11 +1,12 @@
 # Philips Hue: Updates
 
-Philips Hue 0.1.1 is the latest version, and the first. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0).
+Philips Hue 0.1.2 is the latest version, and the first. It needs Starboard with plug-in API 1.16 or later (Starboard 0.23.0).
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 0.1.2 | 1.16 or later | Not released yet |
 | 0.1.1 | 1.16 or later | Not released yet |
 | 0.1.0 | 1.16 or later | 20 November 2026 |
 

@@ -4,7 +4,7 @@ Uptime and status' settings are on its own tab: go to **Settings**, then **Plug-
 
 ## Checks
 
-Each check is one line: a name, a colon, then what to check. Enter it in **Add a check** and select **Add**. Each row has **Test**, **Change** (the same line, to change), **Activate** or **Deactivate**, and **Remove**, which removes its history too.
+Each check is one line: a name, a colon, then what to check. Enter it in **Add a check** and select **Add**. Each row has **Test**, **Change** (the same line, to change), **Turn on** or **Turn off**, and **Remove**, which removes its history too.
 
 | Kind | Example | Up when |
 |---|---|---|
@@ -32,7 +32,7 @@ A `push` check is for something that runs by itself, such as a backup. At its en
 
 Each group made by `in` has a row with how many of its checks are up.
 
-- **Deactivate** a group to pause its alerts. Its checks still run.
+- **Turn off** a group to pause its alerts. Its checks still run.
 - **Maintenance** takes one or more windows, split by `;`: `Sunday 02:00 to 04:00`, `weekdays 01:00 to 02:00`, `every day 03:00 to 03:30`, `2026-11-21 02:00 to 06:00` or `now for 2 hours`. A window that ends before it starts ends the next day. Times are the server's own.
 - In a window, its checks still run and are kept, no alert is sent, and the status page says **Maintenance**. A check still down when the window ends is sent then.
 
@@ -53,7 +53,7 @@ Each group made by `in` has a row with how many of its checks are up.
 - **A `cert` check** reads one certificate and nothing else, four times a day unless you write `every`, such as `cert example.org every 1h`. It sends the alert before the end like the others: set the days under **Warn when a certificate has this long left**.
 - **Certificates** are read for every `https` address and every `tcp` check with `tls`, every 6 hours. A home device with its own certificate is still up; the certificate says **Not trusted** and why.
 - **History:** 90 days of response times and uptime for each check, about 43 KB each.
-- A change is used at the next round, within a minute. Settings are kept when you update or deactivate it.
+- A change is used at the next round, within a minute. Settings are kept when you update or turn it off.
 
 ## Find out more
 

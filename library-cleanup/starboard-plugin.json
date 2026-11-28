@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "library-cleanup",
  "name": "Library clean-up",
- "version": "1.0.4",
+ "version": "1.0.5",
  "description": "Moves films and series to the holding folder when everyone has watched them, or nobody has for a long time. This stops your disks filling up. It never deletes, and each can be put back.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -47,7 +47,7 @@
    "type": "switch",
    "default": false,
    "group": "Rules",
-   "hint": "Once a day in quiet hours, moves what the rules find to the holding folder. Check Preview first: nothing moves until you activate this."
+   "hint": "Once a day in quiet hours, moves what the rules find to the holding folder. Check Preview first: nothing moves until you turn this on."
   },
   {
    "key": "watched",
@@ -209,6 +209,13 @@
  },
  "changes": [
   {
+   "version": "1.0.5",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
+  {
    "version": "1.0.4",
    "date": "2026-11-26",
    "changed": [
@@ -244,7 +251,7 @@
    "added": [
     "**Rules:** films watched by everyone, last watched more than 90 days ago; series that ended with every episode watched; films and series nobody has watched for 12 months. Each a setting, for the libraries you choose.",
     "**Always kept:** favourites, anything someone is part way through, films in a collection, and anything tagged keep.",
-    "**Preview** lists what would move and the space it frees. Nothing moves until you activate Move items each day.",
+    "**Preview** lists what would move and the space it frees. Nothing moves until you turn on Move items each day.",
     "**Never deletes:** it moves each item to media/.holding, keeping its folders, and Put back returns it.",
     "**Reelix and Jellyfin are told:** Reelix stops following what moves, so it is not downloaded again, and follows it again when it is put back."
    ]

@@ -1,9 +1,14 @@
 # Changelog
 
+## 0.2.1 (28 November 2026)
+
+### Changed
+- Turn on and turn off: the text and the help pages now say turn on and turn off. How it works has not changed.
+
 ## 0.2.0 (27 November 2026)
 
 ### Added
-- Heavy jobs held on battery: while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can deactivate this in Settings.
+- Heavy jobs held on battery: while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can turn this off in Settings.
 - The card says so: the Power card says when Starboard's heavy jobs are held.
 
 ### Changed

@@ -21,7 +21,7 @@ A broadcast pack gives the channels in [Create your own TV channel](../../tv-sta
 The example pack, Example TV, is a made-up channel that the plug-in draws in code. It has a logo, the logo with music, 3 idents, a Coming up next card, a promo with 2 music beds and 3 transitions. It holds nothing of anyone else's.
 
 1. Go to **Broadcast pack**.
-2. Under **The station's pack**, activate **Try the example pack**.
+2. Under **The station's pack**, turn on **Try the example pack**.
 3. The first time, the plug-in makes it at the lowest priority. This takes about 2 minutes while no channel is playing. The row says **Being made**, then **In use**.
 4. Every channel without a pack of its own now uses it. Open a channel and select **Preview a frame** or **Preview a Coming up next card**, or watch a channel in Jellyfin's Live TV.
 
@@ -29,7 +29,7 @@ The example pack, Example TV, is a made-up channel that the plug-in draws in cod
 
 ![A Coming up next card from the Example TV pack: the programme's title, episode, Today at 21:00 and a synopsis, with its picture in a yellow frame](../images/tv-station/card-pack.jpg)
 
-To stop trying it, deactivate **Try the example pack**. The channels go back to the station's own pack, or to none.
+To stop trying it, turn off **Try the example pack**. The channels go back to the station's own pack, or to none.
 
 To start your own pack from it, go to **Downloads** and select **The example pack, as a zip**. Unzip it, change its files, and upload it as your own.
 

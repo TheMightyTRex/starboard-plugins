@@ -18,15 +18,15 @@ q2: Does the card come back in a minute?
 q3: Does the card's band say Problem?
   Yes -> 3
   No -> 4
-1: Activate it #1-activate-it
+1: Turn it on #1-turn-it-on
 2: Let it wake up #2-let-it-wake-up
 3: Read what the card says #3-read-what-the-card-says
 4: Start it again #4-start-it-again
 ```
 
-## 1. Activate it
+## 1. Turn it on
 
-A deactivated plug-in cannot answer. Go to **Settings**, then **Plug-ins**, then its name, and select **Activate** in **General**, **State**.
+A plug-in that is off cannot answer. Go to **Settings**, then **Plug-ins**, then its name, and select **Turn on** in **General**, **State**.
 
 ## 2. Let it wake up
 
@@ -42,7 +42,7 @@ Settings, Apps". Fix that, then wait for the next check. Each plug-in's Problems
 
 A card must answer in 3 seconds, in 64 KB at most and in the right shape.
 
-1. On the plug-in's tab, select **Deactivate**, then **Activate**.
+1. On the plug-in's tab, select **Turn off**, then **Turn on**.
 2. If the card still says **No answer from**, go to **System**, then **Logs**, and find the plug-in's name.
 3. Tell its maker, at the [plug-ins' issues on GitHub](https://github.com/TheMightyTRex/starboard-plugins/issues).
 

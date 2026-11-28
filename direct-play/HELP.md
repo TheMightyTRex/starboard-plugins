@@ -29,7 +29,7 @@ It works on one file at a time, at the lowest priority, so your server stays qui
 
 ## Which devices
 
-In **Devices**, activate each kind of device anyone in your home watches on:
+In **Devices**, turn on each kind of device anyone in your home watches on:
 
 - **Roku Express and older Rokus**
 - **Roku 4K:** Roku Express 4K, Streaming Stick 4K and Ultra
@@ -44,9 +44,9 @@ The rules follow from your choice. A file is fixed only when one of the devices 
 example, with only an Nvidia Shield, a film with DTS sound is left alone, because the Shield plays DTS. Add a Fire TV
 Stick, and a playable sound track is added to that film.
 
-Roku Express and older Rokus is activated when you add it. Choose your own devices before you activate the plug-in.
+Roku Express and older Rokus is on when you add it. Choose your own devices before you turn on the plug-in.
 
-Web browsers do not play Dolby Digital sound. If you activate **Web browsers**, files with only Dolby Digital sound
+Web browsers do not play Dolby Digital sound. If you turn on **Web browsers**, files with only Dolby Digital sound
 get an extra stereo track.
 
 ## Settings
@@ -61,16 +61,16 @@ The file being converted always finishes, so work can run past the end of the ho
 
 ### Shrink
 
-- **Shrink very large H.264 files:** activated when you add it.
+- **Shrink very large H.264 files:** turned on when you add it.
 - **Shrink 1080p files over:** 15 Mbps.
 - **Shrink 720p files over:** 8 Mbps.
 - **Shrink smaller files over:** 5 Mbps.
 
 ### More
 
-- **Convert HEVC to H.264:** deactivated when you add it. It leaves HEVC files alone unless you activate it, and then
+- **Convert HEVC to H.264:** turned off when you add it. It leaves HEVC files alone unless you turn it on, and then
   only when none of your devices plays HEVC. H.264 files are larger, so this uses more space.
-- **Keep the originals:** deactivated when you add it. When activated, each original moves to a
+- **Keep the originals:** turned off when you add it. When turned on, each original moves to a
   `.direct-play-originals` folder in your movies or tv folder instead of being replaced. Delete them there yourself
   when you are happy with the new files. No space is saved until you do.
 - **Card updates every:** how often the Direct play card on your dashboard shows progress while a file is
@@ -125,6 +125,6 @@ goes back to the version you had, with your settings as they were.
 - **Pause:** in **Settings**, **Plug-ins**, **Direct play**, choose **Pause fixing**. The file being converted stops
   at once, its unfinished copy is removed, and the original stays as it was. Choose **Resume fixing** to carry on.
 - **Check again now:** **Check the library now** checks for new or changed files straight away. Only those are read.
-- **Stop it for a while:** choose **Deactivate**. Its settings and what it has done are kept.
+- **Stop it for a while:** choose **Turn off**. Its settings and what it has done are kept.
 - **Remove it:** choose **Remove**. The files it already fixed stay as they are. If you used **Keep the originals**,
   the `.direct-play-originals` folders stay too, for you to delete.

@@ -78,7 +78,7 @@ def screen(key, held, off):
         return {"type": "list", "title": "Preview", "layout": "folds", "readonly": True, "columns": COLUMNS,
                 "filters": [{"key": "why", "label": "Why"}],
                 "intro": "3 items would move to the holding folder, freeing 24.5 GB. 2 items the rules found are always kept. "
-                         "Worked out Sun 15 Nov at 09:12 for 3 people in 2 libraries. Nothing moves until you activate Move items each day.",
+                         "Worked out Sun 15 Nov at 09:12 for 3 people in 2 libraries. Nothing moves until you turn on Move items each day.",
                 "items": [{"id": f"p{i}", "title": t, "group": lib, "actions": [],
                            "cells": {"title": t, "library": lib, "why": r, "size": z, "where": w}}
                           for i, (t, lib, r, z, w) in enumerate(PREVIEW)]}
@@ -86,7 +86,7 @@ def screen(key, held, off):
         libs = [("films", "Films", "films", "/media/movies"), ("series", "Series", "series", "/media/tv"),
                 ("children", "Children's films", "films", "/media/children")]
         return {"type": "list", "title": "Libraries",
-                "intro": "The rules check only the libraries activated here. A library you add to Jellyfin is checked until you deactivate it.",
+                "intro": "The rules check only the libraries turned on here. A library you add to Jellyfin is checked until you turn it off.",
                 "items": [{"id": i, "title": t, "detail": ("Films" if k == "films" else "Series") + ": " + where,
                            "group": "Films" if k == "films" else "Series", "on": i not in off,
                            "state": "ok" if i not in off else "off", "state_label": "Checked" if i not in off else "Left alone",
@@ -188,8 +188,8 @@ def cleanup(data_dir):
         active = any(x["key"] == "active" and x["value"] for x in plugins_admin.public_settings(d, "library-cleanup"))
         card = ({"value": 41553759436, "label": "in the holding folder", "note": "3 items held. Next check in quiet hours",
                  "status": "scheduled", "status_label": "Next in quiet hours"} if active else
-                {"value": 41553759436, "label": "in the holding folder", "note": "Deactivated. Preview: 3 items, 24.5 GB",
-                 "status": "inactive", "status_label": "Deactivated"})
+                {"value": 41553759436, "label": "in the holding folder", "note": "Turned off. Preview: 3 items, 24.5 GB",
+                 "status": "inactive", "status_label": "Off"})
         return {"type": "stat", "format": "bytes", "asked": int(time.time()),
                 "data": plugin_cards.clean("stat", {**card, "updated": int(time.time()) - 300})}
 

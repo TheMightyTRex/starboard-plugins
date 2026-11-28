@@ -17,7 +17,7 @@ In Starboard, go to **Settings**, then **Plug-ins**, then **Create your own TV c
 
 - **The template** has every folder, a `pack.json` to fill in, `pack.schema.json` (the machine-checked rules for `pack.json`) and a README with this specification in short.
 - **Placement guides** for the Coming up next card, the promo and the on-screen logo are 1920 by 1080 pictures. They mark the clip area, each text field with its size and place, and the safe areas. With a pack in use, the plug-in draws the guides on the pack's own backgrounds.
-- **The example pack** is Example TV, a made-up channel that the plug-in draws in code. Activate **Try the example pack** first, and the plug-in makes it.
+- **The example pack** is Example TV, a made-up channel that the plug-in draws in code. Turn on **Try the example pack** first, and the plug-in makes it.
 
 ## Step by step
 
@@ -164,7 +164,7 @@ Timing stays exact: a thing comes on from its start and is gone by its end, so a
 - **Animation**, when `pack.json` has it, is used for every thing the settings leave at **The broadcast pack's, or none**.
 - **Each break** between programmes (0.5.0) runs in this order. It opens with a bumper. Then come promos, trailers and clips (up to the number chosen), then one of your extra videos. Then comes the holding slide (or Later and Coming up next cards drawn on your background). It ends with one ident with its music, right before the new programme. A break inside a programme is a bumper, promos and clips, an extra video, the holding slide with Back soon, and a bumper.
 - **Transitions** play at each cut between a programme and a break, chosen at random, the same one on both sides of the cut.
-- **Promos** are made in quiet hours, one at a time at the lowest priority, and never while anyone is watching. Each promo has a few short clips of a programme coming up in the clip area. It also has a music bed from `promo/music`, and its title, day, time and channel. Each channel keeps the number the settings say; old ones are replaced. They play on their own channel and, unless you deactivate it, on your other channels.
+- **Promos** are made in quiet hours, one at a time at the lowest priority, and never while anyone is watching. Each promo has a few short clips of a programme coming up in the clip area. It also has a music bed from `promo/music`, and its title, day, time and channel. Each channel keeps the number the settings say; old ones are replaced. They play on their own channel and, unless you turn it off, on your other channels.
 
 ## The upload, and what is checked
 

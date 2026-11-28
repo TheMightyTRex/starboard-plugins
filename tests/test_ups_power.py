@@ -403,7 +403,7 @@ class StarboardChecks(unittest.TestCase):
 class Manifest(unittest.TestCase):
     def test_it_asks_once_a_minute_and_is_light(self):
         m = manifest("ups-power")
-        self.assertEqual(m["version"], "0.2.0")
+        self.assertEqual(m["version"], "0.2.1")
         self.assertEqual(m["starboard_api"], ">=1.24 <2.0")  # power:hold is plug-in API 1.24
         self.assertEqual(m["containers"][0].get("start", "always"), "always")
         self.assertLessEqual(m["resources"]["main"]["memory"], 48)

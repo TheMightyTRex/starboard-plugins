@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "ups-power",
  "name": "UPS and power",
- "version": "0.2.0",
+ "version": "0.2.1",
  "description": "Load, battery and time left of your UPS on a card, and an alert when the mains power is lost, read from NUT or PeaNUT.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -234,10 +234,17 @@
  },
  "changes": [
   {
+   "version": "0.2.1",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
+  {
    "version": "0.2.0",
    "date": "2026-11-27",
    "added": [
-    "**Heavy jobs held on battery:** while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can deactivate this in Settings.",
+    "**Heavy jobs held on battery:** while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can turn this off in Settings.",
     "**The card says so:** the Power card says when Starboard's heavy jobs are held."
    ],
    "changed": [

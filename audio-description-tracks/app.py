@@ -367,7 +367,7 @@ def look_once(name, rec):
 
 
 def jellyfin_version_installed(force=False):
-    """True when Jellyfin's own Audio description plug-in is installed and not deactivated (asked of Jellyfin's
+    """True when Jellyfin's own Audio description plug-in is installed and not turned off (asked of Jellyfin's
     /Plugins at most every 10 minutes). Then this one stays idle. When Jellyfin cannot be asked, it carries on."""
     if not force and now() - _jf["at"] < JELLYFIN_CHECK_EVERY:
         return _jf["installed"]
@@ -525,7 +525,7 @@ def _notices():
         out.append({"id": "error", "tone": "danger", "title": "The last check did not finish", "text": err["text"][:300], "dismiss": True})
     if not os.path.isdir(INBOX):
         out.append({"id": "nofolder", "tone": "warning", "title": "No audio-description folder yet",
-                    "text": "Starboard makes it when the plug-in is activated. Activate it again in State if it is missing."})
+                    "text": "Starboard makes it when the plug-in is on. Turn it on again in State if it is missing."})
     return out
 
 

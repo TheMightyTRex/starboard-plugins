@@ -41,6 +41,11 @@ TEXT_PATCH = {"vpn-check", "line-speed", "watching-now", "most-watched", "librar
               "download-summary", "disk-forecast", "notifications", "backups-watch", "watch-stats"}
 TEXT_PATCH_DATE = "2026-11-26"
 TEXT_PATCH_CHANGE = "Plainer wording in the text and help pages. How it works has not changed."
+# A second text-only patch (28 November 2026): "turn on" and "turn off" replace "activate" and "deactivate" in the words of
+# the examples whose manifests said them. Each takes the next patch version again, with its own entry; no image change.
+TEXT_PATCH_2 = {"notifications", "single-sign-on", "ups-power"}
+TEXT_PATCH_2_DATE = "2026-11-28"
+TEXT_PATCH_2_CHANGE = "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
 
 
 def changes_for(pid, m):
@@ -91,7 +96,7 @@ WORDS_113 = {
                          "out NAS."],
     "download-summary": ["**Clearer words:** its description says it counts the download queue in Starboard."],
     "disk-forecast": ["**Clearer words:** the band says **Filling fast**, and the card says when each disk fills."],
-    "notifications": ["**Clearer words:** each channel's switch says what to enter before you activate it, the band says **Not "
+    "notifications": ["**Clearer words:** each channel's switch says what to enter before you turn it on, the band says **Not "
                       "sent**, and a message about an event it does not know says \"Starboard has an alert. Open Starboard for the "
                       "details.\""],
     "watch-stats": ["**Clearer words:** **Read the figures again now** is now **Check now**, as on the other plug-ins."],
@@ -557,12 +562,12 @@ EXAMPLES["notifications"] = ({
     # taken out of it, from Starboard's disk.changed event (plug-in API 1.16).
     "_newest": {"version": "1.4.0", "date": "2026-11-25", "added": [
         "**Quiet hours:** choose the hours when it should not wake you. Alerts that are not urgent wait, and one summary goes when the hours end. "
-        "An app that stops answering, a full disk and a disk change still go at once. Deactivated until you activate it."]},
+        "An app that stops answering, a full disk and a disk change still go at once. Turned off until you turn it on."]},
     "_before": [{"version": "1.3.0", "date": "2026-11-22", "added": [
         "**New this week, by email:** a weekly email of what was added to Jellyfin: films, episodes, albums and books. It has titles and years only, and no pictures. You choose the day and the hour, and it can go by email alone or by every "
-        "way you activated."],
+        "way you turned on."],
         "changed": [
-        "**Deactivated at first:** New this week is now deactivated until you activate it under What to send. "
+        "**Turned off at first:** New this week is now turned off until you turn it on under What to send. "
         "Send New this week on is replaced by **When to send New this week**, one setting for the day and the hour."]},
         {"version": "1.2.0", "date": "2026-11-19", "added": [
         "**Disk changes:** a message whenever a disk is erased, added to the pool or taken out of it, however it was asked "
@@ -580,21 +585,21 @@ EXAMPLES["notifications"] = ({
         _switch("send_disk", "A disk is nearly full", "At the limit set for alerts in Settings, Alerts, or 90%.", "What to send"),
         _switch("send_disk_changes", "A disk is erased, added or taken out", "Every change Starboard's disk pool helper makes, however it was asked for.", "What to send"),
         _switch("send_updates", "An update is ready", "For Starboard, your apps and your plug-ins.", "What to send"),
-        _switch("send_weekly", "New this week", "A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Deactivated until you activate it.", "What to send", False),
+        _switch("send_weekly", "New this week", "A weekly email of what was added to Jellyfin: films, episodes, albums and books, with titles and years only. Turned off until you turn it on.", "What to send", False),
         {"key": "weekly_when", "label": "When to send New this week", "type": "schedule", "default": {"every": "week", "day": "monday", "time": "09:00"},
          "group": "What to send", "hint": "The day and the hour. It lists what arrived in the last 7 days."},
         {"key": "weekly_by", "label": "Send New this week by", "type": "choice", "default": "email", "group": "What to send",
-         "hint": "Email uses the settings in Email. The other choice uses every way you activated.",
-         "choices": [{"value": "email", "label": "Email only"}, {"value": "all", "label": "Every way I activated"}]},
+         "hint": "Email uses the settings in Email. The other choice uses every way you turned on.",
+         "choices": [{"value": "email", "label": "Email only"}, {"value": "all", "label": "Every way I turned on"}]},
         {"key": "starboard_address", "label": "Starboard's address, for links", "type": "address", "group": "What to send",
          "hint": "Optional, such as http://192.0.2.10:8095. Messages end with Open Starboard and this address."},
-        _switch("quiet_on", "Hold alerts that are not urgent in quiet hours", "A request ready, a failed download, an app back or an update ready wait. One summary goes when the quiet hours end. Deactivated until you activate it.", "Quiet hours", False),
+        _switch("quiet_on", "Hold alerts that are not urgent in quiet hours", "A request ready, a failed download, an app back or an update ready wait. One summary goes when the quiet hours end. Turned off until you turn it on.", "Quiet hours", False),
         {"key": "quiet_from", "label": "Quiet hours start at", "type": "schedule", "default": {"every": "day", "time": "22:00"},
          "group": "Quiet hours", "hint": "Choose every day. Only the hour counts."},
         {"key": "quiet_until", "label": "Quiet hours end at", "type": "schedule", "default": {"every": "day", "time": "07:00"},
          "group": "Quiet hours", "hint": "Choose every day. The summary is sent at this hour."},
-        _switch("quiet_urgent", "Still send urgent ones", "An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Deactivate it to hold them too.", "Quiet hours"),
-        _switch("email_active", "Send by email", "Activate once the email details are entered and the test arrives.", "Email", False),
+        _switch("quiet_urgent", "Still send urgent ones", "An app that stops answering, a disk nearly full, and a disk erased, added or taken out go at once. Turn it off to hold them too.", "Quiet hours"),
+        _switch("email_active", "Send by email", "Turn on once the email details are entered and the test arrives.", "Email", False),
         {"key": "smtp_host", "label": "Email server", "type": "text", "group": "Email", "hint": "Such as smtp.example.com"},
         {"key": "smtp_port", "label": "Port", "type": "number", "default": 587, "min": 1, "max": 65535, "group": "Email"},
         {"key": "smtp_security", "label": "Security", "type": "choice", "default": "starttls", "group": "Email",
@@ -605,25 +610,25 @@ EXAMPLES["notifications"] = ({
         {"key": "smtp_password", "label": "Password", "type": "secret", "group": "Email", "hint": "An app password where your email service offers one."},
         {"key": "email_from", "label": "Send from", "type": "text", "group": "Email", "hint": "Such as starboard@example.com"},
         {"key": "email_to", "label": "Send email to", "type": "list", "group": "Email", "hint": "One address a line."},
-        _switch("telegram_active", "Send by Telegram", "Activate once the bot token and chat are entered and the test arrives.", "Telegram", False),
+        _switch("telegram_active", "Send by Telegram", "Turn on once the bot token and chat are entered and the test arrives.", "Telegram", False),
         {"key": "telegram_token", "label": "Bot token", "type": "secret", "group": "Telegram", "hint": "From @BotFather in Telegram."},
         {"key": "telegram_chat", "label": "Telegram chat", "type": "list", "group": "Telegram",
          "hint": "One chat id a line. Send your bot a message first, so it may write to you."},
-        _switch("discord_active", "Send by Discord", "Activate once the webhook is filled in and the test arrives.", "Discord", False),
+        _switch("discord_active", "Send by Discord", "Turn on once the webhook is filled in and the test arrives.", "Discord", False),
         {"key": "discord_webhook", "label": "Discord webhook address", "type": "secret", "group": "Discord",
          "hint": "In Discord: the channel's Edit channel, Integrations, Webhooks, Copy webhook URL."},
         _switch("signal_active", "Send by Signal", "Only if you run signal-cli-rest-api, which sends for a number you registered with it.", "Signal", False),
         {"key": "signal_api", "label": "signal-cli-rest-api address", "type": "address", "group": "Signal", "hint": "Such as http://192.0.2.10:8080"},
         {"key": "signal_number", "label": "Send from number", "type": "text", "group": "Signal", "hint": "The number registered with it, such as +447700900123."},
         {"key": "signal_to", "label": "Send Signal messages to", "type": "list", "group": "Signal", "hint": "One number or group id a line."},
-        _switch("pushover_active", "Send by Pushover", "Activate once both keys are entered and the test arrives.", "Pushover", False),
+        _switch("pushover_active", "Send by Pushover", "Turn on once both keys are entered and the test arrives.", "Pushover", False),
         {"key": "pushover_user", "label": "User key", "type": "secret", "group": "Pushover"},
         {"key": "pushover_token", "label": "Application token", "type": "secret", "group": "Pushover", "hint": "Make an application for Starboard on pushover.net."},
-        _switch("ntfy_active", "Send by ntfy", "Activate once the topic is filled in and the test arrives.", "ntfy", False),
+        _switch("ntfy_active", "Send by ntfy", "Turn on once the topic is filled in and the test arrives.", "ntfy", False),
         {"key": "ntfy_url", "label": "ntfy server", "type": "address", "default": "https://ntfy.sh", "group": "ntfy"},
         {"key": "ntfy_topic", "label": "Topic", "type": "text", "group": "ntfy", "hint": "On ntfy.sh anyone who knows the topic can read it, so make it hard to guess."},
         {"key": "ntfy_token", "label": "Access token", "type": "secret", "group": "ntfy", "hint": "Optional, for a server or topic that needs one."},
-        _switch("webhook_active", "Send to webhooks", "Activate once an address is filled in and the test arrives.", "Webhooks", False),
+        _switch("webhook_active", "Send to webhooks", "Turn on once an address is filled in and the test arrives.", "Webhooks", False),
         {"key": "webhooks", "label": "Webhook addresses", "type": "secret", "group": "Webhooks",
          "hint": "One or more, separated by spaces. Each gets title, body and type as JSON, as the Apprise API's notify address takes them."},
         {"key": "people", "label": "People", "type": "list", "group": "People",
@@ -670,7 +675,7 @@ then their email address, or `telegram` and their chat id. When their request is
 
 Signal has no official way for a server to send messages. If you already run
 [signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api) with a number registered, give its address
-and that number. Otherwise leave Signal deactivated.
+and that number. Otherwise leave Signal turned off.
 """,
 }, "file")
 
@@ -762,7 +767,7 @@ EXAMPLES["ups-power"] = ({
                                       {"title": "Battery", "points": [100, 100, 100, 100, 100], "unit": "%", "detail": "Latest 100%"}],
                            "note": "One point every 5 minutes for the last 8 hours.", "status": "ok", "updated": 1794694110}}],
     "changes": [{"version": "0.2.0", "date": "2026-11-27", "added": [
-        "**Heavy jobs held on battery:** while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can deactivate this in Settings.",
+        "**Heavy jobs held on battery:** while the UPS is on battery, Starboard holds its background jobs, scheduled backups and downloads, and starts them again when the mains power is back. A job you start yourself still runs. You can turn this off in Settings.",
         "**The card says so:** the Power card says when Starboard's heavy jobs are held."],
         "changed": ["It needs Starboard 0.40.0 or later (plug-in API 1.24). It asks for one more permission: to hold Starboard's heavy jobs."]},
         {"version": "0.1.1", "date": "2026-11-26", "changed": ["Plainer wording in the text and help pages. How it works has not changed."]},
@@ -787,7 +792,7 @@ While the UPS is on battery, this plug-in asks Starboard once a minute to hold i
 jobs, scheduled backups, other plug-ins' scheduled jobs and downloads. When the mains power is back it lets them go at
 once, and what was held starts again. If this plug-in stops, Starboard ends the hold by itself within 5 minutes. A job you
 start yourself still runs. It uses the permission `power:hold` (plug-in API 1.24, Starboard 0.40.0). The setting **Hold
-Starboard's heavy jobs on battery** is where you deactivate it.
+Starboard's heavy jobs on battery** is where you turn it off.
 """,
 }, "file")
 
@@ -851,9 +856,9 @@ EXAMPLES["single-sign-on"] = ({
     "resources": {"main": {"memory": 32, "cpus": 0.1}}, "health": "/health",
     "settings": [
         {"key": "enabled", "label": "Use single sign-on", "type": "switch", "default": False, "group": "Single sign-on",
-         "hint": "Leave it off on a server only you use. Off means nothing runs for it. To stop the plug-in completely, deactivate it in Settings, Plug-ins, Manage."},
+         "hint": "Leave it off on a server only you use. Off means nothing runs for it. To stop the plug-in completely, turn it off in Settings, Plug-ins, Manage."},
         {"key": "tailscale_name", "label": "This server's Tailscale name", "type": "text", "group": "Single sign-on",
-         "hint": "Such as starboard.tail1234.ts.net, found in Tailscale's admin page under Machines. Set it once. Passkeys are tied to this address for ever: if it changes, every passkey stops working and has to be made again. Tailscale needs MagicDNS and HTTPS certificates activated."},
+         "hint": "Such as starboard.tail1234.ts.net, found in Tailscale's admin page under Machines. Set it once. Passkeys are tied to this address for ever: if it changes, every passkey stops working and has to be made again. Tailscale needs MagicDNS and HTTPS certificates turned on."},
     ],
     "actions": [{"id": "check", "label": "Check the name", "path": "/check"},
                 {"id": "use-new-address", "label": "Use the new address", "path": "/use-new-address",
@@ -862,7 +867,7 @@ EXAMPLES["single-sign-on"] = ({
                "example": {"state": "ok", "text": "The provider will live at https://starboard.tail1234.ts.net. Passkeys will be tied to this address. The provider is not in this version yet.",
                            "status": "waiting", "status_label": "Waiting for provider", "updated": 1794694110}}],
     "changes": [{"version": "0.1.0", "date": "2026-11-27", "added": [
-        "**An on and off switch:** off means nothing runs for single sign-on. If other plug-ins need it, Starboard names them and asks before it deactivates them too (plug-in API 1.21).",
+        "**An on and off switch:** off means nothing runs for single sign-on. If other plug-ins need it, Starboard names them and asks before it turns them off too (plug-in API 1.21).",
         "**The provider's address:** the Tailscale name of your server, checked, and kept the first time it is valid, because passkeys are tied to it for ever.",
         "**A warning if the name changes:** the card says passkeys made at the old name will not work, and Use the new address asks before it changes.",
         "**No provider yet:** this version only holds the settings. It makes no network call and starts only when a card asks."]}],
@@ -871,7 +876,7 @@ EXAMPLES["single-sign-on"] = ({
 It holds the settings that the sign-in provider will use, and nothing else. There is no provider in it yet, so nothing signs in
 through it, and it makes no network call.
 
-- **Use single sign-on** is off until you activate it. Leave it off on a server only you use.
+- **Use single sign-on** is off until you turn it on. Leave it off on a server only you use.
 - **This server's Tailscale name** is the address the provider will live at, such as `starboard.tail1234.ts.net`. Set it once.
   **Passkeys are tied to this address for ever.** A passkey made at one address does not work at another, so changing the
   name later means making every passkey again.

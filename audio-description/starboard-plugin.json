@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "audio-description",
  "name": "Audio description",
- "version": "1.5.1",
+ "version": "1.5.2",
  "description": "Finds films and series in Jellyfin that have a described sound track for blind and partially sighted people, and tags them. Plays it for people who choose it. Prefers releases with one.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -48,7 +48,7 @@
    "type": "switch",
    "default": true,
    "group": "Reelix searches",
-   "hint": "Reelix chooses with its own Audio description format: set it to Prefer in Settings, Reelix, Picture quality. While this is activated, Check the Reelix choice now reminds you when Reelix does not prefer it."
+   "hint": "Reelix chooses with its own Audio description format: set it to Prefer in Settings, Reelix, Picture quality. While this is on, Check the Reelix choice now reminds you when Reelix does not prefer it."
   },
   {
    "key": "people",
@@ -70,7 +70,7 @@
    "type": "switch",
    "default": true,
    "group": "Your library",
-   "hint": "The films and series with a described track go into one Jellyfin collection, which every Jellyfin app shows. Deactivated, the collection stays as it is."
+   "hint": "The films and series with a described track go into one Jellyfin collection, which every Jellyfin app shows. Off, the collection stays as it is."
   },
   {
    "key": "titles",
@@ -298,6 +298,13 @@
  },
  "changes": [
   {
+   "version": "1.5.2",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
+  {
    "version": "1.5.1",
    "date": "2026-11-26",
    "changed": [
@@ -334,8 +341,8 @@
    "date": "2026-11-17",
    "added": [
     "**Find and tag:** each film and episode with a described sound track, and its series, gets the tag **Audio description** in Jellyfin at the nightly check, and the tag comes off when the track goes. Every Jellyfin app, televisions included, can filter by it.",
-    "**The Audio description collection:** activated by default, the films and series with a described track are in one Jellyfin collection. Deactivate **Add them to the Audio description collection** to leave it as it is.",
-    "**Play the described track:** for each person you activate on its page, inactive until chosen. When they start a title with a described track and another plays, Starboard asks their app to change to it. Not every Jellyfin app accepts this.",
+    "**The Audio description collection:** turned on by default, the films and series with a described track are in one Jellyfin collection. Turn off **Add them to the Audio description collection** to leave it as it is.",
+    "**Play the described track:** for each person you turn on on its page, inactive until chosen. When they start a title with a described track and another plays, Starboard asks their app to change to it. Not every Jellyfin app accepts this.",
     "**Rules 1.0:** the same rules file as Jellyfin's own Audio description plug-in. When that plug-in is installed, this one leaves the tag, the collection and Play the described track to it, and its card says **Idle**."
    ],
    "changed": [
@@ -386,7 +393,7 @@
    "version": "1.1.0",
    "date": "2026-11-13",
    "added": [
-    "**AudioVault search links:** for each film and series without audio description, a link to AudioVault's own search. Deactivated until you activate it in Sources; Starboard never downloads from AudioVault",
+    "**AudioVault search links:** for each film and series without audio description, a link to AudioVault's own search. Turned off until you turn it on in Sources; Starboard never downloads from AudioVault",
     "**YouDescribe search links:** for each film and series, a link to YouDescribe's own search, where volunteers describe YouTube videos such as trailers",
     "**MovieReading and Earcatch:** how to use these phone apps alongside Jellyfin, which play a description in step by listening, and where to get them"
    ],

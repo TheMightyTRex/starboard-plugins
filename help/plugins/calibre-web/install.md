@@ -41,7 +41,7 @@ Measured:
 
 3. A slide-out opens with what it can read, change and reach. Read it all.
 4. Enter your Starboard password and select **Install Calibre-Web**. To stop, select **Cancel**: nothing is installed.
-5. Calibre-Web's own tab opens under **Settings**, then **Plug-ins**, and Starboard activates it: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Activate**.
+5. Calibre-Web's own tab opens under **Settings**, then **Plug-ins**, and Starboard turns it on: its **State**, in **General**, says **Active**. If it needs settings first, it says what to enter: save them, then select **Turn on**.
 
 ### Add it by its address
 
@@ -88,7 +88,7 @@ An install made before version 1.2.0 keeps the password it has. Starboard shows 
 
 Its containers stop and go, and its API key stops working. Nothing is deleted.
 
-To stop it for a while instead, select **Deactivate** on its tab: its settings and folder are kept.
+To stop it for a while instead, select **Turn off** on its tab: its settings and folder are kept.
 
 ## Find out more
 

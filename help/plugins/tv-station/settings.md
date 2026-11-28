@@ -47,7 +47,7 @@ The station's settings are for every channel. A channel's own choice, on its pag
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **On air** | Puts the channel in Jellyfin's Live TV. **Up** and **Down** move it in the list, which sets its number. **Remove** takes it off; its settings are kept in the plug-in's folder | Activated |
+| **On air** | Puts the channel in Jellyfin's Live TV. **Up** and **Down** move it in the list, which sets its number. **Remove** takes it off; its settings are kept in the plug-in's folder | Turned on |
 | **Name** | Select **Rename**. Shown in Jellyfin, in the guide, on the cards and promos, and as the on-screen logo when that is **The channel's name** | Up to 40 characters |
 | **Number** | Select **Change number**. Leave it empty to number it by its place in the list | Empty, so numbered from **First channel number** |
 | **Colour** | Used on its Coming up next cards, its made logo and its plain promos | **Blue**, **Green**, **Red**, **Purple**, **Orange**, **Teal**, **Pink**, **Grey**, **Gold** or **Navy**. Each new channel has the next colour in turn |
@@ -349,7 +349,7 @@ Example result: with **After 1 minute**, the first minute of each programme has 
 
 ### Clock and Label
 
-**Clock** writes the time beside the logo, from the server's clock. It starts deactivated.
+**Clock** writes the time beside the logo, from the server's clock. It starts turned off.
 
 **Label** writes New or Repeat, or Live, in words, for the first 2 minutes of each programme. New is an episode or film first shown in the last 30 days, as in the guide. Choices: **No label** (the one it starts with), **New or Repeat** or **Live**.
 
@@ -357,7 +357,7 @@ Example result: with **After 1 minute**, the first minute of each programme has 
 
 ### Backing plate
 
-A dark, partly transparent box behind the logo, the clock and the label, so they are clear on any picture, even a bright one. It starts activated.
+A dark, partly transparent box behind the logo, the clock and the label, so they are clear on any picture, even a bright one. It starts turned on.
 
 ![On a bright snowy picture: the channel's name and the clock on a dark plate, and the same with no plate, harder to read](../../images/tv-station/dog-plate.jpg)
 
@@ -379,13 +379,13 @@ The station's choices. A channel can choose its own on its **On-screen logo and 
 
 ### Programme name at the start
 
-The programme's name, with its series and episode, in a strap low in the corner for 8 seconds as each programme starts. It starts activated.
+The programme's name, with its series and episode, in a strap low in the corner for 8 seconds as each programme starts. It starts turned on.
 
 ![A made-up landscape with the strap Tidewater Lane: Series 2, episode 4: The crossing, low in the corner](../../images/tv-station/strap-programme-name.jpg)
 
 ### Up next during the end credits
 
-The next programme and its time, in a strap low in the corner, during the end credits of each programme. It starts activated.
+The next programme and its time, in a strap low in the corner, during the end credits of each programme. It starts turned on.
 
 **Up next shows for** sets how long, until the programme ends: 5 to 120 seconds. It starts at 30 seconds.
 
@@ -393,7 +393,7 @@ The next programme and its time, in a strap low in the corner, during the end cr
 
 ### Coming up next and Later cards
 
-In the breaks: the programme's picture, its title, its series and episode, the date and time it is shown and a short synopsis. The card for the next programme says Coming up next; a card for one after that says Later on and the channel's name. Deactivated, a break with no clips shows the station's name. It starts activated.
+In the breaks: the programme's picture, its title, its series and episode, the date and time it is shown and a short synopsis. The card for the next programme says Coming up next; a card for one after that says Later on and the channel's name. Off, a break with no clips shows the station's name. It starts turned on.
 
 With no broadcast pack, the plug-in draws the card on the programme's own picture, with a bar in the channel's colour. It darkens the picture to a third of its brightness so the words are clear.
 
@@ -421,16 +421,16 @@ A promo has a few short clips of the programme in its clip area, with its sound.
 
 | Setting | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **Make promos in quiet hours** | In Starboard's quiet hours, one at a time at the lowest priority, and never while anyone is watching | Activated |
+| **Make promos in quiet hours** | In Starboard's quiet hours, one at a time at the lowest priority, and never while anyone is watching | Turned on |
 | **Promo length** | How long each promo is. Longer promos show more clips | **As the pack says (15 seconds unless it says otherwise)**, **10 seconds**, **15 seconds**, **20 seconds**, **30 seconds**, **45 seconds** or **60 seconds**. **As the pack says** |
 | **Clips in each promo** | Short clips from different parts of the programme, clear of its opening titles and end credits | **By its length (about one every 5 seconds)**, or **2 clips** to **6 clips**. **By its length** |
-| **Use the programme's sound in promos** | Each clip plays with its own sound, at the same loudness as the rest. A programme with no sound has the music alone | Activated |
+| **Use the programme's sound in promos** | Each clip plays with its own sound, at the same loudness as the rest. A programme with no sound has the music alone | Turned on |
 | **Music under the programme's sound** | How loud the music is while a clip's sound plays. It is at full before the first clip and after the last | **10%**, **20%**, **30%** or **50%**. **20%** |
-| **Show the station's logo on promos** | Promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner, clear of the clip and the words. Promos made with the station's pack carry it in their design already | Activated |
-| **Audio description on promos** | A voice says each promo's words, for viewers who cannot read them. [Audio description on promos](#audio-description-on-promos) says what is said | Not activated |
+| **Show the station's logo on promos** | Promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner, clear of the clip and the words. Promos made with the station's pack carry it in their design already | Turned on |
+| **Audio description on promos** | A voice says each promo's words, for viewers who cannot read them. [Audio description on promos](#audio-description-on-promos) says what is said | Not turned on |
 | **Promos kept for each channel** | Old ones are replaced, so they never pile up | 1 to 6. **3** |
 | **Replace each promo after** | A promo is also replaced once its programme has started. When a channel's pack changes, its promos made with the old pack stop showing at once and are made again in the next quiet hour | **1 day**, **2 days**, **3 days** or **7 days**. **2 days** |
-| **Show promos for your other channels** | Each channel's breaks show the promos of your other channels too | Activated |
+| **Show promos for your other channels** | Each channel's breaks show the promos of your other channels too | Turned on |
 
 ![A plain promo on purple with the station's Example TV logo, small, on a dark plate in the corner](../../images/tv-station/promo-station-logo.jpg)
 
@@ -439,7 +439,7 @@ A promo has a few short clips of the programme in its clip area, with its sound.
 ### Audio description on promos
 
 A promo is clips of a programme, music, and words on the picture: the title, the channel, the day and the time. A
-viewer who cannot read the picture hears only music. With **Audio description on promos** activated, a voice says the
+viewer who cannot read the picture hears only music. With **Audio description on promos** turned on, a voice says the
 words.
 
 - **What is said.** The voice reads the words in the order they appear on the picture: **Coming soon**, the title,
@@ -456,7 +456,7 @@ words.
   the name the next time it reads the channels from Jellyfin, which it does by itself each night.
 - **What it costs:** a few hundredths of a second of the processor for each promo, in the quiet hours when the promo
   is made. Nothing runs for it at any other time. The plug-in's image is about 6 MB larger for the speech program.
-- **When it changes:** activating or deactivating it makes each channel's promos again in the next quiet hours.
+- **When it changes:** turning on or turning it off makes each channel's promos again in the next quiet hours.
 
 On a channel's **Holding slide and promos** card, **Promos** says how its promos are made. **Add music for its promos** takes music for this channel only, an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes. **Add a background loop for its promos** takes a loop or picture for this channel only, as many as 20.
 
@@ -502,7 +502,7 @@ Your own branding for every channel. It can have the on-screen logo, the logo wi
 | Row | What it does | Choices, and the one it starts with |
 |---|---|---|
 | **Station's pack** | Select **Upload a pack** and choose a zip of up to 60 MB made from the template. It is checked first; when it passes, every channel without a pack of its own uses it. **Stop using the pack** takes it off | None |
-| **Try the example pack** | Uses Example TV, a made-up channel drawn in code, for every channel without a pack of its own. The first time, it takes about 2 minutes to make, while no channel is playing. Deactivate to go back to your own pack, or none | Deactivated |
+| **Try the example pack** | Uses Example TV, a made-up channel drawn in code, for every channel without a pack of its own. The first time, it takes about 2 minutes to make, while no channel is playing. Turn off to go back to your own pack, or none | Turned off |
 | **The last pack checked** | What the check found: each problem with a pack that was not used, or notes on one that was, such as a picture scaled to fit | Empty until a pack is uploaded |
 | **Downloads** | The template (folders, `pack.json`, its schema and a README), the placement guides for the Coming up next card, the promo and the on-screen logo, and the example pack as a zip | None |
 | **Promos kept** | Each promo, with its programme, its day and time and its channel | None yet |
@@ -544,8 +544,8 @@ Timing stays exact. Each thing comes on from its start and has gone by its end, 
 | **Picture size** | The size of the stream while a channel is watched. 720p is lighter on the processor; 1080p is sharper | **720p, lighter on the processor** or **1080p, sharper**. **720p** |
 | **Most channels at once** | Each channel being watched is one conversion. People watching the same channel share it | 1 to 6. **2** |
 | **Stop a channel after the last viewer leaves** | Nothing runs while nobody watches | 5 to 300 seconds. **30 seconds** |
-| **Copy programmes when nothing is drawn on them** | A channel with no on-screen logo, no clock, no label and no straps plays its programmes as they are, with no converting | Activated |
-| **Leave out 3D films** | A 3D film plays as two pictures, side by side or one over the other. Films Jellyfin marks as 3D, or whose file name says 3D, are left out of every channel. Each film on a channel is also checked once, in quiet hours and never while anyone is watching, and one found to be 3D is left out too | Activated |
+| **Copy programmes when nothing is drawn on them** | A channel with no on-screen logo, no clock, no label and no straps plays its programmes as they are, with no converting | Turned on |
+| **Leave out 3D films** | A 3D film plays as two pictures, side by side or one over the other. Films Jellyfin marks as 3D, or whose file name says 3D, are left out of every channel. Each film on a channel is also checked once, in quiet hours and never while anyone is watching, and one found to be 3D is left out too | Turned on |
 
 ## Station
 

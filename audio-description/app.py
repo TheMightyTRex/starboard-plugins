@@ -224,7 +224,7 @@ def scan():
 # Find and tag (rules 1.0) ------------------------------------------------------------------------------------------
 
 def jellyfin_version_installed(force=False):
-    """True when Jellyfin's own Audio description plug-in is installed and not deactivated (asked of Jellyfin's
+    """True when Jellyfin's own Audio description plug-in is installed and not turned off (asked of Jellyfin's
     /Plugins at most every 10 minutes). Then this one leaves the tag, the collection and Play the described track to
     it. When Jellyfin cannot be asked, it carries on as before."""
     if not force and now() - _jf["at"] < JELLYFIN_CHECK_EVERY:
@@ -280,7 +280,7 @@ def plan_tags(want, have):
 
 def find_and_tag(tags, series=None):
     """Tags each film and episode with a described track, and each series with one, and takes the tag off the rest.
-    While the collection is activated, keeps the collection's films and series the same as the tagged ones. `series`:
+    While the collection is on, keeps the collection's films and series the same as the tagged ones. `series`:
     every series with its tags, when the scan has read them already."""
     series = _ids({"IncludeItemTypes": "Series", "Fields": "Tags"}) if series is None else series
     have_series = {str(x.get("Id")) for x in series if TAG.lower() in [str(t).lower() for t in x.get("Tags") or []]}
@@ -375,7 +375,7 @@ def play_screen(said=""):
               "detail": "The described track is chosen when they start a title that has one" if str(u.get("Id")) in chosen else "Inactive"}
              for u in users if isinstance(u, dict) and u.get("Id")]
     last = remember("play_last") or {}
-    intro = ("Inactive until you activate a person. When they start a title with a described track and another plays, Starboard asks their "
+    intro = ("Inactive until you turn on a person. When they start a title with a described track and another plays, Starboard asks their "
              "app to change to it, within about half a minute. Not every Jellyfin app accepts this: one that does not plays as it is.")
     if last.get("notes"):
         intro += " Last: " + last["notes"][-1] + "."
@@ -390,7 +390,7 @@ def play(body=None):
     if not body:
         return play_screen()
     if body.get("action") != "toggle" or not body.get("id"):
-        raise ValueError("Choose a person to activate or deactivate")
+        raise ValueError("Choose a person to turn on or turn off")
     uid = str(body["id"])
     users = {str(u.get("Id")): str(u.get("Name") or "Unnamed") for u in jellyfin("/Users") or [] if isinstance(u, dict)}
     if uid not in users:
@@ -399,7 +399,7 @@ def play(body=None):
     want = uid not in chosen
     chosen = chosen + [uid] if want else [c for c in chosen if c != uid]
     keep("play", chosen)
-    return play_screen(f"Play the described track activated for {users[uid]}" if want else f"Play the described track deactivated for {users[uid]}")
+    return play_screen(f"Play the described track turned on for {users[uid]}" if want else f"Play the described track turned off for {users[uid]}")
 
 
 # Reelix ----------------------------------------------------------------------------------------------------------
@@ -501,7 +501,7 @@ def people_screen(said=""):
               "detail": "Jellyfin keeps the sound track they choose for each film and series" if str(u.get("Id")) in people
               else "Not chosen"} for u in users if isinstance(u, dict) and u.get("Id")]
     out = {"type": "list", "title": "People who want audio description",
-           "intro": "Activate each person who wants audio description. Jellyfin then remembers the sound track they choose, so "
+           "intro": "Turn on each person who wants audio description. Jellyfin then remembers the sound track they choose, so "
                     "choosing the described track once is enough for each film and series. Jellyfin does not pick it by itself.",
            "items": items}
     return {**out, "said": said} if said else out
@@ -511,14 +511,14 @@ def people(body=None):
     if not body:
         return people_screen()
     if body.get("action") != "toggle" or not body.get("id"):
-        raise ValueError("Choose a person to activate or deactivate")
+        raise ValueError("Choose a person to turn on or turn off")
     uid = str(body["id"])
     users = {str(u.get("Id")): str(u.get("Name") or "Unnamed") for u in jellyfin("/Users") or [] if isinstance(u, dict)}
     if uid not in users:
         raise ValueError("That person is not in Jellyfin any more. Reload the page")
     want = uid not in (remember("people", {}) or {})
     set_person(uid, want)
-    return people_screen(f"Audio description activated for {users[uid]}" if want else f"Audio description deactivated for {users[uid]}")
+    return people_screen(f"Audio description turned on for {users[uid]}" if want else f"Audio description turned off for {users[uid]}")
 
 
 # Screens and cards -----------------------------------------------------------------------------------------------
@@ -699,7 +699,7 @@ def _menus_for(items):
 
 def _off_screen(title, switch, what):
     return {"type": "list", "title": title, "items": [],
-            "intro": f"{switch} is deactivated, so nothing is shown here. Activate it under 'Sources' to show {what}."}
+            "intro": f"{switch} is off, so nothing is shown here. Turn it on under 'Sources' to show {what}."}
 
 
 def audiovault(body=None):

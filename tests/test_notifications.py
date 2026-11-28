@@ -197,7 +197,7 @@ class Weekly(unittest.TestCase):
             self.app.on_event({"event": "item.added", "data": d}, wait=True)
 
     def test_off_until_switched_on(self):
-        self.assertIn("deactivated", self.app.weekly()["said"])
+        self.assertIn("is off", self.app.weekly()["said"])
         self.assertEqual(self.calls, [])
         self.assertFalse(next(s for s in manifest("notifications")["settings"] if s["key"] == "send_weekly")["default"])
 
@@ -222,7 +222,7 @@ class Weekly(unittest.TestCase):
 
     def test_email_only_says_so_when_email_is_off(self):
         self.app._set(send_weekly=True)
-        self.assertIn("email is not activated", self.app.weekly()["said"])
+        self.assertIn("email is not on", self.app.weekly()["said"])
         self.assertEqual(self.calls, [])
 
     def test_films_episodes_albums_and_books(self):

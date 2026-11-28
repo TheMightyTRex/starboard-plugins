@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.13.1",
+ "version": "0.13.2",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -756,6 +756,13 @@
  },
  "changes": [
   {
+   "version": "0.13.2",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
+  {
    "version": "0.13.1",
    "date": "2026-11-28",
    "added": [
@@ -809,7 +816,7 @@
    "version": "0.7.0",
    "date": "2026-11-22",
    "added": [
-    "**Audio description on promos** (not active unless you activate it): a voice says each promo's words, so a blind viewer hears what is coming, on which channel, and when. It is made on your server, in the station's language. Nothing is sent anywhere."
+    "**Audio description on promos** (not active unless you turn it on): a voice says each promo's words, so a blind viewer hears what is coming, on which channel, and when. It is made on your server, in the station's language. Nothing is sent anywhere."
    ]
   },
   {
@@ -863,7 +870,7 @@
    "version": "0.5.2",
    "date": "2026-11-19",
    "added": [
-    "**The station's logo on promos:** promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner. To leave it out, deactivate Show the station's logo on promos."
+    "**The station's logo on promos:** promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner. To leave it out, turn off Show the station's logo on promos."
    ]
   },
   {
@@ -924,16 +931,6 @@
    ],
    "changed": [
     "**From the next episode not watched** finds the first episode, in the channel's order, that is not watched, where before it took the first not played in Jellyfin's order."
-   ]
-  },
-  {
-   "version": "0.2.1",
-   "date": "2026-11-19",
-   "added": [
-    "**Choose the hours a suggestion fills:** Suggest a schedule asks for the hours to fill on weekdays and at the weekend, such as 18:00 to 23:00, and fills them one programme after another, leaving out one that would run past the end. The hours are remembered for each channel."
-   ],
-   "changed": [
-    "**Longer holding slides:** a holding slide's video may be up to 120 seconds and 90 MB. Starboard 0.24.1 or later takes files that big; an older Starboard stops at 60 MB."
    ]
   }
  ]

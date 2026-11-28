@@ -32,7 +32,7 @@ Read [HELP.md](HELP.md) for how to use it.
 | Disc art | `disc.*` under `library` | At most 500 pixels wide |
 | Clear art | `clearart.*` under `library` | At most 800 pixels wide |
 
-Every type is shrunk when you add it (**Shrink all picture types**); deactivate that to choose types one by one.
+Every type is shrunk when you add it (**Shrink all picture types**); turn that off to choose types one by one.
 
 The plug-in only opens a picture that is already that small. It never writes it.
 
@@ -86,7 +86,7 @@ and changes nothing if Jellyfin does not answer.
   you add it. **System**, **Jobs** shows when it runs next.
 - **Shrink now** in its actions, or **Run now** in **System**, **Jobs**. **Stop shrinking** stops after the picture
   it is on.
-- **Shrink new pictures in quiet hours:** deactivated when you add it. When activated, each hour of Starboard's quiet
+- **Shrink new pictures in quiet hours:** turned off when you add it. When turned on, each hour of Starboard's quiet
   hours it shrinks the pictures Jellyfin saved since the last pass.
 - **No notifications:** a finished run changes only the figures on its card and **Space saved** page. It sends no
   event, so the Notifications plug-in hears nothing, and the card's status stays on when it runs next. A run that

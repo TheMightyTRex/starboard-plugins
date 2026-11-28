@@ -41,7 +41,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 ![The foot of the install slide-out, with Your Starboard password filled in and Install Immich (step 4) outlined](../../images/immich/install-3-password.png)
 
-5. Immich's own tab opens under **Settings**, then **Plug-ins**. Enter Immich's address and the API key, then save and select **Activate**. Read [Settings](settings.md).
+5. Immich's own tab opens under **Settings**, then **Plug-ins**. Enter Immich's address and the API key, then save and select **Turn on**. Read [Settings](settings.md).
 
 ### Add it by its address
 
