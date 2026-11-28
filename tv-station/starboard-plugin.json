@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.13.1",
+ "version": "0.13.2",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -756,6 +756,13 @@
  },
  "changes": [
   {
+   "version": "0.13.2",
+   "date": "2026-11-28",
+   "added": [
+    "**Lottie animations** in Import a kit: a Lottie file (JSON, up to 1 MB) can be a short title clip or a bumper. It is checked first (no expressions, links, pictures or text), its colours become your two colours, and your channel's name is drawn over it."
+   ]
+  },
+  {
    "version": "0.13.1",
    "date": "2026-11-28",
    "added": [
@@ -924,16 +931,6 @@
    ],
    "changed": [
     "**From the next episode not watched** finds the first episode, in the channel's order, that is not watched, where before it took the first not played in Jellyfin's order."
-   ]
-  },
-  {
-   "version": "0.2.1",
-   "date": "2026-11-19",
-   "added": [
-    "**Choose the hours a suggestion fills:** Suggest a schedule asks for the hours to fill on weekdays and at the weekend, such as 18:00 to 23:00, and fills them one programme after another, leaving out one that would run past the end. The hours are remembered for each channel."
-   ],
-   "changed": [
-    "**Longer holding slides:** a holding slide's video may be up to 120 seconds and 90 MB. Starboard 0.24.1 or later takes files that big; an older Starboard stops at 60 MB."
    ]
   }
  ]

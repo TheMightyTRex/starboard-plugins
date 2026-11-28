@@ -1,4 +1,4 @@
-"""Import a kit (0.13.0, DASH-631): video and picture files made in Canva, Figma, Descript, Adobe Express or anywhere else, or
+"""Import a kit (0.13.0, DASH-636): video and picture files made in Canva, Figma, Descript, Adobe Express or anywhere else, or
 a zip of them, marked for what each one is, turned into a broadcast pack with a LICENCE.txt that says where each came from.
 
 Nothing leaves the home and nothing here runs a file: every file is read with ffprobe (not trusted by its name), copied
@@ -16,6 +16,7 @@ import zipfile
 
 import draw
 import flash
+import lottie
 import pack
 
 MAX_FILE = 90 * 1024 * 1024  # one file
@@ -23,7 +24,8 @@ MAX_FILES = 60  # in a kit
 VIDEO_EXT = {"mp4", "mov", "webm", "mkv"}
 STILL_EXT = {"png", "jpg", "jpeg"}
 AUDIO_EXT = {"mp3", "m4a", "wav", "flac", "ogg", "opus"}
-ALL_EXT = VIDEO_EXT | STILL_EXT | AUDIO_EXT
+LOTTIE_EXT = {"json"}
+ALL_EXT = VIDEO_EXT | STILL_EXT | AUDIO_EXT | LOTTIE_EXT
 ROLES = {
     "ident": "Short title clip",
     "bumper": "Bumper",
@@ -64,6 +66,15 @@ def inspect(path):
         raise KitError("an SVG may hold links and scripts, so it is not used. Export a PNG instead")
     if ext not in ALL_EXT:
         raise KitError("not a file type Starboard uses here. Use MP4, MOV, WebM, MKV, PNG, JPG, MP3, M4A, WAV, FLAC, OGG or OPUS")
+    if ext in LOTTIE_EXT:  # 0.13.2: a Lottie animation is data: checked as JSON, never run
+        try:
+            with open(path, "rb") as f:
+                _, found = lottie.check(f.read(lottie.MAX_BYTES + 1))
+        except lottie.LottieError as e:
+            raise KitError(str(e)) from None
+        if not lottie.available():
+            raise KitError("Lottie files need rlottie, which this plug-in's image does not have yet")
+        return {"kind": "lottie", "dur": found["dur"], "w": found["w"], "h": found["h"], "audio": False}
     info = pack.probe(path)
     v = info["video"]
     if not info["ok"] or (not v and not info["audio"]):
@@ -89,6 +100,8 @@ def guess_role(name, info):
     n = name.lower()
     if info["kind"] == "audio":
         return "music"
+    if info["kind"] == "lottie":
+        return "bumper" if info["dur"] <= 2.5 else "ident"
     if info["kind"] == "still":
         if "logo" in n or "dog" in n or "bug" in n:
             return "logo"
@@ -106,6 +119,8 @@ def roles_for(kind):
     """The answers that make sense for a kind of file."""
     if kind == "audio":
         return ["music", "skip"]
+    if kind == "lottie":
+        return ["ident", "bumper", "skip"]
     if kind == "still":
         return ["ident", "bumper", "logo", "coming_next", "promo", "skip"]
     return ["ident", "bumper", "coming_next", "promo", "skip"]
@@ -267,7 +282,19 @@ def build(src, out, name, colours, files, made_on, progress=lambda step, of, wor
         path = os.path.join(src, f["name"])
         role, ext = f["role"], extension(f["name"])
         tick(f"Adding {f['name']}")
-        if role == "ident":
+        if f["kind"] == "lottie":
+            if role not in ("ident", "bumper"):
+                raise KitError(f"{f['name']}: an animation is a short title clip or a bumper")
+            folder, stem = ("idents", "ident") if role == "ident" else ("bumpers", "bumper")
+            listing = idents if role == "ident" else bumpers
+            os.makedirs(os.path.join(out, folder), exist_ok=True)
+            leaf = f"{stem}{len(listing) + 1:02d}.mp4"
+            with open(path, "rb") as fh:
+                doc, found = lottie.check(fh.read(lottie.MAX_BYTES + 1))
+            lottie.render(lottie.recolour(doc, c1, c2), found, os.path.join(out, folder, leaf), out, name if role == "ident" else "",
+                          draw.text_colour(c1, c1)[0], c1)
+            listing.append(leaf)
+        elif role == "ident":
             rel = f"idents/ident{len(idents) + 1:02d}.mp4" if f["kind"] == "still" else f"idents/ident{len(idents) + 1:02d}.{ext}"
             os.makedirs(os.path.join(out, "idents"), exist_ok=True)
             _video(path, os.path.join(out, rel), f["kind"], 5)

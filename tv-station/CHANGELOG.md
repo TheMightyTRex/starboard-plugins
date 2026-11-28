@@ -1,9 +1,19 @@
 # Changelog
 
+## 0.13.2 (not released yet)
+
+### Added
+- Lottie import (DASH-639): in Import a kit, a Lottie animation (JSON, up to 1 MB) can be a short title clip or a bumper.
+- The JSON is checked before anything is drawn: size, no expressions, no links or embedded files, no pictures, text or sound, shapes only, at most 1920 by 1080, 0.5 to 10 seconds, at most 60 frames a second and 60 layers.
+- The animation's most used colour becomes the main colour and every other colour the second colour. The channel's name is drawn over a short title clip. rlottie draws the frames and FFmpeg (one thread, lowest priority) encodes them.
+- The image now holds Pillow and rlottie-python 1.3.8 (a ready-built wheel only, nothing built; a platform with no wheel says Lottie files are not used in this image). About 8 MB more.
+- Measured in the plug-in's image under the container's limits: a 6 second 1920 by 1080 animation took 12 seconds and 222 MB over a colour (see lottie.py for the figures and the pull request for the table).
+- Tests: tests/test_tv_station_lottie.py.
+
 ## 0.13.1 (not released yet)
 
 ### Added
-- Make a style here (DASH-632): on Choose a style for my channel, the first question is now How do you want to start? with Make a style here (recommended) and Import a kit.
+- Make a style here (DASH-637): on Choose a style for my channel, the first question is now How do you want to start? with Make a style here (recommended) and Import a kit.
 - Five style recipes (Clean, Evening, Retro, Bold, Plain). A recipe is data in recipes.py: how the name arrives and what is drawn with it.
 - Each style makes 4 short title clips (5 to 6 seconds), 2 bumpers (1.5 seconds, silent), the Coming up next card background and the coming-up trailer background (both pictures), and the on-screen logo, from a name, two colours and an optional logo PNG.
 - A picture of a title clip, the card and a bumper is drawn first and changes with every choice. Only then is video made.
@@ -16,16 +26,16 @@
 ## 0.13.0 (not released yet)
 
 ### Added
-- Choose a style for my channel (DASH-631): a page of the plug-in's own, for a computer, in Settings. It is a wizard built from the design system's wizard (ds-components.css).
+- Choose a style for my channel (DASH-636): a page of the plug-in's own, for a computer, in Settings. It is a wizard built from the design system's wizard (ds-components.css).
 - Import a kit: add Canva, Figma, Descript or other exported videos, pictures and sounds, or a zip of them. Say what each file is, and say where each came from.
 - Each file is read with ffprobe, so a picture renamed .mp4 is refused. SVG is refused. Files are copied without their metadata, and nothing in them is run.
 - A still picture used as a short title clip becomes a 5 second clip that fades in and out (2 seconds for a bumper), made with one FFmpeg thread at the lowest priority, one job at a time, and never while a channel is watched.
 - The branding is checked with the same strict pack checks as an uploaded pack. A zip that is already a pack goes straight to the licence step.
 - LICENCE.txt and kit.json are written into the branding. kit.json (a name, two colours and where each file came from) can be added in a zip to fill in the answers. pack.py ignores kit.json, as it does LICENCE.txt.
-- Flash guard (DASH-633): a plain warning when a clip made, added or imported flashes more than 3 times in one second, in the whole picture or in one quarter of it. It never stops a clip being used. It reads the first 90 seconds at 16 by 9 pixels, one thread.
+- Flash guard (DASH-638): a plain warning when a clip made, added or imported flashes more than 3 times in one second, in the whole picture or in one quarter of it. It never stops a clip being used. It reads the first 90 seconds at 16 by 9 pixels, one thread.
 - It runs in the pack check, on Add on Idents, clips and music, and in the new page. The existing -23 LUFS step is unchanged and has tests.
 - Tests: tests/test_tv_station_flash.py (flash guard, loudness) and tests/test_tv_station_kit.py (import a kit, the page).
-- Not done: Make a style here (DASH-632) and Lottie import (DASH-634), which follow. A waiting screen is not a pack part, so a kit cannot hold one.
+- Not done: Make a style here (DASH-637) and Lottie import (DASH-639), which follow. A waiting screen is not a pack part, so a kit cannot hold one.
 
 ## 0.9.0 (not released yet)
 
