@@ -648,7 +648,7 @@ def play_screen(said=""):
                 items.append({"id": f"play:{s['id']}", "title": name(s), "group": name(g["res"]), "on": on,
                               "detail": f"Runs in {name(g['res'])} when something starts playing" if on else f"In {name(g['res'])}",
                               "state": "ok" if on else "off", "state_label": "Chosen" if on else "Not chosen", "actions": ["toggle"]})
-    intro = ("Turn one on scene to run when someone starts playing something in Jellyfin. Starboard checks what is playing every "
+    intro = ("Turn on one scene to run when someone starts playing something in Jellyfin. Starboard checks what is playing every "
              "5 minutes, so the lights can change up to 5 minutes after it starts.")
     if last.get("at"):
         intro += f" Last ran {last['at']} for {last.get('title') or 'something'}."
