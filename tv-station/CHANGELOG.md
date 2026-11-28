@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.3 (not released yet)
+
+### Added
+- Lottie import (DASH-639): in Import a kit, a Lottie animation (JSON, up to 1 MB) can be a short title clip or a bumper.
+- The JSON is checked before anything is drawn: size, no expressions, no links or embedded files, no pictures, text or sound, shapes only, at most 1920 by 1080, 0.5 to 10 seconds, at most 60 frames a second and 60 layers.
+- The animation's most used colour becomes the main colour and every other colour the second colour. The channel's name is drawn over a short title clip. rlottie draws the frames and FFmpeg (one thread, lowest priority) encodes them.
+- The image now holds Pillow and rlottie-python 1.3.8 (a ready-built wheel only, nothing built; a platform with no wheel says Lottie files are not used in this image). About 8 MB more.
+- Measured in the plug-in's image under the container's limits: a 6 second 1920 by 1080 animation took 12 seconds and 222 MB over a colour (see lottie.py for the figures and the pull request for the table).
+- Tests: tests/test_tv_station_lottie.py.
+
 ## 0.13.2 (28 November 2026)
 
 ### Changed

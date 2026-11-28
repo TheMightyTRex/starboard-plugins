@@ -45,7 +45,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.13.1"
+VERSION = "0.13.3"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own

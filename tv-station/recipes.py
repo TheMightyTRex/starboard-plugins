@@ -1,4 +1,4 @@
-"""Style recipes (0.13.1, DASH-632): a channel's branding drawn on the owner's own server from a name, two colours and an optional
+"""Style recipes (0.13.1, DASH-637): a channel's branding drawn on the owner's own server from a name, two colours and an optional
 logo. A recipe is data: a few numbers and words that say how each part moves, drawn by one FFmpeg command at a time through
 draw.py (one thread, the lowest priority, never while a channel is watched). Nothing leaves the home and nothing is fetched.
 

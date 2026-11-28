@@ -78,16 +78,16 @@
   // 1 Add
   function addStep() {
     const k = S.kit, files = (k && k.files) || [];
-    const pick = h("input", { type: "file", id: "pick", multiple: true, class: "input", accept: ".mp4,.mov,.webm,.mkv,.png,.jpg,.jpeg,.mp3,.m4a,.wav,.flac,.ogg,.opus,.zip" });
+    const pick = h("input", { type: "file", id: "pick", multiple: true, class: "input", accept: ".mp4,.mov,.webm,.mkv,.png,.jpg,.jpeg,.mp3,.m4a,.wav,.flac,.ogg,.opus,.json,.zip" });
     const list = files.length ? h("div", { class: "table-wrap" }, h("table", { class: "table" }, h("caption", { class: "visually-hidden" }, "Files added"),
       h("thead", {}, h("tr", {}, ["File", "What it is", "Length", "Remove"].map((t) => h("th", { scope: "col" }, t)))),
-      h("tbody", {}, files.map((f) => h("tr", {}, h("th", { scope: "row" }, f.name), h("td", {}, { video: "Video", still: "Picture", audio: "Sound" }[f.kind] + (f.w ? `, ${f.w} by ${f.h}` : "")),
+      h("tbody", {}, files.map((f) => h("tr", {}, h("th", { scope: "row" }, f.name), h("td", {}, { video: "Video", still: "Picture", audio: "Sound", lottie: "Animation (Lottie)" }[f.kind] + (f.w ? `, ${f.w} by ${f.h}` : "")),
         h("td", {}, f.kind === "still" ? "A picture" : size(f.dur)),
         h("td", {}, h("button", { class: "btn", type: "button", "aria-label": `Take out ${f.name}`, on: { click: () => doRemove(f.name) } }, "Take out"))))))) : null;
     const body = [
       h("p", { class: "muted" }, "Made something in Canva, Figma, Descript, Adobe Express or another tool? Save it as a video or a picture, or as a zip of them, and add it here. Starboard checks each file and turns them into your channel's branding."),
       h("div", { class: "field" }, h("label", { for: "pick" }, "Videos, pictures, sounds or a zip"),
-        h("p", { class: "hint", id: "pick-hint" }, "MP4, MOV, WebM, MKV, PNG, JPG, MP3, M4A, WAV, FLAC, OGG or OPUS, up to 90 MB each, or a zip up to 60 MB. SVG pictures are not used: export a PNG."), pick),
+        h("p", { class: "hint", id: "pick-hint" }, "MP4, MOV, WebM, MKV, PNG, JPG, MP3, M4A, WAV, FLAC, OGG or OPUS, up to 90 MB each, a Lottie animation (JSON, up to 1 MB) or a zip up to 60 MB. SVG pictures are not used: export a PNG."), pick),
       h("div", { class: "row" }, h("button", { class: "btn", type: "button", id: "add", disabled: S.busy, on: { click: () => doUpload(pick.files) } }, S.busy ? "Adding" : "Add the files")),
       S.playing ? notice("warning", "A channel is being watched", ["Adding files is fine, but making the branding waits until nobody is watching."]) : null,
       (k && k.skipped && k.skipped.length) ? notice("warning", "Left out of the zip", [h("ul", { class: "notes" }, k.skipped.slice(0, 8).map((t) => h("li", {}, t)))]) : null,
@@ -121,8 +121,8 @@
     const k = S.kit;
     const rows = k.files.map((f, i) => {
       const sel = h("select", { class: "select", id: `role${i}`, "data-name": f.name }, f.roles.map((r) => h("option", { value: r, selected: r === f.role }, k.roles[r])));
-      const tip = f.kind === "still" && (f.role === "ident" || f.role === "bumper") ? `A picture becomes a ${f.role === "ident" ? "5 second" : "2 second"} clip that fades in and out.` : "";
-      return h("tr", {}, h("th", { scope: "row" }, h("label", { for: `role${i}` }, f.name)), h("td", {}, { video: "Video", still: "Picture", audio: "Sound" }[f.kind]), h("td", {}, sel, tip ? h("p", { class: "hint" }, tip) : null));
+      const tip = f.kind === "lottie" ? "Its colours are changed to yours, and your channel's name is drawn over a short title clip." : f.kind === "still" && (f.role === "ident" || f.role === "bumper") ? `A picture becomes a ${f.role === "ident" ? "5 second" : "2 second"} clip that fades in and out.` : "";
+      return h("tr", {}, h("th", { scope: "row" }, h("label", { for: `role${i}` }, f.name)), h("td", {}, { video: "Video", still: "Picture", audio: "Sound", lottie: "Animation (Lottie)" }[f.kind]), h("td", {}, sel, tip ? h("p", { class: "hint" }, tip) : null));
     });
     const body = [h("p", { class: "muted" }, "Say what each file is. Starboard made a first guess from its name and length. Choose Leave it out for a file you do not want."),
       h("div", { class: "table-wrap" }, h("table", { class: "table" }, h("caption", { class: "visually-hidden" }, "What each file is"),

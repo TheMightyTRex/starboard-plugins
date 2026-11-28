@@ -1,4 +1,4 @@
-"""A guard against flashing (0.13.0, DASH-633; owner, 28 November 2026): a plain warning when a clip made, added or
+"""A guard against flashing (0.13.0, DASH-638; owner, 28 November 2026): a plain warning when a clip made, added or
 imported has fast brightness jumps, in the way WCAG 2.3.1 (Three flashes or below threshold) describes them.
 
 It is a guard, not the full Harding test that broadcasters run. It reads the picture small (16 by 9 grey squares, 25 a
