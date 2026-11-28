@@ -212,7 +212,8 @@ def render(doc, info, dst, folder, name, ink, background, keep_alpha=False, seco
                     p.stdin.close()
                 except OSError:
                     pass
-                err = p.communicate(timeout=300)[1]
+                p.wait(timeout=300)
+                err = p.stderr.read()
             finally:
                 draw._proc["p"] = None
                 if p.poll() is None:

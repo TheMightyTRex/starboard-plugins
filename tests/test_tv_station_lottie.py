@@ -124,6 +124,88 @@ class Drawn(unittest.TestCase):
             self.assertAlmostEqual(i["duration"], 6.0, delta=0.3)
 
 
+def _pillow():
+    try:
+        import PIL.Image  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+@unittest.skipUnless(HAS_FFMPEG and _pillow(), "needs FFmpeg and Pillow")
+class Pipeline(unittest.TestCase):
+    """The encoding path with a stand-in for rlottie (a moving bar drawn by Pillow), so it is tested wherever FFmpeg and Pillow are."""
+
+    def setUp(self):
+        import types
+
+        from PIL import Image, ImageDraw
+
+        class FakeAnimation:
+            @classmethod
+            def from_data(cls, data):
+                return cls()
+
+            def lottie_animation_get_size(self):
+                return (640, 360)
+
+            def lottie_animation_get_totalframe(self):
+                return 50
+
+            def lottie_animation_get_framerate(self):
+                return 25.0
+
+            def render_pillow_frame(self, i):
+                img = Image.new("RGBA", (640, 360), (0, 0, 0, 0))
+                ImageDraw.Draw(img).rectangle([i * 10, 100, i * 10 + 80, 200], fill=(255, 213, 79, 255))
+                return img
+        self.saved = sys.modules.get("rlottie_python")
+        sys.modules["rlottie_python"] = types.SimpleNamespace(LottieAnimation=FakeAnimation)
+        draw.clear()
+        self.tmp = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        if self.saved is None:
+            sys.modules.pop("rlottie_python", None)
+        else:
+            sys.modules["rlottie_python"] = self.saved
+        self.tmp.cleanup()
+
+    def info(self):
+        return {"w": 640, "h": 360, "dur": 2.0, "fps": 25.0}
+
+    def test_a_title_clip_is_made_over_a_colour_with_the_name(self):
+        dst = os.path.join(self.tmp.name, "ident.mp4")
+        lottie.render({}, self.info(), dst, self.tmp.name, "Evening TV", "#FFFFFF", "#10202C")
+        i = pack.probe(dst)
+        self.assertEqual((i["video"]["width"], i["video"]["height"]), (1920, 1080))
+        self.assertAlmostEqual(i["duration"], 2.0, delta=0.2)
+        self.assertEqual(i["video"]["codec_name"], "h264")
+
+    def test_a_bumper_has_no_name_and_transparency_can_be_kept(self):
+        dst = os.path.join(self.tmp.name, "bumper.webm")
+        lottie.render({}, self.info(), dst, self.tmp.name, "", "#FFFFFF", "#10202C", keep_alpha=True)
+        self.assertTrue(pack.alpha_video(pack.probe(dst)))
+
+    def test_a_channel_starting_to_play_stops_it(self):
+        draw.stop()
+        try:
+            with self.assertRaises(draw.Stopped):
+                lottie.render({}, self.info(), os.path.join(self.tmp.name, "x.mp4"), self.tmp.name, "N", "#FFFFFF", "#10202C")
+        finally:
+            draw.clear()
+
+    def test_the_name_is_never_part_of_a_command(self):
+        dst = os.path.join(self.tmp.name, "ident.mp4")
+        lottie.render({}, self.info(), dst, self.tmp.name, "a:b'c,d;e", "#FFFFFF", "#10202C")
+        self.assertTrue(os.path.getsize(dst) > 0)
+
+    def test_an_animation_larger_than_it_says_is_refused(self):
+        bad = dict(self.info(), w=320)
+        with self.assertRaises(lottie.LottieError):
+            lottie.render({}, bad, os.path.join(self.tmp.name, "x.mp4"), self.tmp.name, "N", "#FFFFFF", "#10202C")
+
+
 class InAKit(unittest.TestCase):
     def test_roles_and_guess_for_an_animation(self):
         import kit
