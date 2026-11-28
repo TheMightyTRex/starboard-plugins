@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.9.1",
+ "version": "0.13.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -74,6 +74,13 @@
    "type": "custom",
    "choices": "/files",
    "hint": "Every ident, promo clip, advert and PSA in one list. You can search, sort and filter it, and add several files to a channel or take them off together."
+  },
+  {
+   "key": "styles",
+   "label": "Choose a style for my channel",
+   "type": "custom",
+   "choices": "/styles",
+   "hint": "Add the video and picture files you made in Canva, Figma or another tool, or a zip of them, and turn them into your branding. Check each file, and say where it came from."
   },
   {
    "key": "clips",
@@ -749,6 +756,16 @@
  },
  "changes": [
   {
+   "version": "0.13.0",
+   "date": "2026-11-28",
+   "added": [
+    "**Choose a style for my channel**: a page, for a computer, that turns files you made in Canva, Figma, Descript or another tool into your branding. Add videos, pictures and sounds, or a zip, say what each is, say where each came from, and the plug-in makes the pack.",
+    "**A still picture becomes a short title clip**, 5 seconds that fade in and out, made on your server with one FFmpeg thread at the lowest priority and never while anyone is watching.",
+    "**LICENCE.txt and kit.json** are written into the branding, with where each file came from.",
+    "**A warning for fast flashing** on every clip made, added or imported. It says when a clip flashes more than 3 times in one second, and never stops you using it."
+   ]
+  },
+  {
    "version": "0.9.1",
    "date": "2026-11-26",
    "changed": [
@@ -927,16 +944,6 @@
    ],
    "fixed": [
     "**The schedule grid opens:** with Starboard 0.24.0 and later, Open the schedule grid uses the address you opened Starboard with, so it opens from any address that reaches the server. With no channels, the grid page says what to do."
-   ]
-  },
-  {
-   "version": "0.1.1",
-   "date": "2026-11-19",
-   "changed": [
-    "**Its address for Jellyfin fills in by itself:** with Starboard 0.23.0 and later, Starboard gives it its address on your home network, so Jellyfin's Live TV works without opening its page first."
-   ],
-   "fixed": [
-    "**Channel names and numbers are accepted:** with Starboard 0.23.0 and later, Add a channel, Rename and Change number take plain text, not only web addresses."
    ]
   }
  ]
