@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.16.0",
+ "version": "0.17.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -728,11 +728,20 @@
  },
  "changes": [
   {
+   "version": "0.17.0",
+   "date": "2026-11-28",
+   "changed": [
+    "A channel page has four cards: **Name and number**, **What it shows**, **What plays between programmes** and **What plays when**.",
+    "**More** holds the rest: the break settings one by one, the next 24 hours, the corner logo and branding, animation, the waiting screen and what it has played. About 20 rows show, down from 76.",
+    "**Plan the week for me** is on **What plays when**."
+   ]
+  },
+  {
    "version": "0.16.0",
    "date": "2026-11-28",
    "added": [
-    "**Station break style** in What plays between programmes, with three styles: **Quiet**, **Classic TV** and **Busy**.",
-    "**Break style** on each channel's Breaks card says in words what the channel does, such as Uses the station style: Classic TV, and lets it use the station style, one of its own, or its own settings."
+    "**Station style** in What plays between programmes, with three styles: **Quiet**, **Classic TV** and **Busy**.",
+    "**Style** on each channel's Breaks card says in words what the channel does, such as Uses the station style: Classic TV, and lets it use the station style, one of its own, or its own settings."
    ],
    "changed": [
     "The old break rows are under **More about breaks** on each channel's Breaks card.",
@@ -892,13 +901,6 @@
    "date": "2026-11-19",
    "added": [
     "**The station's logo on promos:** promos made with a channel's own pack, or a plain design, show the station pack's logo, small, in a corner. To leave it out, turn off Show the station's logo on promos."
-   ]
-  },
-  {
-   "version": "0.5.1",
-   "date": "2026-11-19",
-   "fixed": [
-    "**Promos follow a new pack:** when a channel's broadcast pack changes, its promos made with the old pack stop showing and are made again in the next quiet hour."
    ]
   }
  ]

@@ -71,7 +71,7 @@ class TheButton(App):
         rows = {it["id"]: it for it in self.app.channels_page(now=NOW)["items"]}
         it = rows[f"{cid}:initial"]
         self.assertEqual(it["title"], "Plan the week for me")
-        self.assertEqual(it["group"], "What it shows")
+        self.assertEqual(it["group"], "What plays when")
         self.assertEqual(it["actions"], ["attach"])
         self.assertEqual(it["attach"]["label"], "Plan the week for me")
         self.assertEqual(it["attach"]["value"], "Weekdays 18:00 to 23:00, weekends 12:00 to 23:00")

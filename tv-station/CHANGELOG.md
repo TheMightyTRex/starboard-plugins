@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.17.0 (not released yet)
+
+### Changed
+- A shorter channel page (DASH-646, owner, 28 November 2026): four cards (Name and number, What it shows, What plays between programmes, What plays when) and a sub menu called More. About 20 rows show on an open channel, down from 76, and the page is about a third as tall.
+- More holds Breaks, one by one (the old break rows), Next 24 hours, Corner logo and branding, Animation, Waiting screen and coming-up trailers, and Played on this channel. The sub menu is channel~more, and replaces channel~breaks from 0.12.0.
+- Plan the week for me moved to What plays when. Every row keeps its id, so nothing a person saved is touched.
+
 ## 0.16.0 (not released yet)
 
 ### Added

@@ -28,16 +28,14 @@ The station's settings are for every channel. A channel's own choice, on its pag
 
 ## Channels
 
-**Channels** lists your channels, each on a card with its number, its name, whether it is on air and what is on now. Select a channel to open it. An opened channel has a card for each part of it, and each card says what it is for. The cards are:
+**Channels** lists your channels, each on a card with its number, its name, whether it is on air and what is on now. Select a channel to open it. An opened channel has four cards, and each card says what it is for:
 
 - **Name and number**
 - **What it shows**
-- **Breaks**
-- **Corner logo and branding**
-- **Animation**
-- **Waiting screen and coming-up trailers**
-- **Today and tomorrow**
-- **Played on this channel**
+- **What plays between programmes**, with its **Break style**
+- **What plays when**, with **Plan the week for me** and the next three programmes
+
+**More** is a menu on the same channel. It holds **Breaks, one by one**, **Next 24 hours**, **Corner logo and branding**, **Animation**, **Waiting screen and coming-up trailers** and **Played on this channel**. About 20 rows show on a channel without opening **More**, down from 76.
 
 ### Add a channel
 
@@ -243,13 +241,13 @@ A style sets how long the break after each programme is and what plays in it. Th
 
 In **What plays between programmes**, **Station break style** sets the style for every channel that uses it. A channel that already has its own style or its own settings is not changed, and the answer says how many were. A new channel uses the station style from the start.
 
-On a channel's **Breaks** card, **Break style** says in words what the channel does now, such as "Uses the station style: Classic TV". Choose **Use the station style** to follow the station again, one of the three styles for this channel alone, or **Your own settings**.
+On a channel's **What plays between programmes** card, **Break style** says in words what the channel does now, such as "Uses the station style: Classic TV". Choose **Use the station style** to follow the station again, one of the three styles for this channel alone, or **Your own settings**.
 
-The rows a style sets are under **More about breaks** on the same card. Change one and the channel has its own settings. Its earlier settings are kept when you choose a style, and **Your own settings** brings them back. A channel saved before styles existed is not changed: it shows **Your own settings** when it has changed a break setting, and **Use the station style** when it has not. Nothing changes until you choose a style.
+The rows a style sets are under **More**, then **Breaks, one by one**. Change one and the channel has its own settings. Its earlier settings are kept when you choose a style, and **Your own settings** brings them back. A channel saved before styles existed is not changed: it shows **Your own settings** when it has changed a break setting, and **Use the station style** when it has not. Nothing changes until you choose a style.
 
 ### Each channel's breaks
 
-On the channel's **Breaks** card, under **More about breaks**:
+On the channel's page, under **More**, then **Breaks, one by one**:
 
 | Setting | What it does | Choices, and the one it starts with | Example result |
 |---|---|---|---|
