@@ -46,7 +46,28 @@ it is tested, listed and ready to publish.
    python3 tools/check_help.py
    ```
 
-8. Pin its image by digest once GitHub has built it, then run `tools/make_examples.py` (it writes `catalogue.json`)
+8. Choose its category: add it to `KINDS` in `tools/make_examples.py`, using one of the names in `CATEGORIES`.
+   The category is the plug-in's `kind` in `catalogue.json`, and it is the group Starboard's Catalogue and Stallboard
+   list it under. Pick the one that says what the plug-in is for, not how it works:
+
+   | Category | For |
+   |---|---|
+   | Appearance | Colours, shapes and text styles |
+   | Accessibility | Made for blind and partially sighted people |
+   | Jellyfin | Films and series in Jellyfin |
+   | Downloads | What is coming in, and how safely |
+   | Network | Speed, safety and reaching home from outside |
+   | Home | Your house, on your dashboard |
+   | System | Disks, backups and the news from your server |
+   | Books | Your books and audiobooks |
+   | Photos | Your photos |
+   | AI assistants | Ask an assistant about your server, or let an AI tool manage Starboard, with your own model or key |
+   | Apps you can add | A whole app, added to your server in a few steps |
+
+   If none fits, add a new name to `CATEGORIES` in the same change. The build stops on a name it does not know, so a
+   misspelling cannot make a category of its own. A category with no plug-in is not shown anywhere until the first
+   one is listed.
+9. Pin its image by digest once GitHub has built it, then run `tools/make_examples.py` (it writes `catalogue.json`)
    and `tools/make_zips.py`.
 
 ## Things to note

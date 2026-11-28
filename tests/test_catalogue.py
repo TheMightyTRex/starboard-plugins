@@ -30,6 +30,38 @@ class ReplacesOrAdds(unittest.TestCase):
         self.assertTrue(set(make_examples.NOTES) >= {e["id"] for e in json.load(open(os.path.join(ROOT, "catalogue.json"), encoding="utf-8"))["plugins"]})
 
 
+class Categories(unittest.TestCase):
+    """DASH-626: every entry's kind is a known category, and a category nobody uses (AI assistants, for now) lists nothing."""
+
+    def rows(self):
+        with open(os.path.join(ROOT, "catalogue.json"), encoding="utf-8") as f:
+            return json.load(f)["plugins"]
+
+    def test_every_kind_is_a_known_category(self):
+        for e in self.rows():
+            self.assertIn(e["kind"], make_examples.CATEGORIES, e["id"])
+
+    def test_the_list_has_no_repeats_and_is_sentence_case(self):
+        cats = make_examples.CATEGORIES
+        self.assertEqual(len(cats), len(set(cats)))
+        for c in cats:
+            for word in c.split()[1:]:
+                self.assertEqual(word, word.lower(), c)
+
+    def test_ai_assistants_is_a_category_with_no_plug_in_yet(self):
+        self.assertIn("AI assistants", make_examples.CATEGORIES)
+        self.assertEqual([e["id"] for e in self.rows() if e["kind"] == "AI assistants"], [])
+
+    def test_an_unknown_category_stops_the_build(self):
+        make_examples.KINDS["zz-test"] = "AI assistant"
+        try:
+            with self.assertRaises(SystemExit):
+                make_examples.category("zz-test")
+        finally:
+            del make_examples.KINDS["zz-test"]
+        self.assertEqual(make_examples.category("styles"), "Appearance")
+
+
 class PublishedRule(unittest.TestCase):
     def test_no_containers_is_published(self):
         self.assertTrue(make_examples.published({"id": "styles"}))
