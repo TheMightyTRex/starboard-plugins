@@ -14,7 +14,7 @@ problems.
 
 1. In Starboard, go to **Settings**, then **Plug-ins**, then **Catalogue**.
 2. Find the plug-in and select **Install…**. Read what it may do, enter your Starboard password and select **Install**.
-3. Select **Activate** when you are ready.
+3. Select **Turn on** when you are ready.
 
 That is all most people need. Starboard keeps each plug-in up to date from the catalogue, and you can roll one back
 from its page. Other ways to add one are under [Advanced](#advanced).

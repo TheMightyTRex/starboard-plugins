@@ -12,7 +12,7 @@ q: What does its card say?
   Waiting for provider -> 4
 1: Choose the Tailscale name #choose-the-tailscale-name
 2: Decide which name to keep #decide-which-name-to-keep
-3: Activate it or leave it off #activate-it-or-leave-it-off
+3: Turn it on or leave it off #turn-it-on-or-leave-it-off
 4: Wait for the provider #wait-for-the-provider
 ```
 
@@ -31,12 +31,12 @@ The card says the name now in the settings differs from the one the plug-in kept
 1. If the change was a mistake, enter the kept name in the setting again. The card goes back to **Waiting for provider**.
 2. If you really want a new name, select **Use the new address** under **Actions**, read what it says and confirm. Every passkey made at the old name stops working and has to be made again.
 
-## Activate it or leave it off
+## Turn it on or leave it off
 
 Single sign-on is off. Nothing runs for it, which is right on a server only you use.
 
 1. To use it, go to **Settings**, then **Plug-ins**, then **Single sign-on**.
-2. Activate **Use single sign-on** and enter the Tailscale name. Read [Settings](settings.md).
+2. Turn on **Use single sign-on** and enter the Tailscale name. Read [Settings](settings.md).
 
 ## Wait for the provider
 

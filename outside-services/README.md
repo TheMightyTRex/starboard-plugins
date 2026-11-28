@@ -35,7 +35,7 @@ The addresses in **Addresses to check** (from Outside services) are web address 
 
 ## Groups and maintenance
 
-**Groups and maintenance** lists each group with how many of its checks are up. Deactivate a group to pause its
+**Groups and maintenance** lists each group with how many of its checks are up. Turn off a group to pause its
 alerts. **Maintenance** takes windows such as `Sunday 02:00 to 04:00`, `every day 03:00 to 03:30`,
 `2026-11-21 02:00 to 06:00` or `now for 2 hours`, split by `;`. In a window, its checks still run and the plug-in keeps them in the
 history. It sends no alert, and the status page says Maintenance. If a check is still down when its window ends, the
@@ -54,7 +54,7 @@ plug-in sends the alert then.
 
 A page on your home network that only shows information. It shows each group. For each check it shows the name, up or down, the
 response time, and uptime for 24 hours, 30 days and 90 days. It never shows addresses or heartbeat links. Open it from the plug-in's page in
-Starboard, with **Open**. Deactivate it in **Status page**.
+Starboard, with **Open**. Turn it off in **Status page**.
 
 ## Settings
 

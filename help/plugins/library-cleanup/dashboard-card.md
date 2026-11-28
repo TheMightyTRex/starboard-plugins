@@ -4,7 +4,7 @@ Library clean-up adds 1 card you can put on your dashboard. Each starts with a b
 
 ## Holding folder
 
-Shows how much is in the holding folder. Under it, it says how many items are held and when it checks next. While moving is deactivated, it shows what **Preview** would move. While it works, it shows how far it has got.
+Shows how much is in the holding folder. Under it, it says how many items are held and when it checks next. While moving is off, it shows what **Preview** would move. While it works, it shows how far it has got.
 
 - **How often it updates:** every 30 seconds while it is working, and every 10 minutes the rest of the time. This happens only while the dashboard is open and in view. Nothing is asked while the browser tab is hidden.
 - **Example:** 186.40 GB in the holding folder. 41 items held. Next check in quiet hours
@@ -18,7 +18,7 @@ Shows how much is in the holding folder. Under it, it says how many items are he
 | Status | Means |
 |---|---|
 | **Working** | It is working out **Preview** or moving items now. The band says which, "Working out Preview" or "Moving items", and the card says how far it has gone. |
-| **Deactivated** | **Move items each day** is deactivated, so nothing moves. The card says what **Preview** would move, or "Open 'Preview' to find what would move". |
+| **Turned off** | **Move items each day** is off, so nothing moves. The card says what **Preview** would move, or "Open 'Preview' to find what would move". |
 | **Next in quiet hours** | It moves items each day. The card says how many items are held and that it checks next in quiet hours. |
 | **Problem** | The last run did not finish. The band says "Last run failed" and the card says "The last run did not finish" and why. |
 

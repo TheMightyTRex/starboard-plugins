@@ -54,7 +54,7 @@ While the UPS is on battery, this plug-in asks Starboard once a minute to hold i
 jobs, scheduled backups, other plug-ins' scheduled jobs and downloads. When the mains power is back it lets them go at
 once, and what was held starts again. If this plug-in stops, Starboard ends the hold by itself within 5 minutes. A job you
 start yourself still runs. It uses the permission `power:hold` (plug-in API 1.24, Starboard 0.40.0). The setting **Hold
-Starboard's heavy jobs on battery** is where you deactivate it.
+Starboard's heavy jobs on battery** is where you turn it off.
 
 ## Updating
 

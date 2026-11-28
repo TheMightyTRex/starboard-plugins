@@ -12,7 +12,7 @@ import sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from examples_src import (COMMON, EXAMPLES, IMAGE_VERSION, NEW_IN_IMAGE, TEXT_PATCH, TEXT_PATCH_CHANGE, TEXT_PATCH_DATE,  # noqa: E402
+from examples_src import (COMMON, EXAMPLES, IMAGE_VERSION, NEW_IN_IMAGE, TEXT_PATCH, TEXT_PATCH_CHANGE, TEXT_PATCH_DATE, TEXT_PATCH_2, TEXT_PATCH_2_CHANGE, TEXT_PATCH_2_DATE,  # noqa: E402
                           UPDATE_STEPS, VERSION, changes_for)
 import make_logos  # noqa: E402
 
@@ -115,6 +115,10 @@ def main():
             major, minor, patch = (int(x) for x in m["version"].split("."))
             m["version"] = f"{major}.{minor}.{patch + 1}"
             m["changes"] = [{"version": m["version"], "date": TEXT_PATCH_DATE, "changed": [TEXT_PATCH_CHANGE]}] + m["changes"]
+        if pid in TEXT_PATCH_2:  # 28 November 2026: the next patch version again, with its own entry
+            major, minor, patch = (int(x) for x in m["version"].split("."))
+            m["version"] = f"{major}.{minor}.{patch + 1}"
+            m["changes"] = [{"version": m["version"], "date": TEXT_PATCH_2_DATE, "changed": [TEXT_PATCH_2_CHANGE]}] + m["changes"]
         if pid in UPDATE_STEPS:
             m["update"] = UPDATE_STEPS[pid]
         order = ["manifest_version", "id", "name", "version", "description", "author", "licence", "homepage", "support_url",

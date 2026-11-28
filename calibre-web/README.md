@@ -14,7 +14,7 @@ People who keep their books in a Calibre library (a folder with metadata.db). Th
 
 Starboard sets it up before it first starts, so there is nothing to change in Calibre-Web itself:
 
-1. Activate it. It finds the library by itself. It searches for `books-library` in your media folder (made by the Calibre library maker plug-in). It also uses `books`, when that holds a Calibre library (a folder with `metadata.db`).
+1. Turn it on. It finds the library by itself. It searches for `books-library` in your media folder (made by the Calibre library maker plug-in). It also uses `books`, when that holds a Calibre library (a folder with `metadata.db`).
 2. Its first password is made by Starboard, not the default `admin123`. On its tab, **Its first sign-in** has **Show the password…**: it asks for your Starboard password and shows it once.
 3. Choose **Open Calibre-Web** and sign in as `admin`.
 

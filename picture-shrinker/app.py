@@ -11,12 +11,12 @@ The rules are those of the owner's one-off shrink (~/Documents/Claude/server/shr
 - It works at the lowest priority: its thread runs at nice 19 and in the idle disk class.
 
 When it runs: on the schedule the person chooses (plug-in API 1.14: every day, week or month at a time), with
-Shrink now; and, when activated (deactivated by default), each hour of Starboard's quiet hours for the pictures
+Shrink now; and, when turned on (turned off by default), each hour of Starboard's quiet hours for the pictures
 Jellyfin saved since the last pass.
 
 Rules 1.1 (DASH-433): the rules are in rules.json, the same file as the Jellyfin plug-in's
 (TheMightyTRex/jellyfin-plugin-picture-shrinker, SYNC.md there); tools/sync_picture_rules.py copies it in. Each original
-is backed up before its first shrink (activated by default), and Restore original pictures puts them back. When the
+is backed up before its first shrink (turned on by default), and Restore original pictures puts them back. When the
 Jellyfin plug-in is installed, this one stays idle, so the two never shrink the same pictures. A finished run sends no
 notification: its only result is the figures on the card and the Space saved page.
 
@@ -852,7 +852,7 @@ def start_again_now(kind):
 # The Jellyfin version ------------------------------------------------------------------------------------------
 
 def jellyfin_version_installed(force=False):
-    """True when Jellyfin's own Picture shrinker plug-in is installed and not deactivated (asked of Jellyfin's
+    """True when Jellyfin's own Picture shrinker plug-in is installed and not turned off (asked of Jellyfin's
     /Plugins at most every 10 minutes). Then this one stays idle, so the two never shrink the same pictures. When
     Jellyfin cannot be asked, it carries on as before."""
     if not force and now() - _jf["at"] < JELLYFIN_CHECK_EVERY:
@@ -899,9 +899,9 @@ def job_shrink():
 
 
 def job_new():
-    """Each hour of quiet hours: the pictures Jellyfin saved since the last pass, when that is activated."""
+    """Each hour of quiet hours: the pictures Jellyfin saved since the last pass, when that is on."""
     if setting("new_pictures", RULES["new_pictures"]["default"]) is not True:
-        return {"said": "Shrinking new pictures is deactivated"}
+        return {"said": "Shrinking new pictures is off"}
     if jellyfin_version_installed():
         return {"said": IDLE}
     if not backup_choice():
@@ -1071,7 +1071,7 @@ def screen():
                         "text": "This plug-in does nothing while Jellyfin's own version is installed, so the two never shrink the same pictures. Remove one of them."})
     if not os.path.isdir(ROOT):
         notices.append({"id": "folder", "tone": "danger", "title": "Jellyfin's metadata folder is not there",
-                        "text": "Check that Jellyfin is installed in Settings, Apps, then deactivate and activate this plug-in."})
+                        "text": "Check that Jellyfin is installed in Settings, Apps, then turn this plug-in off and on."})
     if not backup_choice():
         notices.append({"id": "choose", "tone": "warning", "title": "Choose whether to keep a backup",
                         "text": "Nothing is shrunk until you choose, in 'Original pictures' in its settings: 'Keep a backup copy of each original' or 'Shrink without a backup'."})

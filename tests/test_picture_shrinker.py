@@ -166,7 +166,7 @@ class PictureShrinker(unittest.TestCase):
 
     def test_new_pictures_is_deactivated_when_added(self):
         self.assertEqual(next(x for x in manifest("picture-shrinker")["settings"] if x["key"] == "new_pictures")["default"], False)
-        self.assertEqual(self.app.job_new()["said"], "Shrinking new pictures is deactivated")
+        self.assertEqual(self.app.job_new()["said"], "Shrinking new pictures is off")
 
     def test_a_run_stops_at_its_limit_and_the_next_carries_on(self):
         self.library()
@@ -662,7 +662,7 @@ class ChooseTheBackupAndStartAgain(unittest.TestCase):
 @unittest.skipIf(Image is None, "Pillow is not installed")
 class EveryPictureType(unittest.TestCase):
     """Rules 1.2: every picture type Jellyfin saves under library (backdrops asked for in the Jellyfin version's issue
-    #2), each with its own size and all activated when it is added, and Shrink all picture types."""
+    #2), each with its own size and all turned on when it is added, and Shrink all picture types."""
 
     tearDown = PictureShrinker.tearDown
     p = PictureShrinker.p

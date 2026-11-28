@@ -273,7 +273,7 @@ def is_3d(e, found=None):
 
 
 def without_3d(entries, cfg=None):
-    """The line-up without 3D films, unless Leave out 3D films is deactivated; and how many were left out."""
+    """The line-up without 3D films, unless Leave out 3D films is off; and how many were left out."""
     if not leave_out_3d(cfg):
         return entries, 0
     found = found_3d()
@@ -285,7 +285,7 @@ def three_d_job(now=None, limit_seconds=40 * 60, most=None):
     """In quiet hours (0.5.5): each film on a channel checked once for 3D, at the lowest priority, at most `most` in a
     run, never while anyone is watching. A channel with a film found to be 3D is read again, so the film is left out."""
     if not leave_out_3d():
-        return {"said": "Leave out 3D films is deactivated, so films are not checked"}
+        return {"said": "Leave out 3D films is off, so films are not checked"}
     if not _promo_lock.acquire(blocking=False):
         return {"said": "Promos are being made, so the check for 3D films waits for the next quiet hour"}
     try:
@@ -529,7 +529,7 @@ def station_pack(s):
 
 def station_logo_for(s, design, cfg=None):
     """The station's logo for a promo (0.5.2): its pack's logo/dog.png, for a promo made with any other design (a
-    channel's own pack, or a plain promo), unless Show the station's logo on promos is deactivated. None for promos
+    channel's own pack, or a plain promo), unless Show the station's logo on promos is off. None for promos
     made with the station's own pack, whose design carries it already."""
     if not truthy((cfg or {}).get("promo_station_logo"), True):
         return None
@@ -581,18 +581,18 @@ def promo_design_key(s, ch, cfg=None):
     d = promo.design_of(promo_design(s, ch))
     lang = language(cfg)
     d = f"{d}|{lang}" if d and lang != tv_words.DEFAULT else d
-    # 0.7.0: with Audio description on promos activated, promos made without the voice are made again, and the other
-    # way round. Deactivated (as it is unless changed), the key is as it was, so an update alone keeps every promo.
+    # 0.7.0: with Audio description on promos turned on, promos made without the voice are made again, and the other
+    # way round. Turned off (as it is unless changed), the key is as it was, so an update alone keeps every promo.
     return f"{d}|ad" if d and promo_described(cfg) else d
 
 
 def promo_described(cfg=None):
-    """True when Audio description on promos is activated (0.7.0); it is not unless changed."""
+    """True when Audio description on promos is on (0.7.0); it is not unless changed."""
     return truthy((cfg if cfg is not None else settings()).get("promo_audio_description"), False)
 
 
 def promo_clips(s, ch, cfg=None):
-    """The promos a channel shows in its breaks: its own, and the other channels' unless that is deactivated."""
+    """The promos a channel shows in its breaks: its own, and the other channels' unless that is off."""
     cfg = cfg or settings()
     others = truthy(cfg.get("promo_other"), True)
     on = {c["id"]: c for c in s["channels"] if c.get("on", True)}
@@ -1430,7 +1430,7 @@ def channel_rows(s, ch, cfg, base, now):
     # Name and number
     g = "Name and number"
     row("on", "On air" if on else "Off air", g, on=on, state="ok" if on else "off", state_label="On air" if on else "Off air",
-        detail="Activate puts it in Jellyfin's Live TV. Move up and Move down change its place in the list, and so its number.",
+        detail="Turn on puts it in Jellyfin's Live TV. Move up and Move down change its place in the list, and so its number.",
         actions=["toggle", "up", "down", "remove"])
     row("name", f"Name: {ch['name']}", g, actions=["attach"], attach={"label": "Rename", "field": "Name", "hint": "Up to 40 characters", "value": ch["name"]})
     row("number", f"Number: {n}", g, actions=["attach"],
@@ -2390,8 +2390,8 @@ def pack_page(said=None):
     else:
         ex_state, ex_label = ("ok", "In use") if using_example else ("off", "Not in use")
         ex_detail = ("Example TV, made in code: a logo, the logo with music, 3 idents, a Coming up next card, a promo with 2 music beds "
-                     "and 3 transitions. " + ("Deactivate to go back to your own pack, or none." if using_example else
-                                              "Activate to use it for every channel without its own pack."))
+                     "and 3 transitions. " + ("Turn off to go back to your own pack, or none." if using_example else
+                                              "Turn on to use it for every channel without its own pack."))
     items.append({"id": "example", "title": "Try the example pack", "detail": ex_detail[:200], "group": "The station's pack",
                   "on": using_example, "actions": ["toggle"], "state": ex_state, "state_label": ex_label})
     chk = sbplugin.remember("pack_check", None) or {}
@@ -2427,7 +2427,7 @@ def pack_page(said=None):
         items.append(it)
     if not load_pack("example") and base:
         items.append({"id": "dl-example-later", "title": "The example pack, as a zip", "group": "Downloads", "state": "unknown",
-                      "state_label": "Not made yet", "detail": "Activate Try the example pack first, and it is made."})
+                      "state_label": "Not made yet", "detail": "Turn on Try the example pack first, and it is made."})
     names = {c["id"]: c["name"] for c in s["channels"]}
     for p in sorted(s.get("promos") or [], key=lambda x: x.get("airs") or 0):
         items.append({"id": f"promo-{p['id']}", "title": f"{p.get('title')}: {dog.day_time_words(p['airs'])}"[:120], "group": "Promos kept",
@@ -2436,7 +2436,7 @@ def pack_page(said=None):
     if not s.get("promos"):
         items.append({"id": "promo-none", "title": "No promos yet", "group": "Promos kept", "state": "unknown", "state_label": "None",
                       "detail": ("Promos are made in quiet hours, for channels whose pack has a promo background, while nobody is watching."
-                                 if truthy(settings().get("promos"), True) else "Making promos is deactivated in the settings.")})
+                                 if truthy(settings().get("promos"), True) else "Making promos is off in the settings.")})
     for ch in numbered(s):
         items.append({"id": f"ch-{ch['id']}", "title": f"{ch['number']}  {ch['name']}: {pack_words(s, ch)}"[:120], "group": "Each channel's pack",
                       "detail": "Change it in Channels, on the channel's page, under Channel.", "state": "ok" if channel_pack(s, ch) else "off",
@@ -2515,7 +2515,7 @@ def download(name, query):
     if name == "example-pack.zip":
         ex = load_pack("example")
         if not ex:
-            raise LookupError("The example pack is not made yet: activate Try the example pack first")
+            raise LookupError("The example pack is not made yet: turn on Try the example pack first")
         cached = os.path.join(sbplugin.DATA, PACKS, "example-pack.zip")
         if not os.path.isfile(cached) or os.path.getmtime(cached) < os.path.getmtime(os.path.join(ex["folder"], "checked.json")):
             with open(cached + ".part", "wb") as f:
@@ -2548,7 +2548,7 @@ def promos_job(now=None, limit_seconds=40 * 60):
     """In quiet hours, from Starboard's quiet-hours job: old promos replaced, new ones made, one at a time."""
     cfg = settings()
     if not truthy(cfg.get("promos"), True):
-        return {"said": "Making promos is deactivated"}
+        return {"said": "Making promos is off"}
     if not _promo_lock.acquire(blocking=False):
         return {"said": "Promos are being made already"}
     try:

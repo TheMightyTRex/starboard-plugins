@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "themearr",
  "name": "Themearr",
- "version": "1.0.1",
+ "version": "1.0.2",
  "description": "Themearr puts a theme tune, theme.mp3, in the folder of each film Reelix has, and Jellyfin plays it on the film's page. It needs a RapidAPI key to fetch the tunes.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -92,7 +92,7 @@
    "type": "switch",
    "default": true,
    "group": "Fetching theme tunes",
-   "hint": "Themearr finds a tune for each film and fetches it. Deactivated, you choose each tune on Themearr's own page."
+   "hint": "Themearr finds a tune for each film and fetches it. Off, you choose each tune on Themearr's own page."
   },
   {
    "key": "sign_in",
@@ -123,6 +123,13 @@
   "alt": "Themearr logo"
  },
  "changes": [
+  {
+   "version": "1.0.2",
+   "date": "2026-11-28",
+   "changed": [
+    "**Turn on and turn off:** the text and the help pages now say turn on and turn off. How it works has not changed."
+   ]
+  },
   {
    "version": "1.0.1",
    "date": "2026-11-26",

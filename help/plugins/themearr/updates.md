@@ -1,11 +1,12 @@
 # Themearr: Updates
 
-Themearr 1.0.1 is the latest version. It needs Starboard with plug-in API 1.14 or later.
+Themearr 1.0.2 is the latest version. It needs Starboard with plug-in API 1.14 or later.
 
 ## Versions
 
 | Version | Needs plug-in API | Released |
 |---|---|---|
+| 1.0.2 | 1.14 or later | Not released yet |
 | 1.0.1 | 1.14 or later | Not released yet |
 | 1.0.0 | 1.14 or later | 17 November 2026 |
 

@@ -127,7 +127,7 @@ class Manifest(unittest.TestCase):
         self.assertNotIn("jobs", m)
         self.assertNotIn("events", m)
         self.assertLessEqual(m["resources"]["main"]["memory"], 48)
-        self.assertEqual((m["switch"], m["starboard_api"]), ("enabled", ">=1.21 <2.0"))  # Starboard asks before it deactivates what needs it
+        self.assertEqual((m["switch"], m["starboard_api"]), ("enabled", ">=1.21 <2.0"))  # Starboard asks before it turns off what needs it
         switch = next(s for s in m["settings"] if s["key"] == "enabled")
         self.assertEqual((switch["type"], switch["default"]), ("switch", False))
 

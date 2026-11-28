@@ -11,7 +11,7 @@ Starboard draws everything that Create your own TV channel shows in Starboard. T
 - **Choose from your library** (0.2.0) is a slide-out. Focus moves to its search box. Each kind is a radio button. Each item is a tick box, with its name as the label and what it is as the description. A screen reader reads out how many are shown and ticked as it changes. Escape or **Cancel** closes it, and focus goes back to **Choose from your library**.
 - **A logo shown on its row** (0.2.0) has words with it, such as "Comedy's logo".
 - **Suggest a schedule** (0.2.0) asks what to make the week from. The choices are radio buttons in a group, each with a linked sentence of help. It starts on the last choice for the channel.
-- **Promos for viewers who cannot read the picture** (0.7.0): with **Audio description on promos** activated, a voice says each promo's words. It also says the title, channel, day and time. It is not active unless you activate it. [Audio description on promos](settings.md#audio-description-on-promos) says what is said.
+- **Promos for viewers who cannot read the picture** (0.7.0): with **Audio description on promos** turned on, a voice says each promo's words. It also says the title, channel, day and time. It is not active unless you turn it on. [Audio description on promos](settings.md#audio-description-on-promos) says what is said.
 - **New or Repeat** is in words, in the guide, on the card and on the television, never by colour alone. Each channel's colour is decoration: its name and number always say which it is.
 - **Its logo**, a television with an aerial, has the text description "Create your own TV channel logo" where it is shown without its name.
 
@@ -37,7 +37,7 @@ The grids are the plug-in's own page. We checked them with axe (WCAG 2.2 AA) in 
 
 ## On the television
 
-- **Contrast on any picture.** Words on the television have a dark outline. The backing plate puts a dark box behind the on-screen logo, the clock and the labels, and it is activated unless you change it. Coming up next cards darken their picture to a third of its brightness. White words on them then have at least 7 to 1 contrast, whatever the picture.
+- **Contrast on any picture.** Words on the television have a dark outline. The backing plate puts a dark box behind the on-screen logo, the clock and the labels, and it is on unless you change it. Coming up next cards darken their picture to a third of its brightness. White words on them then have at least 7 to 1 contrast, whatever the picture.
 - **The font** is Atkinson Hyperlegible Next, made to be clear to people with low vision, as in Starboard.
 - **Inside the safe area** keeps the on-screen logo and the straps in the picture on every television.
 - **Broadcast packs:** words drawn on a pack's backgrounds have the same dark outline. Choose backgrounds that are dark where the words go, or set the text colour in `pack.json`; the placement guides show the title safe area. The example pack's words are white and amber on dark navy, at least 7 to 1.

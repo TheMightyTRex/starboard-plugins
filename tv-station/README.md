@@ -105,7 +105,7 @@ Starboard never adds it by itself. You choose to add it from the catalogue.
   - the sound track, where a programme has one in that language
   - film and series titles and descriptions, which come from the film database through Jellyfin for programmes about to
     be shown, at most 60 an hour, and are kept
-- **Audio description on promos**, when you activate it. A voice says each promo's words, the title, the channel, the
+- **Audio description on promos**, when you turn it on. A voice says each promo's words, the title, the channel, the
   day and the time, so a blind viewer hears more than music. A small speech program in the image makes it on your
   server. Nothing is sent anywhere.
 - **In Jellyfin's Live TV, first.** Its channels are numbered from 1 in your order, before the free channels from 101.

@@ -242,7 +242,7 @@ class Lights(WithBridge):
         self.assertNotIn("choice", lounge["Christmas tree"])  # a plug: on and off only
         self.assertNotIn("Christmas tree colour", lounge)
         self.assertEqual(out["bulk"][0], {"id": "bulk:home", "label": "Every light in the home", "kind": "", "on": 3, "total": 8,
-                                          "active": True, "hint": "3 of 8 lights on. Deactivate it and every one goes off"})
+                                          "active": True, "hint": "3 of 8 lights on. Turn it off and every one goes off"})
         # Only lights can be switched on a row, so Starboard's "2 of 3 active" on the room counts lights
         self.assertTrue(all(i.get("actions", []) in ([], ["toggle"]) for i in out["items"]))
         self.assertTrue(all(i["id"].startswith("light:") for i in out["items"] if i.get("actions")))
@@ -332,7 +332,7 @@ class Schedules(WithBridge):
         self.assertEqual(out["said"], "Changed: Every weekday at 07:30, Kitchen to 80%")
         self.assertEqual([s["localtime"] for s in self.mock.state.schedules.values()], ["W124/T07:30:00"])
         out = self.app.schedules_post({"action": "toggle", "id": row["id"]})
-        self.assertEqual((out["items"][0]["state_label"], out["said"]), ("Off", "Deactivated: Every weekday at 07:30, Kitchen to 80%"))
+        self.assertEqual((out["items"][0]["state_label"], out["said"]), ("Off", "Inactive: Every weekday at 07:30, Kitchen to 80%"))
         self.assertEqual(next(iter(self.mock.state.schedules.values()))["status"], "disabled")
         out = self.app.schedules_post({"action": "remove", "id": row["id"]})
         self.assertEqual((self.mock.state.schedules, out["items"]), ({}, []))

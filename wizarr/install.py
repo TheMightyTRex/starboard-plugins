@@ -37,7 +37,7 @@ def main(argv):
         print("Open this link in the browser you use for Starboard:\n" + link)
     else:
         print("Starboard is opening. Sign in if asked, check what the plug-in may do, and select Add.")
-    print("Then activate it in Settings, Plug-ins, Wizarr. Its page on your home network is shown there, with Open.")
+    print("Then turn it on in Settings, Plug-ins, Wizarr. Its page on your home network is shown there, with Open.")
     return 0
 
 

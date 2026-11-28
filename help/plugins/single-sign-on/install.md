@@ -43,7 +43,7 @@ Like every plug-in, it runs read only, as a user that is not root, with no extra
 
 ![The foot of the install slide-out, with Your Starboard password filled in and Install Single sign-on (step 4) outlined](../../images/single-sign-on/install-3-password.png)
 
-5. Its own tab opens under **Settings**, then **Plug-ins**. Read [Settings](settings.md), choose the Tailscale name, then select **Activate**.
+5. Its own tab opens under **Settings**, then **Plug-ins**. Read [Settings](settings.md), choose the Tailscale name, then select **Turn on**.
 
 ### Add it by its address
 
