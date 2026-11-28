@@ -1,4 +1,4 @@
-"""Create your own TV channel 0.10.0: the flash guard (a plain warning for fast brightness jumps on every clip made, added or
+"""Create your own TV channel 0.13.0: the flash guard (a plain warning for fast brightness jumps on every clip made, added or
 imported, never a refusal), and the loudness step beside it."""
 import os
 import shutil

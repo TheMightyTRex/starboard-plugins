@@ -45,7 +45,7 @@ import three_d
 import titles
 import tv_words
 
-VERSION = "0.10.0"
+VERSION = "0.13.0"
 CLIPS = "clips"  # folder in /data for idents and clips the owner adds
 LOGOS = "logos"
 PACKS = "packs"  # broadcast packs: station, example, and ch-<channel> for a channel's own
@@ -2039,7 +2039,7 @@ def add_clip_file(holder, role, name, length, rfile):
     cid = hashlib.sha256(base.encode()).hexdigest()[:10]
     holder[role] = [c for c in holder.get(role) or [] if c["id"] != cid] + [
         {"id": cid, "src": f"file:{base}", "dur": round(dur, 2), "title": base, "role": role, "has_audio": has_audio, "audio": None}]
-    warn = flash.words(flash.check(path)) if has_video else ""  # 0.10.0: said, never refused
+    warn = flash.words(flash.check(path)) if has_video else ""  # 0.13.0: said, never refused
     return f"Added {base}, {round(dur)} seconds" + (f". Warning: {warn}" if warn else "")
 
 
@@ -3370,7 +3370,7 @@ class Handler(BaseHTTPRequestHandler):
         return self._json(404, {"error": "Not found"})
 
     def _style_get(self, rest, query):
-        """The style page's own page (0.10.0), its script, styles and font, and the answer it reads."""
+        """The style page's own page (0.13.0), its script, styles and font, and the answer it reads."""
         static = {"style": ("style.html", "text/html; charset=utf-8"), "style/style.js": ("style.js", "text/javascript; charset=utf-8"),
                   "style/style.css": ("style.css", "text/css; charset=utf-8"), "style/tokens.css": ("ds-tokens.css", "text/css; charset=utf-8"),
                   "style/components.css": ("ds-components.css", "text/css; charset=utf-8"),
@@ -3407,7 +3407,7 @@ class Handler(BaseHTTPRequestHandler):
         if _example["making"]:
             return self._json(503, {"error": "The example pack is being made, which takes a minute or two. Choose the channel again then"})
         promo.stop()  # a promo being made gives way at once: nothing is made while anyone watches
-        draw.stop()  # and so does a style being made (0.10.0)
+        draw.stop()  # and so does a style being made (0.13.0)
         breaks.stop()  # and so does a search for breaks inside programmes (0.4.0)
         three_d.stop()  # and a check for 3D films (0.5.5)
         try:

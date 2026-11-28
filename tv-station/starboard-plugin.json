@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.10.0",
+ "version": "0.13.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -756,7 +756,7 @@
  },
  "changes": [
   {
-   "version": "0.10.0",
+   "version": "0.13.0",
    "date": "2026-11-28",
    "added": [
     "**Choose a style for my channel**: a page, for a computer, that turns files you made in Canva, Figma, Descript or another tool into your branding. Add videos, pictures and sounds, or a zip, say what each is, say where each came from, and the plug-in makes the pack.",

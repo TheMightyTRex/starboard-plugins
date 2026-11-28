@@ -1,4 +1,4 @@
-"""The plug-in's own page Choose a style for my channel (0.10.0): the server side of Import a kit (and, from the next
+"""The plug-in's own page Choose a style for my channel (0.13.0): the server side of Import a kit (and, from the next
 change, Make a style here). It is a wizard (the design system's docs/WIZARD.md), drawn by style.html and style.js.
 
 Work lives in /data/styles/<kit>/: in/ holds the files as added, pack/ the branding being made, state.json what the page

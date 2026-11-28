@@ -464,7 +464,7 @@ def check(folder):
             _size_notes(rel, v, problems, notes)
         item = {"path": rel, "dur": round(info["duration"], 2), "has_audio": info["audio"], "gain": 0.0,
                 "still": bool(v) and v.get("codec_name") in ("png", "mjpeg"), "codec": (v or {}).get("codec_name", "")}
-        if v and not item["still"] and (said := flash.words(flash.check(os.path.join(folder, rel)))):  # 0.10.0: a plain warning, never a stop
+        if v and not item["still"] and (said := flash.words(flash.check(os.path.join(folder, rel)))):  # 0.13.0: a plain warning, never a stop
             notes.append(f"{rel}: {said}")
         if info["audio"] and role in ("sting", "ident", "music"):
             lufs = loudness(os.path.join(folder, rel))

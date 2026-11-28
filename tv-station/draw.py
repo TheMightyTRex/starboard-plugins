@@ -1,4 +1,4 @@
-"""FFmpeg for the style pages (0.10.0): one command at a time, one thread, the lowest priority, and a stop that kills the
+"""FFmpeg for the style pages (0.13.0): one command at a time, one thread, the lowest priority, and a stop that kills the
 command at once when a channel starts to play.
 
 Measured on this server on 28 November 2026: a 6 second 1920 by 1080 title clip took 3.4 seconds and 205 MB with one

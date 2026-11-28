@@ -1,4 +1,4 @@
-"""Import a kit (0.10.0, DASH-620): video and picture files made in Canva, Figma, Descript, Adobe Express or anywhere else, or
+"""Import a kit (0.13.0, DASH-631): video and picture files made in Canva, Figma, Descript, Adobe Express or anywhere else, or
 a zip of them, marked for what each one is, turned into a broadcast pack with a LICENCE.txt that says where each came from.
 
 Nothing leaves the home and nothing here runs a file: every file is read with ffprobe (not trusted by its name), copied

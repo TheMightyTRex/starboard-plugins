@@ -1,4 +1,4 @@
-"""Create your own TV channel 0.10.0: Import a kit (the files checked by what they are, not their names; a still picture made into a
+"""Create your own TV channel 0.13.0: Import a kit (the files checked by what they are, not their names; a still picture made into a
 short title clip; the Where did this come from step writing LICENCE.txt and kit.json; the strict pack checks reused) and the page's
 server side (one build at a time, never while a channel is watched)."""
 import io
