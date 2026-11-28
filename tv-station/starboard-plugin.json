@@ -2,17 +2,18 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.13.1",
+ "version": "0.13.3",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own broadcast pack with an on-screen logo, idents, transitions, Coming up next cards and promos.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
  "homepage": "https://github.com/TheMightyTRex/starboard-plugins/tree/main/tv-station",
  "support_url": "https://github.com/TheMightyTRex/starboard-plugins/issues",
- "starboard_api": ">=1.15 <2.0",
+ "starboard_api": ">=1.25 <2.0",
  "permissions": [
   "jellyfin:key",
   "network:lan",
-  "network:port"
+  "network:port",
+  "handoff:receive"
  ],
  "needs": [
   "jellyfin"
@@ -26,7 +27,8 @@
    "publish": true,
    "host_port": 8790,
    "volumes": [
-    "data"
+    "data",
+    "handoff/tv-pack:receive"
    ],
    "start": "always"
   }
@@ -756,6 +758,13 @@
  },
  "changes": [
   {
+   "version": "0.13.3",
+   "date": "2026-11-28",
+   "added": [
+    "**Packs ready to use**: a pack another plug-in left in the shared tv-pack folder is listed on Broadcast pack, with where its files came from. Use the switch on its row to check it like an upload and use it for the station. It needs Starboard 1.25."
+   ]
+  },
+  {
    "version": "0.13.1",
    "date": "2026-11-28",
    "added": [
@@ -924,16 +933,6 @@
    ],
    "changed": [
     "**From the next episode not watched** finds the first episode, in the channel's order, that is not watched, where before it took the first not played in Jellyfin's order."
-   ]
-  },
-  {
-   "version": "0.2.1",
-   "date": "2026-11-19",
-   "added": [
-    "**Choose the hours a suggestion fills:** Suggest a schedule asks for the hours to fill on weekdays and at the weekend, such as 18:00 to 23:00, and fills them one programme after another, leaving out one that would run past the end. The hours are remembered for each channel."
-   ],
-   "changed": [
-    "**Longer holding slides:** a holding slide's video may be up to 120 seconds and 90 MB. Starboard 0.24.1 or later takes files that big; an older Starboard stops at 60 MB."
    ]
   }
  ]
