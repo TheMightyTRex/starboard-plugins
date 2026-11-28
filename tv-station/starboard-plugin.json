@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.14.0",
+ "version": "0.14.1",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -77,7 +77,7 @@
   },
   {
    "key": "clips",
-   "label": "Short title clips, clips and music",
+   "label": "What plays between programmes",
    "type": "custom",
    "choices": "/clips",
    "hint": "The station's own short title clips and clips, its waiting screen and its music for coming-up trailers, for every channel's breaks."
@@ -756,6 +756,18 @@
  },
  "changes": [
   {
+   "version": "0.14.1",
+   "date": "2026-11-28",
+   "changed": [
+    "**What plays between programmes** (it was Idents, clips and music) lists short title clips, clips, music, the waiting screen, then the more things, in that order.",
+    "The group called Add is gone: each group has its own add row and a one-sentence hint.",
+    "The hint on every upload says what to upload and no longer warns that names are not used."
+   ],
+   "added": [
+    "**Use the example files** on an empty page, which adds ready-made branding with short title clips, a logo with music and a Coming up next card."
+   ]
+  },
+  {
    "version": "0.14.0",
    "date": "2026-11-28",
    "changed": [
@@ -916,14 +928,6 @@
    ],
    "changed": [
     "**A break's order:** a bumper, trailers and promos, the holding slide or cards, a bumper, then one ident with its music immediately before the next programme."
-   ]
-  },
-  {
-   "version": "0.3.2",
-   "date": "2026-11-19",
-   "added": [
-    "**Create initial schedule** on a channel's What it shows card: a week from the channel's own series and films, in the hours you give, ready to change in the schedule grid and save.",
-    "**This channel's line-up** in Suggest a schedule: every series and film the channel shows, watched or not."
    ]
   }
  ]

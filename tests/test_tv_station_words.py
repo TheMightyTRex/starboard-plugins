@@ -92,5 +92,43 @@ class TheExplainers(App):
             self.assertLessEqual(max(len(x.split()) for x in re.split(r"[.?]", text)), 25, text)
 
 
+class TheClipsPage(App):
+    """What plays between programmes (DASH-642): the order of the groups, no Add group, and the empty state."""
+
+    def groups(self, page):
+        out = []
+        for it in page["items"]:
+            if it["group"] not in out:
+                out.append(it["group"])
+        return out
+
+    def test_the_groups_follow_the_task(self):
+        page = self.app.clips_page()
+        self.assertEqual(page["title"], "What plays between programmes")
+        self.assertEqual(self.groups(page), ["Start here", "Short title clips", "Clips", "Music", "Waiting screen", "More: your own short videos",
+                                             "More: public messages", "More: background loops"])
+        self.assertNotIn("Add", self.groups(page))
+
+    def test_every_add_row_keeps_its_id_and_sits_in_its_own_group(self):
+        by_id = {it["id"]: it["group"] for it in self.app.clips_page()["items"]}
+        self.assertEqual({k: by_id[k] for k in ("add:idents", "add:clips", "add:music", "add:extras", "add:psa", "add:back", "holding")},
+                         {"add:idents": "Short title clips", "add:clips": "Clips", "add:music": "Music", "add:extras": "More: your own short videos",
+                          "add:psa": "More: public messages", "add:back": "More: background loops", "holding": "Waiting screen"})
+
+    def test_an_empty_page_offers_the_example_files_and_a_full_one_does_not(self):
+        first = self.app.clips_page()["items"][0]
+        self.assertEqual((first["id"], first["title"], first["actions"]), ("use-example", "Use the example files", ["toggle"]))
+        s = self.app.state()
+        s["shared"]["clips"].append({"id": "c1", "title": "Opening", "dur": 5})
+        self.app.save(s)
+        self.assertNotIn("use-example", [it["id"] for it in self.app.clips_page()["items"]])
+
+    def test_the_hints_say_one_thing_and_do_not_warn(self):
+        for it in self.app.clips_page()["items"]:
+            for t in (it.get("detail", ""), (it.get("attach") or {}).get("hint", "")):
+                self.assertNotIn("names are not used", t)
+            self.assertLessEqual(len((it.get("detail") or "").split(". ")), 2, it["id"])
+
+
 if __name__ == "__main__":
     unittest.main()

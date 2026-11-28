@@ -1,6 +1,6 @@
 # Create your own TV channel: Settings
 
-Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **Short title clips, clips and music**, **Branding** and **Animation**, open from the same tab. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
+Create your own TV channel's settings are on its tab in **Settings**, then **Plug-ins**. Choices save as soon as you make them. Its pages, **Channels**, **Guide**, **Schedule grid**, **What plays between programmes**, **Branding** and **Animation**, open from the same tab. A change saves in place: the page stays where it was, with the channel open, and says what was saved beside what you changed.
 
 These pages are for a computer screen. They are not made for phones, and the plug-in's own pages say so on a narrow screen.
 
@@ -15,7 +15,7 @@ Each section here says what each setting does, its choices and the one it starts
 | [Schedule grid](#schedule-grid) | **Schedule grid** | A week for each channel, in 15 minute steps |
 | [Break layouts](#break-layouts) | **Break layouts** | What plays In between programmes and in Breaks inside programmes, as columns you fill |
 | [Where breaks go inside a programme](#where-breaks-go-inside-a-programme) | **Channels**, the **Breaks** card | At silence, at set times or at the end of a scene, and how many |
-| [Breaks and short title clips](#breaks-and-short-title-clips) | **Channels**, the **Breaks** and **Waiting screen and coming-up trailers** cards, and **Short title clips, clips and music** | What plays between programmes |
+| [Breaks and short title clips](#breaks-and-short-title-clips) | **Channels**, the **Breaks** and **Waiting screen and coming-up trailers** cards, and **What plays between programmes** | What plays between programmes |
 | [Corner logo](#corner-logo) | The station's settings, and each channel's **Corner logo and branding** card | The logo in the corner of the picture, the clock and the label |
 | [Title bars and cards](#title-bars-and-cards) | The station's settings | The programme's name, Up next, and the Coming up next and Later cards |
 | [Coming-up trailers](#coming-up-trailers) | The station's settings | Short trailers for programmes coming up |
@@ -174,7 +174,7 @@ If a column's items need more time than its break length, the column says so in 
 
 ## Public messages
 
-A **Public message** (public service announcement) is a kind of item beside **Very short title clip**, **Coming-up trailer**, **Your own short videos** and the rest. You drag it into the grids in the same way, and set how many times it is shown. Its files are your own videos. Add them with **Add a public message** in **Short title clips, clips and music** (for every channel) or on a channel's own page (for that channel only). The plug-in checks each file when you add it. It must be a real video that FFmpeg can read. It must have a picture, a length and a sound track, and be no more than 10 minutes and 90 MB. The plug-in refuses a file with no sound track, and the message says so. A channel's **Public messages** choice says whether it plays its own, the station's, both or none. A Public message is listed with the other files in [File lists](#file-lists).
+A **Public message** (public service announcement) is a kind of item beside **Very short title clip**, **Coming-up trailer**, **Your own short videos** and the rest. You drag it into the grids in the same way, and set how many times it is shown. Its files are your own videos. Add them with **Add a public message** in **What plays between programmes** (for every channel) or on a channel's own page (for that channel only). The plug-in checks each file when you add it. It must be a real video that FFmpeg can read. It must have a picture, a length and a sound track, and be no more than 10 minutes and 90 MB. The plug-in refuses a file with no sound track, and the message says so. A channel's **Public messages** choice says whether it plays its own, the station's, both or none. A Public message is listed with the other files in [File lists](#file-lists).
 
 Not in 0.9.0: choosing a public message from a folder on the server with a file picker, and levelling a public message's sound to the channel's loudness. The plug-in can only reach the files you add to it for now.
 
@@ -259,7 +259,7 @@ On the channel's **Waiting screen and coming-up trailers** card:
 |---|---|---|
 | **Waiting screen** | Which slide this channel uses | **The station's waiting screen**, **Its own waiting screen** or **No waiting screen**. **The station's waiting screen** |
 | **Its own waiting screen** | Select **Upload a waiting screen** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB, which loops. It is checked with FFmpeg first | A picture or video you add |
-| **Words on the slide** | What is written low in the middle of the slide, on a dark plate | **A countdown to the next programme**, **Back soon** or **No words**. **Station default** uses the choice in **Short title clips, clips and music** |
+| **Words on the slide** | What is written low in the middle of the slide, on a dark plate | **A countdown to the next programme**, **Back soon** or **No words**. **Station default** uses the choice in **What plays between programmes** |
 | **Preview the waiting screen** | Opens a frame of the slide with its words, in a new tab | None |
 
 ![A waiting screen with the Example TV logo, and under it Next programme in 4:32 and Kestrel Valley: Series 1, episode 1: First light](../../images/tv-station/holding-countdown.jpg)
@@ -270,18 +270,23 @@ On the channel's **Waiting screen and coming-up trailers** card:
 
 *Each choice for **Words on the slide**.*
 
-### The station's short title clips, clips and music
+### What plays between programmes: the station's files
 
-**Short title clips, clips and music** holds the station's own short title clips and clips, for every channel that chooses **The station's** or **This channel's and the station's**. Add a video of up to 60 MB, or the name of a Jellyfin collection or folder of them.
+**What plays between programmes** holds what every channel can use between programmes. It lists the parts in the order a break plays them: short title clips, clips, music, the waiting screen, then more things. Each part has its own **Add** row, and a one-line sentence says what it is. When nothing is added yet, **Use the example files** adds ready-made branding, and you can stop using it again.
 
-| Setting | What it does | Choices, and the one it starts with |
+Channels that choose **The station's** or **This channel's and the station's** use these. A short title clip or clip can be a video of up to 60 MB, or the name of a Jellyfin collection or folder of them.
+
+| Part | What it does | Choices, and the one it starts with |
 |---|---|---|
-| **The station's waiting screen** | Select **Upload a waiting screen** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Every channel without its own slide uses it | None until you add one |
-| **Words on the slide** | The words for every channel left at **Station default** | **A countdown to the next programme**, **Back soon** or **No words**. **A countdown to the next programme** |
-| **Music the coming-up trailers use** | Which music coming-up trailers choose from. A channel's own music comes first. With no music of the kind chosen, the other is used | **Your music and the pack's**, **Only your music** or **Only the pack's music**. **Your music and the pack's** |
-| **Add a short video of your own for the breaks** | Select **Upload a short video of your own** and choose a video of up to 10 minutes and 90 MB, as many as you like | Videos you add |
-| **Add music for coming-up trailers** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks. Each is checked with FFmpeg and played at the same loudness as the rest. **Remove** in its More menu takes it off | Music you add |
-| **Add a background loop for coming-up trailers** | Select **Upload a background loop** and choose a video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080 and up to 90 MB, up to 20 loops. Every channel's coming-up trailers choose from these, its own and its pack's coming-up trailer background, one at random for each coming-up trailer. Leave the clip area and the places for the words clear. **Remove** in its More menu takes it off | Loops you add |
+| **Short title clips** | A few seconds of video with your station name | None until you add one |
+| **Clips** | Short videos of a film or series, played after the short title clip | None until you add one |
+| **Music the coming-up trailers use** | Which music coming-up trailers choose from. A channel's own music comes first. With no music of the kind chosen, the other is used | **Your music and the branding's**, **Only your music** or **Only the branding's music**. **Your music and the branding's** |
+| **Add music** | Select **Upload music** and choose an MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes and up to 60 MB, up to 20 tracks. Each is checked with FFmpeg and played at the same loudness as the rest | Files you add |
+| **The station's waiting screen** | Select **Upload a waiting screen** and choose a PNG or JPEG picture, or a video of up to 120 seconds and 90 MB. Every channel without its own uses it | None until you add one |
+| **Words on the waiting screen** | The words for every channel left at **Station default** | **A countdown to the next programme**, **Back soon** or **No words**. **A countdown to the next programme** |
+| **More: your own short videos** | Select **Upload a short video of your own** and choose a video of up to 10 minutes and 90 MB, as many as you like | Videos you add |
+| **More: public messages** | A short video with a message, such as a safety tip. Up to 10 minutes and 90 MB, with a sound track | Videos you add |
+| **More: background loops** | Select **Upload a background loop** and choose a video of 2 to 60 seconds that loops, or a PNG or JPEG picture, 1920 by 1080 and up to 90 MB, up to 20 loops. Every channel's coming-up trailers choose from them | Files you add |
 
 With music or a background loop here, a channel gets plain coming-up trailers if its pack has no coming-up trailer or it has no pack. A plain coming-up trailer shows the programme's clips and words on a loop, or on the channel's colour.
 
@@ -289,7 +294,7 @@ With music or a background loop here, a channel gets plain coming-up trailers if
 
 The logo in a corner of the picture, as on broadcast television (also called the DOG, or bug). The station's choices are for every channel. Each channel can choose its own on its **Corner logo and branding** card, where every setting starts at **Station default**.
 
-![A made-up evening landscape with the Example TV logo on a dark dark box behind the logo in its corner, Top right](../../images/tv-station/dog-default.jpg)
+![A made-up evening landscape with the Example TV logo in its corner, Top right, on a dark box](../../images/tv-station/dog-default.jpg)
 
 *Every setting as it starts: the channel's logo, **Top right**, medium, inside the safe area, at 80% with the dark box behind the logo.*
 
@@ -409,7 +414,7 @@ With branding, the plug-in draws the card on the pack's Coming up next backgroun
 
 ## Coming-up trailers
 
-Coming-up trailers are short trailers for programmes coming up. The plug-in makes them in quiet hours. It makes them for channels whose branding has a coming-up trailer background. It also makes them for any channel that has music or a background loop for coming-up trailers, in **Short title clips, clips and music** or on the channel.
+Coming-up trailers are short trailers for programmes coming up. The plug-in makes them in quiet hours. It makes them for channels whose branding has a coming-up trailer background. It also makes them for any channel that has music or a background loop for coming-up trailers, in **What plays between programmes** or on the channel.
 
 A coming-up trailer has a few short clips of the programme in its clip area, with its sound. It also has a background music, and the title, the day and time and the channel. It gives the day and time, such as Sunday at 21:00, as it is made days before it plays.
 

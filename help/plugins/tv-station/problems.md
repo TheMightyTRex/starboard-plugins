@@ -83,7 +83,7 @@ The pack is checked before anything in it is used, and the pack in use stays whe
 
 ## Give coming-up trailers what they need
 
-1. Check the channel has something to make coming-up trailers with: its **Waiting screen and coming-up trailers** card says how its coming-up trailers are made. Branding with a coming-up trailer works, and so does music. To add music, upload some in **Short title clips, clips and music**, under **Music for coming-up trailers**, or on the channel's card. The channel then gets plain coming-up trailers on its colour.
+1. Check the channel has something to make coming-up trailers with: its **Waiting screen and coming-up trailers** card says how its coming-up trailers are made. Branding with a coming-up trailer works, and so does music. To add music, upload some in **What plays between programmes**, under **Music for coming-up trailers**, or on the channel's card. The channel then gets plain coming-up trailers on its colour.
 2. Check **Make coming-up trailers in quiet hours** is on, in the plug-in's settings under **Coming-up trailers**.
 3. Coming-up trailers are made in Starboard's quiet hours while nobody is watching anything in Jellyfin. To make them now, select **Make coming-up trailers now** on the plug-in's tab, with nothing playing.
 4. A channel needs programmes in the next 6 days that start at least 2 hours from now.
