@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.15.0 (not released yet)
+
+### Changed
+- Fewer tabs (DASH-643, owner, 28 November 2026): the settings go from 15 tabs to Channels, What plays between programmes, What plays when, Branding and Station, plus one tab of settings for the logo, title bars and trailers, and Actions.
+- Streaming is part of Station. The Guide is a menu in What plays when. Break layouts and File lists are menus in What plays between programmes. Animation is a menu in Branding.
+- The plug-in's own pages answer as before at their old paths, and each change made in a menu is answered with the page that holds it. Row ids in a menu have a prefix (layouts~, files~, guide~ and anim~).
+- The Logo, title bars and trailers tab is not folded into Branding because Starboard draws a plug-in's plain settings as tabs of their own, and a page of the plug-in's cannot change them. This needs a Starboard change to fold.
+- Every setting keeps its key and its saved value, so nothing needs to move. Tests check that no key is lost.
+
 ## 0.14.1 (not released yet)
 
 ### Changed

@@ -2,7 +2,7 @@
  "manifest_version": 1,
  "id": "tv-station",
  "name": "Create your own TV channel",
- "version": "0.14.1",
+ "version": "0.15.0",
  "description": "Your own TV channels in Jellyfin's Live TV, made from your films and series. Add your own branding with an corner logo, short title clips, transitions, Coming up next cards and coming-up trailers.",
  "author": "TheMightyTRexUK",
  "licence": "MIT",
@@ -40,62 +40,6 @@
  },
  "health": "/health",
  "settings": [
-  {
-   "key": "channels",
-   "label": "Channels",
-   "type": "custom",
-   "choices": "/channels",
-   "hint": "Add a channel and open it. It has a card for each of these: its name and number, what it shows, its breaks, its corner logo, its animation, its waiting screen and coming-up trailers, its programmes and what it has played."
-  },
-  {
-   "key": "guide",
-   "label": "Guide",
-   "type": "custom",
-   "choices": "/guide",
-   "hint": "What is on each channel in the next 24 hours, as a table for each channel, and when Jellyfin last read the guide."
-  },
-  {
-   "key": "schedule",
-   "label": "Schedule grid",
-   "type": "custom",
-   "choices": "/schedule",
-   "hint": "Open each channel's week on a grid, in a new tab in a desktop browser. Place films and series at set times, copy a day, stripe a series, or suggest a week from watch history."
-  },
-  {
-   "key": "grids",
-   "label": "Break layouts",
-   "type": "custom",
-   "choices": "/grids",
-   "hint": "What plays In between programmes and in Breaks inside programmes, as two grids for each channel, with drag and drop, buttons and the keyboard."
-  },
-  {
-   "key": "files",
-   "label": "File lists",
-   "type": "custom",
-   "choices": "/files",
-   "hint": "Every short title clip, coming-up trailer clip, own short video and Public message in one list. You can search, sort and filter it, and add several files to a channel or take them off together."
-  },
-  {
-   "key": "clips",
-   "label": "What plays between programmes",
-   "type": "custom",
-   "choices": "/clips",
-   "hint": "The station's own short title clips and clips, its waiting screen and its music for coming-up trailers, for every channel's breaks."
-  },
-  {
-   "key": "pack",
-   "label": "Branding",
-   "type": "custom",
-   "choices": "/pack",
-   "hint": "Your own branding for the channels: upload a pack made from the template, try the example pack, and download the template and placement guides."
-  },
-  {
-   "key": "animation",
-   "label": "Animation",
-   "type": "custom",
-   "choices": "/animation",
-   "hint": "How the cards, title bars, corner logo, clock, label and waiting screen words come on and go off, for every channel, with a preview of each."
-  },
   {
    "key": "station_name",
    "label": "Station name",
@@ -155,33 +99,6 @@
    "group": "Station"
   },
   {
-   "key": "first_number",
-   "label": "First channel number",
-   "type": "number",
-   "default": 1,
-   "min": 1,
-   "max": 9000,
-   "hint": "1 puts your channels first in Jellyfin's Live TV, before the free channels from 101.",
-   "group": "Station"
-  },
-  {
-   "key": "address",
-   "label": "Address Jellyfin uses to reach this plug-in",
-   "type": "text",
-   "hint": "Filled in by itself: Starboard gives this plug-in its address on your home network, such as http://192.168.1.20:8790. Enter one only when Jellyfin reaches the server by another address.",
-   "group": "Station"
-  },
-  {
-   "key": "guide_days",
-   "label": "Days in Jellyfin's guide",
-   "type": "number",
-   "default": 7,
-   "min": 1,
-   "max": 14,
-   "group": "Station",
-   "hint": "Worked out when Jellyfin asks for it, about once a day."
-  },
-  {
    "key": "picture",
    "label": "Picture size",
    "type": "choice",
@@ -197,7 +114,7 @@
     }
    ],
    "hint": "The size of the stream while a channel is watched.",
-   "group": "Streaming"
+   "group": "Station"
   },
   {
    "key": "most_at_once",
@@ -206,7 +123,7 @@
    "default": 2,
    "min": 1,
    "max": 6,
-   "group": "Streaming",
+   "group": "Station",
    "hint": "Each channel being watched is one server work. People watching the same channel share it."
   },
   {
@@ -217,8 +134,35 @@
    "default": 30,
    "min": 5,
    "max": 300,
-   "group": "Streaming",
+   "group": "Station",
    "hint": "Nothing runs while nobody watches."
+  },
+  {
+   "key": "first_number",
+   "label": "First channel number",
+   "type": "number",
+   "default": 1,
+   "min": 1,
+   "max": 9000,
+   "hint": "1 puts your channels first in Jellyfin's Live TV, before the free channels from 101.",
+   "group": "Station"
+  },
+  {
+   "key": "guide_days",
+   "label": "Days in Jellyfin's guide",
+   "type": "number",
+   "default": 7,
+   "min": 1,
+   "max": 14,
+   "group": "Station",
+   "hint": "Worked out when Jellyfin asks for it, about once a day."
+  },
+  {
+   "key": "address",
+   "label": "Address Jellyfin uses to reach this plug-in",
+   "type": "text",
+   "hint": "Filled in by itself: Starboard gives this plug-in its address on your home network, such as http://192.168.1.20:8790. Enter one only when Jellyfin reaches the server by another address.",
+   "group": "Station"
   },
   {
    "key": "copy_plain",
@@ -226,14 +170,14 @@
    "type": "switch",
    "default": true,
    "hint": "A channel with no corner logo and no title bars plays its programmes as they are, with no converting.",
-   "group": "Streaming"
+   "group": "Station"
   },
   {
    "key": "leave_out_3d",
    "label": "Leave out 3D films",
    "type": "switch",
    "default": true,
-   "group": "Streaming",
+   "group": "Station",
    "hint": "A 3D film plays as two pictures. Films Jellyfin or their file name says are 3D are left out, and each film on a channel is checked once in quiet hours."
   },
   {
@@ -241,7 +185,7 @@
    "label": "Make coming-up trailers in quiet hours",
    "type": "switch",
    "default": true,
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "hint": "Short clips of a programme coming up, with its sound, a background music and its day and time, on a background loop. One at a time, at the lowest priority, never while anyone is watching."
   },
   {
@@ -251,7 +195,7 @@
    "default": 3,
    "min": 1,
    "max": 6,
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "hint": "Old ones are replaced, so they never pile up."
   },
   {
@@ -259,7 +203,7 @@
    "label": "Replace each coming-up trailer after",
    "type": "choice",
    "default": "2",
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "choices": [
     {
      "value": "1",
@@ -285,7 +229,7 @@
    "label": "Coming-up trailer length",
    "type": "choice",
    "default": "",
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "choices": [
     {
      "value": "",
@@ -323,7 +267,7 @@
    "label": "Clips in each coming-up trailer",
    "type": "choice",
    "default": "",
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "choices": [
     {
      "value": "",
@@ -357,7 +301,7 @@
    "label": "Use the programme's sound in coming-up trailers",
    "type": "switch",
    "default": true,
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "hint": "Each clip plays with its own sound, at the same loudness as the rest, and the music goes quieter under it."
   },
   {
@@ -365,7 +309,7 @@
    "label": "Music under the programme's sound",
    "type": "choice",
    "default": "20",
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "choices": [
     {
      "value": "10",
@@ -391,7 +335,7 @@
    "label": "Show the station's logo on coming-up trailers",
    "type": "switch",
    "default": true,
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "hint": "The station pack's logo, small, in a corner of coming-up trailers made with a channel's own pack or a plain design. Coming-up trailers made with the station's pack carry it already."
   },
   {
@@ -399,7 +343,7 @@
    "label": "Audio description on coming-up trailers",
    "type": "switch",
    "default": false,
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "hint": "A voice says each coming-up trailer's words: Coming soon, the title, the episode, the day and time and the channel. It adds the first sentence of the description when there is room. The music and the programme's sound fall under it. The voice is made on your server (eSpeak NG), in the station's language; nothing is sent anywhere. Coming-up trailers are made again in the next quiet hours."
   },
   {
@@ -407,7 +351,7 @@
    "label": "Show coming-up trailers for your other channels",
    "type": "switch",
    "default": true,
-   "group": "Coming-up trailers",
+   "group": "Logo, title bars and trailers",
    "hint": "Each channel's breaks show coming-up trailers for programmes on your other channels too."
   },
   {
@@ -434,7 +378,7 @@
     }
    ],
    "hint": "Every channel uses these unless it has its own, in Channels.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_corner",
@@ -460,7 +404,7 @@
     }
    ],
    "hint": "Where it sits.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_size",
@@ -482,7 +426,7 @@
     }
    ],
    "hint": "Small is 6% of the picture's height, medium 8.5% and large 12%.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_margin",
@@ -504,7 +448,7 @@
     }
    ],
    "hint": "Inside the safe area keeps it on screen on every television.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_opacity",
@@ -514,7 +458,7 @@
    "default": 80,
    "min": 30,
    "max": 100,
-   "group": "Corner logo",
+   "group": "Logo, title bars and trailers",
    "hint": "100% is solid."
   },
   {
@@ -537,7 +481,7 @@
     }
    ],
    "hint": "Clips are short title clips, trailers and your own clips.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_fade_in",
@@ -563,7 +507,7 @@
     }
    ],
    "hint": "Keeps the opening titles clear.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_clock",
@@ -571,7 +515,7 @@
    "type": "switch",
    "default": false,
    "hint": "The time beside the corner logo.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_label",
@@ -593,7 +537,7 @@
     }
    ],
    "hint": "In words, for the first 2 minutes of each programme.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_plate",
@@ -601,7 +545,7 @@
    "type": "switch",
    "default": true,
    "hint": "A dark, partly transparent box behind the logo, the clock and the label, so they are clear on any picture.",
-   "group": "Corner logo"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_strap_start",
@@ -609,7 +553,7 @@
    "type": "switch",
    "default": true,
    "hint": "For 8 seconds as each programme starts.",
-   "group": "Title bars and cards"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_strap_end",
@@ -617,7 +561,7 @@
    "type": "switch",
    "default": true,
    "hint": "The next programme and its time, at the end of each programme.",
-   "group": "Title bars and cards"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_strap_seconds",
@@ -627,7 +571,7 @@
    "default": 30,
    "min": 5,
    "max": 120,
-   "group": "Title bars and cards"
+   "group": "Logo, title bars and trailers"
   },
   {
    "key": "dog_cards",
@@ -635,7 +579,35 @@
    "type": "switch",
    "default": true,
    "hint": "In the breaks: the programme's picture, title, the date and time it is shown and a short synopsis.",
-   "group": "Title bars and cards"
+   "group": "Logo, title bars and trailers"
+  },
+  {
+   "key": "channels",
+   "label": "Channels",
+   "type": "custom",
+   "choices": "/channels",
+   "hint": "Add a channel and open it. It has a card for each part: its name and number, what it shows, what plays between programmes, what plays when, and more."
+  },
+  {
+   "key": "clips",
+   "label": "What plays between programmes",
+   "type": "custom",
+   "choices": "/clips",
+   "hint": "Short title clips, clips, music and the waiting screen for every channel's breaks, with the break layouts and every file in one list."
+  },
+  {
+   "key": "schedule",
+   "label": "What plays when",
+   "type": "custom",
+   "choices": "/schedule",
+   "hint": "Each channel's week on a grid, in a new tab on a computer, and what is on in the next 24 hours."
+  },
+  {
+   "key": "pack",
+   "label": "Branding",
+   "type": "custom",
+   "choices": "/pack",
+   "hint": "Ready-made branding for the channels: try the example, add your own from the template, and set how things come on and go off."
   },
   {
    "key": "styles",
@@ -755,6 +727,15 @@
   "alt": "Create your own TV channel logo"
  },
  "changes": [
+  {
+   "version": "0.15.0",
+   "date": "2026-11-28",
+   "changed": [
+    "The settings have fewer tabs: **Channels**, **What plays between programmes**, **What plays when**, **Branding**, **Station**, and **Logo, title bars and trailers**, then Actions.",
+    "**Streaming** is part of **Station**. **Guide** is inside **What plays when**. **Break layouts** and **File lists** are inside **What plays between programmes**. **Animation** is inside **Branding**.",
+    "Every setting keeps its key and its saved value."
+   ]
+  },
   {
    "version": "0.14.1",
    "date": "2026-11-28",
@@ -917,17 +898,6 @@
    ],
    "changed": [
     "**Breaks:** between programmes a bumper, promos, an extra video, the holding slide, then the ident. Inside a programme a bumper, promos, an extra video, the holding slide with Back soon, then a bumper."
-   ]
-  },
-  {
-   "version": "0.4.0",
-   "date": "2026-11-19",
-   "added": [
-    "**Bumpers:** a broadcast pack may have short, silent bumpers in bumpers/. One opens and one closes every break.",
-    "**Breaks inside programmes:** where a programme fades to black for its adverts (found in quiet hours), a bumper, trailers or promos and a bumper play. Up to 1, 2 or 3 minutes, taken from the break after it."
-   ],
-   "changed": [
-    "**A break's order:** a bumper, trailers and promos, the holding slide or cards, a bumper, then one ident with its music immediately before the next programme."
    ]
   }
  ]
