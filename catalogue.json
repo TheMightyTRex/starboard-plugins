@@ -936,7 +936,7 @@
     "network:lan",
     "network:port"
    ],
-   "version": "0.9.1",
+   "version": "0.13.1",
    "starboard_api": ">=1.15 <2.0",
    "manifest": "https://raw.githubusercontent.com/TheMightyTRex/starboard-plugins/main/tv-station/starboard-plugin.json",
    "published": true,
