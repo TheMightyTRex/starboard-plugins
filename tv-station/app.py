@@ -1408,13 +1408,15 @@ def can(what):
 # channels section into smaller cards and look at making it easier to understand once you select the channel").
 CARDS = (("Name and number", "Its name and number in Jellyfin's Live TV, whether it is on air, and its colour."),
          ("What it shows", "The series, films, collections, playlists, genres and decades it plays. Choose from your library to add several at once."),
-         ("Breaks", "What plays between programmes: when programmes start, how long the break is, short title clips, trailers and your clips."),
+         ("What plays between programmes", "Its style: how long the break is and what plays in it. The Style row says it in words."),
+         ("What plays when", "Plan the week for me, and the next few programmes. More has the rest."),
+         ("Breaks, one by one", "The settings a style sets, one by one. Changing one gives this channel its own settings."),
+         ("Next 24 hours", "Every programme in the next 24 hours, worked out from what it shows and its breaks."),
          ("Corner logo and branding", "The logo in the corner, the title bars and cards, and the branding they come from. "
                                          "Each one follows the station's setting until you choose another."),
          ("Animation", "How the cards, title bars, corner logo, clock, label and waiting screen words come on and go off. "
                        "Each one follows the station's choice until you choose another."),
          ("Waiting screen and coming-up trailers", "The slide that loops at the end of a break until the next programme starts, and the music for its coming-up trailers."),
-         ("Today and tomorrow", "What it shows in the next 24 hours, worked out from what it shows and its breaks."),
          ("Played on this channel", "What it has played to someone watching, which From the next episode not watched can count as watched. "
                                     "Jellyfin's own watched marks are never changed."))
 PICK_KINDS = (("series", "Series"), ("film", "Films"), ("collection", "Collections"), ("playlist", "Playlists"), ("genre", "Genres"),
@@ -1431,8 +1433,9 @@ def channel_rows(s, ch, cfg, base, now):
     if not on:
         detail = "Off air. " + detail
     menu = {"id": cid, "title": f"{n}  {ch['name']}", "group": "Channels", "detail": detail[:200], "active": on}
-    more_menu = {"id": f"{cid}~breaks", "title": "More about breaks", "parent": cid, "group": "Breaks", "detail":
-                 "The settings a style sets, one by one. Changing one gives this channel its own settings."}
+    more = f"{cid}~more"
+    more_menu = {"id": more, "title": "More", "parent": cid, "group": "More", "detail":
+                 "Break settings one by one, the corner logo, animation, the waiting screen, the next 24 hours and what it has played."}
     items = []
 
     def row(key, title, group, **more):
@@ -1477,7 +1480,7 @@ def channel_rows(s, ch, cfg, base, now):
     # edit in the schedule grid"): a week from this channel's own series and films, kept as an unsaved suggestion.
     draft = grid_doc(cid, "draft") is not None
     grid_link = {"url": f"{base}/t/{s['token']}/grid?channel={cid}", "label": f"Open the schedule grid for {ch['name']}"} if base else None
-    row("initial", "Plan the week for me", g, actions=["attach"], state="unknown" if not draft else "ok",
+    row("initial", "Plan the week for me", "What plays when", actions=["attach"], state="unknown" if not draft else "ok",
         state_label="Waiting to be saved" if draft else "Make one",
         detail=("Made: open the schedule grid to change it, then save it. " if draft else "") +
                "Fills the hours you give with this channel's series and films: series on weekdays, films at the weekend.",
@@ -1486,8 +1489,8 @@ def channel_rows(s, ch, cfg, base, now):
         **({"link": grid_link} if grid_link else {}))
 
     # Breaks: one style, then the old rows under More about breaks (0.12.0, DASH-644 and DASH-645)
-    g = "Breaks"
-    sub = f"{cid}~breaks"
+    g = "What plays between programmes"
+    sub = more
     st_id = styles.style_of(ch)
     station_style = s.get("style") or ""
     station_name_ = styles.name(station_style) or "not chosen yet"
@@ -1502,8 +1505,8 @@ def channel_rows(s, ch, cfg, base, now):
         said_style = f"Has its own style: {styles.name(st_id)}. " + styles.words(st_id)
     row("style", "Break style", g, choice=_choice("Break style", st_id, options), detail=said_style[:200])
 
-    def brow(key, title, group, **more):
-        row(key, title, group, menu=sub, **more)
+    def brow(key, title, group, **more_):
+        row(key, title, "Breaks, one by one", menu=sub, **more_)
 
     brow("start_on", "Programmes start", g, choice=_choice("Start", ch.get("start_on"), START_ON),
         detail="On the quarter, half or whole hour, the break fills the time to the next one.")
@@ -1640,17 +1643,17 @@ def channel_rows(s, ch, cfg, base, now):
         attach={"label": "Upload music", "field": "Music", "hint": "An MP3, M4A, OGG or FLAC file of 5 seconds to 10 minutes, up to 60 MB",
                 "accept": ",".join(MUSIC_TYPES)})
 
-    # Today and tomorrow
-    g = "Today and tomorrow"
+    # What plays when: the plan helper and the next three programmes; the rest of the next 24 hours is under More
     got = sched.airings(now, now + 86400, limit=60)
     for k, a2 in enumerate(got):
         e = a2["entry"]
         new = guide.is_new(e, a2["start"])
-        row(f"today{k}", f"{day_hm(a2['start'], now)} to {hm(a2['end'])}  {e.get('title')}", g,
+        g, where = ("What plays when", {}) if k < 3 else ("Next 24 hours", {"menu": more})
+        row(f"today{k}", f"{day_hm(a2['start'], now)} to {hm(a2['end'])}  {e.get('title')}", g, **where,
             detail=(guide.episode_words(e) + ". " if guide.episode_words(e) else "") + (e.get("plot") or "")[:120],
             state="ok" if new else "unknown", state_label="New" if new else "Repeat")
     if not got:
-        row("today-none", "Nothing yet", g, state="unknown", state_label="Empty", detail="Choose what it shows, and its programmes are listed here.")
+        row("today-none", "Nothing yet", "What plays when", state="unknown", state_label="Empty", detail="Choose what it shows, and its programmes are listed here.")
 
     # Played on this channel (0.3.0)
     g = "Played on this channel"
@@ -1671,6 +1674,12 @@ def channel_rows(s, ch, cfg, base, now):
     else:
         row("played-none", "Nothing played yet", g, state="unknown", state_label="Empty",
             detail="Once someone watches it in Jellyfin's Live TV, what it plays is listed here.")
+    for it in items:  # four cards, and the rest under More (0.13.0, DASH-646)
+        if it["group"] in ("Corner logo and branding", "Animation", "Waiting screen and coming-up trailers", "Played on this channel"):
+            it["menu"] = more
+    order = ["Name and number", "What it shows", "What plays between programmes", "What plays when", "Breaks, one by one", "Next 24 hours",
+             "Corner logo and branding", "Animation", "Waiting screen and coming-up trailers", "Played on this channel"]
+    items.sort(key=lambda it: order.index(it["group"]) if it["group"] in order else len(order))
     return [menu, more_menu], items
 
 
@@ -1700,8 +1709,8 @@ def channels_page(said=None, now=None, only=None):
             out["said"] = said[:200]
         return out
     out = {"type": "list", "title": "Channels", "intro": (f"{station_name(cfg)}: {sbplugin.plural(len(s['channels']), 'channel')}. "
-                                                          "Open a channel to change it. Each of its cards is one part of it: its name, what it shows, "
-                                                          "its breaks, its corner logo, its waiting screen and coming-up trailers, and its programmes."),
+                                                          "Open a channel to change it. It has four cards: its name and number, what it shows, "
+                                                          "what plays between programmes and what plays when. More has the rest."),
            "add": {"label": "Add a channel", "hint": "Its name, such as Comedy. Up to 40 characters", "placeholder": "Channel name"},
            "menus": menus, "items": items, "hints": dict(CARDS)}
     if can("cards"):

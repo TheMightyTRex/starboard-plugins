@@ -120,9 +120,9 @@ class SavedInPlace(App):
         self.assertEqual(len(full["menus"]), 4, "each channel and its More about breaks; an older Starboard gets the whole list, as before")
         self.can("partial")
         part = self.app.channels_post({"action": "choose", "id": f"{one}:dog-corner", "value": "top_left"}, now=NOW)
-        self.assertEqual(part["partial"], {"menus": [one, f"{one}~breaks"]})
-        self.assertEqual([m["id"] for m in part["menus"]], [one, f"{one}~breaks"])
-        self.assertTrue(all(it["menu"] in (one, f"{one}~breaks") for it in part["items"]))
+        self.assertEqual(part["partial"], {"menus": [one, f"{one}~more"]})
+        self.assertEqual([m["id"] for m in part["menus"]], [one, f"{one}~more"])
+        self.assertTrue(all(it["menu"] in (one, f"{one}~more") for it in part["items"]))
         self.assertEqual(part["said"], "Corner: Top left. Saved for Comedy", "it says what was saved")
 
     def test_moving_a_channel_answers_with_every_channel(self):
@@ -140,12 +140,15 @@ class InCards(App):
         self.can("cards", "picker")
         page = self.app.channels_page(now=NOW)
         self.assertEqual(page["layout"], "cards")
-        groups = []
+        groups, more = [], []
         for it in page["items"]:
-            if it["group"] not in groups:
-                groups.append(it["group"])
-        self.assertEqual(groups, ["Name and number", "What it shows", "Breaks", "Corner logo and branding", "Animation",
-                                  "Waiting screen and coming-up trailers", "Today and tomorrow", "Played on this channel"])
+            into = more if it["menu"].endswith("~more") else groups
+            if it["group"] not in into:
+                into.append(it["group"])
+        self.assertEqual(groups, ["Name and number", "What it shows", "What plays between programmes", "What plays when"], "four cards")
+        self.assertEqual(more, ["Breaks, one by one", "Next 24 hours", "Corner logo and branding", "Animation",
+                                "Waiting screen and coming-up trailers", "Played on this channel"], "and the rest under More")
+        groups += more
         for g in groups:
             self.assertTrue(page["hints"][g].endswith("."), g)
             self.assertLessEqual(len(g), 40)
@@ -306,7 +309,7 @@ class Uploads(App):
             self.app.add_holding(f"ch-{cid}", "big.mp4", 91 * 1024 * 1024, io.BytesIO(b""))
         self.can("partial")
         page = send(clip, f"{cid}:holding-own")
-        self.assertEqual(page["partial"], {"menus": [cid, f"{cid}~breaks"]})
+        self.assertEqual(page["partial"], {"menus": [cid, f"{cid}~more"]})
         s = self.app.state()
         h = self.app.holding_for(s, self.app.find(s, cid))
         self.assertFalse(h["still"])

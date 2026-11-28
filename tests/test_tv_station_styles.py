@@ -139,23 +139,49 @@ class TheChannelsOwnStyle(App):
     def test_the_old_rows_are_in_a_sub_menu_and_the_style_is_not(self):
         cid = self.channel("Comedy", lineup=episodes("a", 2, 1500))
         page = self.app.channels_page(now=NOW)
-        sub = next(m for m in page["menus"] if m["id"] == f"{cid}~breaks")
-        self.assertEqual((sub["parent"], sub["title"]), (cid, "More about breaks"))
+        sub = next(m for m in page["menus"] if m["id"] == f"{cid}~more")
+        self.assertEqual((sub["parent"], sub["title"]), (cid, "More"))
         menu = {i["id"].split(":", 1)[1]: i.get("menu") for i in page["items"] if i["id"].startswith(cid + ":")}
         self.assertEqual(menu["style"], cid)
         for k in ("start_on", "break_seconds", "per_break", "idents", "clips", "extras", "ident_order", "trailers"):
-            self.assertEqual(menu[k], f"{cid}~breaks", k)
+            self.assertEqual(menu[k], f"{cid}~more", k)
 
     def test_a_partial_answer_covers_the_sub_menu_too(self):
         cid = self.channel("Comedy")
         self.can("partial", "cards", "picker")
         got = self.app.channels_post({"action": "choose", "id": f"{cid}:style", "value": "quiet"}, now=NOW)
-        self.assertEqual(got["partial"]["menus"], [cid, f"{cid}~breaks"])
+        self.assertEqual(got["partial"]["menus"], [cid, f"{cid}~more"])
 
     def test_a_bad_style_is_refused(self):
         cid = self.channel("Comedy")
         with self.assertRaises(ValueError):
             self.app.channels_post({"action": "choose", "id": f"{cid}:style", "value": "loud"}, now=NOW)
+
+
+class TheFourCards(App):
+    """A channel page of four cards and More (DASH-646): about 20 rows show, and nothing is lost."""
+
+    def test_the_rows_that_show_without_opening_more(self):
+        cid = self.channel("Comedy", lineup=episodes("a", 4, 1500))
+        page = self.app.channels_page(now=NOW)
+        shown = [i for i in page["items"] if i["menu"] == cid]
+        everything = [i for i in page["items"]]
+        self.assertLessEqual(len(shown), 20, [i["id"] for i in shown])
+        self.assertGreater(len(everything), len(shown))
+        self.assertEqual(len({i["id"] for i in everything}), len(everything), "no row twice")
+
+    def test_every_row_a_channel_had_is_still_there(self):
+        cid = self.channel("Comedy")
+        ids = {i["id"].split(":", 1)[1] for i in self.app.channels_page(now=NOW)["items"] if i["id"].startswith(cid + ":")}
+        for k in ("on", "name", "number", "colour", "order", "run", "initial", "style", "start_on", "break_seconds", "mid_break_seconds",
+                  "place_how", "idents", "clips", "extras", "psa", "add-ident", "add-clip", "pack", "holding_mode", "holding_words",
+                  "count_played"):
+            self.assertIn(k, ids)
+
+    def test_the_plan_helper_is_with_what_plays_when(self):
+        cid = self.channel("Comedy")
+        row = next(i for i in self.app.channels_page(now=NOW)["items"] if i["id"] == f"{cid}:initial")
+        self.assertEqual((row["group"], row["menu"]), ("What plays when", cid))
 
 
 if __name__ == "__main__":
