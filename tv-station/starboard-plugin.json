@@ -759,10 +759,10 @@
    "version": "0.13.1",
    "date": "2026-11-28",
    "added": [
-    "**Make a style here**: on Choose a style for my channel, choose one of 5 styles (Clean, Evening, Retro, Bold or Plain), enter your channel's name and two colours, and add a logo if you have one. The plug-in draws 4 short title clips, 2 bumpers, the Coming up next card background, the coming-up trailer background and the logo on your own server.",
-    "**A picture first**: a picture of a title clip, the Coming up next card and a bumper is drawn before any video is made. Nothing is made while anyone is watching a channel, and it uses one FFmpeg thread at the lowest priority.",
-    "**Readable words**: the words are black or white, and a colour that would make them hard to read is made a little darker or lighter until they reach 7 to 1. A still choice holds every clip still, for people who ask for it.",
-    "**The licence** is written into the pack: the styles and what they draw are free to use under the MIT licence."
+    "**Make a style here**: choose Clean, Evening, Retro, Bold or Plain, enter your channel's name and two colours, and add a logo if you have one. The plug-in draws 4 short title clips, 2 bumpers, the card and trailer backgrounds and the logo on your own server.",
+    "**A picture first**: a picture of a title clip, the Coming up next card and a bumper is drawn before any video. Nothing is made while anyone is watching a channel, with one FFmpeg thread at the lowest priority.",
+    "**Readable words**: a colour that would make the words hard to read is made a little darker or lighter until they reach 7 to 1. A still choice holds every clip still.",
+    "**The licence** is written into the pack: what the styles draw is free to use under the MIT licence."
    ]
   },
   {
