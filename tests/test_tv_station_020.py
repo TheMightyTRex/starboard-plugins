@@ -94,11 +94,12 @@ class TheGridOpens(App):
 
     def test_the_link_goes_to_the_grid_on_the_plugins_own_port(self):
         cid = self.channel()
-        it = self.app.schedule_page()["items"][0]
+        it = next(i for i in self.app.schedule_page()["items"] if i["id"].startswith("grid-"))
         token = self.app.state()["token"]
         self.assertEqual(it["link"]["url"], f"http://192.0.2.10:8790/t/{token}/grid?channel={cid}")
         self.assertIn("Open the schedule grid", it["link"]["label"])
-        self.assertIn("Open the schedule grid", self.app.schedule_page()["intro"])
+        self.assertIn("Open the set times", self.app.schedule_page()["intro"])
+        self.assertIn("week grid", self.app.schedule_page()["intro"])
 
     def test_with_no_channels_the_grid_has_every_field_its_page_draws(self):
         got = self.app.grid_state("")

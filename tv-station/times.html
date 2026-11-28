@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shows at set times</title>
+<link rel="stylesheet" href="times/tokens.css">
+<link rel="stylesheet" href="grid/grid.css">
+<link rel="stylesheet" href="times/times.css">
+<script src="times/times.js" defer></script>
+</head>
+<body>
+<p class="desktop-note" role="note">This page is for a computer screen. It is not made for phones.</p>
+<a class="skip" href="#rules">Skip to the times</a>
+<header class="top">
+  <div>
+    <h1>Shows at set times</h1>
+    <p class="lede">Say what plays at what time, such as Harbour lights at 19:00 on weekdays. The time between shows keeps the channel's automatic line-up and breaks. Each change is kept at once.</p>
+  </div>
+  <div class="field">
+    <label for="theme">Colours</label>
+    <select id="theme"><option value="light">Light</option><option value="dark">Dark</option></select>
+  </div>
+</header>
+<main>
+  <section class="controls" aria-label="Channel">
+    <div class="field">
+      <label for="channel">Channel</label>
+      <select id="channel"></select>
+    </div>
+    <a id="gridlink" href="grid">Plan every slot on the week grid</a>
+  </section>
+  <p id="said" role="status" class="said"></p>
+  <p id="problem" role="alert" class="problem"></p>
+  <section id="rules" aria-labelledby="rules-h" tabindex="-1">
+    <h2 id="rules-h">Shows at set times</h2>
+    <p id="none" hidden>No set times yet. This channel plays automatically. Add a time below, such as Harbour lights at 19:00 on weekdays.</p>
+    <ul id="list" class="rule-list"></ul>
+  </section>
+  <form id="add" class="card" aria-labelledby="add-h">
+    <h2 id="add-h">Add a time</h2>
+    <div class="field">
+      <label for="q">Find a show or film</label>
+      <div class="inline">
+        <input type="search" id="q" autocomplete="off" aria-describedby="q-help">
+        <button type="button" id="find">Find</button>
+      </div>
+      <span id="q-help" class="hint">Enter part of its name.</span>
+    </div>
+    <fieldset id="results-set" hidden>
+      <legend>Choose one</legend>
+      <div id="results"></div>
+    </fieldset>
+    <p id="chosen" class="hint" hidden></p>
+    <div class="inline">
+      <div class="field">
+        <label for="at">Starts at</label>
+        <select id="at"></select>
+      </div>
+      <div class="field">
+        <label for="n">Episodes in a row</label>
+        <select id="n"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+        <span class="hint">A film plays once.</span>
+      </div>
+    </div>
+    <fieldset>
+      <legend>On these days</legend>
+      <div id="days" class="inline"></div>
+      <div class="inline">
+        <button type="button" data-days="0,1,2,3,4">Monday to Friday</button>
+        <button type="button" data-days="5,6">Saturday and Sunday</button>
+        <button type="button" data-days="0,1,2,3,4,5,6">Every day</button>
+      </div>
+    </fieldset>
+    <button type="submit" class="primary" id="go">Add the time</button>
+  </form>
+</main>
+</body>
+</html>

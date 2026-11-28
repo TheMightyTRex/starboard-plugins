@@ -1423,6 +1423,11 @@ PICK_KINDS = (("series", "Series"), ("film", "Films"), ("collection", "Collectio
               ("decade", "Decades"))
 
 
+def rules_of(ch):
+    """A channel's Shows at set times, read from its saved grid (grid.rules): nothing is stored for them."""
+    return grid.rules(ch.get("_grid") or grid.empty())
+
+
 def channel_rows(s, ch, cfg, base, now):
     """One channel's menu row, its sub menus and its items, card by card. Returns (menus, items)."""
     cid, n = ch["id"], ch["number"]
@@ -1480,6 +1485,12 @@ def channel_rows(s, ch, cfg, base, now):
     # edit in the schedule grid"): a week from this channel's own series and films, kept as an unsaved suggestion.
     draft = grid_doc(cid, "draft") is not None
     grid_link = {"url": f"{base}/t/{s['token']}/grid?channel={cid}", "label": f"Open the schedule grid for {ch['name']}"} if base else None
+    if base:
+        row("times", "Shows at set times", "What plays when", state="ok" if rules_of(ch) else "unknown",
+            state_label=sbplugin.plural(len(rules_of(ch)), "time") if rules_of(ch) else "Automatic",
+            detail=("; ".join(r["words"] for r in rules_of(ch)[:2]) + (" and more" if len(rules_of(ch)) > 2 else "") if rules_of(ch)
+                    else "Plays automatically. Say what plays at what time, such as a show at 19:00 on weekdays.")[:200],
+            link={"url": f"{base}/t/{s['token']}/times?channel={cid}", "label": f"Open the set times for {ch['name']}"})
     row("initial", "Plan the week for me", "What plays when", actions=["attach"], state="unknown" if not draft else "ok",
         state_label="Waiting to be saved" if draft else "Make one",
         detail=("Made: open the schedule grid to change it, then save it. " if draft else "") +
@@ -2861,6 +2872,7 @@ def grid_state(cid, said="", now=None):
     out = {"channels": [{"id": c["id"], "name": c["name"], "number": c["number"]} for c in chans], "cid": cid, "monday": monday,
            "today": time.localtime(now).tm_wday, "days": list(grid.DAYS), "draft": kind == "draft",
            "can_undo": kind == "" and grid_doc(cid, "prev") is not None, "said": said, **grid.view(doc, monday),
+           "rules": [{k: r[k] for k in ("id", "words", "name", "days", "start", "n")} for r in grid.rules(doc)],
            "suggest_from": find(s, cid).get("suggest_from") or "history",
            "suggest_hours": find(s, cid).get("suggest_hours") or suggest_defaults()}
     if kind == "draft":
@@ -2963,6 +2975,30 @@ def grid_op(body, now=None):
                 doc, focus, said = grid.add(doc, day, start, "film", got[0], now)
             else:
                 raise grid.GridError("Choose a film or series from the search")
+        elif op == "rule_add":  # Shows at set times (0.15.0): a film or series, the days, the time and how many in a row
+            iid, item_kind = str(body.get("id") or ""), str(body.get("kind") or "")
+            if not library.ID.match(iid):
+                raise grid.GridError("Choose a film or series from the search")
+            days = [int(d) for d in body.get("days") or [] if str(d).isdigit()]
+            start = _int(body.get("start"), 0, grid.DAY - grid.STEP, "a time")
+            n = _int(body.get("n") or 1, 1, 6, "how many episodes")
+            if item_kind == "series":
+                eps = library.lineup(jf, [{"kind": "series", "id": iid}])
+                if not eps:
+                    raise grid.GridError("Jellyfin has no episodes of that series to play")
+                sm = {"mode": "unwatched", "unwatched_index": unwatched_index(iid, eps, seen_on(cid))} if iid not in doc["series"] else None
+                doc, said = grid.add_rule(doc, days, start, "series", {"id": iid, "name": eps[0]["title"]}, n, now, eps, start_mode=sm)
+            elif item_kind == "film":
+                got = library.lineup(jf, [{"kind": "film", "id": iid}])
+                if not got:
+                    raise grid.GridError("Jellyfin cannot play that film")
+                doc, said = grid.add_rule(doc, days, start, "film", got[0], 1, now)
+            else:
+                raise grid.GridError("Choose a film or series from the search")
+            focus = ""
+        elif op == "rule_remove":
+            doc, said = grid.remove_rule(doc, str(body.get("rule") or ""), now)
+            focus = ""
         elif op == "move":
             doc, said = grid.move(doc, focus, _int(body.get("day"), 0, 6, "a day"), _int(body.get("start"), 0, grid.DAY - grid.STEP, "a time"), now)
         elif op == "nudge":
@@ -3189,31 +3225,42 @@ def breaks_op(body):
 
 
 def schedule_page(said=None):
-    """Starboard's page for the grid: a link to each channel's grid, which opens on this plug-in's own web page."""
+    """What plays when (0.15.0): Shows at set times for each channel first, with the week grid as the more thing under it.
+    Both open on this plug-in's own pages, in a new tab."""
     s = state()
     base = address()
     items = []
     for ch in numbered(s):
+        rules = grid.rules(ch.get("_grid") or grid.empty())
+        times = {"id": f"times-{ch['id']}", "title": f"{ch['number']}  {ch['name']}"[:120], "group": "Shows at set times",
+                 "state": "ok" if rules else "unknown", "state_label": sbplugin.plural(len(rules), "time") if rules else "Automatic",
+                 "detail": ("; ".join(r["words"] for r in rules[:2]) + (" and more" if len(rules) > 2 else "")) if rules
+                 else "Plays automatically. Say what plays at what time, such as a show at 19:00 on weekdays."}
+        if base:
+            times["link"] = {"url": f"{base}/t/{s['token']}/times?channel={ch['id']}", "label": f"Open the set times for {ch['name']}"}
+        else:
+            times["detail"] = NO_ADDRESS
+        items.append(times)
+    for ch in numbered(s):
         doc = ch.get("_grid") or grid.empty()
         n = len(doc["slots"])
         draft = grid_doc(ch["id"], "draft") is not None
-        it = {"id": f"grid-{ch['id']}", "title": f"{ch['number']}  {ch['name']}"[:120], "group": "Each channel's grid",
+        it = {"id": f"grid-{ch['id']}", "title": f"{ch['number']}  {ch['name']}"[:120], "group": "More: plan every slot on a grid",
               "state": "ok" if n else "unknown", "state_label": (f"{n} slot{'s' if n != 1 else ''}" if n else "Automatic only"),
               "detail": ("A suggestion is waiting to be saved or discarded. " if draft else "") +
                         ("Fixed slots, with the automatic line-up between them" if n else "Its automatic line-up only, until slots are added")}
         if base:
             it["link"] = {"url": f"{base}/t/{s['token']}/grid?channel={ch['id']}", "label": f"Open the schedule grid for {ch['name']}"}
         else:
-            it["detail"] = ("It does not know its address yet. Update Starboard in Settings, Updates (0.23.0 and later give it), "
-                            "or open this plug-in's web page once from its page in Settings, Plug-ins.")
+            it["detail"] = NO_ADDRESS
         items.append(it)
     if not items:
-        items.append({"id": "none", "title": "No channels yet", "group": "Each channel's grid", "state": "unknown", "state_label": "None",
+        items.append({"id": "none", "title": "No channels yet", "group": "Shows at set times", "state": "unknown", "state_label": "None",
                       "detail": "Add a channel in Channels first."})
     out = {"type": "list", "title": "What plays when", "items": items,
-           "intro": ("Select Open the schedule grid under a channel: its week opens in a new tab, on this plug-in's own page, in a desktop "
-                     "browser. Place films and series at set times by dragging or with buttons and the keyboard, copy a day, stripe a series "
-                     "across weekdays, or suggest a week from watch history.")}
+           "intro": ("Say what plays at what time, such as Harbour lights at 19:00 on weekdays: select Open the set times under a channel. "
+                     "The time between shows keeps the automatic line-up. The week grid is for exact control, copying a day or a suggested week. "
+                     "Both open in a new tab on a computer.")}
     g = guide_rows()
     _sub(out, "guide", "What is on in the next 24 hours", g, "guide~", g["intro"], group="Guide")
     if said:
@@ -3471,7 +3518,7 @@ class Handler(BaseHTTPRequestHandler):
         m = re.match(r"^stream/([0-9a-f]{8})\.ts$", rest)
         if m:
             return self._stream(m.group(1))
-        if rest == "grid" or rest.startswith("grid/"):
+        if rest == "grid" or rest.startswith(("grid/", "times")):
             return self._grid_get(rest, query)
         if rest == "breaks" or rest.startswith("breaks/"):
             return self._breaks_get(rest, query)
@@ -3497,7 +3544,10 @@ class Handler(BaseHTTPRequestHandler):
         static = {"grid": ("grid.html", "text/html; charset=utf-8"), "grid/grid.js": ("grid.js", "text/javascript; charset=utf-8"),
                   "grid/grid.css": ("grid.css", "text/css; charset=utf-8"),
                   "grid/tokens.css": ("ds-tokens.css", "text/css; charset=utf-8"),
-                  "grid/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2")}
+                  "grid/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2"),
+                  "times": ("times.html", "text/html; charset=utf-8"), "times/times.js": ("times.js", "text/javascript; charset=utf-8"),
+                  "times/times.css": ("times.css", "text/css; charset=utf-8"), "times/tokens.css": ("ds-tokens.css", "text/css; charset=utf-8"),
+                  "times/font.woff2": ("atkinson-hyperlegible-next.woff2", "font/woff2")}
         if rest in static:
             name, kind = static[rest]
             with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), name), "rb") as f:

@@ -12,6 +12,7 @@ Each section here says what each setting does, its choices and the one it starts
 |---|---|---|
 | [Channels](#channels) | **Channels** | Add, name, number and order your channels |
 | [What each channel shows](#what-each-channel-shows) | **Channels**, the **What it shows** card | The series, films, collections, playlists, genres and decades on each channel |
+| [Shows at set times](#shows-at-set-times) | **What plays when** | What plays at what time, such as a show at 19:00 on weekdays |
 | [Schedule grid](#schedule-grid) | **What plays when** | A week for each channel, in 15 minute steps |
 | [Break layouts](#break-layouts) | **What plays between programmes**, then **Break layouts** | What plays In between programmes and in Breaks inside programmes, as columns you fill |
 | [Where breaks go inside a programme](#where-breaks-go-inside-a-programme) | **Channels**, the **Breaks** card | At silence, at set times or at the end of a scene, and how many |
@@ -90,9 +91,27 @@ A channel streams only while someone is watching it in Jellyfin's Live TV, so wh
 
 In **What plays when**, the menu **What is on in the next 24 hours** starts by saying when Jellyfin last read the guide, and how many programmes on how many channels it had. This tells you that Jellyfin has the guide. Then each channel lists what is on in the next 24 hours. Each row shows the programme, its time, its episode, and whether it is New or a Repeat. Jellyfin's own guide has as many days as **Days in Jellyfin's guide** says. An episode or film first shown in the last 30 days is New. Anything older is a Repeat.
 
+## Shows at set times
+
+**What plays when** lists your channels under **Shows at set times**. Each has an **Open the set times** link, which opens a page of the plug-in's own in a new tab. The same link is on the channel's **What plays when** card. The page is for a computer screen. It is not made for phones.
+
+A time says what plays when, in a sentence such as "Harbour lights, Monday to Friday at 19:00, 2 episodes". A channel with no times plays automatically, one programme after another.
+
+To add a time:
+
+1. In **Find a show or film**, enter part of its name and select **Find**.
+2. Choose one result.
+3. Choose **Starts at**, which is on the quarter hour, and **Episodes in a row**. A film plays once.
+4. Choose the days, or select **Monday to Friday**, **Saturday and Sunday** or **Every day**.
+5. Select **Add the time**.
+
+If a show would overlap another on the grid, nothing is added and a sentence says which show it would run into. Move or remove that one first. To remove a time, select **Remove** beside it. A series carries on from the episode due now, so removing a time never loses its place.
+
+The times are read from the channel's week grid, so nothing else is kept. A grid you made before still shows as times. A set of slots that does not repeat in a pattern shows as one time for each. The **More: plan every slot on a grid** group opens the week grid for exact control, copying a day, or a suggested week.
+
 ## Schedule grid
 
-**Schedule grid** lists your channels. Each has an **Open the schedule grid** link, which opens its grid in a new tab on the plug-in's own page. Use a desktop browser. From Starboard 0.24.0 the link uses the address you opened Starboard with.
+In **What plays when**, under **More: plan every slot on a grid**, each channel has an **Open the schedule grid** link, which opens its grid in a new tab on the plug-in's own page. Use a desktop browser. From Starboard 0.24.0 the link uses the address you opened Starboard with.
 
 The grid is a week, Monday to Sunday, in 15 minute steps. Films and series you place on it play at those times every week. The time between them keeps the channel's automatic line-up, with whole programmes only, and the rest is a break. A channel with nothing on its grid is as it was. The guide in Jellyfin follows the grid.
 

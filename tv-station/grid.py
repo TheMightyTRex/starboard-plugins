@@ -14,6 +14,7 @@ pure function on the document here, so the page, the tests and the suggester sha
 """
 import bisect
 import copy
+import hashlib
 import json
 import math
 import os
@@ -338,6 +339,92 @@ def stripe(doc, slot_id, weekdays, per_day, weekends, now):
     names = ", ".join(SHORT[d] for d in days)
     return doc, (f"Striped {name_of(doc, ref)} at {hm(start)} on {names}: {per_day} episode{'s' if per_day != 1 else ''} a day, "
                  f"{added} slots, each the next episode")
+
+
+# Rules: Shows at set times (0.15.0, DASH-649) ------------------------------------------------------------------------
+# A rule is how a person says it: "Harbour lights, Monday to Friday at 19:00, 2 episodes". It is read from the slots,
+# never stored, so every grid already made shows as rules and a rule is only slots: nothing to migrate or keep in step.
+def days_words(days):
+    days = sorted(set(days))
+    if days == list(range(7)):
+        return "every day"
+    if days == list(range(5)):
+        return "Monday to Friday"
+    if days == [5, 6]:
+        return "Saturday and Sunday"
+    if len(days) == 1:
+        return DAYS[days[0]]
+    return ", ".join(SHORT[d] for d in days)
+
+
+def rules(doc):
+    """The slots as rules: one for each film or series, start time and number of programmes in a row, with its days."""
+    out = []
+    by_ref = {}
+    for s in ordered(doc):
+        by_ref.setdefault(s["ref"], []).append(s)
+    for ref, slots in by_ref.items():
+        step = length(doc, ref)
+        runs, per_day = [], {}
+        for s in slots:
+            per_day.setdefault(int(s["day"]), []).append(s)
+        for day, ss in per_day.items():
+            cur = [ss[0]]
+            for x in ss[1:]:
+                if int(x["start"]) == int(cur[-1]["start"]) + step:
+                    cur.append(x)
+                else:
+                    runs.append((day, cur))
+                    cur = [x]
+            runs.append((day, cur))
+        groups = {}
+        for day, cur in runs:
+            groups.setdefault((int(cur[0]["start"]), len(cur)), []).append((day, cur))
+        for (start, n), found in groups.items():
+            ids = [x["id"] for _, cur in found for x in cur]
+            days = sorted(d for d, _ in found)
+            name = name_of(doc, ref)
+            out.append({"id": "r" + hashlib.sha1(",".join(sorted(ids)).encode()).hexdigest()[:8], "ref": ref, "name": name, "days": days,
+                        "start": start, "n": n, "slots": ids,
+                        "words": f"{name}, {days_words(days)} at {hm(start)}, {n} episode{'s' if n != 1 else ''}"
+                                 if ref.startswith("s:") else f"{name}, {days_words(days)} at {hm(start)}"})
+    return sorted(out, key=lambda r: (r["start"], r["name"], r["days"]))
+
+
+def add_rule(doc, days, start, kind, item, n, now, episodes=None, start_mode=None):
+    """A film or series at a time on chosen days, with n episodes one after another. All of it or none: a clash with
+    anything on the grid refuses the whole rule and says which."""
+    days = sorted({int(d) for d in days})
+    if not days or any(not 0 <= d < 7 for d in days):
+        raise GridError("Choose at least one day")
+    n = max(1, min(6, int(n))) if kind == "series" else 1
+    check_place(days[0], int(start))
+    doc, _, _ = add(doc, days[0], int(start), kind, item, now, episodes, start_mode)
+    ref = doc["slots"][-1]["ref"]
+    step = length(doc, ref)
+    if int(start) + n * step > DAY:
+        raise GridError(f"{n} episodes from {hm(start)} would run past midnight. Choose fewer, or an earlier time")
+    if len(doc["slots"]) + (len(days) * n - 1) > MAX_SLOTS:
+        raise GridError(f"A grid holds up to {MAX_SLOTS} slots")
+    first = doc["slots"].pop()
+    for d in days:
+        for k in range(n):
+            t = int(start) + k * step
+            _place(doc, d, t, ref)
+            doc["slots"].append({"id": first["id"] if (d == days[0] and k == 0) else secrets.token_hex(4), "day": d, "start": t, "ref": ref})
+    return doc, f"Added {name_of(doc, ref)} at {hm(start)}, {days_words(days)}" + (f", {n} episode{'s' if n != 1 else ''}" if kind == "series" else "")
+
+
+def remove_rule(doc, rule_id, now):
+    doc = copy.deepcopy(doc)
+    found = next((r for r in rules(doc) if r["id"] == rule_id), None)
+    if not found:
+        raise GridError("That time has gone. The grid may have changed in another tab")
+    if found["ref"].startswith("s:"):
+        reanchor(doc, found["ref"][2:], now)  # the series carries on from the episode due now
+    gone = set(found["slots"])
+    doc["slots"] = [x for x in doc["slots"] if x["id"] not in gone]
+    return tidy(doc), f"Removed {found['words']}"
 
 
 # The week, worked out --------------------------------------------------------------------------------------------------

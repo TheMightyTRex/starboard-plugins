@@ -407,7 +407,7 @@ class Page(unittest.TestCase):
         got = self.op(op="undo")
         self.assertEqual(len(got["slots"]), 1)
         page = self.app.schedule_page()
-        self.assertEqual(page["items"][0]["state_label"], "1 slot")
+        self.assertEqual(next(i for i in page["items"] if i["id"].startswith("grid-"))["state_label"], "1 slot")
         a = self.app.sched_of(self.app.find(self.app.state(), self.cid)).airing(grid.at(grid.week_start(time.time()), 0, 1200) + 60)
         self.assertEqual(a["entry"]["title"], "Show A", "the channel follows the saved grid")
 

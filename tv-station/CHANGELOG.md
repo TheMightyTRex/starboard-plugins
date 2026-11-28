@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.19.0 (not released yet)
+
+### Added
+- Shows at set times (DASH-649, owner, 28 November 2026): a rules list, "Harbour lights, Monday to Friday at 19:00, 2 episodes", on a page of the plug-in's own (times.html, times.js, times.css, at /t/token/times). It adds and removes whole rules: all of a rule or none, and a clash is a sentence naming the show it would run into.
+- The rules are read from the week grid (grid.rules, grid.add_rule, grid.remove_rule) and never stored, so there is nothing to migrate: every grid made before shows as rules, and a grid made by hand and a rule are the same slots.
+- A row "Shows at set times" on each channel's What plays when card and in What plays when, with the rules in words and a link to the page.
+- tools/tv_a11y.sh checks the plug-in's own pages with axe in light, dark and forced colours at 1280 and 1024 wide, and walks Shows at set times by keyboard.
+- The page says "This page is for a computer screen. It is not made for phones." on a narrow screen.
+
+### Changed
+- What plays when lists Shows at set times first. The week grid is under More: plan every slot on a grid, and works as before.
+- The Dockerfile copies styles.py and the new page files. (0.12.0 left styles.py out, which would have stopped the image building. A test now checks every module and page is copied.)
+
 ## 0.18.0 (not released yet)
 
 ### Changed
